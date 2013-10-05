@@ -1,0 +1,183 @@
+%\usepackage[utf8]{inputenc}
+\usepackage[english, ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{xspace}
+\usepackage{enumerate}
+\usepackage{varioref}
+\usepackage[square,colon]{natbib}
+
+\usepackage{ifthen}  % Conditional
+
+%\usepackage{harvard}
+%\newcommand{\citep}{\cite}
+%\newcommand{\citet}{\cite}
+
+%\usepackage[rootbib]{chapterbib}
+%\usepackage{bibunits}
+\usepackage{multibib}
+\newcites{jour}{Journal Articles}
+\newcites{conf}{Refereed Conference Proceedings}
+\newcites{thes}{Theses}
+
+
+\usepackage{amsfonts}
+\usepackage{ipe}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.png,.jpg,.pdf,.gif}
+%\usepackage{multicol}
+%\usepackage{subfigure}	% deprecated
+%\usepackage{subfig}		% deprecated
+\usepackage{caption,subcaption}
+\usepackage{floatrow}
+\floatsetup{heightadjust=object,valign=t}		% vertically aligned subfloats (beware of using float package)
+
+%\usepackage{url}
+\usepackage{fp}
+\usepackage{calc}
+\usepackage[usenames,dvipsnames,table]{xcolor}
+\usepackage{rotating} % rotated texts
+\usepackage{coolstr}
+\usepackage[colorinlistoftodos,color=green!50!black!20,bordercolor=green!50!black!20]{todonotes}
+\usepackage{import}
+\usepackage{savefnmark}
+\usepackage{lscape}
+
+
+\usepackage{expl3}
+
+
+
+%-----------------------------------------
+% TikZ
+%-----------------------------------------
+
+\usepackage{tikz,pgfplots}
+%\usetikzlibrary{backgrounds,decorations,mindmap,positioning}
+\usetikzlibrary{arrows,backgrounds,decorations,patterns,
+	matrix,shapes,fit,calc,plotmarks,mindmap,trees,positioning}
+\pgfrealjobname{thesis}
+
+\newcommand{\inputTikZ}[1]{\includegraphics{fig/#1.pdf}}
+
+%\iffinal
+%  \newcommand{\inputTikZ}[1]{%
+%	\subimport{fig/}{#1.tikz}
+%%    \input{fig/#1.tikz}%
+%  }
+%\else
+%  \newcommand{\inputTikZ}[1]{%
+%    \includegraphics{fig/#1.pdf}
+%%    \beginpgfgraphicnamed{#1-external}%
+%%    \input{fig/#1.tikz}%
+%%    \endpgfgraphicnamed%
+%  }
+%\fi
+
+%-----------------------------------------
+% latexdiff
+%-----------------------------------------
+
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}                      %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+%--Gewährleistung der Kompatibilität mit hyperref.sty-------------------------------------
+
+%\usepackage{url}
+%\urlstyle{rm}
+
+\usepackage[
+	pdftitle={Dissertation Title},
+	pdfauthor={Enrico Siragusa},
+	hidelinks,
+	bookmarksopen
+%	colorlinks=false,
+%	linkcolor=black,
+%	citecolor=black,
+%	urlcolor=black
+]{hyperref}
+
+%\usepackage[oldstyle]{minion-cm} %oldstyle, lining
+%\usepackage{gillsans}
+
+%\usepackage[oldstyle]{pagaramon}
+%\usepackage{courier}
+%\usepackage{mathscrkuenst}
+%\usepackage{mathfont}
+\usepackage{chapitre}
+\usepackage{euscript}
+\usepackage{makeidx}
+
+% C++ source code with syntax highlights
+%\usepackage{minted}
+%\usemintedstyle{trac}
+%\newminted{cpp}{mathescape,gobble=2,linenos,numbersep=5pt,frame=lines,framesep=2mm,fontfamily=tt}
+%\renewcommand{\theFancyVerbLine}{\sffamily\textcolor{NumberColor}{\tiny\arabic{FancyVerbLine}}}
+
+\usepackage[noend]{algorithmic}
+
+%\usepackage[algochapter,vlined,algoruled,linesnumbered]{algorithm2e} %plain, boxed, ruled, vlined
+\usepackage[algochapter,noline,noend,algoruled,linesnumbered]{algorithm2e} %plain, boxed, ruled, vlined
+\usepackage{mfirstuc}
+\DontPrintSemicolon
+\SetKwInOut{Input}{\textsf{input}}
+\SetKwInOut{Output}{\textsf{output}}
+\SetKwInOut{Require}{require}
+\SetKwInOut{Ensure}{ensure}
+\SetKw{KwDownTo}{downto}
+\SetKw{KwOr}{or}
+\SetKw{KwAnd}{and}
+\SetKw{KwNot}{not}
+\SetKw{KwNothing}{}
+\SetKw{Print}{print}
+\SetKw{Report}{report}
+\SetInd{0.75em}{0.75em}
+\SetKw{Sort}{sort}
+\SetKw{Permute}{permute}
+
+\newcommand{\styleLineNumbers}[1]{\sffamily\textcolor{NumberColor}{#1}}
+\newcommand{\styleKeywords}[1]{\sffamily\textcolor{KeywordColor}{#1}}
+\newcommand{\styleComments}[1]{\ttfamily\textcolor{CommentColor}{#1}}
+%\newcommand{\styleComments}[1]{\ttfamily\textcolor{CommentColor}{#1}}
+\newcommand*{\main}[1]{\textbf{\hyperpage{#1}}} 
+ 
+\SetNlSty{styleLineNumbers}{}{\ \ }
+\SetKwSty{styleKeywords}
+\SetCommentSty{styleComments}
+\SetAlFnt{\sffamily\color[HTML]{606060}}
+
+%\footnotesize\addfontfeatures{Colour=888888,Numbers=Monospaced}}{}{}
+
+%kopie von algorithm, heisst nur procedure:
+%\usepackage[ruled,section]{procedure} %plain, boxed, ruled
+
+%\usepackage{float}
+%\usepackage[hang,small]{caption}
+\usepackage{longtable}
+\usepackage{paralist}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}     % Tables
+\usepackage{nicefrac} %for fractions like 1/4
+
+%\usepackage{chapterbib}

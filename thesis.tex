@@ -1,0 +1,271 @@
+\documentclass[nocenter,twoside,a4paper,12pt,crosshair,upper,bold,final]{thesis}
+
+% === Tex ======================================================================
+
+% --- Packages ---
+
+\input{tex/packages}
+
+% --- Macros ---
+
+\input{tex/gunnarMacros}
+\input{tex/gunnarTheorem}
+\input{tex/colors}
+\input{tex/davidMacros}
+
+% --- Commands ---
+
+\newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}             
+
+% --- Theorem ---
+
+\newtheorem{problem}{Problem}[chapter]
+\newtheorem*{problem*}{Problem}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem*{proposition*}{Proposition}
+
+
+% === Layout ========================================================================
+
+% If true, omit TOC, index, refs and captions.
+\newboolean{noskeleton}
+\setboolean{noskeleton}{false}
+
+\chapapp{\chaptername}
+
+% --- Style ---
+
+\pagestyle{myheadings}
+
+% --- Margins ---
+
+\setlength{\textheight}{225mm}
+\setlength{\textwidth}{145mm}
+\setlength{\oddsidemargin}{10mm}
+\setlength{\evensidemargin}{10mm}
+\setlength{\topmargin}{0mm}
+\setlength{\exampleindent}{0mm}
+
+\reversemarginpar % Notes on the inside margin
+
+%\setlength{\marginparsep}{2mm}
+%\setlength{\marginparwidth}{20mm}
+%\renewcommand{\baselinestretch}{1.2} % Zeilenabstand
+
+% --- Fractions ---
+
+\renewcommand{\floatpagefraction}{.99}%tex-buch sagt: werte muessen
+%kleiner als 1 sein, tatsache, jetzt geht es.
+\renewcommand{\textfraction}{0}
+\renewcommand{\topfraction}{.99}
+\renewcommand{\bottomfraction}{.99}
+
+% --- Title page fonts ---
+
+\titlefont{\Huge\bfseries}
+\authorfont{\Large}
+\departmentfont{\Large}
+\institutionfont{\Large}
+
+% --- Caption fonts ---
+
+\captionheaderfont{\sl\bfseries}
+\captionbodyfont{\sl}
+\pagenumberfont{\small\bf}
+\renewcommand{\tableshortname}{Table}
+\renewcommand{\figureshortname}{Figure}
+
+% --- Italic font ---
+
+\renewcommand{\itdefault}{sl}
+
+% --- Index ---
+
+\makeindex
+%\citeindextrue	% References in the index
+
+
+\graphicspath{{figures/}}
+
+
+% === Document =========================================================================
+
+\begin{document} 
+
+\selectlanguage{english}
+
+\frontmatter
+
+% === Cover Page ========================================================================
+
+\title{Dissertation Title} % Insert return with: \\[.5ex]
+%\subtitle{Working Title}
+
+\selectlanguage{ngerman}
+\translator{\large Dissertation zur Erlangung des Grades eines\\Doktors der Naturwissenschaften (Dr. rer. nat.)}
+\author{Enrico Siragusa}
+\department{
+    \begin{center}
+        \includegraphics[scale=0.3]{Siegel_blau_RGB}
+    \end{center}
+    \vspace{0.5cm}
+    \vfill
+{\textrm{am }}Fachbereich Mathematik und Informatik}
+\institution{der Freien Universit{\"a}t Berlin}
+\selectlanguage{english}
+
+
+% === Dedication Page ===================================================================
+
+%\dedication{f\"ur XXX}
+
+
+% === Disputation Page ==================================================================
+
+\lowertitleback{
+\selectlanguage{ngerman}
+Datum des Disputation: \emph{\textbf{XX.XX.201X}}\\[1ex]
+Gutachter:\\
+\emph{\textbf{Prof. Dr. Knut Reinert}, Freie Universit"at Berlin, Deutschland}\\
+\emph{\textbf{Prof. Dr. XXX XXX}, XXX, XXX}\\
+\selectlanguage{english}
+}
+\date{Berlin 201X}
+
+\ifthenelse{\boolean{noskeleton}}{}{
+\maketitle
+\clearemptydoublepage
+}
+
+% Initialize page counter.
+\ifthenelse{\boolean{noskeleton}}{}{\setcounter{page}{5}}
+
+
+% === Abstract =========================================================================
+
+\include{scripts/abstract_en}
+%\include{scripts/abstract_de}
+\clearemptydoublepage
+
+\ifthenelse{\boolean{noskeleton}}{}
+{
+% === Acknowledgments ==================================================================
+
+%\include{scripts/acknowledgments}
+
+
+% === Quote ============================================================================
+
+%{
+%	\centering
+%	\null\vspace{\stretch{1}}
+%	\begin{quotation}
+%		\it ``More engineering work has to be done to improve the practical performance of these index structures (\ldots) These implementations should be grouped under a common interface in libraries (\ldots) One such library-project (\ldots) is the SeqAn library.''
+%	\end{quotation}
+%	\flushright
+%	\citet{Vyverman2012}
+%	\vspace{\stretch{2}}\null
+%	\par
+%}
+%\clearemptydoublepage
+
+
+% === Table of Contents ================================================================
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+{\small \tableofcontents}
+\clearemptydoublepage
+
+}
+
+\mainmatter
+
+\include{scripts/skeleton}
+
+% === Introduction =====================================================================
+
+%\ifthenelse{\boolean{noskeleton}}{}{\part{Introduction}}
+%
+%\include{scripts/intro}
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+% === Data Structures ==================================================================
+
+%\ifthenelse{\boolean{noskeleton}}{}{\part{Index Data Structures}}
+%
+%\include{scripts/chapter_esa_index}
+%\include{scripts/chapter_wotd_index}
+%\include{scripts/chapter_qgram_index}
+%
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+% === Applications =====================================================================
+
+%\ifthenelse{\boolean{noskeleton}}{}{\part{Applications}}
+%
+%\include{scripts/chapter_readmapping}
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+%
+%\include{scripts/chapter_frequencystringmining}
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+%\include{scripts/conclusion}
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+
+% === Appendix =========================================================================
+
+%\appendix
+
+%\include{scripts/appendix}
+%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+\ifthenelse{\boolean{noskeleton}}{}{
+
+% === Declaration =======================================================================
+
+\include{scripts/appendix_declaration}
+
+
+% === Curriculum Vitae ==================================================================
+
+%\addtocontents{toc}{\protect\contentsline{chapter}{Curriculum Vitae}{\thepage}}
+
+%leerzeile (trick, geht vielleicht eleganter)
+%\addtocontents{toc}{\protect\contentsline{part}{}{}}
+
+%\include{scripts/appendix_cv}
+%\include{scripts/appendix_nocv}
+
+
+% === Bibiliography ==========================================================================
+
+\bibliographystyle{natbib}
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{thesis}
+
+
+% === Lists ==================================================================================
+
+\listoffigures
+\clearemptydoublepage
+\listoftables
+\clearemptydoublepage
+\listofalgorithms
+\clearemptydoublepage
+
+\markboth{List of Notations \hfill}{List of Notations \hfill}
+\listofnotations
+\markboth{}{}
+
+\clearemptydoublepage
+\raggedright
+%\addtocontents{toc}{\protect\contentsline{chapter}{Index}{\thepage}}
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+}
+
+
+\end{document}
