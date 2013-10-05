@@ -1,59 +1,67 @@
 \part{Approximate String Matching}
 
 \chapter{Introduction}
-%\section{History of Approximate String Matching}
 \section{Problem definition}
-\section{Applications}
-\section{Overview of methods}
+\section{Bioinformatics applications}
+\section{Overview of existing methods}
+\subsection{Online methods}
+\subsection{Indexed methods}
+\subsection{Filtering methods}
+\section{Related problems}
+\subsection{Local similarity search}
+\subsection{Dictionary search}
+\subsection{Overlap computation}
 
-\chapter{Algorithms for Approximate String Matching}
+\chapter{Online Methods}
+\section{Classic methods}
+\section{Bit-vector methods}
+\subsection{Myers' bit-vector algorithm}
+\subsection{NFA bit-vector emulation}
+\section{Verification methods}
+\subsection{Banded Myers' bit-vector algorithm}
+\subsection{Increased bit-parallelism using SIMD instructions}
+
+\chapter{Indexed Methods}
+\section{Classic Full-Text Indices}
+\subsection{Trie}
+\subsection{Suffix trie and suffix tree}
+\subsection{Suffix array}
+\subsection{$q$-Gram index}
+\section{Compressed Full-Text Indices}
+\subsection{Burrows-Wheeler transform}
+%\subsubsection{Construction}
+%\subsubsection{The Bwte algorithm}
+%\subsubsection{The BCR algorithm}
+%\subsubsection{Inversion}
+\subsection{FM-index}
+%\subsubsection{Backward search}
+%\subsubsection{Locating occurrences}
+\subsection{Rank dictionaries}
+%\subsubsection{Sequential dictionaries}
+%\subsubsection{Wavelet tree}
 \section{Backtracking}
 \subsection{Pruning methods}
 \subsection{Multiple backtracking}
+
+\chapter{Filtering Methods}
+\section{Counting filters}
+\subsection{Exact seeds}
+\subsection{Gapped seeds}
+%\subsubsection{Intuition}
+%\subsubsection{Threshold computation}
+%\subsubsection{Sensitivity computation}
 \section{Factor filters}
 \subsection{Exact seeds}
 \subsection{Approximate seeds}
 \section{Suffix filters}
-\section{Counting filters}
-\subsection{Exact seeds}
-\subsection{Gapped seeds}
-%\subsection{Intuition}
-%\subsection{Threshold computation}
-%\subsection{Sensitivity computation}
-
-\chapter{Algorithms for Edit Distance Verification}
-%\section{NFA bit-vector emulation}
-\section{Banded Myers' bit-vector algorithm}
-\section{Increased bit-parallelism using SIMD instructions}
-
-
-\part{Full-Text Indices}
-
-\chapter{Classic Full-Text Indices}
-\section{Trie}
-\section{Suffix trie and suffix tree}
-\section{Suffix array}
-%\subsection{Forward search}
-\section{$q$-Gram index}
-
-\chapter{Compressed Full-Text Indices}
-\section{Rank dictionaries}
-\subsection{Sequential dictionaries}
-\subsection{Wavelet tree}
-\section{Burrows-Wheeler transform}
-\subsection{Construction}
-%\subsubsection{The Bwte algorithm}
-%\subsubsection{The BCR algorithm}
-\subsection{Inversion}
-\section{FM-index}
-\subsection{Backward search}
-\subsection{Locating occurrences}
 
 
 \part{Applications}
 
 \chapter{Read Mapping}
 \section{Related work}
+\subsection{Best mappers}
+\subsection{All mappers}
 \section{The Masai mapper}
 \subsection{Single-end mapping}
 \subsection{Paired-end mapping}
