@@ -182,37 +182,31 @@ Gutachter:\\
 
 \mainmatter
 
-\include{scripts/skeleton}
+% === Approximate String Matching ======================================================
 
-% === Introduction =====================================================================
+\ifthenelse{\boolean{noskeleton}}{}{\part{Approximate String Matching}}
 
-%\ifthenelse{\boolean{noskeleton}}{}{\part{Introduction}}
-%
-%\include{scripts/intro}
-%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\include{scripts/asm_background}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
 
-% === Data Structures ==================================================================
+\include{scripts/asm_online}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
 
-%\ifthenelse{\boolean{noskeleton}}{}{\part{Index Data Structures}}
-%
-%\include{scripts/chapter_esa_index}
-%\include{scripts/chapter_wotd_index}
-%\include{scripts/chapter_qgram_index}
-%
-%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\include{scripts/asm_indexed}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+\include{scripts/asm_filtering}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
 
 % === Applications =====================================================================
 
-%\ifthenelse{\boolean{noskeleton}}{}{\part{Applications}}
-%
-%\include{scripts/chapter_readmapping}
-%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
-%
-%\include{scripts/chapter_frequencystringmining}
-%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\ifthenelse{\boolean{noskeleton}}{}{\part{Applications}}
 
-%\include{scripts/conclusion}
-%\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\include{scripts/app_readmapping}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+\include{scripts/app_searchjoin}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
 
 
 % === Appendix =========================================================================
