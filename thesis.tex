@@ -143,9 +143,11 @@ Gutachter:\\
 
 % === Abstract =========================================================================
 
+\ifthenelse{\boolean{noskeleton}}{}{
 \include{scripts/abstract_en}
 %\include{scripts/abstract_de}
 \clearemptydoublepage
+}
 
 % === Acknowledgments ==================================================================
 
@@ -183,6 +185,7 @@ Gutachter:\\
 \mainmatter
 
 % === Approximate String Matching ======================================================
+% === Core stringology methods =========================================================
 
 \ifthenelse{\boolean{noskeleton}}{}{\part{Approximate String Matching}}
 

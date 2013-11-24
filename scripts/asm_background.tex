@@ -1,12 +1,158 @@
 \chapter{Background}
+
+% === Introduction ===
+
 \section{Introduction}
-\subsection{Biological motivation}
+
+% --- Motivation ---
+
+\subsection{Motivation}
+%\subsection{History of sequencing}
+
+This work has been motivated by recent advances of molecular genetics.
+The human genome has been sequenced in 2001. Also mouse, drosophila, etc.
+Nowadays \# reference model genomes are available in genbank.
+
+Next-generation sequencing has been the second revolution.
+NGS produces billions of reads for 1000\$ dollars.
+Why should one re-sequence a known genome?
+Resequencing applications include variant calling, etc.
+So NGS impacts biomedicine.
+
+Given a set of reads, two approaches are possible: assembly and mapping.
+
+Assembly methods are based on overlaps, de brujin graphs, or...
+
+Read mapping methods work on a previously assembled reference genome.
+
+The typical SNPs analysis pipeline \ref{fig:ngs-pipeline} consists of...
+
+In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
+
+\begin{figure}[h]
+\caption{NGS pipeline.}
+\label{fig:ngs-pipeline}
+\end{figure}
+
+% --- Problem definition ---
+
 \subsection{Problem definition}
+
+We define formally the basic objects alphabet and word.
+We call alphabet a finite set of symbols, we denote it as $\Sigma$.
+We call word a sequence of symbols over an alphabet. We denote a word $w$ over $\Sigma^{*}$.
+
+Define distance.
+Let $d$ be a distance function over words, defined as $d : (\Sigma^{*}, \Sigma^{*}) \rightarrow \mathcal{N}$.
+Common distance metrics are the Hamming and Levenshtein or edit distance.
+
+$d_H = $
+
+$d_E = $
+
+Define occurrence.
+We say that a word $p$ of length $m$ occurs in another word $t$ at position $e$ if $t_{e-m, e} = p$.
+The notion of occurrence can be generalized to metric distances...
+
+Define approximate string matching.
+Given two words $t$ and $p$ such that $t \gg p$, respectively called text and pattern. Given a distance threshold $k \in \mathcal{N}$.
+The approximate string matching problem is to find all occurrences of $p$ into $t$ within the error threshold $k$.
+
+These definitions allow us to model basic biological.
+
+
+% === Overview of existing methods ===
+
 \section{Overview of existing methods}
+
+Existing methods can be classified in three categories: online, indexed and filtering.
+Online and filtering in \cite{Navarro1998}. Indexed in \cite{Navarro2001}.
+
+% --- Online methods ---
+
 \subsection{Online methods}
+
+\subsubsection{Dynamic Programming}
+
+The edit distance between two strings can be efficiently computed via dynamic programming.
+
+The recurrence relation is as follows: $D[i,j] = \dots$
+
+Answering the question whether the distance $d(x,y) \leq k$ is an easier problem: a band of size $k+1$ is sufficient.
+
+Finding all occurrences of a pattern $p$ in a text $t$...
+
+Change initialization.
+
+Change traceback to start from all $j : D[m,j] \leq k$.
+
+
+\subsubsection{DP Bit-parallelism}
+
+
+\subsubsection{Automata}
+
+\subsubsection{NFA}
+
+
+% --- Indexed methods ---
+
 \subsection{Indexed methods}
+
+\subsubsection{Suffix tree}
+
+\subsubsection{Backtracking}
+
+% --- Filtering methods ---
+
 \subsection{Filtering methods}
+
+\subsubsection{Why filtering}
+
+\subsubsection{Pigeonhole principle}
+
+\subsubsection{$q$-Gram lemma}
+
+% === Related problems ===
+
 \section{Related problems}
+
+% --- Local similarity search ---
+
 \subsection{Local similarity search}
+
+Define score and scoring scheme.
+
+Define local similarity.
+
+\subsubsection{Online methods}
+Give dynamic programming solution.
+
+\subsubsection{Indexed methods}
+Backtracking over substring index. BWT-SW.
+
+\subsubsection{Filtering methods}
+SWIFT/Stellar is based on the q-gram lemma.
+Lastz resembles a suffix filter.
+
+
+% --- Dictionary search ---
+
 \subsection{Dictionary search}
+
+Define problem.
+
+\subsubsection{Trie}
+
+\subsubsection{Backtracking}
+
+% --- Overlaps computation ---
+
 \subsection{Overlaps computation}
+
+Define problem.
+
+DP solution.
+
+Indexed solution, exact and approximate.
+
