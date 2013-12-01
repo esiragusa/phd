@@ -36,19 +36,31 @@ In this work we focus on read mapping, although many core algorithms considered 
 
 % --- Problem definition ---
 
-\subsection{Problem definition}
+\subsection{Definitions}
 
-We define formally the basic objects alphabet and word.
-We call alphabet a finite set of symbols, we denote it as $\Sigma$.
-We call word a sequence of symbols over an alphabet. We denote a word $w$ over $\Sigma^{*}$.
+Let us start by defining primitive objects of stringology: alphabets and strings. An alphabet is a finite set of symbols (or characters); a string (or word) over an alphabet is a finite sequence of symbols from that alphabet. We denote the length of a string $s$ by $\left| s \right|$, and by $\epsilon$ the empty string s.t. $\left| \epsilon \right|=0$.
+Given an alphabet $\Sigma$, we define $\Sigma^0=\{ \epsilon \}$ as the set containing the empty string, $\Sigma^n$ as the set of all strings over $\Sigma$ of length $n$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ as the set of all strings over $\Sigma$.
+For example, let us consider the alphabet $\Sigma$ consisting of DNA bases: $\Sigma = \{A,C,G,T\}$. Examples of strings over $\Sigma$ are $s_1=A$, $s_2=AGGTAC$, $s_3=TC$; for instance, $s_2 \in \Sigma^6$ and $\left| s_2 \right| = 6$.
 
-Define distance.
+We now define substrings. Given a strings $s \in \Sigma^n$, is a prefix of $y$ if 
+
+
+
+Define occurrence.
+
+
+Define distance between two strings.
 Let $d$ be a distance function over words, defined as $d : (\Sigma^{*}, \Sigma^{*}) \rightarrow \mathcal{N}$.
 Common distance metrics are the Hamming and Levenshtein or edit distance.
 
 $d_H = $
 
 $d_E = $
+
+Define alignment between two strings.
+
+
+
 
 Define occurrence.
 We say that a word $p$ of length $m$ occurs in another word $t$ at position $e$ if $t_{e-m, e} = p$.
