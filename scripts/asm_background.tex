@@ -34,9 +34,12 @@ In this work we focus on read mapping, although many core algorithms considered 
 \label{fig:ngs-pipeline}
 \end{figure}
 
-% --- Fundamental notions ---
+% --- Fundamental stringology ---
 
-\subsection{Fundamental notions}
+\subsection{Fundamental stringology}
+
+We now introduce fundamental definitions and problems of stringology, in order to keep the manuscript self-contained.
+The reader familiar with basic stringology can skip this section and proceed to section \ref{?}.
 
 \subsubsection{Definitions}
 
@@ -55,58 +58,103 @@ A string $x$ is a prefix of $y$ iff there is some string $z$ s.t. $y=x\cdot z$.
 Analogously, $x$ is a suffix of $y$ iff there is some string $z$ s.t. $y=z\cdot x$.
 Moreover, $x$ is a substring of $y$ iff there is some string $w,z$ s.t. $y=w\cdot x \cdot z$, and then we say that $x$ occurs within $y$ at position $|w|$.
 
+\begin{example}
 These definitions allow us to model basic biological sequences.
-Let us consider the alphabet consisting of DNA bases: $\Sigma = \{A,C,G,T\}$.
-Examples of strings over $\Sigma$ are $x=A$, $y=AGGTAC$, $z=TA$.
+Let us consider the alphabet consisting of DNA bases: $\Sigma = \{\text{A},\text{C},\text{G},\text{T}\}$.
+Examples of strings over $\Sigma$ are $x=$A, $y=$AGGTAC, $z=$TA.
 For instance, $y \in \Sigma^6$ and $\left| y \right| = 6$.
-Moreover, the concatenation $x \cdot z$ produces $ATA$.
+Moreover, the concatenation $x \cdot z$ produces ATA.
 The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
+\end{example}
 
 \subsubsection{Transformations}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
 Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ s.t. $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
 If the given strings have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
-Therefore, given any two strings $x,y$, we define edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+Therefore, given any two strings $x,y$, we define as edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+
+\begin{example}
+TODO: example of edit transcript.
+\end{example}
 
 Edit transcripts lead us to the definition of distance functions between strings.
 The Hamming distance between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \mathcal{N}$ counting the number of substitutions necessary to transform $x$ into $y$.
 More generally, the edit (or Levenshtein) distance between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \mathcal{N}$ counting the minimum number of edit operation necessary to transform $x$ into $y$.
 
-An alignment is a way of visualizing an edit transcript between two strings.
+\begin{example}
+TODO: example of edit and hamming distance.
+\end{example}
 
-TODO: add an example of edit transcript, edit and hamming distance, alignment.
+\subsubsection{Edit distance computation}
 
-\subsubsection{Problems}
+The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
+The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-We can now define exact string matching, the most fundamental problem in stringology.
+Given two strings $x,y$, for all $1 \leq i \leq \left| x \right|$ and $1 \leq j \leq \left| y \right|$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+The base conditions of the recurrence relation are:
+\begin{eqnarray}
+d_E(\epsilon,\epsilon) = 0
+\end{eqnarray}
+\begin{eqnarray}
+d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq \left| x \right|
+\end{eqnarray}
+\begin{eqnarray}
+d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq \left| y \right|
+\end{eqnarray}
+
+The recursive case is defined as follows:
+\begin{eqnarray}
+d_E[i,j] = min \{ d_E(x_{i-1},y_j)+1, d_E(x_i,y{j-1})+1, d_E(x_{i-1},x_{j-1}) + \delta(x_i, y_j)\}
+\end{eqnarray}
+
+The recurrence relation can be computed in time $\mathcal{O}(\left| x \right| \cdot \left| y \right|)$ using a table of size $(n+1) \times (m+1)$.
+
+\begin{figure}[h]
+\caption{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
+\label{fig:edit-dp}
+\end{figure}
+
+An optimal alignment can be computed in time $\mathcal{O}(n + m)$.
+
+Answering the question whether the distance $d_E(x,y) \leq k$ is an easier problem: a band of size $k+1$ is sufficient.
+
+\subsubsection{Alignments}
+
+An alignment is a way of visualizing a transformation between two strings.
+
+The problem of finding the optimal alignment between two strings is the dual of the edit distance problem.
+%This equivalence is often taken for granted.
+
+\begin{example}
+TODO: example of alignment.
+\end{example}
+
+% === Overview of existing methods ===
+
+\section{Overview of string matching}
+
+\subsection{Problem definition}
+
+We can now define exact string matching, perhaps the most fundamental problem in stringology.
 Given a string $p$ called the pattern and a longer string $t$ called the text, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \cite{Gusfield1997}.
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice. The reader is referred to \cite{?} for an extensive treatment of the subject.
 
 The definition of distance functions between strings let us generalize exact string matching into a more challenging problem: approximate string matching.
-Given a text $t$, a pattern $p$, and an error threshold $k \in \mathcal{N}$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within $k$ errors.
+Given a text $t$, a pattern $p$, and a distance threshold $k \in \mathcal{N}$, the approximate string matching (a.s.m.) problem is to find all occurrences of $p$ into $t$ within distance $k$.
 %such that $t \gg p$
+The a.s.m. problem under the Hamming distance is commonly referred as the $k$-mismatches problem and under the edit distance as the $k$-differences problem.
+%Unless explicitly stated, in the following of this manuscript we will refer to a.s.m. as the $k$-differences problem.
 
-The edit distance problem is to compute the edit distance between two given strings.
-
-% === Overview of existing methods ===
-
-\section{Overview of existing methods}
-
-Existing methods can be classified in three categories: online, indexed and filtering.
-Online and filtering in \cite{Navarro1998}. Indexed in \cite{Navarro2001}.
+Existing methods to solve approximate string matching problems can be classified in three categories: online, indexed and filtering.
+An extensive survey on online methods is provided by \cite{Navarro1999}, while a more succint survey on indexed methods is given in \cite{Navarro2001}.
+In the following of this section we give a brief overview of the state of the art in this field, including most recent methods not treated by \cite{Navarro1999} nor \cite{Navarro2001}.
 
 % --- Online methods ---
 
 \subsection{Online methods}
 
 \subsubsection{Dynamic Programming}
-
-The edit distance between two strings can be efficiently computed via dynamic programming.
-
-The recurrence relation is as follows: $D[i,j] = \dots$
-
-Answering the question whether the distance $d(x,y) \leq k$ is an easier problem: a band of size $k+1$ is sufficient.
 
 Finding all occurrences of a pattern $p$ in a text $t$...
 
@@ -115,12 +163,11 @@ Change initialization.
 Change traceback to start from all $j : D[m,j] \leq k$.
 
 
-\subsubsection{DP Bit-parallelism}
-
+%\subsubsection{DP Bit-parallelism}
 
 \subsubsection{Automata}
 
-\subsubsection{NFA}
+%\subsubsection{NFA}
 
 
 % --- Indexed methods ---
