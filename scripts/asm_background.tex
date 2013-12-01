@@ -38,50 +38,40 @@ In this work we focus on read mapping, although many core algorithms considered 
 
 \subsection{Fundamentals}
 
-\subsubsection{Fundamental definitions}
+\subsubsection{Definitions}
 
 Let us start by defining primitive objects of stringology: alphabets and strings. An alphabet is a finite set of symbols (or characters); a string (or word) over an alphabet is a finite sequence of symbols from that alphabet. We denote the length of a string $s$ by $\left| s \right|$, and by $\epsilon$ the empty string s.t. $\left| \epsilon \right|=0$.
 Given an alphabet $\Sigma$, we define $\Sigma^0=\{ \epsilon \}$ as the set containing the empty string, $\Sigma^n$ as the set of all strings over $\Sigma$ of length $n$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ as the set of all strings over $\Sigma$. Finally, we call any subset of $\Sigma^*$ a language over $\Sigma$.
 
-We now define concatenation, the most fundamental operation on strings. The concatenation operator of two strings is denoted with $\cdot$ and defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$. Given two strings, $x \in \Sigma^n$ with $x=\alpha_1\alpha_2\dots\alpha_n$, and $y \in \Sigma^m$ with $y=\beta_1\beta_2\dots\beta_m$, their concatenation $x \cdot y$ (or simply denoted $xy$) is the string $z \in \Sigma^{n+m}$ consisting of the symbols $\alpha_1\alpha_2\dots\alpha_n\beta_1\beta_2\dots\beta_m$.
+We now define concatenation, the most fundamental operation on strings. The concatenation operator of two strings is denoted with $\cdot$ and defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$. Given two strings, $x \in \Sigma^n$ with $x=x_1 x_2 \dots x_n$, and $y \in \Sigma^m$ with $y=y_1 y_2 \dots y_m$, their concatenation $x \cdot y$ (or simply denoted $xy$) is the string $z \in \Sigma^{n+m}$ consisting of the symbols $x_1 x_2 \dots x_n y_1 y_2 \dots y_m$.
 
 From concatenation we can derive the notion of prefix, suffix, and substring.
 A string $x$ is a prefix of $y$ iff there is some string $z$ s.t. $y=x\cdot z$.
 Analogously, $x$ is a suffix of $y$ iff there is some string $z$ s.t. $y=z\cdot x$.
-Similarly, $x$ is a substring of $y$ iff there is some string $w,z$ s.t. $y=w\cdot x \cdot z$.
-Moreover, if $x$ is a substring of $y$, then we say that $x$ occurs within $y$ at position $|w|$.
+Moreover, $x$ is a substring of $y$ iff there is some string $w,z$ s.t. $y=w\cdot x \cdot z$, and then we say that $x$ occurs within $y$ at position $|w|$.
 
-For example, let us consider the alphabet $\Sigma$ consisting of DNA bases: $\Sigma = \{A,C,G,T\}$. Examples of strings over $\Sigma$ are $x=A$, $y=AGGTAC$, $z=TA$. For instance, $y \in \Sigma^6$ and $\left| y \right| = 6$. An example of concatenation is $x \cdot z = ATA$. The string $x$ is a prefix of $y$. The string $z$ is a substring of $y$, occurring at position 4 in $y$.
+These definitions allow us to model basic biological sequences. For example, let us consider the alphabet $\Sigma$ consisting of DNA bases: $\Sigma = \{A,C,G,T\}$. Examples of strings over $\Sigma$ are $x=A$, $y=AGGTAC$, $z=TA$. For instance, $y \in \Sigma^6$ and $\left| y \right| = 6$. An example of concatenation is $x \cdot z = ATA$. The string $x$ is a prefix of $y$. The string $z$ is a substring of $y$, occurring at position 4 in $y$.
 
-\subsubsection{Fundamental problems}
+\subsubsection{Transformations}
+
+The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
+Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ s.t. $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
+If the given strings $x,y$ have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
+Therefore, given any two strings $x,y$, we define edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+
+Edit transcripts lead us to the definition of distance functions between strings.
+The Hamming distance between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \mathcal{N}$ counting the number of substitutions necessary to transform $x$ into $y$.
+More generally, the edit (or Levenshtein) distance between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \mathcal{N}$ counting the minimum number of edit operation necessary to transform $x$ into $y$.
+
+\subsubsection{Problems}
 
 We now define exact string matching, the most fundamental problem in stringology.
 Given a string $p$ called the pattern and a longer string $t$ called the text, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \cite{Gusfield1997}.
+This problem has been extensively studied from the theoretical standpoint and is well solved in practice. The reader is referred to \cite{?} for an extensive treatment of the subject.
 
-This problem can be generalized in various ways. For instance, the definition of distance between strings yields approximate string matching.
-
-
-Define distance between two strings.
-Let $d$ be a distance function over words, defined as $d : (\Sigma^{*}, \Sigma^{*}) \rightarrow \mathcal{N}$.
-Common distance metrics are the Hamming and Levenshtein or edit distance.
-
-$d_H = $
-
-$d_E = $
-
-Define alignment between two strings.
-
-
-Define occurrence.
-We say that a word $p$ of length $m$ occurs in another word $t$ at position $e$ if $t_{e-m, e} = p$.
-The notion of occurrence can be generalized to metric distances...
-
-Define approximate string matching.
-Given two words $t$ and $p$ such that $t \gg p$, respectively called text and pattern. Given a distance threshold $k \in \mathcal{N}$.
-The approximate string matching problem is to find all occurrences of $p$ into $t$ within the error threshold $k$.
-
-These definitions allow us to model basic biological.
-
+The definition of distance functions between strings let us generalize exact string matching into a more challenging problem, approximate string matching.
+Given a text $t$, a pattern $p$, and an error threshold $k \in \mathcal{N}$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within $k$ errors.
+%such that $t \gg p$
 
 % === Overview of existing methods ===
 
