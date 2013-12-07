@@ -45,7 +45,7 @@ The reader familiar with basic stringology can skip this section and proceed to 
 
 Let us start by defining primitive objects of stringology: alphabets and strings.
 An alphabet is a finite set of symbols (or characters); a string (or word) over an alphabet is a finite sequence of symbols from that alphabet.
-We denote the length of a string $s$ by $\left| s \right|$, and by $\epsilon$ the empty string s.t. $\left| \epsilon \right|=0$.
+We denote the length of a string $s$ by $| s |$, and by $\epsilon$ the empty string s.t. $| \epsilon |=0$.
 Given an alphabet $\Sigma$, we define $\Sigma^0=\{ \epsilon \}$ as the set containing the empty string, $\Sigma^n$ as the set of all strings over $\Sigma$ of length $n$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ as the set of all strings over $\Sigma$.
 Finally, we call any subset of $\Sigma^*$ a language over $\Sigma$.
 
@@ -62,7 +62,7 @@ Moreover, $x$ is a substring of $y$ iff there is some string $w,z$ s.t. $y=w\cdo
 These definitions allow us to model basic biological sequences.
 Let us consider the alphabet consisting of DNA bases: $\Sigma = \{\text{A},\text{C},\text{G},\text{T}\}$.
 Examples of strings over $\Sigma$ are $x=$A, $y=$AGGTAC, $z=$TA.
-For instance, $y \in \Sigma^6$ and $\left| y \right| = 6$.
+For instance, $y \in \Sigma^6$ and $| y | = 6$.
 Moreover, the concatenation $x \cdot z$ produces ATA.
 The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
 \end{example}
@@ -91,33 +91,32 @@ TODO: example of edit and hamming distance.
 The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
 The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$, for all $1 \leq i \leq \left| x \right|$ and $1 \leq j \leq \left| y \right|$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$, for all $1 \leq i \leq | x |$ and $1 \leq j \leq | y |$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d_E(\epsilon,\epsilon) = 0
 \end{eqnarray}
 \begin{eqnarray}
-d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq \left| x \right|
+d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq | x |
 \end{eqnarray}
 \begin{eqnarray}
-d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq \left| y \right|
+d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq | y |
 \end{eqnarray}
-
-The recursive case is defined as follows:
+and the recursive case is defined as follows:
 \begin{eqnarray}
-d_E[i,j] = min \{ d_E(x_{i-1},y_j)+1, d_E(x_i,y{j-1})+1, d_E(x_{i-1},x_{j-1}) + \delta(x_i, y_j)\}
+d_E(x_{1..i},y_{1..j}) = min \{ d_E(x_{1..i-1},y_{1..j})+1, d_E(x_{1..i},y_{1..j-1})+1, d_E(x_{1..i-1},x_{1..j-1}) + \delta(x_i, y_j)\}
 \end{eqnarray}
 
-The recurrence relation can be computed in time $\mathcal{O}(\left| x \right| \cdot \left| y \right|)$ using a table of size $(n+1) \times (m+1)$.
+The recurrence relation can be computed in time $\Oh(| x | \cdot | y |)$ using a table of $(n+1) \times (m+1)$ cells. However only $\Oh(min\{ n, m \})$ space is required.
+
+The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
 
 \begin{figure}[h]
 \caption{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
 \label{fig:edit-dp}
 \end{figure}
 
-An optimal alignment can be computed in time $\mathcal{O}(n + m)$.
-
-Answering the question whether the distance $d_E(x,y) \leq k$ is an easier problem: a band of size $k+1$ is sufficient.
+An optimal alignment can be computed in time $\Oh(n + m)$.
 
 \subsubsection{Alignments}
 
@@ -148,35 +147,178 @@ The a.s.m. problem under the Hamming distance is commonly referred as the $k$-mi
 
 Existing methods to solve approximate string matching problems can be classified in three categories: online, indexed and filtering.
 An extensive survey on online methods is provided by \cite{Navarro1999}, while a more succint survey on indexed methods is given in \cite{Navarro2001}.
-In the following of this section we give a brief overview of the state of the art in this field, including most recent methods not treated by \cite{Navarro1999} nor \cite{Navarro2001}.
+In the following of this section we give only a brief and non-exhaustive overview of the fundamental techniques, and discuss their advantages and limitations.
+This overview serves as an introduction to more involved methods presented in chapter \ref{?}.
+%In the following of this section we give a brief overview of the state of the art in this field, including most recent methods not treated by \cite{Navarro1999} nor \cite{Navarro2001}.
 
 % --- Online methods ---
 
 \subsection{Online methods}
 
-\subsubsection{Dynamic Programming}
-
-Finding all occurrences of a pattern $p$ in a text $t$...
-
-Change initialization.
-
-Change traceback to start from all $j : D[m,j] \leq k$.
-
-
-%\subsubsection{DP Bit-parallelism}
+Introduce and motivate online methods.
+Online methods work by scanning the text from left to right (or right to left).
+Good: require in the best case memory proportional to the pattern length.
+Bad: worst case runtime at least linear in the text size.
 
 \subsubsection{Automata}
 
-%\subsubsection{NFA}
+Exact search of one pattern. Boyer-moore automaton.
+
+Exact search of multiple patterns. Aho-corasick automaton.
+
+Approximate search of one pattern. Ukkonen automaton.
+
+%\subsubsection{NFA bit-parallelism}
+
+\subsubsection{Dynamic programming}
+
+The dynamic programming algorithm \ref{?} to compute the edit distance of two strings can be easily turned into a pattern matching algorithm.
+Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
+The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
+
+Let pose $x=t$ and $y=p$ and consider equations \ref{?}.
+Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row as:
+\begin{eqnarray}
+d_E(\epsilon, y_{1..j}) = 0 \text{ for } 1 \leq j \leq | y |
+\end{eqnarray}
+and since an occurrence of the pattern can end anywhere in the text, we check every cell of the bottom row for the condition:
+\begin{eqnarray}
+d_E(x_{1..m},y_{1..j}) \leq k \text{ for } 1 \leq j \leq | y |.
+\end{eqnarray}
+
+\begin{figure}[h]
+\caption{DP table representing the match of $p=...$ in $t=...$.}
+\label{fig:asm-dp}
+\end{figure}
+
+
+%\subsubsection{DP bit-parallelism}
 
 
 % --- Indexed methods ---
 
 \subsection{Indexed methods}
 
-\subsubsection{Suffix tree}
+Motivate indexed methods.
+Good: runtime independent of the text size.
+Bad: require memory linear in the text size; exponential in $k$.
 
-\subsubsection{Backtracking}
+No matter how fast online search can be, these approaches quickly become impractical.
+Since the text is static and searched frequently, we decide to preprocess it.
+We build an index of the text beforehand and use it to speed up subsequent searches.
+To this intent, we first introduce \emph{suffix trees}, optimal data structures to index strings.
+Later on, we consider algorithms solving string matching problems on suffix trees.
+
+\subsubsection{Suffix tree and suffix trie}
+
+The suffix tree \citep{Morrison1968} is a lexicographically ordered tree data structure representing all suffixes of a string.
+Assume w.l.o.g. a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
+The suffix tree $\mathbb{S}$ of the string $s$ has one node designated as the root and $n$ leaves, one per suffix, labeled with numbers from $1$ to $n$.
+Each internal node has more than one child, and each edge is labeled with a non-empty substring of $s$.
+Each path from the root to a leaf $i$ spells the suffix $s_{i..n}$.
+Figure \ref{fig:st} illustrates.
+
+\begin{figure}[h]
+\caption{Suffix tree.}
+\label{fig:stree}
+\end{figure}
+
+%The suffix tree can be built in time and space linear in the length of the string.
+
+%The definition of suffix tree can be generalized to index set of strings.
+%Given a set of strings $\mathcal{S} = \{ s^1, s^2, \dots, s^z \}$, assume w.l.o.g. that each string $s^i \in \mathcal{S}$ is padded with distinct terminator symbol $\$_i$.
+%Leaves of the \emph{generalized suffix tree} are labeled with with pairs $(i,j)$ such that $1 \leq i \leq z$ and $1 \leq j \leq | s^i |$.
+%Each path from the root to a leaf $(i,j)$ spells the suffix $s_{j..n}^i$.
+%Figure \ref{fig:gst} illustrates.
+%
+%\begin{figure}[h]
+%\caption{Generalized suffix tree.}
+%\label{fig:gstree}
+%\end{figure}
+
+In the following of this manuscript we consider w.l.o.g. \emph{suffix tries} instead of suffix trees.
+On suffix tries, internal nodes can have only one child and each edge is labeled by one single character.
+This fact simplifies the exposition of all given algorithms without affecting their runtime complexity nor their result.
+However, we remark that all given algorithms can be generalized to work on trees.
+Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\mathbb{T}$.
+
+\begin{figure}[h]
+\caption{Suffix trie.}
+\label{fig:strie}
+\end{figure}
+
+Given a node $x$, we denote with $label(x)$ the label of the edge entering into $x$, with $\mathcal{C}(x)$ the set of children of $x$ being internal nodes\footnote{Entering edges of internal nodes are labeled with symbols in $\Sigma$.}, with $\mathcal{E}(x)$ the set of children of $x$ being leaves\footnote{Entering edges of leaves are labeled with terminator symbols.}.
+
+\subsubsection{Exact search}
+
+
+Using the suffix trie $\mathbb{T}$ of a text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(|p|)$ and independently of $|t|$.
+We use the property of the suffix trie that each path from the root to an internal node spells a different unique substring of $t$ and consequently all equal substrings of $t$ are compressed in a single path.
+Algorithm \ref{alg:ExactSearch} locates a pattern $p$ by starting in the root node of $\mathbb{T}$ and following the path spelling the pattern.
+If we end up in a node $x$, each leaf $l_x \in \mathcal{E}(x)$ points to a distinct substring of $t$ that is equal to $p$.
+
+%\begin{algorithm}
+%\caption{Exact search on a suffix trie.}
+%\label{alg:ExactSearch}
+%\begin{algorithmic}[1]
+%\algnotext{EndFor}
+%\Procedure{Search}{$s,q$}
+%	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
+%	\ForAll {$c_q \in \mathcal{C}(q)$}
+%		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
+%			\State \Call{Search}{$c_s,c_q$}
+%		\EndIf
+%	\EndFor
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
+
+\begin{figure}[h]
+\caption{Exact pattern matching on a suffix tree.}
+\label{fig:st-exact}
+\end{figure}
+
+\subsubsection{Backtracking $k$-mismatches}
+
+By backtracking \citep{Ukkonen1993, Baeza1999} on a suffix tree we can find all occurrences in $t$ within distance $k$ from a pattern $p$, in average time sublinear in $|t|$ \citep{Navarro2000}.
+A top-down traversal on the suffix trie $\mathbb{T}$ spells incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, we incrementally compute the distance between the query and the spelled string.
+If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
+Conversely, if we completely spelled the pattern $p$, and we ended up in a node $x$, each leaf $l_x \in \mathcal{E}(x)$ points to a distinct string $S_x \in \mathcal{S}$ that is within distance $k$ of $p$.
+
+%\begin{algorithm}
+%\caption{$k$-mismatches on a suffix trie.}
+%\label{alg:ApproximateSearch}
+%\begin{algorithmic}[1]
+%\algnotext{EndFor}
+%\Procedure{Search}{$s,q$}
+%	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
+%	\ForAll {$c_q \in \mathcal{C}(q)$}
+%		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
+%			\State \Call{Search}{$c_s,c_q$}
+%		\EndIf
+%	\EndFor
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
+
+\begin{figure}[h]
+\caption{$k$-mismatches on a suffix tree.}
+\label{fig:st-hamming}
+\end{figure}
+
+\subsubsection{Backtracking $k$-differences}
+
+We can compute $k$-differences on a suffix tree in two different ways: by explicitly enumerating errors with a five-fold recursion on the suffix trie, or by computing the DP matrix on the suffix trie.
+
+%\begin{algorithm}
+%\caption{$k$-differences on a suffix trie.}
+%\end{algorithm}
+
+\begin{figure}[h]
+\caption{$k$-differences on a suffix tree.}
+\label{fig:st-edit}
+\end{figure}
 
 % --- Filtering methods ---
 
@@ -184,7 +326,40 @@ Change traceback to start from all $j : D[m,j] \leq k$.
 
 \subsubsection{Why filtering}
 
+Motivate filtering methods.
+
 \subsubsection{Pigeonhole principle}
+
+\subsubsection{Exact seeds}
+A simple solution to the problem is provided by a filtering algorithm proposed in \cite{Baeza1999b} which reduces an approximate search into smaller exact searches.
+A pattern $p$ is partitioned into $k+1$ non-overlapping seeds which are searched in $t$ with the help of $\mathbb{T}$.
+Since each edit operation can affect at most one seed, for the pigeonhole principle each approximate occurrence of $p$ in $t$ contains an exact occurrence of some seed.
+However the converse is not true, consequently we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of $p$ in $t$.
+
+Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
+Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
+If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
+
+\begin{figure}[h]
+\caption{Filtration with exact seeds.}
+\label{fig:seeds-ext}
+\end{figure}
+
+\subsubsection{Approximate seeds}
+A more involved filtering algorithm proposed in \cite{Navarro2000} reduces an approximate search into smaller approximate searches.
+We partition $p$ into $s \leq k+1$ non-overlapping seeds.
+According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
+
+%Moreover, since the number of seeds within distance $\lfloor k/s \rfloor$ is $s - (k \bmod s)$,
+Approximate seeds are searched via backtracking on $\mathbb{T}$.
+We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
+Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+
+\begin{figure}[h]
+\caption{Filtration with approximate seeds.}
+\label{fig:seeds-apx}
+\end{figure}
 
 \subsubsection{$q$-Gram lemma}
 
@@ -207,19 +382,29 @@ Give dynamic programming solution.
 Backtracking over substring index. BWT-SW.
 
 \subsubsection{Filtering methods}
-SWIFT/Stellar is based on the q-gram lemma.
-Lastz resembles a suffix filter.
+SWIFT/Stellar is based on the $q$-gram lemma.
+%Lastz resembles a suffix filter.
 
 
 % --- Dictionary search ---
 
 \subsection{Dictionary search}
 
-Define problem.
+Dictionary search is a restriction of string matching.
+Given a set of database strings $\mathcal{S}$ and a query string $q$ find all strings in $\mathcal{S}$ within distance $k$ from $q$.
+Note that strings in $\mathcal{S}$ usually have length similar to $|q|$, as $| |s| - |q| | \leq k$ is a necessary condition for $d_E(s,q) \leq k$.
 
-\subsubsection{Trie}
+\subsubsection{Online methods}
 
-\subsubsection{Backtracking}
+The problem can be solved by checking whether $d_E(s,q) \leq k$ for all $s \in \mathcal{S}$.
+Answering the question whether the distance $d_E(s,q) \leq k$ is an easier problem than computing the edit distance $d_E(s,q)$: a band of size $k+1$ is sufficient.
+
+\subsubsection{Indexed methods}
+
+Using a radix tree $\mathbb{S}$ we can find all strings in $\mathcal{S}$ equal to a query string $q$, in optimal time $\Oh(|q|)$ and independently of $||\mathcal{S}||$.
+
+\subsubsection{Filtering methods}
+
 
 % --- Overlaps computation ---
 
@@ -227,7 +412,10 @@ Define problem.
 
 Define problem.
 
+\subsubsection{Online methods}
+
 DP solution.
 
-Indexed solution, exact and approximate.
+\subsubsection{Indexed methods}
 
+Indexed solution, exact and approximate.
