@@ -4,7 +4,7 @@
 
 \section{Introduction}
 
-% --- Motivation ---
+% -----------------------------------------------------------------------------
 
 \subsection{Motivation}
 %\subsection{History of sequencing}
@@ -34,14 +34,16 @@ In this work we focus on read mapping, although many core algorithms considered 
 \label{fig:ngs-pipeline}
 \end{figure}
 
-% --- Fundamental stringology ---
+\subsection{Organization of this manuscript}
 
-\subsection{Fundamental stringology}
+% -----------------------------------------------------------------------------
+
+\section{Stringology preliminaries}
 
 We now introduce fundamental definitions and problems of stringology, in order to keep the manuscript self-contained.
 The reader familiar with basic stringology can skip this section and proceed to section \ref{?}.
 
-\subsubsection{Definitions}
+\subsection{Definitions}
 
 Let us start by defining primitive objects of stringology: alphabets and strings.
 An alphabet is a finite set of symbols (or characters); a string (or word) over an alphabet is a finite sequence of symbols from that alphabet.
@@ -67,7 +69,7 @@ Moreover, the concatenation $x \cdot z$ produces ATA.
 The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
 \end{example}
 
-\subsubsection{Transformations}
+\subsection{Transformations}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
 Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ s.t. $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
@@ -86,7 +88,7 @@ More generally, the edit (or Levenshtein) distance between two strings $x,y \in 
 TODO: example of edit and hamming distance.
 \end{example}
 
-\subsubsection{Edit distance computation}
+\subsection{Edit distance computation}
 
 The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
 The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
@@ -118,7 +120,7 @@ The table can be filled in four different ways: column-wise, row-wise, diagonal-
 
 An optimal alignment can be computed in time $\Oh(n + m)$.
 
-\subsubsection{Alignments}
+\subsection{Alignments}
 
 An alignment is a way of visualizing a transformation between two strings.
 
