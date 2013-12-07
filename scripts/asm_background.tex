@@ -251,27 +251,26 @@ Given a node $x$, we denote with $label(x)$ the label of the edge entering into 
 
 \subsubsection{Exact search}
 
-
 Using the suffix trie $\mathbb{T}$ of a text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(|p|)$ and independently of $|t|$.
 We use the property of the suffix trie that each path from the root to an internal node spells a different unique substring of $t$ and consequently all equal substrings of $t$ are compressed in a single path.
 Algorithm \ref{alg:ExactSearch} locates a pattern $p$ by starting in the root node of $\mathbb{T}$ and following the path spelling the pattern.
 If we end up in a node $x$, each leaf $l_x \in \mathcal{E}(x)$ points to a distinct substring of $t$ that is equal to $p$.
 
-%\begin{algorithm}
-%\caption{Exact search on a suffix trie.}
-%\label{alg:ExactSearch}
-%\begin{algorithmic}[1]
-%\algnotext{EndFor}
-%\Procedure{Search}{$s,q$}
-%	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
-%	\ForAll {$c_q \in \mathcal{C}(q)$}
-%		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
-%			\State \Call{Search}{$c_s,c_q$}
-%		\EndIf
-%	\EndFor
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
+\begin{algorithm}
+\caption{Exact search on a suffix trie.}
+\label{alg:st-exact}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\Procedure{Search}{$s,q$}
+	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
+	\ForAll {$c_q \in \mathcal{C}(q)$}
+		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
+			\State \Call{Search}{$c_s,c_q$}
+		\EndIf
+	\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure}[h]
 \caption{Exact pattern matching on a suffix tree.}
@@ -286,21 +285,21 @@ While traversing each branch of the trie, we incrementally compute the distance 
 If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
 Conversely, if we completely spelled the pattern $p$, and we ended up in a node $x$, each leaf $l_x \in \mathcal{E}(x)$ points to a distinct string $S_x \in \mathcal{S}$ that is within distance $k$ of $p$.
 
-%\begin{algorithm}
-%\caption{$k$-mismatches on a suffix trie.}
-%\label{alg:ApproximateSearch}
-%\begin{algorithmic}[1]
-%\algnotext{EndFor}
-%\Procedure{Search}{$s,q$}
-%	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
-%	\ForAll {$c_q \in \mathcal{C}(q)$}
-%		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
-%			\State \Call{Search}{$c_s,c_q$}
-%		\EndIf
-%	\EndFor
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
+\begin{algorithm}[h]
+\caption{$k$-mismatches on a suffix trie.}
+\label{alg:st-hamming}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\Procedure{Search}{$s,q$}
+	\State \Report $\mathcal{E}(s) \times \mathcal{E}(q)$
+	\ForAll {$c_q \in \mathcal{C}(q)$}
+		\If {$\exists\,{c_s \in \mathcal{C}(s)}:\  label(c_s) = label(c_q)$\label{alg1::comp}}
+			\State \Call{Search}{$c_s,c_q$}
+		\EndIf
+	\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure}[h]
 \caption{$k$-mismatches on a suffix tree.}
@@ -311,9 +310,10 @@ Conversely, if we completely spelled the pattern $p$, and we ended up in a node 
 
 We can compute $k$-differences on a suffix tree in two different ways: by explicitly enumerating errors with a five-fold recursion on the suffix trie, or by computing the DP matrix on the suffix trie.
 
-%\begin{algorithm}
-%\caption{$k$-differences on a suffix trie.}
-%\end{algorithm}
+\begin{algorithm}
+\caption{$k$-differences on a suffix trie.}
+\label{alg:st-edit}
+\end{algorithm}
 
 \begin{figure}[h]
 \caption{$k$-differences on a suffix tree.}
@@ -402,6 +402,16 @@ Answering the question whether the distance $d_E(s,q) \leq k$ is an easier probl
 \subsubsection{Indexed methods}
 
 Using a radix tree $\mathbb{S}$ we can find all strings in $\mathcal{S}$ equal to a query string $q$, in optimal time $\Oh(|q|)$ and independently of $||\mathcal{S}||$.
+
+\begin{algorithm}[h]
+\caption{Exact dictionary search on a radix trie.}
+\label{alg:dict-exact}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Approximate dictionary search on a radix trie.}
+\label{alg:dict-edit}
+\end{algorithm}
 
 \subsubsection{Filtering methods}
 
