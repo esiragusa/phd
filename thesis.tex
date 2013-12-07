@@ -2,28 +2,16 @@
 
 % === Tex ======================================================================
 
-% --- Packages ---
-
 \input{tex/packages}
-
-% --- Macros ---
-
-\input{tex/gunnarMacros}
-\input{tex/gunnarTheorem}
 \input{tex/colors}
-\input{tex/davidMacros}
+\input{tex/fonts}
+\input{tex/macros}
+\input{tex/theorem}
+\input{tex/tikz}
 
 % --- Commands ---
 
 \newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}\cleardoublepage}}             
-
-% --- Theorem ---
-
-\newtheorem{problem}{Problem}[chapter]
-\newtheorem*{problem*}{Problem}
-\newtheorem{proposition}{Proposition}[chapter]
-\newtheorem*{proposition*}{Proposition}
-
 
 % === Layout ========================================================================
 
@@ -185,7 +173,7 @@ Gutachter:\\
 \mainmatter
 
 % === Approximate String Matching ======================================================
-% === Core stringology methods =========================================================
+% === Core stringology methods ??
 
 \ifthenelse{\boolean{noskeleton}}{}{\part{Approximate String Matching}}
 

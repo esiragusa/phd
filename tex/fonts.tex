@@ -1,0 +1,56 @@
+%-----------------------------------------
+% Font Definitions
+%-----------------------------------------
+
+%\newcommand{\mainfont}{Linux Libertine O} % Cambria, Palatino Linotype, Constantia
+%%\newcommand{\mainfont}{Source Sans Pro }
+\newcommand{\mainfont}{Cambria} % Cambria, Palatino Linotype, Constantia
+
+%\newcommand{\sffont}{Source Sans Pro Light}
+%\newcommand{\sffont}{Linux Biolinum O} % serifenlose Schrift
+\newcommand{\sffont}{Calibri} % Candara
+
+\newcommand{\monofont}{Monaco} %{WenQuanYi Zen Hei Mono}
+%\newcommand{\titlefont}{Hoefler Text}
+\newcommand{\mathfont}{Cambria Math}
+
+% XeLaTex bevorzugt
+\ifdefined\XeTeXrevision
+%%\usepackage[cm-default]{fontspec}
+\usepackage{fontspec}
+\usepackage[EU1]{fontenc}
+\usepackage{xunicode,xltxtra}
+\usepackage[math-style=TeX]{unicode-math}
+\defaultfontfeatures{
+	Mapping=tex-text,
+%%	Numbers=OldStyle,
+	Scale=MatchLowercase
+}
+
+%\setmainfont[Ligatures={Common},
+%  BoldFont={\mainfont},
+%  ItalicFont={\mainfont Light Italic}
+%]{\mainfont Light}
+\setmainfont[Ligatures={Common}]{\mainfont}
+\setsansfont[Ligatures={Common}]{\sffont}
+
+\setmathfont{\mathfont}
+
+%%\setmathrm{Cambria Math} % include this
+\setmonofont[Mapping=tex-text,
+  Scale=MatchUppercase,
+  BoldFont={\monofont},
+  ItalicFont={\monofont}
+]{\monofont}
+\setmathtt{\monofont}
+
+%\newfontfamily{\checkfont}{Zapf Dingbats}
+\newfontfamily{\checkfont}{Arial Unicode MS}
+%\newfontfamily{\checkfont}{STIXGeneral}
+%\renewcommand{\checked}{\checkfont{\checkmark}}
+\fi
+
+\makeatletter
+\def\underbrace#1{\@ifnextchar_{\tikz@@underbrace{#1}}{\tikz@@underbrace{#1}_{}}}
+\def\tikz@@underbrace#1_#2{\tikz[baseline=(a.east)] {\node (a) {\(#1\)}; \draw[ultra thick,line cap=round,decorate,decoration={brace,amplitude=5pt}] (a.south east) -- node[below,inner sep=7pt] {\(\scriptstyle #2\)} (a.south west);}}
+\makeatother

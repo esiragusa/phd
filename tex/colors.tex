@@ -1,3 +1,19 @@
+%-----------------------------------------
+% Color Definitions
+%-----------------------------------------
+
+\definecolor{Red}{HTML}{C5000B}
+\definecolor{Orange}{HTML}{ea964c}
+\definecolor{Yellow}{HTML}{FFD320}
+\definecolor{Green}{HTML}{008000}
+\definecolor{Blue}{HTML}{0084D1}
+\definecolor{DarkBlue}{HTML}{000080}
+\definecolor{Gray}{HTML}{a0a0a0}
+\definecolor{LightGray}{HTML}{b2b2b2}
+\definecolor{DarkGray}{HTML}{424242}
+
+\definecolor{numbercolor}{gray}{0.5}
+
 \definecolor{mycolor1high}{RGB}{25,90,168}		% blue
 \definecolor{mycolor2high}{RGB}{1,2,2}			% black
 \definecolor{mycolor3high}{RGB}{236,46,47}		% red
@@ -24,3 +40,31 @@
 \colorlet{mycolor6low}{mycolor6high!33}
 \colorlet{mycolor7low}{mycolor7high!33}
 \colorlet{mycolor8low}{mycolor8high!33}
+
+\colorlet{primary}{mycolor1high}
+\colorlet{secondary}{mycolor6high}
+\colorlet{highlight}{mycolor3high}
+\colorlet{lightprimary}{mycolor1low}
+\colorlet{lightsecondary}{mycolor6low}
+\colorlet{lighthighlight}{mycolor3low}
+
+\colorlet{wotdcolor1L}{mycolor1low}
+\colorlet{wotdcolor2L}{mycolor6low}
+\colorlet{wotdcolor3L}{mycolor3low}
+
+\colorlet{LightBlue}{Blue!40}
+
+\colorlet{KeywordColor}{black}
+\colorlet{CommentColor}{mycolor1mid!80}
+\colorlet{NumberColor}{LightGray}
+
+\colorlet{DPInitColor}{mycolor1low}
+\colorlet{DPRecurseColor}{mycolor6low}
+%\definecolor{DPInitColor}{rgb}{0.8,0.9,1.0}
+%\definecolor{DPRecurseColor}{rgb}{1.0,0.95,0.8}
+\colorlet{DPInitValueColor}{black!30!DPInitColor}
+
+\colorlet{DPInitColorDark}{mycolor1mid}
+\colorlet{DPRecurseColorDark}{mycolor6mid}
+%\colorlet{DPInitColorDark}{black!15!DPInitColor}
+%\colorlet{DPRecurseColorDark}{black!15!DPRecurseColor}
