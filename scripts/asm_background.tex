@@ -211,8 +211,7 @@ We build an index of the text beforehand and use it to speed up subsequent searc
 To this intent, we first introduce \emph{suffix trees}, optimal data structures to index strings.
 Later on, we consider algorithms solving string matching problems on indices.
 
-%Good: runtime independent of the text size.
-%Bad: require memory linear in the text size; exponential in $k$.
+The suffix tree is a idealized data structure to elegantly expose our algorithms. In chapter \ref{chr:index} we consider other substring indices.
 
 \subsubsection{Suffix tree and suffix trie}
 
@@ -366,36 +365,80 @@ Lossy filters can be designed to solve approximately $\epsilon$-differences.
 We focus our attention on lossless filters. 
 
 We now consider two classes of filtering methods: those based on \emph{$q$-grams} and those based on \emph{seeds}.
-Filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams. Eventually, simple lemmas gives us a lower bound on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
+Filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams. Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
 Instead, seed based filters partition the pattern into \emph{non-overlapping} factors called seeds.
 We can derive full-sensitive partitioning strategies by application of the pigeonhole principle.
 
 \subsubsection{$q$-Gram filters}
 
+$q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$, defined as the number of substrings of length $q$ common to two given strings.
+The following lemma relates the $q$-gram similarity to edit distance\footnote{Thus also to Hamming distance.}.
+It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ for any two strings having $d_E(x,y) = k$.
+This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
 \begin{lemma}
+\cite{?}
+Let $x,y$ be two strings with edit distance $k$ with $\min\{|x|,|y|\} = m$, then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
+\begin{proof}
+By induction on k.
+\end{proof}
+
+\begin{example}
+\end{example}
+
+How can we use this result to solve a.s.m. problems?
+The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. problems the pattern can match any substring of the text.
+In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
+In the case of edit distance, it must hold $m - k \leq |s| \leq m + k$.
+The dot-plot representation helps us to visualize this concept.
+Hamming distance occurrences cover one single diagonal of the dot-plot, while edit distance occurrences are enclosed inside a parallelogram of side $2k+1$.
+
+Overlapping parallelograms?
+
+We can design a filtration algorithm that scans the text and counts how many $q$-grams of the pattern falls into each parallelograms.
+Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
+To speed up the filtration phase, the $q$-grams can be counted with the help of a substring index.
+
+Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
+
+\begin{figure}[h]
+\caption{Filtration with $q$-grams.}
+\label{fig:qgrams-ext}
+\end{figure}
 
 \subsubsection{Seed filters}
 
-%\subsubsection{Exact seeds}
-A simple solution to the problem is provided by a filtering algorithm proposed in \cite{Baeza1999b} which reduces an approximate search into smaller exact searches.
-A pattern $p$ is partitioned into $k+1$ non-overlapping seeds which are searched in $t$ with the help of $\Ti$.
-Since each edit operation can affect at most one seed, for the pigeonhole principle each approximate occurrence of $p$ in $t$ contains an exact occurrence of some seed.
-However the converse is not true, consequently we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of $p$ in $t$.
+Again, we start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
+If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed $y^i$ will occur as a factor of $x$.
 
-\begin{theorem}
-\end{theorem}
+\begin{lemma}
+\cite{Baeza1999b}
+If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
+\end{lemma}
+\begin{proof}
+Again, by induction on k?
+\end{proof}
 
-%Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
-%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
-%If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
+Thus, we solve $k$-differences by partitioning $p$ into $k+1$ seeds and searching them into $t$, \eg with the help of a substring index.
+Note that we are reducing one approximate search into many smaller exact searches.
+Again, this lemma gives us a necessary but not sufficient condition, consequently we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of $p$ in $t$.
+Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m + k$ containing one seed of $p$.
+
+Which length of $q$ makes filtration lossless? 
+
 
 \begin{figure}[h]
 \caption{Filtration with exact seeds.}
 \label{fig:seeds-ext}
 \end{figure}
 
+\subsubsection{Analysis of filters}
+
+
 %\subsubsection{Approximate seeds}
+%Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
+%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
+%If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
 %A more involved filtering algorithm proposed in \cite{Navarro2000} reduces an approximate search into smaller approximate searches.
 %We partition $p$ into $s \leq k+1$ non-overlapping seeds.
 %According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
@@ -404,11 +447,6 @@ However the converse is not true, consequently we must verify whether any candid
 %We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
 %To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
 %Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
-
-%\begin{figure}[h]
-%\caption{Filtration with approximate seeds.}
-%\label{fig:seeds-apx}
-%\end{figure}
 
 % === Related problems ===
 
