@@ -69,61 +69,102 @@ Moreover, the concatenation $x \cdot z$ produces ATA.
 The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
 \end{example}
 
-\subsection{Transformations}
+\subsection{Alignments}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
 Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ s.t. $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
 If the given strings have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
 Therefore, given any two strings $x,y$, we define as edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+See Figure~\ref{fig:edit-transcript} for an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption{Example of edit transcript.}
+\caption{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
 \label{fig:edit-transcript}
 \input{figures/transcript.tikz}
 \end{center}
 \end{figure}
 
-Edit transcripts lead us to the definition of distance functions between strings.
-The Hamming distance between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
-More generally, the edit (or Levenshtein) distance between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$ counting the minimum number of edit operation necessary to transform $x$ into $y$.
+An alignment is an alternative yet equivalent way of visualizing a transformation between strings.
+While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment relates pairs of corresponding symbols between two strings.
+Because some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed, we first need to introduce a gap symbol $-$, which is not part of the string alphabet $\Sigma$.
+Subsequently, we can define the alignment of two strings of length $n,m$ over $\Sigma$ to be a string of length between $\min\{n,m\}$ and $n+m$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
+
+\begin{example}
+An alignment of the strings $x=AAAA$ and $y=CCCC$ is given by the string
+$z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text{C}}{\text{G} \choose \text{G}}$
+\end{example}
+
+A dotplot is a way to visualize any alignment between two strings and highlight their similarities.
+Given two string $x,y$ of length $n,m$, a dotplot is a $n \times m$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
+We define a dotplot trace to be a path in the matrix connecting non-decreasing positions of the matrix.
+Any dotplot trace corresponds to an alignment and vice versa.
+In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
+See Figure~\ref{?}.
+
+\begin{figure}[h]
+\begin{center}
+\caption{Dotplot of the strings $x=AAAA$ and $y=CCCC$.}
+\label{fig:dotplot}
+\input{figures/dotplot.tikz}
+\end{center}
+\end{figure}
+
+\subsection{Distance metrics}
+
+We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R$, where:
+\begin{itemize}
+\item $\omega(\alpha,\beta)$ for all $(\alpha,\beta) \in \Sigma \times \Sigma$ defines the cost of substituting $\alpha$ with $\beta$,
+\item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
+\item $\omega(-,\beta)$ for all $\beta \in \Sigma$ defines the cost of inserting the symbol $\beta$,
+\end{itemize}
+and by defining the total cost $C(z)$ of an alignment between two strings as the sum of the weights of all its alignment symbols:
+
+\begin{eqnarray}
+C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
+\end{eqnarray}
+
+In particular, the \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
+We obtain the Hamming distance by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
+
+The edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
+It is obtained by defining $\omega(\alpha,\beta)$ as in the Hamming distance, $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1, and by taking the minimum cost over all possible alignments of $x,y$:
+\begin{eqnarray}
+d_E(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
+\end{eqnarray}
 
 \begin{example}
 TODO: example of edit and hamming distance.
 \end{example}
 
-An optimal alignment can be computed in time $\Oh(n + m)$.
+\subsection{Optimal alignments}
 
-\subsection{Alignments}
-
-An alignment is a way of visualizing a transformation between two strings.
-
-The problem of finding the optimal alignment between two strings is the dual of the edit distance problem.
+The problem of finding an optimal alignment between two strings is the dual of the edit distance problem.
 %This equivalence is often taken for granted.
-
-\begin{example}
-TODO: example of alignment.
-\end{example}
-
-
-\subsection{Edit distance computation}
 
 The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
 The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$, for all $1 \leq i \leq | x |$ and $1 \leq j \leq | y |$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
-d_E(\epsilon,\epsilon) = 0\\
-d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq |x|\\
-d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq |y|\\
+d_E(\epsilon,\epsilon)&=&0\\
+d_E(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq n\\
+d_E(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq m\\
 \end{eqnarray}
 and the recursive case is defined as follows:
 \begin{eqnarray}
-d_E(x_{1..i},y_{1..j}) = \min \{ d_E(x_{1..i-1},y_{1..j})+1, d_E(x_{1..i},y_{1..j-1})+1, d_E(x_{1..i-1},x_{1..j-1}) + \delta(x_i, y_j)\}
+d_E(x_{1..i},y_{1..j}) = \min \left\{
+\begin{array}{lcl}
+d_E(x_{1..i-1},y_{1..j})&+&\omega(x_i, -)\\
+d_E(x_{1..i},y_{1..j-1})&+&\omega(-, y_j)\\
+d_E(x_{1..i-1},x_{1..j-1})&+&\omega(x_i, y_j)
+\end{array}
+\right.
 \end{eqnarray}
 
 The recurrence relation can be computed in time $\Oh(| x | \cdot | y |)$ using a table of $(n+1) \times (m+1)$ cells. However only $\Oh(\min\{ n, m \})$ space is required.
+An optimal alignment can be computed in time $\Oh(n + m)$.
 
 The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
 
@@ -543,7 +584,7 @@ Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query strin
 \Procedure{ExactSearch}{$\Tn,p$}
 	\If {$p = \epsilon$}
 		\State \Report $\Ei(\Tn)$
-	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:st-exact:comp}}
+	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:dict-exact:comp}}
 		\State \Call{ExactSearch}{$\Cn,p_{2..|p|}$}
 	\EndIf
 \EndProcedure

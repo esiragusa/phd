@@ -18,13 +18,7 @@
     {
     	\node[n] (read_\i) at (0.4*\i,0) {\r};
 		\node[n] (genome_\i)  at (0.4*\i,-1) {\g};
-		\ifthenelse{\equal{\t}{M}}
-	    {
-			\draw[e] (read_\i) -- (genome_\i) node[m] (transcript_\i) {\t};
-		}
-		{
-			\draw[e] (read_\i) -- (genome_\i) node[t] (transcript_\i) {\t};
-		}
+		\draw[e] (read_\i) -- (genome_\i) node[m] (transcript_\i) {\t};
     }
     
     \begin{pgfonlayer}{background} 
@@ -56,7 +50,7 @@
 	\draw[line] (genome_#1.north east) -- (genome_#1.south east) ;
 }
 
-\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$-$, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $-$/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}
+\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$ $, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $ $/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}
 \band{25}
 
 \node[left=0.25cm of read_1] {$x$} ;
@@ -64,23 +58,5 @@
 \node[left=0.25cm of transcript_1] {$transcript$} ;
 
 \seed{1}{25}{1}
-
-% (a) Exact seeds
-% GCTN TGGG CATT ATGG C-CAT TTTT
-% GCTA TG-G CATT GTGG CCCAT TTAT
-%
-%\seed{5}{8}{0}
-%\seed{9}{12}{1}
-%\seed{13}{16}{0}
-%\seed{17}{21}{0}
-%\seed{22}{25}{0}
-
-% (b) Approximate seeds
-% GCTNTGGG CATTATGG C-CATTTTT
-% GCTATG-G CATTGTGG CCCATTTAT
-%
-%\seed{1}{8}{0}
-%\seed{9}{16}{1}
-%\seed{17}{25}{0}
 
 \end{tikzpicture}

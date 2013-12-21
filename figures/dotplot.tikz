@@ -1,0 +1,33 @@
+\begin{tikzpicture}[xscale=0.3,yscale=-0.3]
+	\tikzstyle{grid lines}=[gray,densely dotted,line width=0.3pt]
+	
+	% paralelogram and grid
+	\begin{pgfscope}
+		\pgftransformshift{\pgfpoint{-3cm}{0cm}}
+		\clip (3,0) rectangle (19, 13);
+		\draw[draw=none,fill=gray!2] (1,0) rectangle (19, 13);
+%		\draw[style=grid lines](0,0) grid +(20,20);
+		\draw[black] (3,0) rectangle (19, 13);
+
+		\node at (3.5,0.5) {\sf\tiny $\bullet$};
+		\node at (4.5,0.5) {\sf\tiny $\bullet$};
+		\node at (5.5,0.5) {\sf\tiny $\cdot$};
+		\node at (6.5,0.5) {\sf\tiny $\bullet$};
+		\node at (7.5,0.5) {\sf\tiny $\bullet$};
+		\node at (8.5,0.5) {\sf\tiny $\bullet$};
+		\node at (9.5,0.5) {\sf\tiny $\bullet$};
+		\node at (10.5,0.5){\sf\tiny $\bullet$};
+		\node at (3.5,1.5) {\sf\tiny $\bullet$};
+		\node at (3.5,2.5) {\sf\tiny $\bullet$};
+		\node at (3.5,3.5) {\sf\tiny $\bullet$};
+	\end{pgfscope}
+	
+	\tikzstyle{labelstyle}=[font=\sf\footnotesize,color=NumberColor]
+	
+	\node[labelstyle] at (.5,14) {0};
+	\node[labelstyle] at (15.5,14) {$n$};
+
+	\node[labelstyle] at (-1,.5) {0};
+	\node[labelstyle] at (-1,12.5) {$m$};
+
+\end{tikzpicture}
