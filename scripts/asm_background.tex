@@ -76,9 +76,13 @@ Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed i
 If the given strings have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
 Therefore, given any two strings $x,y$, we define as edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
 
-\begin{example}
-TODO: example of edit transcript.
-\end{example}
+\begin{figure}[h]
+\begin{center}
+\caption{Example of edit transcript.}
+\label{fig:edit-transcript}
+\input{figures/transcript.tikz}
+\end{center}
+\end{figure}
 
 Edit transcripts lead us to the definition of distance functions between strings.
 The Hamming distance between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
@@ -87,36 +91,6 @@ More generally, the edit (or Levenshtein) distance between two strings $x,y \in 
 \begin{example}
 TODO: example of edit and hamming distance.
 \end{example}
-
-\subsection{Edit distance computation}
-
-The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
-The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
-
-Given two strings $x,y$, for all $1 \leq i \leq | x |$ and $1 \leq j \leq | y |$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
-The base conditions of the recurrence relation are:
-\begin{eqnarray}
-d_E(\epsilon,\epsilon) = 0
-\end{eqnarray}
-\begin{eqnarray}
-d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq | x |
-\end{eqnarray}
-\begin{eqnarray}
-d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq | y |
-\end{eqnarray}
-and the recursive case is defined as follows:
-\begin{eqnarray}
-d_E(x_{1..i},y_{1..j}) = \min \{ d_E(x_{1..i-1},y_{1..j})+1, d_E(x_{1..i},y_{1..j-1})+1, d_E(x_{1..i-1},x_{1..j-1}) + \delta(x_i, y_j)\}
-\end{eqnarray}
-
-The recurrence relation can be computed in time $\Oh(| x | \cdot | y |)$ using a table of $(n+1) \times (m+1)$ cells. However only $\Oh(\min\{ n, m \})$ space is required.
-
-The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
-
-\begin{figure}[h]
-\caption{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
-\label{fig:edit-dp}
-\end{figure}
 
 An optimal alignment can be computed in time $\Oh(n + m)$.
 
@@ -130,6 +104,37 @@ The problem of finding the optimal alignment between two strings is the dual of 
 \begin{example}
 TODO: example of alignment.
 \end{example}
+
+
+\subsection{Edit distance computation}
+
+The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
+The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
+
+Given two strings $x,y$, for all $1 \leq i \leq | x |$ and $1 \leq j \leq | y |$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+The base conditions of the recurrence relation are:
+\begin{eqnarray}
+d_E(\epsilon,\epsilon) = 0\\
+d_E(x_{1..i},\epsilon) = i \text{ for } 1 \leq i \leq |x|\\
+d_E(\epsilon, y_{1..j}) = j \text{ for } 1 \leq j \leq |y|\\
+\end{eqnarray}
+and the recursive case is defined as follows:
+\begin{eqnarray}
+d_E(x_{1..i},y_{1..j}) = \min \{ d_E(x_{1..i-1},y_{1..j})+1, d_E(x_{1..i},y_{1..j-1})+1, d_E(x_{1..i-1},x_{1..j-1}) + \delta(x_i, y_j)\}
+\end{eqnarray}
+
+The recurrence relation can be computed in time $\Oh(| x | \cdot | y |)$ using a table of $(n+1) \times (m+1)$ cells. However only $\Oh(\min\{ n, m \})$ space is required.
+
+The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
+
+\begin{figure}[h]
+\begin{center}
+\caption{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
+\label{fig:edit-dp}
+\input{figures/dp_edit.tikz}
+\end{center}
+\end{figure}
+
 
 % === Overview of existing methods ===
 
@@ -193,8 +198,11 @@ d_E(x_{1..m},y_{1..j}) \leq k \text{ for } 1 \leq j \leq | y |.
 \end{eqnarray}
 
 \begin{figure}[h]
+\begin{center}
 \caption{DP table representing the match of $p=...$ in $t=...$.}
 \label{fig:asm-dp}
+\input{figures/dp_asm.tikz}
+\end{center}
 \end{figure}
 
 
@@ -235,8 +243,11 @@ This fact simplifies the exposition of all given algorithms without affecting th
 However, we remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
+\begin{center}
 \caption{Suffix tree and suffix trie.}
 \label{fig:stree}
+\input{figures/stree.tikz}
+\end{center}
 \end{figure}
 
 Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\Ti$.
@@ -265,8 +276,11 @@ Algorithm \ref{alg:st-exact} is correct since each path from the root to any int
 \end{algorithm}
 
 \begin{figure}[h]
+\begin{center}
 \caption{Exact string matching on a suffix tree.}
 \label{fig:st-exact}
+\input{figures/stree.tikz}
+\end{center}
 \end{figure}
 
 \subsubsection{Backtracking $k$-mismatches}
@@ -298,6 +312,14 @@ See algorithm \ref{alg:st-hamming}.
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Approximate string matching on a suffix tree.}
+\label{fig:st-hamming}
+\input{figures/stree.tikz}
+\end{center}
+\end{figure}
 
 \subsubsection{Backtracking $k$-differences}
 
@@ -349,16 +371,17 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 % --- Filtering methods ---
 
 \subsection{Filtering methods}
+\label{sec:intro:filtering}
+
+The goal of filtering methods is to obtain algorithms that have favorable average running times.
+The principle under which they work is that large and uninteresting portions of the text can be quickly discarded, while narrow and highly similar portions can be verified with a conventional online method.
+We remark that any filtering method can either work in a online fashion or take advantage of an index of the text to speed up the filtration phase.
+Here we always consider the filtration phase to be indexed.
 
 Filtering methods work under the assumption that given patterns occurs in the text with a \emph{low average probability}.
 Such probability is a function of the error rate $\epsilon$, in addition to the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source, \eg the uniform Bernoulli model where each symbol of $\Sigma$ occurs with probability $\frac{1}{\sigma}$.
 Under such assumptions, \citep{Navarro2000} estimates that $\epsilon < 1 - \frac{1}{\sigma}$ is a conservative bound on the error rate which ensures few matches, and for which filtering algorithms are effective.
 For higher error rates, non-filtering online and indexed methods work better.
-
-The goal of filtering methods is thus to obtain algorithms that have favorable average running times.
-The principle under which they work is that large and uninteresting portions of the text can be quickly discarded, while narrow and highly similar portions can be verified with a conventional online method.
-We remark that any filtering method can either work in a online fashion or take advantage of an index of the text to speed up the filtration phase.
-Here we always consider the filtration phase to be indexed.
 
 We call a filter \emph{lossless} or \emph{full-sensitive} if it guarantees not to discard any occurrence of the pattern, otherwise we call it \emph{lossy}.
 Lossy filters can be designed to solve approximately $\epsilon$-differences.
@@ -386,8 +409,8 @@ By induction on k.
 \begin{example}
 \end{example}
 
-How can we use this result to solve a.s.m. problems?
-The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. problems the pattern can match any substring of the text.
+How can we use this result to solve approximate string matching?
+The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. the pattern can match any substring of the text.
 In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
 In the case of edit distance, it must hold $m - k \leq |s| \leq m + k$.
 The dot-plot representation helps us to visualize this concept.
@@ -402,8 +425,11 @@ To speed up the filtration phase, the $q$-grams can be counted with the help of 
 Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 \begin{figure}[h]
+\begin{center}
 \caption{Filtration with $q$-grams.}
 \label{fig:qgrams-ext}
+\input{figures/transcript.tikz}
+\end{center}
 \end{figure}
 
 \subsubsection{Seed filters}
@@ -428,11 +454,24 @@ Which length of $q$ makes filtration lossless?
 
 
 \begin{figure}[h]
+\begin{center}
 \caption{Filtration with exact seeds.}
 \label{fig:seeds-ext}
+\input{figures/transcript.tikz}
+\end{center}
 \end{figure}
 
 \subsubsection{Analysis of filters}
+
+%\begin{eqnarray}
+%p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma\\
+%\text{Pr}(H > 0) = \frac{1}{\sigma^q}\\
+%E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}\\
+%\end{eqnarray}
+%
+%\begin{eqnarray}
+%E(V) = (k + 1) \cdot E(H) < \frac{n (k + 1)}{\sigma^q}
+%\end{eqnarray}
 
 
 %\subsubsection{Approximate seeds}
@@ -457,13 +496,33 @@ Which length of $q$ makes filtration lossless?
 \subsection{Dictionary search}
 
 Dictionary search is a restriction of string matching.
-Given a set of database strings $\Dc$ and a query string $q$ find all strings in $\Dc$ within distance $k$ from $q$.
-Note that strings in $\Dc$ usually have length similar to $|q|$, as $| |d| - |q| | \leq k$ is a necessary condition for $d_E(d,q) \leq k$.
+Given a set of database strings $\Dc$ and a query string $q$, the approximate dictionary search problem is to find all strings in $\Dc$ within distance $k$ from $q$.
+Note that usually the query string $q$ has length similar to strings in $\Dc$, as $| |d| - |q| | \leq k$ is a necessary condition for $d_E(d,q) \leq k$.
 
 \subsubsection{Online methods}
 
 The problem can be solved by checking whether $d_E(d,q) \leq k$ for all $d \in \Dc$.
 Answering the question whether the distance $d_E(d,q) \leq k$ is an easier problem than computing the edit distance $d_E(d,q)$: a band of size $k+1$ is sufficient.
+
+\begin{lemma}
+\label{lemma:kband}
+%In contrast to the general global alignment problem, 
+The $k$-differences global alignment problem can be solved by computing only a diagonal band of the DP matrix of width $k+1$, where the leftmost band diagonal is $\left\lfloor\frac{m-n+k}{2}\right\rfloor$ cells left of the main diagonal (see Figure~\ref{fig::BandedDP}).
+\end{lemma}
+\begin{proof}
+Indirect. Assume that a cell outside the band is part of a global alignment with at most $k$ errors.
+If the cell is left of the band, the traceback that starts in the top left corner would go down at least $c=\left\lfloor\frac{m-n+k}{2}\right\rfloor+1$ cells. Then it needs to go right at least $n-m+c$ cells to end in the bottom right corner.
+Hence it contains at least $n-m+2c>n-m+2\frac{m-n+k}{2}=k$ errors.
+The assumption that the cell is right of the band can be falsified analogously.
+\end{proof}
+
+\begin{figure}[h]
+\begin{center}
+\caption{DP table representing the match of $p=...$ in $t=...$.}
+\label{fig:dict-dp}
+\input{figures/dp_banded.tikz}
+\end{center}
+\end{figure}
 
 \subsubsection{Indexed methods}
 
@@ -472,30 +531,30 @@ Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query strin
 \begin{algorithm}[h]
 \caption{Exact dictionary search on a radix trie.}
 \label{alg:dict-exact}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\Procedure{ExactSearch}{$\Tn,p$}
+	\If {$p = \epsilon$}
+		\State \Report $\Ei(\Tn)$
+	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:st-exact:comp}}
+		\State \Call{ExactSearch}{$\Cn,p_{2..|p|}$}
+	\EndIf
+\EndProcedure
+\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[h]
-\caption{Approximate dictionary search on a radix trie.}
-\label{alg:dict-edit}
-\end{algorithm}
+\begin{figure}[h]
+\begin{center}
+\caption{Exact dictionary search on a suffix trie.}
+\label{fig:dict-exact}
+\input{figures/stree.tikz}
+\end{center}
+\end{figure}
 
 \subsubsection{Filtering methods}
 
+Filtering methods of section \ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm \ref{?}.
 
- 
-% --- Overlaps computation ---
-
-\subsection{Overlaps computation}
-
-Define problem.
-
-\subsubsection{Online methods}
-
-DP solution.
-
-\subsubsection{Indexed methods}
-
-Indexed solution, exact and approximate.
 
 
 % --- Local similarity search ---
@@ -515,3 +574,18 @@ Backtracking over substring index. BWT-SW.
 \subsubsection{Filtering methods}
 SWIFT/Stellar is based on the $q$-gram lemma.
 %Lastz resembles a suffix filter.
+
+
+% --- Overlaps computation ---
+
+\subsection{Overlaps computation}
+
+Define problem.
+
+\subsubsection{Online methods}
+
+DP solution.
+
+\subsubsection{Indexed methods}
+
+Indexed solution, exact and approximate.

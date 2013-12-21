@@ -1,0 +1,53 @@
+\begin{tikzpicture}[scale=1.5,font=\sf]
+
+\tikzstyle{level 1}=[sibling distance=20mm, level distance=6mm]
+\tikzstyle{level 2}=[sibling distance=8mm, level distance=6mm]
+\tikzstyle{level 3}=[sibling distance=8mm, level distance=6mm] 
+\tikzstyle{level 4}=[sibling distance=5mm, level distance=6mm]
+
+%\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+%\tikzstyle{el}=[->,thick,color=gray,text=mycolor1high]
+
+\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+\tikzstyle{el}=[->,thick,color=black,text=black]
+\tikzstyle{inner}=[circle,draw,color=black,inner sep=1.5pt]
+
+\node[inner](r) {}
+child[transparent] {
+node[inner](G) {}
+child[transparent] {
+node[inner](GG) {}
+child[transparent] {
+node[leaf](GGC) {$12$}
+}
+child[transparent] {
+node[inner](GGG) {}
+child[transparent] {
+node[leaf](GGGC) {$11$}
+}
+}
+child[transparent] {
+node[inner](GGT) {}
+child[transparent] {
+node[leaf](GGTA) {$0$}
+}
+child[transparent] {
+node[leaf](GGTG) {$6$}
+}
+}
+}
+}
+;
+
+\draw[el] (r) -- (G) \labelA{G};
+\draw[el] (G) -- (GG) \labelA{G};
+
+\draw[el] (GG) -- (GGC) \labelA{C};
+\draw[el] (GG) -- (GGG) \labelA{G};
+\draw[el] (GGG) -- (GGGC) \labelA{C};
+\draw[el] (GG) -- (GGT) \labelA{T};
+\draw[el] (GGT) -- (GGTA) \labelA{A};
+\draw[el] (GGT) -- (GGTG) \labelA{G};
+
+\end{tikzpicture}
+
