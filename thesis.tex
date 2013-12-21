@@ -48,6 +48,16 @@
 \renewcommand{\topfraction}{.99}
 \renewcommand{\bottomfraction}{.99}
 
+% --- Itemize spacing ---
+
+\let\olditemize\itemize
+\renewcommand{\itemize}{
+  \olditemize
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}
+
 % --- Title page fonts ---
 
 \titlefont{\Huge\bfseries}
@@ -245,9 +255,9 @@ Gutachter:\\
 \listofalgorithms
 \clearemptydoublepage
 
-\markboth{List of Notations \hfill}{List of Notations \hfill}
-\listofnotations
-\markboth{}{}
+%\markboth{List of Notations \hfill}{List of Notations \hfill}
+%\listofnotations
+%\markboth{}{}
 
 \clearemptydoublepage
 \raggedright

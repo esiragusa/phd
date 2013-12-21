@@ -79,7 +79,7 @@ See Figure~\ref{fig:edit-transcript} for an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
+\caption[Example of edit transcript.]{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
 \label{fig:edit-transcript}
 \input{figures/transcript.tikz}
 \end{center}
@@ -98,14 +98,14 @@ $z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text
 
 A dotplot is a way to visualize any alignment between two strings and highlight their similarities.
 Given two string $x,y$ of length $n,m$, a dotplot is a $n \times m$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
-We define a dotplot trace to be a path in the matrix connecting non-decreasing positions of the matrix.
-Any dotplot trace corresponds to an alignment and vice versa.
+We define a dotplot trace to be a monotonical path in the matrix connecting non-decreasing positions of the matrix.
+A dotplot trace corresponds to an alignment and vice versa.
 In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
 See Figure~\ref{?}.
 
 \begin{figure}[h]
 \begin{center}
-\caption{Dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
+\caption[Example of dotplot.]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
 \label{fig:dotplot}
 \input{figures/dotplot.tikz}
 \end{center}
@@ -143,7 +143,7 @@ The problem of finding an optimal alignment between two strings is equivalent to
 A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
 Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d(\epsilon,\epsilon)&=&0\\
@@ -158,19 +158,17 @@ d(x_{1..i-1},y_{1..j})&+&\omega(x_i, -)\\
 d(x_{1..i},y_{1..j-1})&+&\omega(-, y_j)\\
 d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \end{array}
-\right.
+\right.\label{eq:dp-min}
 \end{eqnarray}
 
-The recurrence relation can be computed in time $\Oh(nm)$ using a table of $(n+1) \times (m+1)$ cells. 
-The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
-An optimal alignment can be computed via traceback in time $\Oh(n + m)$.
-However, only $\Oh(\min\{ n, m \})$ space is required to compute the the sole distance without any alignment.
-
-
+We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(n+1) \times (m+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
+The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$), and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
+An optimal alignment can be computed in time $\Oh(n + m)$ via \emph{traceback} on the table $D$:
+We start in the cell $D[n,m]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of Equation \ref{eq:dp-min} yielded the value of $D[n,m]$.
 
 \begin{figure}[h]
 \begin{center}
-\caption{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
+\caption[Example of DP table.]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
 \label{fig:edit-dp}
 \input{figures/dp_edit.tikz}
 \end{center}
@@ -228,19 +226,16 @@ The dynamic programming algorithm \ref{?} to compute the distance of two strings
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
-Let pose $x=t$ and $y=p$ and consider equations \ref{?}.
-Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row as:
+We pose $x=t$ and $y=p$ and consider equation \ref{eq:dp-min}.
+Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row $D[0:]$ of the DP matrix according to the condition:
 \begin{eqnarray}
-d_E(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq m
+d(x_{1..i}, \epsilon) = 0 \text{ for all } 1 \leq i \leq m
 \end{eqnarray}
-and since an occurrence of the pattern can end anywhere in the text, we check every cell of the bottom row for the condition:
-\begin{eqnarray}
-d_E(x_{1..m},y_{1..j}) \leq k \text{ for all } 1 \leq j \leq m.
-\end{eqnarray}
+and since an occurrence of the pattern can end anywhere in the text, we check every cell $D[m,i]$ of the bottom row, for all $1 \leq i \leq n$, for the condition $D[m,i] \leq k$.
 
 \begin{figure}[h]
 \begin{center}
-\caption{DP table representing the match of $p=...$ in $t=...$.}
+\caption[Example of approximate string matching via DP.]{DP table representing the match of $p=...$ in $t=...$.}
 \label{fig:asm-dp}
 \input{figures/dp_asm.tikz}
 \end{center}
@@ -284,7 +279,7 @@ This fact simplifies the exposition of all given algorithms without affecting th
 However, we remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\caption{Suffix tree and suffix trie.}
+\caption{Suffix tree and suffix trie for the string ANANAS.}
 \label{fig:stree}
 \begin{subfigure}{.5\textwidth}
 \begin{center}
@@ -325,7 +320,7 @@ Algorithm \ref{alg:st-exact} is correct since each path from the root to any int
 
 \begin{figure}[h]
 \begin{center}
-\caption{Exact string matching on a suffix tree.}
+\caption[Exact string matching on a suffix tree.]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS.}
 \label{fig:st-exact}
 \input{figures/stree.tikz}
 \end{center}
@@ -427,8 +422,8 @@ We remark that any filtering method can either work in a online fashion or take 
 Here we always consider the filtration phase to be indexed.
 
 Filtering methods work under the assumption that given patterns occurs in the text with a \emph{low average probability}.
-Such probability is a function of the error rate $\epsilon$, in addition to the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source, \eg the uniform Bernoulli model where each symbol of $\Sigma$ occurs with probability $\frac{1}{\sigma}$.
-Under such assumptions, \citep{Navarro2000} estimates that $\epsilon < 1 - \frac{1}{\sigma}$ is a conservative bound on the error rate which ensures few matches, and for which filtering algorithms are effective.
+Such probability is a function of the error rate $\epsilon$, in addition to the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source.
+Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $\frac{1}{\sigma}$, \citet{Navarro2000} estimates that $\epsilon < 1 - \frac{1}{\sigma}$ is a conservative bound on the error rate which ensures few matches, and for which filtering algorithms are effective.
 For higher error rates, non-filtering online and indexed methods work better.
 
 We call a filter \emph{lossless} or \emph{full-sensitive} if it guarantees not to discard any occurrence of the pattern, otherwise we call it \emph{lossy}.
@@ -566,7 +561,7 @@ The assumption that the cell is right of the band can be falsified analogously.
 
 \begin{figure}[h]
 \begin{center}
-\caption{DP table representing the match of $p=...$ in $t=...$.}
+\caption[Example of $k$-differences global aligment via DP.]{DP table representing the match of $p=...$ in $t=...$.}
 \label{fig:dict-dp}
 \input{figures/dp_banded.tikz}
 \end{center}

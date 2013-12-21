@@ -1,0 +1,868 @@
+%%% ====================================================================
+%%% Journal abbreviations:
+
+@String{j-ACMCS = {ACM Comput. Surv.}}
+@String{j-ALG = {Algorithmica}}
+@String{j-BIOINF = {Bioinformatics}}
+@String{j-BMCBIO = {BMC Bioinf.}}
+@String{j-CACM = {Commun. ACM}}
+@String{j-CELL = {Cell}}
+@String{j-DAM = {Discrete Appl. Math.}}
+@String{j-DMKD = {Data Min. Knowl. Discov.}}
+@String{j-FUND = {Fund. Inform.}}
+@String{j-GENOMICS = {Genomics}}
+@String{j-GB = {Genome Biol.}}
+@String{j-GI = {Genome Inform.}}
+@String{j-GR = {Genome Res.}}
+@String{j-IEEETC = {IEEE T. Comput.}}
+@String{j-JA = {J. Algorithms}}
+@String{j-JACM = {J. ACM}}
+@String{j-JBCB = {J. Bioinform. Comput. Biol.}}
+@String{j-JCB = {J. Comput. Biol.}}
+@String{j-JMB = {J. Mol. Biol.}}
+@String{j-JODA = {J. Discrete Algorithms}}
+@String{j-MATHPROG = {Math. Program.}}
+@String{j-NAR = {Nucleic Acids Res.}}
+@String{j-NAT = {Nature}}
+@String{j-NATBT = {Nat. Biotechnol.}}
+@String{j-NATGEN = {Nat. Genet.}}
+@String{j-NATMETH = {Nat. Methods}}
+@String{j-NATNEURO = {Nat. Neurosci.}}
+@String{j-PLOSCB = {PLoS Comput. Biol.}}
+@String{j-PLOSONE = {PLoS ONE}}
+@String{j-PNAS = {PNAS}}
+@String{j-RECOMB = {RECOMB}}
+@String{j-SCIENCE = {Science}}
+@String{j-SPE = {Software Pract. Exper.}}
+@String{j-TCBB = {IEEE/ACM Trans. Comput. Biol. Bioinf.}}
+@String{j-TCS = {Theoret. Comput. Sci.}}
+
+%%% ====================================================================
+%%% Proceedings abbreviations:
+
+@String{p-GCB = {Proceedings of the German Conference on Bioinformatics}}
+
+%%% ====================================================================
+%%% Publisher abbreviations:
+
+@String{pub-ACM                       = "ACM Press"}
+@String{pub-ACM:adr                   = "New York, NY, USA"}
+@String{pub-IEEE                      = "IEEE Computer Society"}
+@String{pub-NAT                       = "Nature Publishing Group"}
+%@String{pub-SPRINGER                 = "Springer-Verlag Inc."}
+@String{pub-PLOS                      = "Public Library of Science"}
+@String{pub-SPRINGER                  = "Springer"}
+@String{pub-SPRINGER:adr              = "New York, NY, USA"}
+@String{pub-CAMBRIDGE                 = "Cambridge University Press"}
+@String{pub-OXFORD                    = "Oxford University Press"}
+@String{pub-OXFORD:adr                = "Oxford, UK"}
+
+%%% ====================================================================
+%%% Series abbreviations:
+
+@String{ser-LNAI                = "Lecture Notes in Artificial Intelligence"}
+@String{ser-LNBI                = "Lecture Notes in Bioinformatics"}
+%@String{ser-LNCS                = "Lecture Notes in Computer Science"}
+@String{ser-LNCS                = "LNCS"}
+
+
+@ARTICLE{SeqAn08,
+  author = {Andreas D\"oring and David Weese and Tobias Rausch and Knut Reinert},
+  title = {{SeqAn} an efficient, generic {C}++ library for sequence
+	analysis},
+  journal = {BMC Bioinformatics},
+  year = {2008},
+  volume = {9},
+  pages = {11},
+  abstract = {BACKGROUND: The use of novel algorithmic techniques is pivotal to
+	many important problems in life science. For example the sequencing
+	of the human genome 1 would not have been possible without advanced
+	assembly algorithms. However, owing to the high speed of technological
+	progress and the urgent need for bioinformatics tools, there is a
+	widening gap between state-of-the-art algorithmic techniques and
+	the actual algorithmic components of tools that are in widespread
+	use. RESULTS: To remedy this trend we propose the use of SeqAn, a
+	library of efficient data types and algorithms for sequence analysis
+	in computational biology. SeqAn comprises implementations of existing,
+	practical state-of-the-art algorithmic components to provide a sound
+	basis for algorithm testing and development. In this paper we describe
+	the design and content of SeqAn and demonstrate its use by giving
+	two examples. In the first example we show an application of SeqAn
+	as an experimental platform by comparing different exact string matching
+	algorithms. The second example is a simple version of the well-known
+	MUMmer tool rewritten in SeqAn. Results indicate that our implementation
+	is very efficient and versatile to use. CONCLUSION: We anticipate
+	that SeqAn greatly simplifies the rapid development of new bioinformatics
+	tools by providing a collection of readily usable, well-designed
+	algorithmic components which are fundamental for the field of sequence
+	analysis. This leverages not only the implementation of new algorithms,
+	but also enables a sound analysis and comparison of existing algorithms},
+  doi = {10.1186/1471-2105-9-11},
+  keywords = {Algorithms; Database Management Systems; Databases, Genetic; Programming
+	Languages; Sequence Alignment; Sequence Analysis; Software; User-Computer
+	Interface},
+  owner = {weese},
+  pii = {1471-2105-9-11},
+  pmid = {18184432},
+  timestamp = {2008.04.02}
+}
+
+@TECHREPORT{SeqAnReadSimulator,
+  author = {Manuel Holtgrewe},
+  title = {Mason -- A read simulator for second generation sequencing data},
+  institution = {Institut f\"ur Mathematik und Informatik, Freie Universit\"at Berlin},
+  year = {2010},
+  number = {TR-B-10-06}
+}
+
+@ARTICLE{Holtgrewe2011,
+  author = {Manuel Holtgrewe and Anne-Katrin Emde and David Weese and Knut Reinert},
+  title = {A novel and well-defined benchmarking method for second generation
+	read mapping},
+  journal = {BMC Bioinformatics},
+  year = {2011},
+  volume = {12},
+  pages = {210},
+  abstract = {Second generation sequencing technologies yield DNA sequence data
+	at ultra high-throughput. Common to most biological applications
+	is a mapping of the reads to an almost identical or highly similar
+	reference genome. The assessment of the quality of read mapping results
+	is not straightforward and has not been formalized so far. Hence,
+	it has not been easy to compare different read mapping approaches
+	in a unified way and to determine which program is the best for what
+	task.We present a new benchmark method, called Rabema (Read Alignment
+	BEnchMArk), for read mappers. It consists of a strict definition
+	of the read mapping problem and of tools to evaluate the result of
+	arbitrary read mappers supporting the SAM output format.We show the
+	usefulness of the benchmark program by performing a comparison of
+	popular read mappers. The tools supporting the benchmark are licensed
+	under the GPL and available from http://www.seqan.de/projects/rabema.html.},
+  doi = {10.1186/1471-2105-12-210},
+  institution = {Department of Computer Science, Free University of Berlin},
+  keywords = {Algorithms; Animals; High-Throughput Nucleotide Sequencing; Humans;
+	Sequence Analysis, DNA, methods/standards},
+  medline-pst = {epublish},
+  owner = {holtgrew},
+  pii = {1471-2105-12-210},
+  pmid = {21615913},
+  timestamp = {2012.01.24},
+  url = {http://dx.doi.org/10.1186/1471-2105-12-210}
+}
+
+@ARTICLE{Li2010,
+  author = {Heng Li and Nils Homer},
+  title = {A survey of sequence alignment algorithms for next-generation sequencing},
+  journal = {Brief Bioinform.},
+  year = {2010},
+  volume = {11},
+  pages = {473--483},
+  number = {5},
+  __markedentry = {[holtgrew:]},
+  abstract = {Rapidly evolving sequencing technologies produce data on an unparalleled
+	scale. A central challenge to the analysis of this data is sequence
+	alignment, whereby sequence reads must be compared to a reference.
+	A wide variety of alignment algorithms and software have been subsequently
+	developed over the past two years. In this article, we will systematically
+	review the current development of these algorithms and introduce
+	their practical applications on different types of experimental data.
+	We come to the conclusion that short-read alignment is no longer
+	the bottleneck of data analyses. We also consider future development
+	of alignment algorithms with respect to emerging long sequence reads
+	and the prospect of cloud computing.},
+  doi = {10.1093/bib/bbq015},
+  institution = {Broad Institute, Cambridge, MA 02142, USA. hengli@broadinstitute.org},
+  keywords = {Algorithms; Base Sequence; Genome, Human; Humans; Sequence Alignment,
+	methods; Sequence Analysis, DNA, methods; Software},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {holtgrew},
+  pii = {bbq015},
+  pmid = {20460430},
+  timestamp = {2012.02.08},
+  url = {http://dx.doi.org/10.1093/bib/bbq015}
+}
+
+@MISC{Bowtie2Poster,
+  author = {Ben Langmead and Mihai Pop and Rafael A. Irizarry and Steven L. Salzberg},
+  title = {Bowtie2: Extending Burrows-Wheeler-based read alignment to longer
+	reads and gapped alignments},
+  howpublished = {Poster, Biol. of Genomes},
+  year = {2011},
+  owner = {holtgrew},
+  timestamp = {2012.03.01}
+}
+
+@ARTICLE{Bowtie,
+  author = {Langmead, Ben and Trapnell, Cole and Pop, Mihai and Salzberg, Steven
+	L},
+  title = {{Ultrafast and memory-efficient alignment of short DNA sequences
+	to the human genome}},
+  journal = {Genome Biol.},
+  year = {2009},
+  volume = {10},
+  pages = {R25},
+  number = {3}
+}
+
+@ARTICLE{BWA-SW,
+  author = {Li, Heng and Durbin, Richard},
+  title = {Fast and accurate long-read alignment with Burrows-Wheeler transform},
+  journal = {Bioinformatics},
+  year = {2010},
+  volume = {26},
+  pages = {589-595},
+  number = {5},
+  abstract = {Motivation: Many programs for aligning short sequencing reads to a
+	reference genome have been developed in the last 2 years. Most of
+	them are very efficient for short reads but inefficient or not applicable
+	for reads >200 bp because the algorithms are heavily and specifically
+	tuned for short queries with low sequencing error rate. However,
+	some sequencing platforms already produce longer reads and others
+	are expected to become available soon. For longer reads, hashing-based
+	software such as BLAT and SSAHA2 remain the only choices. Nonetheless,
+	these methods are substantially slower than short-read aligners in
+	terms of aligned bases per unit time.Results: We designed and implemented
+	a new algorithm, Burrows-Wheeler Aligner's Smith-Waterman Alignment
+	(BWA-SW), to align long sequences up to 1 Mb against a large sequence
+	database (e.g. the human genome) with a few gigabytes of memory.
+	The algorithm is as accurate as SSAHA2, more accurate than BLAT,
+	and is several to tens of times faster than both.Availability: http://bio-bwa.sourceforge.netContact:
+	rd@sanger.ac.uk},
+  doi = {10.1093/bioinformatics/btp698},
+  eprint = {http://bioinformatics.oxfordjournals.org/content/26/5/589.full.pdf+html},
+  url = {http://bioinformatics.oxfordjournals.org/content/26/5/589.abstract}
+}
+
+@ARTICLE{BWA,
+  author = {Li, Heng and Durbin, Richard},
+  title = {Fast and accurate short read alignment with Burrows-Wheeler transform},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {1754-1760},
+  number = {14},
+  abstract = {Motivation: The enormous amount of short reads generated by the new
+	DNA sequencing technologies call for the development of fast and
+	accurate read alignment programs. A first generation of hash table-based
+	methods has been developed, including MAQ, which is accurate, feature
+	rich and fast enough to align short reads from a single individual.
+	However, MAQ does not support gapped alignment for single-end reads,
+	which makes it unsuitable for alignment of longer reads where indels
+	may occur frequently. The speed of MAQ is also a concern when the
+	alignment is scaled up to the resequencing of hundreds of individuals.Results:
+	We implemented Burrows-Wheeler Alignment tool (BWA), a new read alignment
+	package that is based on backward search with Burrows√êWheeler Transform
+	(BWT), to efficiently align short sequencing reads against a large
+	reference sequence such as the human genome, allowing mismatches
+	and gaps. BWA supports both base space reads, e.g. from Illumina
+	sequencing machines, and color space reads from AB SOLiD machines.
+	Evaluations on both simulated and real data suggest that BWA is 10--20
+	faster than MAQ, while achieving similar accuracy. In addition, BWA
+	outputs alignment in the new standard SAM (Sequence Alignment/Map)
+	format. Variant calling and other downstream analyses after the alignment
+	can be achieved with the open source SAMtools software package.Availability:
+	http://maq.sourceforge.netContact: rd@sanger.ac.uk},
+  doi = {10.1093/bioinformatics/btp324},
+  eprint = {http://bioinformatics.oxfordjournals.org/content/25/14/1754.full.pdf+html},
+  url = {http://bioinformatics.oxfordjournals.org/content/25/14/1754.abstract}
+}
+
+@ARTICLE{Li2009,
+  author = {Li, Heng and Handsaker, Bob and Wysoker, Alec and Fennell, Tim and
+	Ruan, Jue and Homer, Nils and Marth, Gabor and Abecasis, Goncalo
+	and Durbin, Richard and {1000 Genome Project Data Processing Subgroup}},
+  title = {The Sequence Alignment/Map format and {SAMtools}},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {2078-2079},
+  number = {16},
+  abstract = {Summary: The Sequence Alignment/Map (SAM) format is a generic alignment
+	format for storing read alignments against reference sequences, supporting
+	short and long reads (up to 128 Mbp) produced by different sequencing
+	platforms. It is flexible in style, compact in size, efficient in
+	random access and is the format in which alignments from the 1000
+	Genomes Project are released. SAMtools implements various utilities
+	for post-processing alignments in the SAM format, such as indexing,
+	variant caller and alignment viewer, and thus provides universal
+	tools for processing read alignments.Availability: http://samtools.sourceforge.netContact:
+	rd@sanger.ac.uk},
+  doi = {10.1093/bioinformatics/btp352},
+  eprint = {http://bioinformatics.oxfordjournals.org/content/25/16/2078.full.pdf+html},
+  url = {http://bioinformatics.oxfordjournals.org/content/25/16/2078.abstract}
+}
+
+@ARTICLE{Soap2,
+  author = {Li, Ruiqiang and Yu, Chang and Li, Yingrui and Lam, Tak-Wah and Yiu,
+	Siu-Ming and Kristiansen, Karsten and Wang, Jun},
+  title = {{SOAP2}: an improved ultrafast tool for short read alignment},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {1966-1967},
+  number = {15},
+  abstract = {Summary: SOAP2 is a significantly improved version of the short oligonucleotide
+	alignment program that both reduces computer memory usage and increases
+	alignment speed at an unprecedented rate. We used a Burrows Wheeler
+	Transformation (BWT) compression index to substitute the seed strategy
+	for indexing the reference sequence in the main memory. We tested
+	it on the whole human genome and found that this new algorithm reduced
+	memory usage from 14.7 to 5.4 GB and improved alignment speed by
+	20--30 times. SOAP2 is compatible with both single- and paired-end
+	reads. Additionally, this tool now supports multiple text and compressed
+	file formats. A consensus builder has also been developed for consensus
+	assembly and SNP detection from alignment of short reads on a reference
+	genome.Availability: http://soap.genomics.org.cnContact: soap@genomics.org.cn},
+  doi = {10.1093/bioinformatics/btp336},
+  eprint = {http://bioinformatics.oxfordjournals.org/content/25/15/1966.full.pdf+html},
+  url = {http://bioinformatics.oxfordjournals.org/content/25/15/1966.abstract}
+}
+
+@article{Bowtie2,
+	author = {Langmead, Ben and Salzberg, Steven L},
+	title = {{Fast gapped-read alignment with Bowtie 2}},
+	journal = {Nat. Methods},
+	year = {2012},
+	volume = {9},
+	number = {4},
+	pages = {357--359}
+}
+
+@ARTICLE{Ahmadi2011,
+	author = {Ahmadi, Athena and Behm, Alexander and Honnalli, Nagesh and Li, Chen and Weng, Lingjie and Xie, Xiaohui}, 
+	title = {Hobbes: optimized gram-based methods for efficient read alignment}, 
+	volume = {40}, 
+	number = {6}, 
+	pages = {e41}, 
+	year = {2012}, 
+	doi = {10.1093/nar/gkr1246}, 
+	abstract ={Recent advances in sequencing technology have enabled the rapid generation of billions of bases at relatively low cost. A crucial first step in many sequencing applications is to map those reads to a reference genome. However, when the reference genome is large, finding accurate mappings poses a significant computational challenge due to the sheer amount of reads, and because many reads map to the reference sequence approximately but not exactly. We introduce Hobbes, a new gram-based program for aligning short reads, supporting Hamming and edit distance. Hobbes implements two novel techniques, which yield substantial performance improvements: an optimized gram-selection procedure for reads, and a cache-efficient filter for pruning candidate mappings. We systematically tested the performance of Hobbes on both real and simulated data with read lengths varying from 35 to 100?bp, and compared its performance with several state-of-the-art read-mapping programs, including Bowtie, BWA, mrsFast and RazerS. Hobbes is faster than all other read mapping programs we have tested while maintaining high mapping quality. Hobbes is about five times faster than Bowtie and about 2–10 times faster than BWA, depending on read length and error rate, when asked to find all mapping locations of a read in the human genome within a given Hamming or edit distance, respectively. Hobbes supports the SAM output format and is publicly available at http://hobbes.ics.uci.edu.}, 
+	URL = {http://nar.oxfordjournals.org/content/40/6/e41.abstract}, 
+	eprint = {http://nar.oxfordjournals.org/content/40/6/e41.full.pdf+html}, 
+	journal = j-NAR
+}
+
+@ARTICLE{Hach2010,
+  author = {Faraz Hach and Fereydoun Hormozdiari and Can Alkan and Farhad Hormozdiari
+	and Inanc Birol and Evan E Eichler and S. Cenk Sahinalp},
+  title = {{mrsFAST}: a cache-oblivious algorithm for short-read mapping},
+  journal = {Nat. Methods},
+  year = {2010},
+  volume = {7},
+  pages = {576--577},
+  number = {8},
+  doi = {10.1038/nmeth0810-576},
+  keywords = {Algorithms; Genome, Human; Humans; Mutation; Sequence Alignment; Sequence
+	Analysis, DNA},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {holtgrew},
+  pii = {nmeth0810-576},
+  pmid = {20676076},
+  timestamp = {2012.01.25},
+  url = {http://dx.doi.org/10.1038/nmeth0810-576}
+}
+
+@ARTICLE{Alkan2009,
+  author = {Can Alkan and Jeffrey M Kidd and Tomas Marques-Bonet and Gozde Aksay
+	and Francesca Antonacci and Fereydoun Hormozdiari and Jacob O Kitzman
+	and Carl Baker and Maika Malig and Onur Mutlu and S. Cenk Sahinalp
+	and Richard A Gibbs and Evan E Eichler},
+  title = {Personalized copy number and segmental duplication maps using next-generation
+	sequencing},
+  journal = {Nat. Genet.},
+  year = {2009},
+  volume = {41},
+  pages = {1061--1067},
+  number = {10},
+  abstract = {Despite their importance in gene innovation and phenotypic variation,
+	duplicated regions have remained largely intractable owing to difficulties
+	in accurately resolving their structure, copy number and sequence
+	content. We present an algorithm (mrFAST) to comprehensively map
+	next-generation sequence reads, which allows for the prediction of
+	absolute copy-number variation of duplicated segments and genes.
+	We examine three human genomes and experimentally validate genome-wide
+	copy number differences. We estimate that, on average, 73-87 genes
+	vary in copy number between any two individuals and find that these
+	genic differences overwhelmingly correspond to segmental duplications
+	(odds ratio = 135; P < 2.2 x 10(-16)). Our method can distinguish
+	between different copies of highly identical genes, providing a more
+	accurate assessment of gene content and insight into functional constraint
+	without the limitations of array-based technology.},
+  doi = {10.1038/ng.437},
+  institution = {Department of Genome Sciences, University of Washington School of
+	Medicine, Seattle, Washington, USA.},
+  keywords = {Algorithms; Chromosome Mapping, methods; DNA, analysis/genetics; Gene
+	Dosage; Gene Duplication; Genome, Human; Genomic Library; Humans;
+	Polymorphism, Genetic; Sequence Analysis, DNA, methods},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {holtgrew},
+  pii = {ng.437},
+  pmid = {19718026},
+  timestamp = {2012.01.24},
+  url = {http://dx.doi.org/10.1038/ng.437}
+}
+
+@article{Shrimp2,
+author = {David, Matei and Dzamba, Misko and Lister, Dan and Ilie, Lucian and Brudno, Michael},
+title = {{SHRiMP2}: sensitive yet practical SHort Read Mapping},
+journal = j-BIOINF,
+year = {2011},
+volume = {27},
+number = {7},
+pages = {1011--1012},
+}
+
+@article{RazerS3,
+author = {Weese, David and Holtgrewe, Manuel and Reinert, Knut}, 
+title = {{RazerS\,3}: Faster, fully sensitive read mapping}, 
+year = {2012}, 
+note = {10.1093/bioinformatics/bts505}, 
+abstract ={Motivation: During the last years NGS sequencing has become a key technology for many applications in the biomedical sciences. Throughput continues to increase and new protocols provide longer reads than currently available. In almost all applications, read mapping is a first step. Hence, it is crucial to have algorithms and implementations that perform fast, with high sensitivity, and are able to deal with long reads and a large absolute number of indels. Results: RazerS is a read mapping program with adjustable sensitivity based on counting q-grams. In this work we propose the successor RazerS 3 which now supports shared-memory parallelism, an additional seed-based filter with adjustable sensitivity, a much faster, banded version of the Myers’ bit-vector algorithm for verification, memory saving measures and support for the SAM output format. This leads to a much improved performance for mapping reads, in particular long reads with many errors. We extensively compare RazerS 3 with other popular read mappers and show that its results are often superior to them in terms of sensitivity while exhibiting practical and often competetive run times. In addition, RazerS 3 works without a precomputed index. Availability and Implementation: Source code and binaries are freely available for download at http://www.seqan.de/projects/razers. RazerS 3 is implemented in C++ and OpenMP under a GPL license using the SeqAn library and supports Linux, Mac OS X, and Windows.Contact: david.weese@fu-berlin.de}, 
+URL = {http://bioinformatics.oxfordjournals.org/content/early/2012/08/23/bioinformatics.bts505.abstract}, 
+eprint = {http://bioinformatics.oxfordjournals.org/content/early/2012/08/23/bioinformatics.bts505.full.pdf+html}, 
+journal = {Bioinformatics} 
+}
+
+@ARTICLE{Weese2009,
+  author = {Weese, David and Emde, Anne-Katrin and Rausch, Tobias and D\"{o}ring,
+	Andreas and Reinert, Knut},
+  title = {{RazerS}--fast read mapping with sensitivity control},
+  journal = {Genome Res.},
+  year = {2009},
+  volume = {19},
+  pages = {1646--1654},
+  number = {9},
+  abstract = {Second-generation sequencing technologies deliver DNA sequence data
+	at unprecedented high throughput. Common to most biological applications
+	is a mapping of the reads to an almost identical or highly similar
+	reference genome. Due to the large amounts of data, efficient algorithms
+	and implementations are crucial for this task. We present an efficient
+	read mapping tool called RazerS. It allows the user to align sequencing
+	reads of arbitrary length using either the Hamming distance or the
+	edit distance. Our tool can work either lossless or with a user-defined
+	loss rate at higher speeds. Given the loss rate, we present an approach
+	that guarantees not to lose more reads than specified. This enables
+	the user to adapt to the problem at hand and provides a seamless
+	tradeoff between sensitivity and running time.},
+  address = {Department of Computer Science, Free University of Berlin, 14195
+	Berlin, Germany. weese@inf.fu-berlin.de},
+  bdsk-url-1 = {http://dx.doi.org/10.1101/gr.088823.108},
+  doi = {10.1101/gr.088823.108},
+  file = {:Users/manuel/Documents/Mendeley Desktop/2009 - Weese et al. - RazerS--fast read mapping with sensitivity control.pdf:pdf},
+  issn = {1549-5469 (Electronic)},
+  keywords = {RazerS,Read Mapping,Seqan},
+  mendeley-tags = {RazerS,Read Mapping,Seqan},
+  pmid = {19592482}
+}
+
+
+
+@article{Morrison1968,
+ author = {Morrison, Donald R.},
+ title = {PATRICIA-—Practical algorithm to retrieve information coded in alphanumeric},
+ journal = {J. ACM},
+ issue_date = {1968},
+ volume = {15},
+ number = {4},
+ month = oct,
+ year = {1968},
+ issn = {0004-5411},
+ pages = {514--534},
+ numpages = {21},
+ url = {http://doi.acm.org/10.1145/321479.321481},
+ doi = {10.1145/321479.321481},
+ acmid = {321481},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+
+
+@inproceedings{Weiner1973,
+  title={Linear pattern matching algorithms},
+  author              = {Peter Weiner},
+  booktitle           = {SWAT (FOCS)},
+  pages={1--11},
+  year={1973},
+  organization={IEEE}
+}
+
+@inproceedings{Ferragina2000,
+  title={Opportunistic data structures with applications},
+  author={Ferragina, P. and Manzini, G.},
+  booktitle={Foundations of Computer Science, 2000. Proceedings. 41st Annual Symposium on},
+  pages={390--398},
+  year={2000},
+  organization={IEEE}
+}
+@inproceedings{Ferragina2001,
+  title={An experimental study of an opportunistic index},
+  pages={269--278},
+  year={2001},
+   author              = {Paolo Ferragina and 
+                          Giovanni Manzini},
+   booktitle           = {SODA}
+}
+
+@article{Abouelhoda2004,
+  title={Replacing suffix trees with enhanced suffix arrays},
+  author={Abouelhoda, M.I. and Kurtz, S. and Ohlebusch, E.},
+  journal={Journal of Discrete Algorithms},
+  volume={2},
+  number={1},
+  pages={53--86},
+  year={2004},
+  publisher={Elsevier}
+}
+
+@inproceedings{Giegerich1999a,
+  title={Efficient implementation of lazy suffix trees},
+   author              = {Robert Giegerich and 
+                          Stefan Kurtz and 
+                          Jens Stoye},
+  booktitle={Algorithm Engineering},
+  pages={30--42},
+  year={1999},
+  publisher={Springer}
+}
+
+@article{Giegerich1999,
+   author              = {Robert Giegerich and 
+                          Stefan Kurtz and 
+                          Jens Stoye},
+   title               = {Efficient implementation of lazy suffix trees},
+   journal             = {Softw., Pract. Exper.},
+   year                = {2003},
+   pages               = {1035--1049}
+}
+
+@inproceedings{Manber1990,
+  title={Suffix arrays: a new method for on-line string searches},
+  pages={319--327},
+  year={1990},
+   author              = {Udi Manber and 
+                          Gene Myers},
+   booktitle           = {SODA}
+}
+
+@article{Karkkainen2003,
+  title={Simple linear work suffix array construction},
+  author    = {Juha K{\"a}rkk{\"a}inen and
+               Peter Sanders},
+  journal = {ICALP},
+  pages={943--955},
+  year={2003},
+  publisher={Springer}
+}
+
+@INCOLLECTION{Karkkainen2003a,
+   author = {K\"arkk\"ainen, Juha and Sanders, Peter},
+   affiliation = {Max-Planck-Institut f\"ur Informatik, Stuhlsatzenhausweg 85, 66123 Saarbr\"ucken, Germany},
+   title = {Simple Linear Work Suffix Array Construction},
+   booktitle = {Automata, Languages and Programming},
+   series = {Lecture Notes in Computer Science},
+   editor = {Baeten, Jos and Lenstra, Jan and Parrow, Joachim and Woeginger, Gerhard},
+   publisher = pub-SPRINGER,
+   isbn = {978-3-540-40493-4},
+   keyword = {Computer Science},
+   pages = {943--955},
+   volume = {2719},
+   year = {2003}
+}
+
+@inproceedings{Ukkonen1993,
+  title     = {Approximate string-matching over suffix trees},
+  author    = {Esko Ukkonen},
+  booktitle = {CPM},
+  year      = {1993},
+  pages     = {228-242}
+}
+
+@inproceedings{Baeza1999,
+  title={A fast algorithm on average for all-against-all sequence matching},
+  organization={IEEE},
+   author              = {Ricardo A. Baeza-Yates and 
+                          Gaston H. Gonnet},
+   booktitle           = {SPIRE/CRIWG},
+   year                = {1999},
+   pages               = {16--23},
+   ee                  = {http://computer.org/proceedings/spire/0268/02680016abs.htm}
+}
+
+@article{Baeza1999b,
+  author = {Ricardo A. Baeza-Yates and Gonzalo Navarro},
+  title = {Faster approximate string matching},
+  journal = {Algorithmica},
+  year = {1999},
+  volume = {23},
+  pages = {127-158},
+  number = {2},
+  bibsource = {DBLP, http://dblp.uni-trier.de},
+  ee = {http://dx.doi.org/10.1007/PL00009253}
+}
+
+@article{Navarro2000,
+  title={A hybrid indexing method for approximate string matching},
+  author={Gonzalo Navarro and Rircardo A. Baeza-Yates},
+  journal={Journal of Discrete Algorithms},
+  volume={1},
+  number={1},
+  pages={205--239},
+  year={2000},
+  publisher={Citeseer}
+}
+
+@article{Navarro2001,
+  title={Indexing methods for approximate string matching},
+   author              = {Gonzalo Navarro and 
+                          Ricardo A. Baeza-Yates and 
+                          Erkki Sutinen and 
+                          Jorma Tarhio},
+  volume={24},
+  number={4},
+  pages={19--27},
+  year={2001},
+  publisher={Citeseer},
+  journal             = {IEEE Data Eng. Bull.}
+}
+
+@article{Navarro2001b,
+  title={A guided tour to approximate string matching},
+  author={Navarro, G.},
+  journal={ACM Comput. Surv.},
+  volume={33},
+  number={1},
+  pages={31--88},
+  year={2001},
+  publisher={ACM}
+}
+
+@inproceedings{Kaerkkaeinen2007,
+  title={Faster filters for approximate string matching},
+  author={K{\"a}rkk{\"a}inen, J. and Na, J.C.},
+  booktitle={Workshop on Algorithm Engineering and Experiments (ALENEX07)},
+  year={2007}
+}
+
+@INPROCEEDINGS{Jokinen91,
+  author = {Petteri Jokinen and Esko Ukkonen},
+  title = {Two Algorithms for Approximate String Matching in Static Texts},
+  booktitle = {MFCS},
+  year = {1991},
+  pages = {240-248},
+  bibsource = {DBLP, http://dblp.uni-trier.de},
+  ee = {http://dx.doi.org/10.1007/3-540-54345-7_67}
+}
+
+@ARTICLE{Myers1999,
+  author = {Myers, Gene},
+  title = {{A fast bit-vector algorithm for approximate string matching based
+	on dynamic programming}},
+  journal = {J. ACM},
+  year = {1999},
+  volume = {46},
+  pages = {395--415},
+  number = {3},
+  address = {New York, NY, USA},
+  bdsk-url-1 = {http://doi.acm.org/10.1145/316542.316550},
+  doi = {http://doi.acm.org/10.1145/316542.316550},
+  issn = {0004-5411},
+  publisher = {ACM}
+}
+
+@ARTICLE{Needleman1970,
+  author = {S.~B. Needleman and C.~D. Wunsch},
+  title = {A general method applicable to the search for similarities in the
+	amino acid sequence of two proteins},
+  journal = {J. Mol. Biol.},
+  year = {1970},
+  volume = {48},
+  pages = {443--453},
+  date-added = {2011-02-17 12:38:07 +0100},
+  date-modified = {2011-02-17 12:38:29 +0100}
+}
+
+@inproceedings{Kim2003,
+ author = {Kim, Dong Kyue and Sim, Jeong Seop and Park, Heejin and Park, Kunsoo},
+ title = {Linear-time construction of suffix arrays},
+ booktitle = {Proceedings of the 14th annual conference on Combinatorial pattern matching},
+ series = {CPM'03},
+ year = {2003},
+ isbn = {3-540-40311-6},
+ location = {Morelia, Michoac\&\#225;n, Mexico},
+ pages = {186--199},
+ numpages = {14},
+ url = {http://portal.acm.org/citation.cfm?id=1756553.1756567},
+ acmid = {1756567},
+ publisher = pub-SPRINGER,
+ address = {Berlin, Heidelberg},
+} 
+
+@INPROCEEDINGS{Ko2003,
+  author = {Ko, P. and Aluru, S.},
+  title = {Space Efficient Linear Time Construction of Suffix Arrays},
+  booktitle = {CPM},
+  year = {2003},
+  pages = {200-210},
+  bibsource = {DBLP, http://dblp.uni-trier.de},
+  ee = {http://link.springer.de/link/service/series/0558/bibs/2676/26760200.htm},
+  owner = {weese},
+  timestamp = {2010.09.20}
+}
+
+@ARTICLE{Ukkonen1995,
+  author = {Ukkonen, E.},
+  title = {On-line construction of suffix trees},
+  journal = j-ALG,
+  year = {1995},
+  volume = {14},
+  pages = {249--260},
+  number = {3},
+  owner = {weese},
+  timestamp = {2010.09.20}
+}
+
+@INPROCEEDINGS{Kasai2001,
+   author              = {Toru Kasai and 
+                          Gunho Lee and 
+                          Hiroki Arimura and 
+                          Setsuo Arikawa and 
+                          Kunsoo Park},
+  title = {Linear-time longest-common-prefix computation in suffix arrays and
+	its applications},
+  booktitle           = {CPM},
+  year = {2001},
+  pages = {181--192},
+  isbn = {3-540-42271-4}
+}
+
+@inproceedings{Grossi2003,
+ author = {Grossi, Roberto and Gupta, Ankur and Vitter, Jeffrey Scott},
+ title = {High-order entropy-compressed text indexes},
+ booktitle = {Proc. of the 14th annual ACM-SIAM symposium on Discrete algorithms},
+ series = {SODA~'03},
+ year = {2003},
+ isbn = {0-89871-538-5},
+ location = {Baltimore, Maryland},
+ pages = {841--850},
+ numpages = {10},
+ url = {http://portal.acm.org/citation.cfm?id=644108.644250},
+ acmid = {644250},
+ publisher = {Society for Industrial and Applied Mathematics},
+ address = {Philadelphia, PA, USA},
+} 
+
+@article{Dementiev2008,
+ author = {Dementiev, Roman and K\"{a}rkk\"{a}inen, Juha and Mehnert, Jens and Sanders, Peter},
+ title = {Better external memory suffix array construction},
+ journal = {J. Exp. Algorithmics},
+ issue_date = {June 2008},
+ volume = {12},
+ month = aug,
+ year = {2008},
+ issn = {1084-6654},
+ pages = {3.4:1--3.4:24},
+ articleno = {3.4},
+ numpages = {24},
+ url = {http://doi.acm.org/10.1145/1227161.1402296},
+ doi = {10.1145/1227161.1402296},
+ acmid = {1402296},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {Algorithm engineering, I/O-efficient, algorithms for strings, external memory, large data sets, secondary memory, suffix array},
+} 
+
+@article{Fonseca2012,
+author = {Fonseca, Nuno A. and Rung, Johan and Brazma, Alvis and Marioni, John C.}, 
+title = {Tools for mapping high-throughput sequencing data},
+volume = {28}, 
+number = {24}, 
+pages = {3169-3177}, 
+year = {2012}, 
+doi = {10.1093/bioinformatics/bts605}, 
+abstract ={Motivation: A ubiquitous and fundamental step in high-throughput sequencing analysis is the alignment (mapping) of the generated reads to a reference sequence. To accomplish this task, numerous software tools have been proposed. Determining the mappers that are most suitable for a specific application is not trivial.Results: This survey focuses on classifying mappers through a wide number of characteristics. The goal is to allow practitioners to compare the mappers more easily and find those that are most suitable for their specific problem.Availability: A regularly updated compendium of mappers can be found at http://wwwdev.ebi.ac.uk/fg/hts_mappers/.Contact: nf@ebi.ac.ukSupplementary information: Supplementary data are available at Bioinformatics online.}, 
+URL = {http://bioinformatics.oxfordjournals.org/content/28/24/3169.abstract}, 
+journal = {Bioinformatics} 
+}
+
+@ARTICLE{Sellers1980,
+  author = {Peter H. Sellers},
+  title = {The theory and computation of evolutionary distances: Pattern recognition.},
+  journal = j-JA,
+  year = {1980},
+  volume = {1},
+  pages = {359--373},
+  number = {4},
+  abstract = {A method of finding pattern similarities between two sequences is
+	given. Two portions, one from each sequence, are similar if they
+	are close in the metric space of evolutionary distances. The method
+	allows a complete list to be made of all pairs of intervals, one
+	from each of two given sequences, such that each pair displays a
+	maximum local degree of similarity, and, if the lengths of the given
+	sequences are m and n, then the procedure takes on the order of mn
+	computational steps. This result lends itself to finding similarities
+	by computer between pairs of biological sequences, such as proteins
+	and nucleic acids.},
+  doi = {10.1016/0196-6774(80)90016-4},
+  issn = {0196-6774},
+  owner = {bkehr},
+  timestamp = {2010.07.28}
+}
+
+@BOOK{Gusfield1997,
+  title = {Algorithms on strings, trees, and sequences: {C}omputer science and
+	computational biology},
+  publisher = pub-CAMBRIDGE,
+  year = {1997},
+  author = {D. Gusfield},
+  address = {New York, NY, USA},
+  __markedentry = {[weese]},
+  owner = {weese},
+  timestamp = {2010.09.20}
+}
+
+@article{Siragusa2013,
+  author    = {Enrico Siragusa and
+               David Weese and
+               Knut Reinert},
+  title     = {Fast and accurate read mapping with approximate seeds and
+               multiple backtracking},
+  journal   = j-NAR,
+  year      = {2013}
+}
+
+@article{Navarro2007,
+  title={Compressed full-text indexes},
+  author={Navarro, Gonzalo and M{\"a}kinen, Veli},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={39},
+  number={1},
+  pages={2},
+  year={2007},
+  publisher={ACM}
+}
+
+@article{Borkar2011,
+  title={The future of microprocessors},
+  author={Borkar, Shekhar and Chien, Andrew A},
+  journal={Communications of the ACM},
+  volume={54},
+  number={5},
+  pages={67--77},
+  year={2011},
+  publisher={ACM}
+}
+
+@phdthesis{Batten2010,
+  title={Simplified vector-thread architectures for flexible and efficient data-parallel accelerators},
+  author={Batten, Christopher Francis},
+  year={2010},
+  school={Massachusetts Institute of Technology}
+}
+
+@online{Nvidia2013,
+  author = {NVIDIA Corporation},
+  title = {CUDA C Programming Guide},
+  year = {2013},
+}
