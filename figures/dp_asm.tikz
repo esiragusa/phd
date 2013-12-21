@@ -16,13 +16,13 @@
 		\draw[black] (3,0) rectangle (19, 13);
 
 		\node at (3.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
-		\node at (4.5,0.5) {\sf\tiny \color{DPInitValueColor}1};
-		\node at (5.5,0.5) {\sf\tiny \color{DPInitValueColor}2};
-		\node at (6.5,0.5) {\sf\tiny \color{DPInitValueColor}3};
-		\node at (7.5,0.5) {\sf\tiny \color{DPInitValueColor}4};
-		\node at (8.5,0.5) {\sf\tiny \color{DPInitValueColor}5};
-		\node at (9.5,0.5) {\sf\tiny \color{DPInitValueColor}6};
-		\node at (10.5,0.5){\sf\tiny \color{DPInitValueColor}7};
+		\node at (4.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (5.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (6.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (7.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (8.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (9.5,0.5) {\sf\tiny \color{DPInitValueColor}0};
+		\node at (10.5,0.5){\sf\tiny \color{DPInitValueColor}0};
 		\node at (3.5,1.5) {\sf\tiny \color{DPInitValueColor}1};
 		\node at (3.5,2.5) {\sf\tiny \color{DPInitValueColor}2};
 		\node at (3.5,3.5) {\sf\tiny \color{DPInitValueColor}3};

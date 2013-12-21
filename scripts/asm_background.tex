@@ -91,6 +91,7 @@ Because some symbols in one string are not related to any symbol in the other st
 Subsequently, we can define the alignment of two strings of length $n,m$ over $\Sigma$ to be a string of length between $\min\{n,m\}$ and $n+m$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
 
 \begin{example}
+\label{ex:alignment}
 An alignment of the strings $x=AAAA$ and $y=CCCC$ is given by the string
 $z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text{C}}{\text{G} \choose \text{G}}$
 \end{example}
@@ -104,13 +105,13 @@ See Figure~\ref{?}.
 
 \begin{figure}[h]
 \begin{center}
-\caption{Dotplot of the strings $x=AAAA$ and $y=CCCC$.}
+\caption{Dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
 \label{fig:dotplot}
 \input{figures/dotplot.tikz}
 \end{center}
 \end{figure}
 
-\subsection{Distance metrics}
+\subsection{Distance functions}
 
 We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R$, where:
 \begin{itemize}
@@ -118,20 +119,19 @@ We can assign a cost to any alignment and to its associated edit transformation 
 \item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
 \item $\omega(-,\beta)$ for all $\beta \in \Sigma$ defines the cost of inserting the symbol $\beta$,
 \end{itemize}
-and by defining the total cost $C(z)$ of an alignment between two strings as the sum of the weights of all its alignment symbols:
-
+and by defining the total cost $C(z)$ of an alignment $z$ between two strings as the sum of the weights of all its alignment symbols:
 \begin{eqnarray}
 C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
 \end{eqnarray}
-
-In particular, the \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
-We obtain the Hamming distance by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
-
-The edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
-It is obtained by defining $\omega(\alpha,\beta)$ as in the Hamming distance, $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1, and by taking the minimum cost over all possible alignments of $x,y$:
+Consequently, we can define the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R$ by taking the minimum cost over all possible alignments of $x,y$:
 \begin{eqnarray}
-d_E(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
+d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
 \end{eqnarray}
+
+In particular, the edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
+It is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1.
+The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
+We obtain it by defining $\omega(\alpha,\beta)$ as in the edit distance, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
 
 \begin{example}
 TODO: example of edit and hamming distance.
@@ -139,34 +139,34 @@ TODO: example of edit and hamming distance.
 
 \subsection{Optimal alignments}
 
-The problem of finding an optimal alignment between two strings is the dual of the edit distance problem.
-%This equivalence is often taken for granted.
+The problem of finding an optimal alignment between two strings is equivalent to the problem of finding their minimum distance \citep{Gusfield1997}.
+A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
+Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-The edit distance problem is to compute the edit distance between two given strings, along with an optimal edit transcript that describes the transformation \cite{Gusfield1997}.
-The edit distance problem is a minimization problem and can be efficiently computed via dynamic programming (DP). Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
-
-Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d_E(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d(x_{1..i},y_{1..j})$ the edit distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
-d_E(\epsilon,\epsilon)&=&0\\
-d_E(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq n\\
-d_E(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq m\\
+d(\epsilon,\epsilon)&=&0\\
+d(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq n\\
+d(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq m
 \end{eqnarray}
 and the recursive case is defined as follows:
 \begin{eqnarray}
-d_E(x_{1..i},y_{1..j}) = \min \left\{
+d(x_{1..i},y_{1..j}) = \min \left\{
 \begin{array}{lcl}
-d_E(x_{1..i-1},y_{1..j})&+&\omega(x_i, -)\\
-d_E(x_{1..i},y_{1..j-1})&+&\omega(-, y_j)\\
-d_E(x_{1..i-1},x_{1..j-1})&+&\omega(x_i, y_j)
+d(x_{1..i-1},y_{1..j})&+&\omega(x_i, -)\\
+d(x_{1..i},y_{1..j-1})&+&\omega(-, y_j)\\
+d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \end{array}
 \right.
 \end{eqnarray}
 
-The recurrence relation can be computed in time $\Oh(| x | \cdot | y |)$ using a table of $(n+1) \times (m+1)$ cells. However only $\Oh(\min\{ n, m \})$ space is required.
-An optimal alignment can be computed in time $\Oh(n + m)$.
-
+The recurrence relation can be computed in time $\Oh(nm)$ using a table of $(n+1) \times (m+1)$ cells. 
 The table can be filled in four different ways: column-wise, row-wise, diagonal-wise or antidiagonal-wise.
+An optimal alignment can be computed via traceback in time $\Oh(n + m)$.
+However, only $\Oh(\min\{ n, m \})$ space is required to compute the the sole distance without any alignment.
+
+
 
 \begin{figure}[h]
 \begin{center}
@@ -184,7 +184,7 @@ The table can be filled in four different ways: column-wise, row-wise, diagonal-
 \subsection{Problem definition}
 
 We can now define \emph{exact string matching}, perhaps the most fundamental problem in stringology.
-Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string $t$ (with $|t|=n$) called the \emph{text}, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \cite{Gusfield1997}.
+Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string $t$ (with $|t|=n$) called the \emph{text}, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \citep{Gusfield1997}.
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice.
 
 The definition of distance functions between strings let us generalize exact string matching into a more challenging problem: \emph{approximate string matching}.
@@ -204,7 +204,7 @@ Filtering methods outperform fully-indexed methods for a vast range of inputs\fo
 
 In the following of this section we thus give a brief and non-exhaustive overview of the fundamental techniques for online and (both fully-indexed and filtering) offline string matching.
 This overview serves as an introduction to the more involved algorithms presented in chapter \ref{?} and directly used in applications of part \ref{part:apps}.
-For an extensive treatment of the subject, we refer the reader to complete surveys on exact \cite{Faro2013} and approximate \cite{Navarro1999} online string matching methods, as well as to a succint survey on indexed methods \cite{Navarro2001}.
+For an extensive treatment of the subject, we refer the reader to complete surveys on exact \citep{Faro2013} and approximate \citep{Navarro1999} online string matching methods, as well as to a succint survey on indexed methods \citep{Navarro2001}.
 
 % --- Online methods ---
 
@@ -214,7 +214,7 @@ We consider two classes of algorithms for online string matching, those based on
 
 \subsubsection{Automata}
 
-Exact search of one pattern. Boyer-moore automaton.
+Exact search of one pattern. Knuth-Morris-Pratt automaton.
 
 Exact search of multiple patterns. Aho-corasick automaton.
 
@@ -224,18 +224,18 @@ Approximate search of one pattern. Ukkonen automaton.
 
 \subsubsection{Dynamic programming}
 
-The dynamic programming algorithm \ref{?} to compute the edit distance of two strings can be easily turned into a string matching algorithm.
+The dynamic programming algorithm \ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
 Let pose $x=t$ and $y=p$ and consider equations \ref{?}.
 Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row as:
 \begin{eqnarray}
-d_E(\epsilon, y_{1..j}) = 0 \text{ for } 1 \leq j \leq | y |
+d_E(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq m
 \end{eqnarray}
 and since an occurrence of the pattern can end anywhere in the text, we check every cell of the bottom row for the condition:
 \begin{eqnarray}
-d_E(x_{1..m},y_{1..j}) \leq k \text{ for } 1 \leq j \leq | y |.
+d_E(x_{1..m},y_{1..j}) \leq k \text{ for all } 1 \leq j \leq m.
 \end{eqnarray}
 
 \begin{figure}[h]
@@ -447,7 +447,7 @@ The following lemma relates the $q$-gram similarity to edit distance\footnote{Th
 It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ for any two strings having $d_E(x,y) = k$.
 This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
 \begin{lemma}
-\cite{?}
+\citep{?}
 Let $x,y$ be two strings with edit distance $k$ and $\min\{|x|,|y|\} = m$, then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
 \begin{proof}
@@ -486,7 +486,7 @@ Again, we start by considering the case of two arbitrary strings $x,y$ \st $d_E(
 If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed $y^i$ will occur as a factor of $x$.
 
 \begin{lemma}
-\cite{Baeza1999b}
+\citep{Baeza1999b}
 If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
 \end{lemma}
 \begin{proof}
@@ -526,7 +526,7 @@ Which length of $q$ makes filtration lossless?
 %Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
 %Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
 %If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
-%A more involved filtering algorithm proposed in \cite{Navarro2000} reduces an approximate search into smaller approximate searches.
+%A more involved filtering algorithm proposed in \citep{Navarro2000} reduces an approximate search into smaller approximate searches.
 %We partition $p$ into $s \leq k+1$ non-overlapping seeds.
 %According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
 %
