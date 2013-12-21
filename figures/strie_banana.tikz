@@ -1,11 +1,12 @@
 \begin{tikzpicture}[scale=1.5,font=\sf]
 
-\tikzstyle{level 1}=[sibling distance=14mm, level distance=6mm]
-\tikzstyle{level 2}=[sibling distance=8mm, level distance=6mm]
-\tikzstyle{level 3}=[sibling distance=8mm, level distance=6mm] 
-\tikzstyle{level 4}=[sibling distance=8mm, level distance=6mm] 
-\tikzstyle{level 5}=[sibling distance=8mm, level distance=6mm] 
-\tikzstyle{level 6}=[sibling distance=8mm, level distance=6mm] 
+\tikzstyle{level 1}=[sibling distance=12mm, level distance=6mm]
+\tikzstyle{level 2}=[sibling distance=6mm, level distance=6mm]
+\tikzstyle{level 3}=[sibling distance=6mm, level distance=6mm] 
+\tikzstyle{level 4}=[sibling distance=6mm, level distance=6mm] 
+\tikzstyle{level 5}=[sibling distance=6mm, level distance=6mm] 
+\tikzstyle{level 6}=[sibling distance=6mm, level distance=6mm] 
+\tikzstyle{level 7}=[sibling distance=6mm, level distance=6mm] 
 
 %\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
 %\tikzstyle{el}=[->,thick,color=gray,text=mycolor1high]
