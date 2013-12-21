@@ -243,11 +243,18 @@ This fact simplifies the exposition of all given algorithms without affecting th
 However, we remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\begin{center}
 \caption{Suffix tree and suffix trie.}
 \label{fig:stree}
-\input{figures/stree.tikz}
+\begin{subfigure}{.5\textwidth}
+\begin{center}
+\input{figures/stree_banana.tikz}
 \end{center}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+\begin{center}
+\input{figures/strie_banana.tikz}
+\end{center}
+\end{subfigure}
 \end{figure}
 
 Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\Ti$.
@@ -428,7 +435,7 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \begin{center}
 \caption{Filtration with $q$-grams.}
 \label{fig:qgrams-ext}
-\input{figures/transcript.tikz}
+\input{figures/filtration_qgrams.tikz}
 \end{center}
 \end{figure}
 
@@ -457,7 +464,7 @@ Which length of $q$ makes filtration lossless?
 \begin{center}
 \caption{Filtration with exact seeds.}
 \label{fig:seeds-ext}
-\input{figures/transcript.tikz}
+\input{figures/filtration_exact.tikz}
 \end{center}
 \end{figure}
 

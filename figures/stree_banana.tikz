@@ -1,0 +1,55 @@
+\begin{tikzpicture}[scale=1.5,font=\sf]
+
+\tikzstyle{level 1}=[sibling distance=14mm, level distance=10mm]
+\tikzstyle{level 2}=[sibling distance=8mm, level distance=14mm]
+\tikzstyle{level 3}=[sibling distance=8mm, level distance=14mm] 
+
+%\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+%\tikzstyle{el}=[->,thick,color=gray,text=mycolor1high]
+
+\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+\tikzstyle{el}=[->,thick,color=black,text=black]
+\tikzstyle{inner}=[circle,draw,color=black,inner sep=1.5pt]
+
+\node[inner](r) {}
+child[transparent] {
+node[inner](A) {}
+child[transparent] {
+node[inner](ANA) {}
+child[transparent] {
+node[leaf](ANANAS) {$1$}
+}
+child[transparent] {
+node[leaf](ANAS) {$3$}
+}
+}
+child[transparent] {
+node[leaf](AS) {$5$}
+}
+}
+child[transparent] {
+node[inner](NA) {}
+child[transparent] {
+node[leaf](NANAS) {$2$}
+}
+child[transparent] {
+node[leaf](NAS) {$4$}
+}
+}
+child[transparent] {
+node[leaf](S) {$6$}
+}
+;
+
+\draw[el] (r) -- (A) \labelA{A};
+\draw[el] (A) -- (ANA) \labelB{N}{A};
+\draw[el] (ANA) -- (ANANAS) \labelD{N}{A}{S}{\$};
+\draw[el] (ANA) -- (ANAS) \labelB{S}{\$};
+\draw[el] (A) -- (AS) \labelB{S}{\$};
+\draw[el] (r) -- (NA) \labelB{N}{A};
+\draw[el] (NA) -- (NANAS) \labelD{N}{A}{S}{\$};
+\draw[el] (NA) -- (NAS) \labelB{S}{\$};
+\draw[el] (r) -- (S) \labelB{S}{\$};
+
+\end{tikzpicture}
+

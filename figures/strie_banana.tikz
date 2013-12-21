@@ -1,0 +1,107 @@
+\begin{tikzpicture}[scale=1.5,font=\sf]
+
+\tikzstyle{level 1}=[sibling distance=14mm, level distance=6mm]
+\tikzstyle{level 2}=[sibling distance=8mm, level distance=6mm]
+\tikzstyle{level 3}=[sibling distance=8mm, level distance=6mm] 
+\tikzstyle{level 4}=[sibling distance=8mm, level distance=6mm] 
+\tikzstyle{level 5}=[sibling distance=8mm, level distance=6mm] 
+\tikzstyle{level 6}=[sibling distance=8mm, level distance=6mm] 
+
+%\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+%\tikzstyle{el}=[->,thick,color=gray,text=mycolor1high]
+
+\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+\tikzstyle{el}=[->,thick,color=black,text=black]
+\tikzstyle{inner}=[circle,draw,color=black,inner sep=1.5pt]
+
+\node[inner](r) {}
+child[transparent] {
+node[inner](A) {}
+child[transparent] {
+node[inner](AN) {}
+child[transparent] {
+node[inner](ANA) {}
+child[transparent] {
+node[inner](ANAN) {}
+child[transparent] {
+node[inner](ANANA) {}
+child[transparent] {
+node[inner](ANANAS) {}
+child[transparent] {
+node[leaf](ANANASD) {$1$}
+}
+}
+}
+}
+child[transparent] {
+node[inner](ANAS) {}
+child[transparent] {
+node[leaf](ANASD) {$3$}
+}
+}
+}
+}
+child[transparent] {
+node[inner](AS) {}
+child[transparent] {
+node[leaf](ASD) {$5$}
+}
+}
+}
+child[transparent] {
+node[inner](N) {}
+child[transparent] {
+node[inner](NA) {}
+child[transparent] {
+node[inner](NAN) {}
+child[transparent] {
+node[inner](NANA) {}
+child[transparent] {
+node[inner](NANAS) {}
+child[transparent] {
+node[leaf](NANASD) {$2$}
+}
+}
+}
+}
+child[transparent] {
+node[inner](NAS) {}
+child[transparent] {
+node[leaf](NASD) {$4$}
+}
+}
+}
+}
+child[transparent] {
+node[inner](S) {}
+child[transparent] {
+node[leaf](SD) {$6$}
+}
+}
+;
+
+\draw[el] (r) -- (A) \labelA{A};
+\draw[el] (A) -- (AN) \labelA{N};
+\draw[el] (AN) -- (ANA) \labelA{A};
+\draw[el] (ANA) -- (ANAN) \labelA{N};
+\draw[el] (ANAN) -- (ANANA) \labelA{A};
+\draw[el] (ANANA) -- (ANANAS) \labelA{S};
+\draw[el] (ANANAS) -- (ANANASD) \labelA{\$};
+\draw[el] (ANA) -- (ANAS) \labelA{S};
+\draw[el] (ANAS) -- (ANASD) \labelA{\$};
+\draw[el] (A) -- (AS) \labelA{S};
+\draw[el] (AS) -- (ASD) \labelA{\$};
+
+\draw[el] (r) -- (N) \labelA{N};
+\draw[el] (N) -- (NA) \labelA{A};
+\draw[el] (NA) -- (NAN) \labelA{N};
+\draw[el] (NAN) -- (NANA) \labelA{A};
+\draw[el] (NANA) -- (NANAS) \labelA{S};
+\draw[el] (NANAS) -- (NANASD) \labelA{\$};
+\draw[el] (NA) -- (NAS) \labelA{S};
+\draw[el] (NAS) -- (NASD) \labelA{\$};
+\draw[el] (r) -- (S) \labelA{S};
+\draw[el] (S) -- (SD) \labelA{\$};
+
+\end{tikzpicture}
+
