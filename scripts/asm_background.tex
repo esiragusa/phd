@@ -25,7 +25,7 @@ Assembly methods are based on overlaps, de brujin graphs, or...
 
 Read mapping methods work on a previously assembled reference genome.
 
-The typical SNPs analysis pipeline \ref{fig:ngs-pipeline} consists of...
+The typical SNPs analysis pipeline~\ref{fig:ngs-pipeline} consists of...
 
 In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
 
@@ -41,7 +41,7 @@ In this work we focus on read mapping, although many core algorithms considered 
 \section{Stringology preliminaries}
 
 We now introduce fundamental definitions and problems of stringology, in order to keep the manuscript self-contained.
-The reader familiar with basic stringology can skip this section and proceed to section \ref{?}.
+The reader familiar with basic stringology can skip this section and proceed to section~\ref{?}.
 
 \subsection{Definitions}
 
@@ -53,7 +53,7 @@ Finally, we call any subset of $\Sigma^*$ a language over $\Sigma$.
 
 We now define concatenation, the most fundamental operation on strings.
 The concatenation operator of two strings is denoted with $\cdot$ and defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
-Given two strings, $x \in \Sigma^n$ with $x=x_1 x_2 \dots x_n$, and $y \in \Sigma^m$ with $y=y_1 y_2 \dots y_m$, their concatenation $x \cdot y$ (or simply denoted $xy$) is the string $z \in \Sigma^{n+m}$ consisting of the symbols $x_1 x_2 \dots x_n y_1 y_2 \dots y_m$.
+Given two strings, $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$, and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (or simply denoted $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
 
 From concatenation we can derive the notion of prefix, suffix, and substring.
 A string $x$ is a prefix of $y$ iff there is some string $z$ s.t. $y=x\cdot z$.
@@ -88,7 +88,7 @@ See Figure~\ref{fig:edit-transcript} for an example.
 An alignment is an alternative yet equivalent way of visualizing a transformation between strings.
 While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment relates pairs of corresponding symbols between two strings.
 Because some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed, we first need to introduce a gap symbol $-$, which is not part of the string alphabet $\Sigma$.
-Subsequently, we can define the alignment of two strings of length $n,m$ over $\Sigma$ to be a string of length between $\min\{n,m\}$ and $n+m$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
+Subsequently, we can define the alignment of two strings of length $m,n$ over $\Sigma$ to be a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
 
 \begin{example}
 \label{ex:alignment}
@@ -97,7 +97,7 @@ $z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text
 \end{example}
 
 A dotplot is a way to visualize any alignment between two strings and highlight their similarities.
-Given two string $x,y$ of length $n,m$, a dotplot is a $n \times m$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
+Given two string $x,y$ of length $m,n$, a dotplot is a $m \times n$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
 We define a dotplot trace to be a monotonical path in the matrix connecting non-decreasing positions of the matrix.
 A dotplot trace corresponds to an alignment and vice versa.
 In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
@@ -143,12 +143,12 @@ The problem of finding an optimal alignment between two strings is equivalent to
 A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
 Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$, for all $1 \leq i \leq n$ and $1 \leq j \leq m$ we define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$ of length $m,n$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$ we define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d(\epsilon,\epsilon)&=&0\\
-d(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq n\\
-d(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq m
+d(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq m\\
+d(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
 and the recursive case is defined as follows:
 \begin{eqnarray}
@@ -161,10 +161,10 @@ d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \right.\label{eq:dp-min}
 \end{eqnarray}
 
-We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(n+1) \times (m+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
+We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
 The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$), and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
-An optimal alignment can be computed in time $\Oh(n + m)$ via \emph{traceback} on the table $D$:
-We start in the cell $D[n,m]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of Equation \ref{eq:dp-min} yielded the value of $D[n,m]$.
+An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
+We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of Equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
 \begin{figure}[h]
 \begin{center}
@@ -201,7 +201,7 @@ Fully-indexed algorithms work solely on the index of the text, while filtering m
 Filtering methods outperform fully-indexed methods for a vast range of inputs\footnote{When the error rate is low.} and are thus very interesting from a practical standpoint. Nonetheless, filtering methods are just opportunistic combinations of online and fully-indexed methods.
 
 In the following of this section we thus give a brief and non-exhaustive overview of the fundamental techniques for online and (both fully-indexed and filtering) offline string matching.
-This overview serves as an introduction to the more involved algorithms presented in chapter \ref{?} and directly used in applications of part \ref{part:apps}.
+This overview serves as an introduction to the more involved algorithms presented in chapter~\ref{?} and directly used in applications of part~\ref{part:apps}.
 For an extensive treatment of the subject, we refer the reader to complete surveys on exact \citep{Faro2013} and approximate \citep{Navarro1999} online string matching methods, as well as to a succint survey on indexed methods \citep{Navarro2001}.
 
 % --- Online methods ---
@@ -222,16 +222,16 @@ Approximate search of one pattern. Ukkonen automaton.
 
 \subsubsection{Dynamic programming}
 
-The dynamic programming algorithm \ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
+The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
-We pose $x=t$ and $y=p$ and consider equation \ref{eq:dp-min}.
+We pose $x=p$ and $y=t$ and consider Equation~\ref{eq:dp-min}.
 Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row $D[0:]$ of the DP matrix according to the condition:
 \begin{eqnarray}
-d(x_{1..i}, \epsilon) = 0 \text{ for all } 1 \leq i \leq m
+d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
-and since an occurrence of the pattern can end anywhere in the text, we check every cell $D[m,i]$ of the bottom row, for all $1 \leq i \leq n$, for the condition $D[m,i] \leq k$.
+and since an occurrence of the pattern can end anywhere in the text, we check all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ for the condition $D[m,j] \leq k$.
 
 \begin{figure}[h]
 \begin{center}
@@ -249,13 +249,12 @@ and since an occurrence of the pattern can end anywhere in the text, we check ev
 
 \subsection{Indexed methods}
 
-No matter how fast online methods can be, these approaches quickly become impractical when the text is long and searched frequently.
+No matter how efficient online methods can be, these approaches quickly become impractical when the text is long and searched frequently.
 If the text is static and given in advance, we are allowed to preprocess it.
-We build an index of the text beforehand and use it to speed up subsequent searches.
-To this intent, we first introduce \emph{suffix trees}, optimal data structures to index strings.
-Later on, we consider algorithms solving string matching problems on indices.
-
-The suffix tree is a idealized data structure to elegantly expose our algorithms. In chapter \ref{chr:index} we consider other substring indices.
+Therefore we build an index of the text beforehand and use it to speed up subsequent searches.
+To this intent we introduce the \emph{suffix tree}, an optimal data structure to index all substrings of a text.
+We take the suffix tree as an idealized data structure to elegantly expose our indexed algorithms solving string matching problems.
+In chapter~\ref{chr:index} we will consider other substring indices to replace the suffix tree in practice.
 
 \subsubsection{Suffix tree and suffix trie}
 
@@ -264,7 +263,7 @@ Assume w.l.o.g. a string $s$ of length $n$, padded with a \emph{terminator symbo
 The suffix tree $\Si$ of the string $s$ has one node designated as the root and $n$ leaves, each one pointing to a distinct suffix of $s$, denoted as $\Ln_1 \dots \Ln_n$.
 Each internal node has more than one child, and each edge is labeled with a non-empty substring of $s$.
 Each path from the root to a leaf $\Ln_i$ spells the suffix $s_{i..n}$.
-Figure \ref{fig:stree} illustrates.
+Figure~\ref{fig:stree} illustrates.
 
 %The suffix tree can be built in time and space linear in the length of the string.
 
@@ -274,7 +273,7 @@ Figure \ref{fig:stree} illustrates.
 %Each path from the root to a leaf $(i,j)$ spells the suffix $s_{j..n}^i$.
 
 In the following of this manuscript we consider w.l.o.g. \emph{suffix tries} instead of suffix trees.
-On suffix tries, internal nodes can have only one child and each edge is labeled by one single character (see Figure \ref{fig:st}).
+On suffix tries, internal nodes can have only one child and each edge is labeled by one single character (see Figure~\ref{fig:st}).
 This fact simplifies the exposition of all given algorithms without affecting their runtime complexity nor their result.
 However, we remark that all given algorithms can be generalized to work on trees.
 
@@ -299,9 +298,9 @@ Given a node $\Tn$ of $\Ti$, we denote with $label(\Tn)$ the label of the edge e
 \subsubsection{Exact string matching}
 
 Using the suffix trie $\Ti$ of the text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(m)$, thus independently of $n$.
-Algorithm \ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
+Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m} = p$.
-Algorithm \ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
+Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 
 \begin{algorithm}[h]
 \caption{Exact string matching on a suffix trie.}
@@ -333,7 +332,7 @@ A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t
 While traversing each branch of the trie, we incrementally compute the distance between the query and the spelled string.
 If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
 Conversely, if we completely spelled the pattern $p$, and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
-See algorithm \ref{alg:st-hamming}.
+See algorithm~\ref{alg:st-hamming}.
 
 \begin{algorithm}[h]
 \caption{$k$-mismatches on a suffix trie.}
@@ -366,7 +365,7 @@ See algorithm \ref{alg:st-hamming}.
 
 \subsubsection{Backtracking $k$-differences}
 
-We can compute $k$-differences on a suffix tree in two different ways. Algorithm \ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm \ref{alg:st-edit} computes the edit distance on the suffix trie.
+We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
 \begin{algorithm}[h]
 \caption{$k$-differences on a suffix trie.}
@@ -404,11 +403,11 @@ We can compute $k$-differences on a suffix tree in two different ways. Algorithm
 \end{algorithmic}
 \end{algorithm}
 
-In algorithm \ref{alg:st-edit}, any online method can be used to compute the edit distance.
+In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
 However, for theoretical considerations, it is important to consider an algorithm wich computes in $\Oh(1)$ per node.
 Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
 
-Algorithm \ref{alg:st-edit-explicit} reports more occurrences than algorithm \ref{alg:st-edit}.
+Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
 Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 % --- Filtering methods ---
@@ -596,7 +595,7 @@ Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query strin
 
 \subsubsection{Filtering methods}
 
-Filtering methods of section \ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm \ref{?}.
+Filtering methods of section~\ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm~\ref{?}.
 
 
 
