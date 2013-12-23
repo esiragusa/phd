@@ -113,7 +113,7 @@ See Figure~\ref{?}.
 
 \subsection{Distance functions}
 
-We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R$, where:
+We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
 \begin{itemize}
 \item $\omega(\alpha,\beta)$ for all $(\alpha,\beta) \in \Sigma \times \Sigma$ defines the cost of substituting $\alpha$ with $\beta$,
 \item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
@@ -123,14 +123,14 @@ and by defining the total cost $C(z)$ of an alignment $z$ between two strings as
 \begin{eqnarray}
 C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
 \end{eqnarray}
-Consequently, we can define the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R$ by taking the minimum cost over all possible alignments of $x,y$:
+Consequently, we can define the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ by taking the minimum cost over all possible alignments of $x,y$:
 \begin{eqnarray}
 d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
 \end{eqnarray}
 
-In particular, the edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
+In particular, the edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
 It is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1.
-The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N$ counting the number of substitutions necessary to transform $x$ into $y$.
+The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$ counting the number of substitutions necessary to transform $x$ into $y$.
 We obtain it by defining $\omega(\alpha,\beta)$ as in the edit distance, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
 
 \begin{example}
@@ -162,7 +162,7 @@ d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \end{eqnarray}
 
 We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
-The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$), and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
+The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$) and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
 An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
 We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of Equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
@@ -331,7 +331,7 @@ We can solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on th
 A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
 While traversing each branch of the trie, we incrementally compute the distance between the query and the spelled string.
 If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
-Conversely, if we completely spelled the pattern $p$, and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+Conversely, if we completely spelled the pattern $p$ and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
 See algorithm~\ref{alg:st-hamming}.
 
 \begin{algorithm}[h]
@@ -420,7 +420,7 @@ The principle under which they work is that large and uninteresting portions of 
 We remark that any filtering method can either work in a online fashion or take advantage of an index of the text to speed up the filtration phase.
 Here we always consider the filtration phase to be indexed.
 
-Filtering methods work under the assumption that given patterns occurs in the text with a \emph{low average probability}.
+Filtering methods work under the assumption that given patterns occur in the text with a \emph{low average probability}.
 Such probability is a function of the error rate $\epsilon$, in addition to the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source.
 Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $\frac{1}{\sigma}$, \citet{Navarro2000} estimates that $\epsilon < 1 - \frac{1}{\sigma}$ is a conservative bound on the error rate which ensures few matches, and for which filtering algorithms are effective.
 For higher error rates, non-filtering online and indexed methods work better.
@@ -429,16 +429,70 @@ We call a filter \emph{lossless} or \emph{full-sensitive} if it guarantees not t
 Lossy filters can be designed to solve approximately $\epsilon$-differences.
 We focus our attention on lossless filters. 
 
-We now consider two classes of filtering methods: those based on \emph{$q$-grams} and those based on \emph{seeds}.
-Filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams. Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
-Instead, seed based filters partition the pattern into \emph{non-overlapping} factors called seeds.
+We now consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
+Filters based on seeds partition the pattern into \emph{non-overlapping} factors called seeds.
 We can derive full-sensitive partitioning strategies by application of the pigeonhole principle.
+Instead, filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
+Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
+
+\subsubsection{Seed filters}
+
+We start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
+If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+\begin{lemma}
+\label{lemma:exact-seeds}
+\citep{Baeza1999b}
+Let $x,y$ be two strings \st $d_E(x,y) = k$ for some $k \in \N_0$.
+If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
+\end{lemma}
+\begin{proof}
+We proceed by induction on $k$.
+For $k=0$, the string $y$ is partitioned into only one factor, $y$ itself.
+The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
+We suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
+We consider the case $k=j$. The $j$-th error can be in
+\begin{inparaenum}[(i)]
+\item\label{lemma:exact-seeds:prefix} $y^1\dots y^{i-1}$,
+\item\label{lemma:exact-seeds:infix} $y^i$, or
+\item\label{lemma:exact-seeds:suffix} $y^{i+1}\dots y^{j}$.
+\end{inparaenum}
+In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
+In case~\ref{lemma:exact-seeds:infix}, if we partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
+\end{proof}
+
+Thus, we solve $k$-differences by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
+Figure~\ref{fig:seeds-ext} shows an example.
+Note that we are reducing one approximate search into many smaller exact searches.
+As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of the pattern in the text.
+Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m + k$ containing one seed of $p$.
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with exact seeds.}
+\label{fig:seeds-ext}
+\input{figures/filtration_exact.tikz}
+\end{center}
+\end{figure}
+
+How many verifications we expect to have?
+\begin{eqnarray}
+p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma\\
+\text{Pr}(H > 0) = \frac{1}{\sigma^q}\\
+E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}\\
+E(V) = (k + 1) \cdot E(H) < \frac{n (k + 1)}{\sigma^q}
+\end{eqnarray}
+
+Which is the runtime of the algorithm?
+
+How to choose the partitioning? Which length of $q$ makes filtration lossless?
+$q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
+
 
 \subsubsection{$q$-Gram filters}
 
-$q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N$, defined as the number of substrings of length $q$ common to two given strings.
-The following lemma relates the $q$-gram similarity to edit distance\footnote{Thus also to Hamming distance.}.
-It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ for any two strings having $d_E(x,y) = k$.
+$q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
+The following lemma relates $q$-gram similarity to edit distance\footnote{Thus it relates $q$-gram similarity also to Hamming distance.}.
+It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ for any two strings $x,y$ for which $d_E(x,y) = k$.
 This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
 \begin{lemma}
 \citep{?}
@@ -473,47 +527,6 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \input{figures/filtration_qgrams.tikz}
 \end{center}
 \end{figure}
-
-\subsubsection{Seed filters}
-
-Again, we start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
-If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed $y^i$ will occur as a factor of $x$.
-
-\begin{lemma}
-\citep{Baeza1999b}
-If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
-\end{lemma}
-\begin{proof}
-Again, by induction on k?
-\end{proof}
-
-Thus, we solve $k$-differences by partitioning $p$ into $k+1$ seeds and searching them into $t$, \eg with the help of a substring index.
-Note that we are reducing one approximate search into many smaller exact searches.
-Again, this lemma gives us a necessary but not sufficient condition, consequently we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of $p$ in $t$.
-Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m + k$ containing one seed of $p$.
-
-Which length of $q$ makes filtration lossless? 
-
-
-\begin{figure}[h]
-\begin{center}
-\caption{Filtration with exact seeds.}
-\label{fig:seeds-ext}
-\input{figures/filtration_exact.tikz}
-\end{center}
-\end{figure}
-
-\subsubsection{Analysis of filters}
-
-%\begin{eqnarray}
-%p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma\\
-%\text{Pr}(H > 0) = \frac{1}{\sigma^q}\\
-%E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}\\
-%\end{eqnarray}
-%
-%\begin{eqnarray}
-%E(V) = (k + 1) \cdot E(H) < \frac{n (k + 1)}{\sigma^q}
-%\end{eqnarray}
 
 
 %\subsubsection{Approximate seeds}

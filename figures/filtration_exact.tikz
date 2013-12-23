@@ -52,16 +52,16 @@
 
 	\draw[line] (genome_1.north west) -- (genome_#1.north east) ;
 	\draw[line] (genome_1.south west) -- (genome_#1.south east) ;
-	\draw[line] (genome_1.north west) -- (genome_1.south west) ;
-	\draw[line] (genome_#1.north east) -- (genome_#1.south east) ;
+	\draw[wave] (genome_1.north west) -- (genome_1.south west) ;
+	\draw[wave] (genome_#1.north east) -- (genome_#1.south east) ;
 }
 
 \transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$-$, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $-$/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}
 \band{25}
 
-\node[left=0.25cm of read_1] {$x$} ;
-\node[left=0.25cm of genome_1] {$y$} ;
-\node[left=0.25cm of transcript_1] {$transcript$} ;
+\node[left=0.25cm of read_1] {$p$} ;
+\node[left=0.25cm of genome_1] {$t$} ;
+\node[left=0.25cm of transcript_1] {} ;
 
 % (a) Exact seeds
 % GCTN TGGG CATT ATGG C-CAT TTTT
