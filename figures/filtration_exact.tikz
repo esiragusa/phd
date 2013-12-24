@@ -7,43 +7,27 @@
 \tikzstyle{frame}=[draw, rectangle, thin, inner sep=0pt]
 \tikzstyle{covered}=[draw, rectangle, thin, inner sep=0pt, fill=LightGray]
 \tikzstyle{tape}=[fill=black]
-\tikzstyle{strike}=[-, style=double, ultra thin, decorate, decoration=zigzag]
-\tikzstyle{line}=[-, thin]
+
+\tikzstyle{strike}=[-, style=double, thin, decorate, decoration=zigzag]
+\tikzstyle{break}=[-, thin, decorate, decoration=zigzag]
 \tikzstyle{wave}=[-, thin, decorate, decoration={snake, segment length=2.5mm, amplitude=0.4mm}]
+\tikzstyle{line}=[-, thin]
 
 
-\newcommand{\transcript}[2]
+\newcommand{\transcript}[3]
 {
     \foreach[count=\i] \r/\t/\g in {#2}
     {
-    	\node[n] (read_\i) at (0.4*\i,0) {\r};
+    	\node[n] (read_\i) at (0.4*\i,#3*0.4) {\r};
 		\node[n] (genome_\i)  at (0.4*\i,-1) {\g};
-		\ifthenelse{\equal{\t}{M}}
-	    {
-			\draw[e] (read_\i) -- (genome_\i) node[m] (transcript_\i) {\t};
-		}
-		{
-			\draw[e] (read_\i) -- (genome_\i) node[t] (transcript_\i) {\t};
-		}
+		\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[m] (transcript_\i) {\t};
     }
     
     \begin{pgfonlayer}{background} 
-		\draw[tape] ([xshift=0.1cm, yshift=-0.01cm]transcript_1.north west) rectangle ([xshift=-0.1cm, yshift=0.01cm]transcript_#1.south east) ;
+		\draw[tape] ([xshift=0.1cm, yshift=-0.01cm]transcript_1.north west)
+				rectangle
+					([xshift=-0.1cm, yshift=0.01cm]transcript_#1.south east) ;
 	\end{pgfonlayer}
-}
-
-\newcommand{\seed}[3]
-{
-	\ifthenelse{\equal{#3}{0}}
-    {
-%    	\draw[strike] (read_#1.west) -- (read_#2.east) ;
-
-	    \begin{pgfonlayer}{background} 
-    		\draw[covered] (read_#1.north west) rectangle (read_#2.south east) ;
-		\end{pgfonlayer}
-    }
-           
-	\node[frame] (read_rect) [transform shape, fit = (read_#1) (read_#2)] {};
 }
 
 \newcommand{\band}[1]
@@ -56,30 +40,57 @@
 	\draw[wave] (genome_#1.north east) -- (genome_#1.south east) ;
 }
 
-\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$-$, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $-$/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}
+\newcommand{\seed}[3]
+{           
+	\node[frame] (read_rect) [transform shape, fit = (read_#1) (read_#2)] {};
+}
+
+\newcommand{\qgram}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+	}
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+}
+
+\newcommand{\qgrami}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+	}
+
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_2.north west) ;
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_1.south west) ;
+	\draw[line] (qgram_#1_1.south west) -- (qgram_#1_2.south west) ;
+	\draw[break] (qgram_#1_1.north east) -- (qgram_#1_2.south west) ;
+
+	\draw[line] (qgram_#1_2.north east) -- (qgram_#1_5.north east) ;
+	\draw[line] (qgram_#1_5.north east) -- (qgram_#1_5.south east) ;
+	\draw[line] (qgram_#1_2.south east) -- (qgram_#1_5.south east) ;
+	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
+}
+
+\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$ $, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $ $/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}{1}
 \band{25}
+\seed{1}{25}{1}
 
 \node[left=0.25cm of read_1] {$p$} ;
 \node[left=0.25cm of genome_1] {$t$} ;
-\node[left=0.25cm of transcript_1] {} ;
 
-% (a) Exact seeds
-% GCTN TGGG CATT ATGG C-CAT TTTT
-% GCTA TG-G CATT GTGG CCCAT TTAT
-%
-\seed{1}{4}{0}
-\seed{5}{8}{0}
-\seed{9}{12}{1}
-\seed{13}{16}{0}
-\seed{17}{21}{0}
-\seed{22}{25}{0}
+\foreach \x in {1,5,9,13,22}
+{
+	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{1}
+}
+\qgrami{17}{$\#$, $ $, $\#$, $\#$, $\#$}{1}
 
-% (b) Approximate seeds
-% GCTNTGGG CATTATGG C-CATTTTT
-% GCTATG-G CATTGTGG CCCATTTAT
-%
-%\seed{1}{8}{0}
-%\seed{9}{16}{1}
-%\seed{17}{25}{0}
+\draw[strike] (qgram_1_4.north) -- (qgram_1_4.south) ;
+\draw[strike] (qgram_5_3.north) -- (qgram_5_3.south) ;
+\draw[strike] (qgram_13_1.north) -- (qgram_13_1.south) ;
+\draw[strike] (qgram_22_3.north) -- (qgram_22_3.south) ;
+
+\draw[line] (qgram_17_2.north) -- (qgram_17_2.south) ;
+\draw[line] (qgram_17_2.north) -- (read_18.south) ;
 
 \end{tikzpicture}

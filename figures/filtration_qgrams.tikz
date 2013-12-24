@@ -75,7 +75,6 @@
 
 \node[left=0.25cm of read_1] {$p$} ;
 \node[left=0.25cm of genome_1] {$t$} ;
-\node[left=0.25cm of transcript_1] {} ;
 
 \foreach \x in {1,...,22}
 {
