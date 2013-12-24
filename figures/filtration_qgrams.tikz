@@ -69,7 +69,7 @@
 	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
 }
 
-\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/M/G, G/D/$ $, C/M/C, A/M/A, T/M/T, A/R/G, T/M/T, T/M/T, G/M/G, $ $/I/G, G/M/C, C/M/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}{4}
+\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/M/G, G/D/$ $, C/M/C, A/M/A, T/M/T, A/R/G, T/M/T, T/M/T, G/M/G, A/R/G, G/M/C, C/M/C, C/M/C, G/R/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}{4}
 \band{25}
 \seed{1}{25}{1}
 
@@ -77,21 +77,9 @@
 \node[left=0.25cm of genome_1] {$t$} ;
 \node[left=0.25cm of transcript_1] {} ;
 
-\foreach \x in {1,...,12}
+\foreach \x in {1,...,22}
 {
-	\pgfmathsetmacro{\y}{1+Mod(\x-1,4)}
-	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}
-}
-
-%\foreach \x in {15,...,19}
-%{
-%	\pgfmathsetmacro{\y}{1+Mod(\x-1,4)}
-%	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}
-%}
-
-\foreach \x in {18,...,22}
-{
-	\pgfmathsetmacro{\y}{1+Mod(\x-2,4)}
+	\pgfmathtruncatemacro{\y}{1+Mod(\x-1,4)}
 	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}
 }
 
@@ -99,27 +87,15 @@
 \draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
 \draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
 
-%\draw[line] (read_23.south)+(0,-3*0.4) -- (transcript_23);
-%\draw[line] (read_24.south)+(0,-2*0.4) -- (transcript_24);
-\draw[line] (read_25.south)+(0,-1*0.4) -- (transcript_25);
+\draw[line] (qgram_20_4.north) -- (qgram_22_2);
+\draw[line] (read_24.south)+(0,-2*0.4) -- (transcript_24);
+\draw[line] (read_25.south)+(0,-2*0.4) -- (transcript_25);
+\draw[line] (qgram_22_4.north) -- (read_25.south);
 
-
-\draw[strike] (qgram_1_4.north) -- (qgram_1_4.south) ;
-\draw[strike] (qgram_2_3.north) -- (qgram_2_3.south) ;
-\draw[strike] (qgram_3_2.north) -- (qgram_3_2.south) ;
-\draw[strike] (qgram_4_1.north) -- (qgram_4_1.south) ;
-
-\draw[strike] (qgram_5_4.north) -- (qgram_5_4.south) ;
-\draw[strike] (qgram_6_3.north) -- (qgram_6_3.south) ;
-\draw[strike] (qgram_7_2.north) -- (qgram_7_2.south) ;
-\draw[strike] (qgram_8_1.north) -- (qgram_8_1.south) ;
-
-\draw[strike] (qgram_9_4.north) -- (qgram_9_4.south) ;
-\draw[strike] (qgram_10_3.north) -- (qgram_10_3.south) ;
-\draw[strike] (qgram_11_2.north) -- (qgram_11_2.south) ;
-\draw[strike] (qgram_12_1.north) -- (qgram_12_1.south) ;
-
-%\draw[break] (qgram_17_1.north east) -- (qgram_17_1.south east) ;
-%\draw[break] (qgram_17_3.north west) -- (qgram_17_3.south west) ;
+\foreach \x in {1,...,20}
+{
+	\pgfmathtruncatemacro{\y}{4-Mod(\x-1,4)}
+	\draw[strike] (qgram_\x_\y.north) -- (qgram_\x_\y.south) ;
+}
 
 \end{tikzpicture}
