@@ -1,0 +1,86 @@
+\tikzstyle{n}=[inner sep=0pt, minimum size=10pt, align=center]
+\tikzstyle{e}=[-latex, thin]
+\tikzstyle{m}=[draw, shape=circle, clabel, pos=0.4, align=center, inner sep=0pt, minimum size=8pt, font=\tiny]
+\tikzstyle{t}=[draw, shape=circle, clabel, pos=0.4, align=center, inner sep=0pt, minimum size=8pt, font=\tiny, fill=LightGray]
+\tikzstyle{frame}=[draw, rectangle, thin, inner sep=0pt]
+\tikzstyle{covered}=[draw, rectangle, thin, inner sep=0pt, fill=LightGray]
+\tikzstyle{tape}=[fill=black]
+
+\tikzstyle{strike}=[-, style=double, thin, decorate, decoration=zigzag]
+\tikzstyle{break}=[-, thin, decorate, decoration=zigzag]
+\tikzstyle{wave}=[-, thin, decorate, decoration={snake, segment length=2.5mm, amplitude=0.4mm}]
+\tikzstyle{line}=[-, thin]
+
+
+\newcommand{\transcript}[3]
+{
+    \foreach[count=\i] \r/\t/\g in {#2}
+    {
+    	\node[n] (read_\i) at (0.4*\i,#3*0.4) {\r};
+		\node[n] (genome_\i)  at (0.4*\i,-1) {\g};
+%		\ifthenelse{\equal{\t}{M}}
+%	    {
+			\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[m] (transcript_\i) {\t};
+%		}
+%		{
+%			\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[t] (transcript_\i) {\t};
+%		}
+    }
+    
+    \begin{pgfonlayer}{background} 
+		\draw[tape] ([xshift=0.1cm, yshift=-0.01cm]transcript_1.north west)
+				rectangle
+					([xshift=-0.1cm, yshift=0.01cm]transcript_#1.south east) ;
+	\end{pgfonlayer}
+}
+
+\newcommand{\band}[1]
+{
+%	\node[frame] (genome_rect) [transform shape, fit = (genome_1) (genome_#1)] {};
+
+	\draw[line] (genome_1.north west) -- (genome_#1.north east) ;
+	\draw[line] (genome_1.south west) -- (genome_#1.south east) ;
+	\draw[wave] (genome_1.north west) -- (genome_1.south west) ;
+	\draw[wave] (genome_#1.north east) -- (genome_#1.south east) ;
+}
+
+\newcommand{\seed}[3]
+{
+	\ifthenelse{\equal{#3}{0}}
+    {
+%    	\draw[strike] (read_#1.west) -- (read_#2.east) ;
+
+	    \begin{pgfonlayer}{background} 
+    		\draw[covered] (read_#1.north west) rectangle (read_#2.south east) ;
+		\end{pgfonlayer}
+    }
+           
+	\node[frame] (read_rect) [transform shape, fit = (read_#1) (read_#2)] {};
+}
+
+\newcommand{\qgram}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,1.6-0.4*#3) {\phantom{\r}};
+	}
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+}
+
+\newcommand{\qgrami}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+	}
+
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_2.north west) ;
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_1.south west) ;
+	\draw[line] (qgram_#1_1.south west) -- (qgram_#1_2.south west) ;
+	\draw[break] (qgram_#1_1.north east) -- (qgram_#1_2.south west) ;
+
+	\draw[line] (qgram_#1_2.north east) -- (qgram_#1_5.north east) ;
+	\draw[line] (qgram_#1_5.north east) -- (qgram_#1_5.south east) ;
+	\draw[line] (qgram_#1_2.south east) -- (qgram_#1_5.south east) ;
+	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
+}

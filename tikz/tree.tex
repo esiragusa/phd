@@ -1,0 +1,118 @@
+%-----------------------------------------
+% Suffix tree labels
+%-----------------------------------------
+
+\tikzstyle{root}=[circle,fill,color=gray,inner sep=1.5pt]
+\tikzstyle{inner}=[circle,draw,color=gray,inner sep=1.5pt]
+\tikzstyle{implicit}=[circle,fill,inner sep=0.2pt]
+\tikzstyle{leaf}=[rectangle,color=black,draw,inner sep=1.5pt]
+\tikzstyle{pf}=[->,very thin,color=gray,text=mycolor1high]
+\tikzstyle{kpf}=[very thin]
+\tikzstyle{clabel}=[fill=white,inner sep=1pt,font=\small\tt]
+
+\newcommand{\labelA}[1]{node[clabel,pos=0.5]{#1}}
+\newcommand{\labelB}[2]{node[clabel,pos=0.333]{#1} node[clabel,pos=0.666]{#2} }
+\newcommand{\labelC}[3]{node[clabel,pos=0.25]{#1} node[clabel,pos=0.5]{#2} node[clabel,pos=0.75]{#3} }
+\newcommand{\labelD}[4]{node[clabel,pos=0.2]{#1} node[clabel,pos=0.4]{#2} node[clabel,pos=0.6]{#3} node[clabel,pos=0.8]{#4} }
+\newcommand{\labelE}[5]{node[clabel,pos=0.166]{#1} node[clabel,pos=0.333]{#2} node[clabel,pos=0.5]{#3} node[clabel,pos=0.666]{#4} node[clabel,pos=0.833]{#5} }
+\newcommand{\labelF}[6]{node[clabel,pos=0.142]{#1} node[clabel,pos=0.285]{#2} node[clabel,pos=0.428]{#3} node[clabel,pos=0.571]{#4} node[clabel,pos=0.714]{#5} node[clabel,pos=0.857]{#6} }
+\newcommand{\labelG}[7]{node[clabel,pos=0.125]{#1} node[clabel,pos=0.25]{#2} node[clabel,pos=0.375]{#3} node[clabel,pos=0.5]{#4} node[clabel,pos=0.625]{#5} node[clabel,pos=0.75]{#6} node[clabel,pos=0.875]{#7} }
+\newcommand{\labelH}[8]{node[clabel,pos=0.111]{#1} node[clabel,pos=0.222]{#2} node[clabel,pos=0.333]{#3} node[clabel,pos=0.444]{#4} node[clabel,pos=0.555]{#5} node[clabel,pos=0.666]{#6} node[clabel,pos=0.777]{#7} node[clabel,pos=0.888]{#8} }
+\newcommand{\labelI}[9]{node[clabel,pos=0.1]{#1} node[clabel,pos=0.2]{#2} node[clabel,pos=0.3]{#3} node[clabel,pos=0.4]{#4} node[clabel,pos=0.5]{#5} node[clabel,pos=0.6]{#6} node[clabel,pos=0.7]{#7} node[clabel,pos=0.8]{#8} node[clabel,pos=0.9]{#9} }
+
+
+\newcounter{wotdFig}
+\newcounter{skewFig}
+\newcounter {x}
+\newcounter{sy}
+\setcounter{sy}{3}
+\newcounter{ty}
+\setcounter{ty}{-5}
+\newboolean{wotdorig} %Deklaration
+\setboolean{wotdorig}{false} %Zuweisung
+
+
+%-----------------------------------------
+% Enhanced Suffix Array
+%-----------------------------------------
+
+\newcommand{\ltreeexample}
+{
+		\tikzstyle{lvalue}=[text=black,inner sep=6pt, pos=0.5, font=\bfseries, font=\sf,anchor=center]
+
+		\tikzstyle{siblA}=[sibling distance=50mm, level distance=25mm]
+		\tikzstyle{siblB}=[sibling distance=45mm]
+		\tikzstyle{siblC}=[sibling distance=25mm]
+
+		\node[inode](r) {[0..10)}
+			child [siblA,grow=left] {node (0) at (-3,0) {} edge from parent[draw=none]}
+%			child {node (0) {} edge from parent[draw=green]}
+%			child {
+%				node[inode](1) {[0,0]}
+%			}
+			child [siblA] {
+				node[inode](a) {[0..2)}
+				child [siblC] { node[inode](a1) {[0..1)} }
+				child [siblC] { node[inode](atctctta1) {[1..2)} }
+			}
+			child [siblA] {
+				node[inode](ct) {[2..4)}
+				child [siblC] { node[inode](ctctta1) {[2..3)} }
+				child [siblC] { node[inode](ctta1) {[3..4)} }
+			}
+			child [siblA] {
+				node[inode](t) at (3,0) {[4..10)}
+				child [siblB] { 
+					node[inode](ta) {[4..6)}
+					child [siblC] { node[inode](ta1) {[4..5)} }
+					child [siblC] { node[inode](tatctctta1) {[5..6)} }
+				}
+				child [siblB] { 
+					node[inode](tct) {[6..8)} 
+					child [siblC] { node[inode](tctctta1) {[6..7)} }
+					child [siblC] { node[inode](tctta1) {[7..8)} }
+				}
+				child [siblB] { 
+					node[inode](tta) {[8..10)} 
+					child [siblC] { node[inode](tta1) {[8..9)} }
+					child [siblC] { node[inode](ttatctctta1) {[9..10)} }
+				}
+			}
+			child [siblA, grow=right] {node (0b) at (3,0) {} edge from parent[draw=none]}
+		;
+		\path (r) -- (0) node [lvalue](l0) {0};
+		\path (r) -- (0b) node [lvalue](l11) {10};
+%		\path (1) -- (a) node [lvalue](l1) {1};
+		\path (a) -- (ct) node [lvalue](l3) {2};
+		\path (ct) -- (t) node [lvalue](l5) {4};
+		\path (a1) -- (atctctta1) node [lvalue](l2) {1};
+		\path (ctctta1) -- (ctta1) node [lvalue](l4) {3};
+
+		\path (ta) -- (tct) node [lvalue](l7) {6};
+		\path (tct) -- (tta) node [lvalue](l9) {8};
+
+		\path (ta1) -- (tatctctta1) node [lvalue](l6) {5};
+		\path (tctctta1) -- (tctta1) node [lvalue](l8) {7};
+		\path (tta1) -- (ttatctctta1) node [lvalue](l10) {9};
+		
+%		\draw[nextl] (l0) to node {} (l3);
+%		\draw[downS] (l0) to node {} (l2);
+		\draw[downS] (l0) to node {} (l3);
+		\draw[nextl] (l0) to node {} (l11);
+		\draw[nextl] (l3) to node {} (l5);
+		\draw[up] (l3) to node {} (l2);
+		\draw[downS] (l3) to node {} (l4);
+%		\draw[nextl] (l5) to node {} (l11);
+		\draw[up] (l5) to node {} (l4);
+		\draw[down] (l5) to node {} (l7);
+		\draw[nextl] (l7) to node {} (l9);
+		\draw[up] (l7) to node {} (l6);
+		\draw[downS] (l7) to node {} (l8);
+		\draw[up] (l9) to node {} (l8);
+		\draw[down] (l9) to node {} (l10);
+%		\draw[up] (l11) to node {} (l7);
+		\draw[up] (l11) to node {} (l3);
+}
+
+\newcommand\tabnode[2]{\tikz \node (#1) {#2};}
+\newcommand\tabemptynode[1]{\tikz \node[transparent,outer sep=2pt] (#1) {8};}

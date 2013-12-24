@@ -1,0 +1,104 @@
+%-----------------------------------------
+% Print Strings and Tables
+%-----------------------------------------
+
+\newcommand {\PrintChar} [3]
+{
+	\node[anchor=base] at (#1 + .5, #2 + \ifdefined\CharYOfs \CharYOfs \else + .7 \fi) [char] { \ifdefined\CharFont \CharFont \else \Large\ttfamily \fi {#3} };
+}
+
+\newcommand {\PrintIndex} [3]
+{
+	\node[anchor=base] at (#1 + .5, #2 - .25) [position,color=NumberColor] { \sffamily\footnotesize{#3} };
+}
+
+\newcommand {\PrintCharWithIndex} [4]
+{
+	\PrintChar{#1}{#2}{#3}
+	\PrintIndex{#1}{#2}{#4}
+}
+
+\newcounter {PrintString@Index}
+\def\reallyempty{}
+\newcommand {\PrintIndices} [3]
+{
+	\foreach[count=\i from 0] \val in {#3}
+	{
+		\setcounter {x} {\i}
+		\PrintIndex {#1 + \arabic{x}} {#2} {\val} {\tt{\arabic{x}}}
+	}
+}
+\newcommand {\PrintString} [4]
+{
+	\node at (#1 + .2, #2 + .75) [title] { \LARGE { #3 } };
+	\foreach[count=\i from 0] \val in {#4}
+	{
+		\setcounter {x} {\i}
+		\PrintChar {#1 + \arabic{x}} {#2} {\val} {\arabic{x}}
+%		\draw (#1 + \arabic{x},#2) grid +(1, 1);
+		\draw[black] (#1 + \arabic{x},#2) rectangle (#1 + \arabic{x} + 1,#2 + 1);
+	}
+%	\draw (#1,#2) grid +(\arabic{x}, 1);
+}
+
+\newcommand {\PrintStringWithIndex} [4]
+{
+	\setcounter {PrintString@Index} {0}
+	\node at (#1 + .2, #2 + .75) [title] { \LARGE { #3 } };
+	\foreach[count=\i from 0] \val in {#4}
+	{
+		\setcounter {x} {\i}
+		\ifx\val\reallyempty
+		\else
+			\PrintCharWithIndex {#1 + \arabic{x}} {#2} {\val} {\arabic{PrintString@Index}}
+			\addtocounter {PrintString@Index} {1}
+%			\draw (#1 + \arabic{x},#2) grid +(1, 1);
+			\draw[black] (#1 + \arabic{x},#2) rectangle (#1 + \arabic{x} + 1,#2 + 1);
+		\fi
+	}
+%	\draw (#1,#2) grid +(\arabic{x}, 1);
+}
+
+\newcounter{tokcnt}
+\newcommand {\PrintVString} [3]
+{
+	\strlenstore{#3}{tokcnt}
+	\foreach \val in {1,2,...,\value{tokcnt}}
+	{
+		\FPmul{\ofsY}{\val}{.7}
+		\PrintChar {#1} {#2 - 0.7 + \ofsY} {\color{NumberColor}\substr{#3}{\val}{1}}
+	}
+}
+
+\newcommand {\PrintStringOnly} [3]
+{
+	\foreach[count=\i from 0] \val in {#3}
+	{
+		\setcounter {x} {\i}
+		\PrintChar {#1 + \arabic{x}} {#2} {\val} {\arabic{x}}
+	}
+}
+
+\newcommand {\PrintVStringOnly} [3]
+{
+	\foreach[count=\i from 0] \val in {#3}
+	{
+		\setcounter {x} {\i}
+		\PrintChar {#1} {#2 + \arabic{x}} {\val} {\arabic{x}}
+	}
+}
+
+\newcommand {\PrintDots} [3]
+{
+	\foreach[count=\i from 0] \val in {#3}
+	{
+		\setcounter {x} {\i}
+		\ifthenelse{\equal{\val}{0}}
+		{
+			\PrintChar {#1 + \arabic{x}} {#2} {$\cdot$} {\arabic{x}}
+		}
+		{
+			\PrintChar {#1 + \arabic{x}} {#2} {$\bullet$} {\arabic{x}}
+		}
+	}
+}

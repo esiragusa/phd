@@ -2,6 +2,8 @@
 % TiKZ Macros
 %-----------------------------------------
 
+\usetikzlibrary{arrows,snakes,backgrounds,decorations,patterns,matrix,shapes,fit,calc,shadows,plotmarks,mindmap,trees,positioning}
+
 %
 % Suffix tree labels
 %
@@ -108,6 +110,27 @@
 		\PrintChar {#1} {#2 - 0.7 + \ofsY} {\color{NumberColor}\substr{#3}{\val}{1}}
 	}
 }
+
+\newcommand {\PrintStringOnly} [3]
+{
+	\setcounter {x} {0}
+	\foreach \val in {#3}
+	{
+		\PrintChar {#1 + \arabic{x}} {#2} {\val} {\arabic{x}}
+		\addtocounter {x} {1}
+	}
+}
+
+\newcommand {\PrintVStringOnly} [3]
+{
+	\setcounter {x} {0}
+	\foreach \val in {#3}
+	{
+		\PrintChar {#1} {#2 + \arabic{x}} {\val} {\arabic{x}}
+		\addtocounter {x} {1}
+	}
+}
+
 
 %
 % Enhanced Suffix Array

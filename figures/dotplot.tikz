@@ -1,33 +1,33 @@
-\begin{tikzpicture}[xscale=0.3,yscale=-0.3]
+\begin{tikzpicture}[
+	xscale=0.3,yscale=-0.3,
+    char/.style={draw=none, text centered, anchor=base},
+    position/.style={draw=none, text centered, anchor=base},
+]
+	\def\CharFont{\small\sffamily}
+
 	\tikzstyle{grid lines}=[gray,densely dotted,line width=0.3pt]
-	
-	% paralelogram and grid
+	\tikzstyle{labelstyle}=[font=\sf\footnotesize,color=NumberColor]
+
 	\begin{pgfscope}
 		\pgftransformshift{\pgfpoint{-3cm}{0cm}}
-		\clip (3,0) rectangle (19, 13);
-		\draw[draw=none,fill=gray!2] (1,0) rectangle (19, 13);
-%		\draw[style=grid lines](0,0) grid +(20,20);
-		\draw[black] (3,0) rectangle (19, 13);
-
-		\node at (3.5,0.5) {\sf\tiny $\bullet$};
-		\node at (4.5,0.5) {\sf\tiny $\bullet$};
-		\node at (5.5,0.5) {\sf\tiny $\cdot$};
-		\node at (6.5,0.5) {\sf\tiny $\bullet$};
-		\node at (7.5,0.5) {\sf\tiny $\bullet$};
-		\node at (8.5,0.5) {\sf\tiny $\bullet$};
-		\node at (9.5,0.5) {\sf\tiny $\bullet$};
-		\node at (10.5,0.5){\sf\tiny $\bullet$};
-		\node at (3.5,1.5) {\sf\tiny $\bullet$};
-		\node at (3.5,2.5) {\sf\tiny $\bullet$};
-		\node at (3.5,3.5) {\sf\tiny $\bullet$};
+		\clip (3,0) rectangle (16, 13);
+		\draw[draw=none,fill=gray!2] (1,0) rectangle (16, 13);
+		\draw[black] (3,0) rectangle (16, 13);
 	\end{pgfscope}
-	
-	\tikzstyle{labelstyle}=[font=\sf\footnotesize,color=NumberColor]
-	
-	\node[labelstyle] at (.5,14) {0};
-	\node[labelstyle] at (15.5,14) {$n$};
 
-	\node[labelstyle] at (-1,.5) {0};
-	\node[labelstyle] at (-1,12.5) {$m$};
-
+	\PrintDots{0}{0.5}{1,0,1,0,0,0,0,0,0,0,1,0,0}
+	\PrintDots{0}{1.5}{0,1,0,0,0,0,0,0,0,0,0,0,1}
+	\PrintDots{0}{2.5}{0,1,0,0,0,0,0,0,0,0,0,0,1}
+	\PrintDots{0}{3.5}{1,0,1,0,0,0,0,0,0,0,1,0,0}
+	\PrintDots{0}{4.5}{0,0,0,1,0,1,0,1,1,0,0,1,0}
+	\PrintDots{0}{5.5}{0,0,0,1,0,1,0,1,1,0,0,1,0}
+	\PrintDots{0}{6.5}{0,0,0,0,0,0,1,0,0,1,0,0,0}
+	\PrintDots{0}{7.5}{0,0,0,1,0,1,0,1,1,0,0,1,0}
+	\PrintDots{0}{8.5}{0,0,0,0,0,0,1,0,0,1,0,0,0}
+	\PrintDots{0}{9.5}{1,0,1,0,0,0,0,0,0,0,1,0,0}
+	\PrintDots{0}{10.5}{0,0,0,1,0,1,0,1,1,0,0,1,0}
+	\PrintDots{0}{11.5}{0,1,0,0,0,0,0,0,0,0,0,0,1}
+	
+	\PrintStringOnly{0}{-1.1}{C,G,C,A,N,A,T,A,A,T,C,A,G}
+	\PrintVStringOnly{-1.2}{.5}{C,G,G,C,A,A,T,A,T,C,A,G}
 \end{tikzpicture}
