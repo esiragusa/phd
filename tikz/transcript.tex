@@ -67,6 +67,15 @@
 	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
 }
 
+\newcommand{\qgramo}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+	}
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+}
+
 \newcommand{\qgrami}[3]
 {
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
