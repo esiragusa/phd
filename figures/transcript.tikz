@@ -1,4 +1,4 @@
-\begin{tikzpicture}[font=\normalsize]
+\begin{tikzpicture}[font=\normalsize\sffamily]
 
 \transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$ $, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $ $/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}{0}
 \band{25}

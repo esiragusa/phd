@@ -2,6 +2,9 @@
 % Banded Myers
 %-----------------------------------------
 
+\tikzstyle{grid lines}=[gray,densely dotted,line width=0.3pt]
+
+
 \newcommand{\parallelogram}[4] { % params: start x, start y, end x, diagonal width
   \fill[color=black, opacity=0.2] (#1,#2) -- (#3,#2+#3-#1) -- (#3,#2+#3-#1+#4) -- (#1,#2+#4) -- cycle;
 }
