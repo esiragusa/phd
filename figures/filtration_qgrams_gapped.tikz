@@ -1,0 +1,33 @@
+\begin{tikzpicture}[font=\normalsize\sffamily]
+
+\transcript{25}{G/M/G, C/M/C, T/M/T, T/M/T, N/R/A, G/M/G, T/M/T, G/M/G, C/M/C, G/R/A, T/M/T, A/M/A, T/M/T, T/M/T, A/R/G, A/M/A, G/M/C, C/M/C, C/M/C, G/R/A, T/M/T, T/M/T, A/R/T, A/M/A, T/M/T}{5}
+\band{25}
+\seed{1}{25}{1}
+
+\node[left=0.25cm of read_1] {$p$} ;
+\node[left=0.25cm of genome_1] {$t$} ;
+
+\foreach \x in {1,...,21}
+{
+	\pgfmathtruncatemacro{\y}{1+Mod(\x-1,5)}
+	\qgramg{\x}{$\#$, $ $, $\#$, $\#$, $\#$}{\y}
+}
+
+\foreach \x in {1,2,3,5,6,7,8,10,11,12,13,15,16,17,18,20}
+{
+	\pgfmathtruncatemacro{\y}{5-Mod(\x-1,5)}
+	\draw[strike] (qgram_\x_\y.north) -- (qgram_\x_\y.south) ;
+}
+\draw[strike] (qgram_21_3.north) -- (qgram_21_3.south) ;
+\draw[strike] (qgram_19_5.north) -- (qgram_19_5.south) ;
+
+%\draw[line] (read_1.south)+(0,-1*0.4) -- (transcript_1);
+%\draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
+%\draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
+%\draw[line] (read_4.south)+(0,-4*0.4) -- (transcript_4);
+
+%\draw[line] (qgram_21_5) -- (transcript_25);
+%\draw[line] (qgram_21_4) -- (qgram_20_5);
+%\draw[line] (qgram_21_3) -- (qgram_19_5);
+
+\end{tikzpicture}
