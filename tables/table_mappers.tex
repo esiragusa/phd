@@ -1,0 +1,16 @@
+% latex table generated in R 2.15.0 by xtable 1.7-0 package
+% Sun Jul  1 11:47:28 2012
+\begin{tabular}{llccccc}
+  \toprule 
+%  & & \multicolumn{3}{c}{$\overbrace{}^\text{index}$} & \\
+   & mapper & { scoring scheme } & {  method } &  { index } & {  reference } & {  reads } \\ 
+  \midrule \multirow{4}{*}{\begin{sideways}\scriptsize \hspace{1ex} best\end{sideways}} 
+  & {\emph{Masai}} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
+  & {Bowtie\,2} & qualities + affine & exact seeds &  FM-index & \cmark & \xmark \\ 
+  & {BWA} & qualities & backtracking & FM-index & \cmark & \xmark \\
+%  & {Soap\,2} & qualities & backtracking  & FM-index & \cmark & \xmark \\ 
+	  \midrule\multirow{5}{*}{\begin{sideways}\scriptsize \hspace{6ex} all\end{sideways}} 
+  & {\emph{Masai}} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
+  & {RazerS\,3 } & edit distance & exact seeds & $q$-gram index & \xmark & \cmark  \\ 
+  & {mrFAST } & edit distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
+\bottomrule \end{tabular}
