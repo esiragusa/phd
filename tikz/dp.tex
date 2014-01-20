@@ -29,12 +29,12 @@
 	\foreach \val in {1,...,#4}
 	{
 		\ifnum\val<#3
-			\fill[fill=DPRecurseColor] (#1+\val,#2+1) rectangle (#1+\val + 1, #2+\val + 1);
+			\fill[fill=gray!2] (#1+\val,#2+1) rectangle (#1+\val + 1, #2+\val + 1);
 		\else
 			\ifnum\val<\numexpr #4-1
-				\fill[fill=DPRecurseColor] (#1+\val,#2+\val-#3+1) rectangle (#1+\val+1,#2+\val+1);
+				\fill[fill=gray!2] (#1+\val,#2+\val-#3+1) rectangle (#1+\val+1,#2+\val+1);
 			\else
-				\fill[fill=DPRecurseColor] (#1+\val,#2+\val-#3+1) rectangle (#1+\val+1,#2+#4-1);
+				\fill[fill=gray!2] (#1+\val,#2+\val-#3+1) rectangle (#1+\val+1,#2+#4-1);
 			\fi
 		\fi
 	}

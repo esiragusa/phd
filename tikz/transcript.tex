@@ -10,6 +10,7 @@
 \tikzstyle{break}=[-, thin, decorate, decoration=zigzag]
 \tikzstyle{wave}=[-, thin, decorate, decoration={snake, segment length=2.5mm, amplitude=0.4mm}]
 \tikzstyle{line}=[-, thin]
+\tikzstyle{gap}=[-, style=double, thin, double distance=0.3mm]
 
 
 \newcommand{\transcript}[3]
@@ -92,4 +93,16 @@
 	\draw[line] (qgram_#1_5.north east) -- (qgram_#1_5.south east) ;
 	\draw[line] (qgram_#1_2.south east) -- (qgram_#1_5.south east) ;
 	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
+}
+
+\newcommand{\qgramg}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,2.0-0.4*#3) {\phantom{\r}};
+	}
+
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1)] {};
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_3) (qgram_#1_5)] {};
+	\draw[gap] (qgram_#1_1) -- (qgram_#1_3) ;
 }
