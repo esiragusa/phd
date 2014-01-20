@@ -13,14 +13,14 @@
 	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}
 }
 
-\draw[line] (read_1.south)+(0,-1*0.4) -- (transcript_1);
-\draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
-\draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
-
-\draw[line] (qgram_20_4.north) -- (qgram_22_2);
-\draw[line] (read_24.south)+(0,-2*0.4) -- (transcript_24);
-\draw[line] (read_25.south)+(0,-2*0.4) -- (transcript_25);
-\draw[line] (qgram_22_4.north) -- (read_25.south);
+%\draw[line] (read_1.south)+(0,-1*0.4) -- (transcript_1);
+%\draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
+%\draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
+%
+%\draw[line] (qgram_20_4.north) -- (qgram_22_2);
+%\draw[line] (read_24.south)+(0,-2*0.4) -- (transcript_24);
+%\draw[line] (read_25.south)+(0,-2*0.4) -- (transcript_25);
+%\draw[line] (qgram_22_4.north) -- (read_25.south);
 
 \foreach \x in {1,...,20}
 {

@@ -18,7 +18,7 @@
 \draw[strike] (qgram_13_1.north) -- (qgram_13_1.south) ;
 \draw[strike] (qgram_22_3.north) -- (qgram_22_3.south) ;
 
-\draw[line] (qgram_17_2.north) -- (qgram_17_2.south) ;
-\draw[line] (qgram_17_2.north) -- (read_18.south) ;
+%\draw[line] (qgram_17_2.north) -- (qgram_17_2.south) ;
+%\draw[line] (qgram_17_2.north) -- (read_18.south) ;
 
 \end{tikzpicture}

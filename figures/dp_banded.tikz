@@ -7,22 +7,22 @@
 	\begin{pgfscope}
 		\pgftransformshift{\pgfpoint{-3cm}{0cm}}
 		\clip (3,0) rectangle (17, 13);
-		\draw[draw=none,fill=gray!2] (1,0) rectangle (17, 13);
+		\draw[draw=none] (1,0) rectangle (17, 13);
         \bandedDotPara{0}{0}{11}{17};
 		\draw[style=grid lines](0,0) grid +(20,20);
 		\draw[black] (3,0) rectangle (17, 13);
-		\draw[black,densely dotted] (4,1) -- (4, 13);
-		\draw[black,densely dotted] (4,1) -- (17, 1);
+		\draw[black,densely dotted] (4,1) -- (4, 4);
+		\draw[black,densely dotted] (4,1) -- (11, 1);
 	\end{pgfscope}
 	
-%	\def\CharFont{\scriptsize\sffamily}
-%	\PrintStringOnly{0}{0.1}{0,1,2,3,4,5,6,7,8,9,10,11,12,13}
-%	\PrintStringOnly{0}{1.1}{0,1,2,3,4,5,6,7,8,9}
-%	\PrintStringOnly{0}{2.1}{0,1,2,3,4,5,6,7,8,9}
-%	\PrintStringOnly{0}{3.1}{0,1,2,3,4,5,6,7,8,9}
-%	\PrintStringOnly{0}{4.1}{0,1,2,3,4,5,6,7,8,9}
-%	\PrintStringOnly{0}{5.1}{0,1,2,3,4,5,6,7,8,9}
-%	\PrintStringOnly{0}{6.1}{0,1,2,3,4,5,6,7,8,$\bullet$}
+	\def\CharFont{\scriptsize\sffamily}
+	\PrintStringOnly{0}{0.1}{0,1,2,3,4,5,6,7}
+	\PrintStringOnly{0}{1.1}{0,1,2,3,4,5,6,7,8}
+	\PrintStringOnly{0}{2.1}{0,1,2,3,4,5,6,7,8,9}
+	\PrintStringOnly{0}{3.1}{0,1,2,3,4,5,6,7,8,9,10}
+	\PrintStringOnly{1}{4.1}{0,1,2,3,4,5,6,7,8,9,10}
+	\PrintStringOnly{2}{5.1}{0,1,2,3,4,5,6,7,8,9,10}
+	\PrintStringOnly{3}{6.1}{0,1,2,3,4,5,6,7,8,9,10}
 
 	\def\CharFont{\small\sffamily}
 	\PrintStringOnly{0}{-1.1}{$\epsilon$,C,G,C,A,N,A,T,A,A,T,C,A,G}
