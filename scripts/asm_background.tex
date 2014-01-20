@@ -34,6 +34,12 @@ In this work we focus on read mapping, although many core algorithms considered 
 \label{fig:ngs-pipeline}
 \end{figure}
 
+\begin{itemize}
+\item Plan A: de-novo assembly
+\item Plan B: reference mapping
+\item Plan C: reference guided de-novo assembly
+\end{itemize}
+
 \subsection{Organization of this manuscript}
 
 % -----------------------------------------------------------------------------
@@ -502,9 +508,6 @@ Let $x,y$ be two strings with edit distance $k$ and $\min\{|x|,|y|\} = m$, then 
 By induction on k.
 \end{proof}
 
-\begin{example}
-\end{example}
-
 How can we use this result to solve approximate string matching?
 The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. the pattern can match any substring of the text.
 In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
@@ -525,6 +528,14 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \caption{Filtration with $q$-grams.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with gapped $q$-grams.}
+\label{fig:qgrams-gapped}
+\input{figures/filtration_qgrams_gapped.tikz}
 \end{center}
 \end{figure}
 
