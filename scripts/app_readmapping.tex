@@ -85,7 +85,11 @@ Cite regions of clinical relevance, \eg HLA-A.
 Cite regions of biological relevance, \eg 5S rRNA.
 
 
-\section{Read mappers}
+\section{Surveys on read mappers}
+
+Cite tens of surveys classifying hundreds of mappers.
+Critic the surveys.
+Critic the mappers.
 
 \subsection{Best mappers versus all mappers}
 
@@ -104,11 +108,101 @@ From the former problem, we conclude that considering only one optimal mapping l
 The latter problem tells us to be careful about relying on strict optimality.
 Therefore, in general a read mapper should return a comprehensive set of relevant mapping locations along with the likelihood that they correspond to the original location.
 
-\subsection{Popular read mappers}
 
-Cite tens of surveys classifying hundreds of mappers.
-Critic the surveys.
-Critic the mappers.
+\section{Read mappers}
+
+\subsection{Bowtie}
+
+Bowtie is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation Illumina/Solexa and AB/SOLiD short reads of length up to 50~bp.
+It achieves the former goal by indexing the reference genome with an FM-index and the latter goal by performing a greedy depth-first traversal on it.
+
+The greedy depth-first traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
+In addition, Bowtie speeds up backtracking by applying case pruning based, a simple application of the pigeonhole principle.
+However this technique is mostly suited for $k=1$ and requires the index of the forward and reverse text.
+
+Bowtie can be configured to search by strata, however the search time increases significantly while the search still misses a large fraction of the search space due to seeding heuristics.
+Main practical drawbacks of the tool are too many cryptic options, and the lack of paired-end mapping?
+
+Bowtie~2 has been designed to quickly report a couple of mapping locations for recent Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
+
+This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
+Candidate locations to verify are chosen randomly, to avoid uncompressing large CSA intervals and executing many DP instances.
+Each mapping location is verified using a striped vectorial dynamic programming algorithm, implemented using SIMD instructions, previously introduced by \cite{Farrar2009} and extended to compute end-to-end alignments.
+
+Bowtie~2 can be configured to report end-to-end or local alignments, scored using a tunable affine scoring scheme.
+For this reason, it is believed to be good at reporting alignments containing indels.
+However, its completely heuristic filtration strategy, independent of the scoring scheme, makes it hard to believe what it promises.
+
+\subsection{BWA}
+
+BWA-backtrack is designed to map Illumina/Solexa reads up to 100~bp and report a few best end-to-end alignments.
+The program performs a greedy breadth-first search on an FM-index of the reference genome.
+Nodes to be visited are ranked by edit distance score: the best node is popped from a priority queue and visited, its children are then inserted again in the queue.
+The traversal considers indels using a more involved 9-fold recursion.
+Backtracking is sped up by adopting a more stringent pruning strategy that, however, takes some preprocessing time and requires the index of the reverse reference genome.
+
+BWA performs paired-end alignments by trying to anchor both paired-end reads and verifying the corresponding mate, within an estimated insert size, using the classic DP-based Smith-Waterman algorithm.
+Consequently, the program in paired-end mode aligns reads at a slower rate than in single-end mode.
+The program is not fully multi-threaded, therefore BWA scales poorly on modern multi-core machines.
+
+BWA-SW is designed to map Roche/454 reads of average length of 400~bp.
+It is an heuristic version of BWT-SW designed to report a few good local alignments.
+
+This version of BWA adopts a double indexing strategy: it indexes all substrings of one read in a DAWG.
+It performs Smith-Waterman of all read substrings directly on the FM-index, by backtracking as soon as no viable alignment can be obtained.
+As in BWA-backtrack, the traversal proceeds in a greedy fashion.
+In addition, BWA-SW implements some seeding heuristics to limit backtracking and jump in the reference genome to verify candidate locations whenever this becomes favorable.
+
+This version of BWA does not support paired-end reads, presumably because it was meant for Roche/454 reads.
+
+\subsection{Soap}
+
+Soap~2 is very similar to Bowtie: it has been designed to produce a very quick but shallow mapping of Illumina/Solexa reads up to 75~bp with no more than 2 mismatches and no indels.
+However, its underlying algorithm is based on the so-called bi-directional (or 2-way) BWT.
+The tool support paired-end mapping but at a slower alignment rate.
+Practical drawbacks are the lack of native output in the de-facto standard SAM format and is closed source.
+
+Soap~3 is algorithmically equivalent to Soap~2 but targets only NVIDIA CUDA accelerators.
+
+\subsection{RazerS}
+
+RazerS has been designed to report all mapping locations within a fixed hamming or edit distance error-rate.
+It is based on a full-sensitive $q$-gram filtration method (SWIFT semi-global) combined with the Myers edit distance verification algorithm.
+On demand, the SWIFT filter can be configured to become lossy within a fixed loss rate.
+The lossy filter becomes more stringent and produces a lower number of candidates to verify, thus improving the overall speed of the program.
+All in all, the SWIFT filter is very slow while not highly specific.
+
+RazerS~3 is a faster version featuring shared-memory parallelism, a faster banded-Myers verification algorithm, and a faster filtration scheme based on exact seeds that however turns out to be very weak on mammal genomes.
+Because of this, RazerS~3 is one-two orders of magnitude slower than Bowtie~2 and BWA-backtrack on mammal genomes.
+
+All RazerS versions index the reads and scan the reference genome.
+One positive aspect of this strategy is that no preprocessing of the reference genome is required.
+However, other mapping strategies beyond all-mapping, \eg mapping by strata, cannot be efficiently implemented.
+Moreover, the program exhibit an high memory footprint as it must remember the mapping locations of all input reads until the whole reference genome has been scanned.
+
+\subsection{mr(s)Fast}
+
+The tools mrFast and mrsFast are designed to report all mapping locations within a fixed absolute number errors, respectively under the hamming and edit distance, given Illumina/Solexa reads of length ranging from 50~bp to 125~bp.
+Similarly to RazerS~3, they are based on a full-sensitive filtration strategy using exact seeds, which turns out to be very weak on mammal genomes.
+
+The peculiarity of their underlying method is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
+In addition, mrsFast computes the edit distance between one read and one mapping location in the reference genome with an antidiagonal-wise vectorial dynamic programming algorithm, implemented using SIMD instructions.
+
+These tools are as slow as RazerS~3 and appealing for nothing more than all-mapping.
+They lack multi-threading support and exhibit various bugs.
+Furthermore, they only accept reads of fixed length and produce files of impractical size.
+
+\subsection{GEM}
+
+The GEM mapper is a flexible read aligner that can be used either as an all-mapper or as a best/unique-mapper.
+It is based on state of the art approximate string matching methods like approximate seeds and suffix filters.
+GEM indexes the reference genome with an FM-index, tries to find an optimal filtration strategy per read, and verifies candidate locations using Myers algorithm.
+Paired-reads are either mapped independently and then combined, or left/right are mapped and their mates verified using an online strategy.
+
+Pros: full-sensitive, search by strata, all/best/unique strategies.
+Cons: many parameters, indirect SAM output, bad paired-end, closed source.
+
+\subsection{SHRiMP}
 
 \begin{table}[h]
   \center
@@ -119,20 +213,6 @@ Critic the mappers.
 	\input{tables/table_mappers}
   }
 \end{table}
-
-\subsubsection{Bowtie}
-
-\subsubsection{BWA}
-
-\subsubsection{Soap}
-
-\subsubsection{RazerS}
-
-\subsubsection{mrFast}
-
-\subsubsection{SHRiMP}
-
-\subsubsection{GEM}
 
 \section{Masai}
 \subsection{Single-end mapping}
