@@ -1,16 +1,42 @@
 % latex table generated in R 2.15.0 by xtable 1.7-0 package
 % Sun Jul  1 11:47:28 2012
-\begin{tabular}{llccccc}
-  \toprule 
-%  & & \multicolumn{3}{c}{$\overbrace{}^\text{index}$} & \\
-   & mapper & { scoring scheme } & {  method } &  { index } & {  reference } & {  reads } \\ 
-  \midrule \multirow{4}{*}{\begin{sideways}\scriptsize \hspace{1ex} best\end{sideways}} 
-  & {\emph{Masai}} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
-  & {Bowtie\,2} & qualities + affine & exact seeds &  FM-index & \cmark & \xmark \\ 
-  & {BWA} & qualities & backtracking & FM-index & \cmark & \xmark \\
-%  & {Soap\,2} & qualities & backtracking  & FM-index & \cmark & \xmark \\ 
-	  \midrule\multirow{5}{*}{\begin{sideways}\scriptsize \hspace{6ex} all\end{sideways}} 
-  & {\emph{Masai}} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
-  & {RazerS\,3 } & edit distance & exact seeds & $q$-gram index & \xmark & \cmark  \\ 
-  & {mrFAST } & edit distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
-\bottomrule \end{tabular}
+\begin{tabular}{lcccccccccccccccc}
+\toprule 
+& \multicolumn{4}{c}{ platform } & & \multicolumn{3}{c}{ strategy } & & \multicolumn{3}{c}{ method } & & \multicolumn{3}{c}{ index }\\
+\cmidrule{2-5} \cmidrule{7-9} \cmidrule{11-13} \cmidrule{15-17}
+& { Illumina } & {Ion}  & { 454 } & {SOLiD} & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {alignment} & {optimal} & {algorithm} & \phantom{-} & { type } & { reference } & { reads } \\ 
+\midrule
+{Bowtie} & $\leq 50$ & \xmark & \xmark & \cmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Bowtie~2} & $\geq 75$ & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
+\\
+{BWA} & $\leq 100$ & \xmark & \xmark & \xmark & & \cmark & \xmark & \bullet & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{BWA-SW} & \xmark & \cmark & \cmark & \xmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+\\
+{Soap~2} & $\leq 75$ & \xmark & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+\\
+{RazerS} & $\geq 50$ & \xmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
+{RazerS~3} & $\geq 50$ & \cmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
+\\
+{SHRiMP} & \cmark & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
+\\
+{mrsFast} & $\leq 75$ & \xmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrFast} & $\leq 125$ & \xmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+\\
+{GEM} & \cmark & \cmark & \xmark & \cmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
+\\
+{Masai} & \cmark & \xmark & \xmark & \xmark & & \cmark & \bullet & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
+{Yara} & \cmark & \cmark & \xmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \xmark \\
+
+
+%{Masai} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
+%  {Bowtie\,2} & qualities + affine & exact seeds &  FM-index & \cmark & \xmark \\ 
+%  {BWA} & qualities & backtracking & FM-index & \cmark & \xmark \\
+%  {Soap\,2} & hamming + qualities & backtracking  & FM-index & \cmark & \xmark \\ 
+%
+%  {RazerS} & edit distance & $q$-grams & $q$-gram index & \xmark & \cmark  \\ 
+%  {RazerS\,3 } & edit distance & exact seeds & $q$-gram index & \xmark & \cmark  \\ 
+%
+%  {mrsFAST } & hamming distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
+%  {mrFAST } & edit distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
+\bottomrule
+\end{tabular}
