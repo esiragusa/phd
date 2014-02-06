@@ -7,10 +7,10 @@
 & { Illumina } & {Ion}  & { 454 } & {SOLiD} & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {alignment} & {optimal} & {algorithm} & \phantom{-} & { type } & { reference } & { reads } \\ 
 \midrule
 {Bowtie} & $\leq 50$ & \xmark & \xmark & \cmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-{Bowtie~2} & $\geq 75$ & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
+{Bowtie~2} & $\geq 75$ & \cmark & \cmark & \xmark & & \cmark & \bullet & \bullet & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
 \\
 {BWA} & $\leq 100$ & \xmark & \xmark & \xmark & & \cmark & \xmark & \bullet & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-{BWA-SW} & \xmark & \cmark & \cmark & \xmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{BWA-SW} & \xmark & \cmark & \cmark & \xmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \cmark \\
 \\
 {Soap~2} & $\leq 75$ & \xmark & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
