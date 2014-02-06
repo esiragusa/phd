@@ -99,6 +99,13 @@ Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
 \newblock {SOAP2}: an improved ultrafast tool for short read alignment.
 \newblock {\em Bioinformatics\/}, {\bf 25}(15), pages 1966--1967.
 
+\bibitem[Liu \ea(2012)Liu, Wong, Wu, Luo, Yiu, Li, Wang, Yu, Chu, Zhao,
+  \ea]{Soap3}
+Liu, C.-M., Wong, T., Wu, E., Luo, R., Yiu, S.-M., Li, Y., Wang, B., Yu, C.,
+  Chu, X., Zhao, K., \ea (2012).
+\newblock Soap3: ultra-fast gpu-based parallel alignment tool for short reads.
+\newblock {\em Bioinformatics\/}, {\bf 28}(6), pages 878--879.
+
 \bibitem[Marco-Sola \ea(2012)Marco-Sola, Sammeth, Guig{\'o}, and Ribeca]{Gem}
 Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
 \newblock The gem mapper: fast, accurate and versatile alignment by filtration.
