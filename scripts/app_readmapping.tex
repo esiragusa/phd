@@ -11,14 +11,20 @@ Moreover, the donor genome from which reads have been sequenced contains small g
 After all, spotting genomic variation is one reason for which we resequence genomes.
 Thus, when mapping a read to a reference genome, it is not sufficient to consider the loci where the reads map exactly; it is necessary to consider any loci of relevant sequence similarity, being possible origins of the sequenced reads.
 
+% =============================================================================
+
 \section{Sequencing technologies}
 \subsection{Illumina}
 \subsection{Ion Torrent}
 
+% =============================================================================
+
 \section{Genome mappability}
 
-Genome mappability has been recently studied by \citep{Derrien2011}, \citep{Lee2012}.
-We start by giving our generic definition of genome mappability, analogous to \citep{Derrien2011}.
+Genome mappability has been recently studied by \citep{Derrien2012}, \citep{Lee2012}.
+We start by giving our generic definition of genome mappability, analogous to \citep{Derrien2012}.
+
+% -----------------------------------------------------------------------------
 
 \subsection{Definitions}
 
@@ -31,11 +37,11 @@ Any location $i$ for which $M(i) < 1$ is not unambiguously mappable.
 \subsubsection{Pileup mappability}
 
 If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
-Pileup mappability \citep{Derren2011} at position $i$ is the average mappability of all reads spanning position $i$.
+Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
 
 $M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
 
-\citep{Lee2011} genome mappability score (GMS) is analogous to pileup mappability.
+\citep{Lee2012} genome mappability score (GMS) is analogous to pileup mappability.
 They start by considering the mappability at position $i$ as the probability that the read ending at position $i$ can be mapped correctly.
 This probability is the mapping quality.
 Then, they define the $GMS(i)$ as the average probability that all reads spanning position $i$ can be mapped correctly.
@@ -48,6 +54,8 @@ Then, they define the $GMS(i)$ as the average probability that all reads spannin
 
 TODO.
 
+% -----------------------------------------------------------------------------
+
 \subsection{Genome mappability of model organisms}
 
 Genome mappability can bias NGS analysis more than we might think at a first glance.
@@ -57,17 +65,19 @@ In the human genome almost all 17-mers would be unique, on fly 15-mers, on worm 
 Sticking to these assumptions, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability. For two reasons, this is not the case:
 \begin{itemize}
 \item the $k$-mers distribution of model genomes does not fit the uniform bernoulli distribution.
-In \cite{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
-This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \cite{?}
+In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
+This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}
 
 \item Reads have to be mapped approximately to the reference genome.
 The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
 Thus the above estimate is a lower bound.
 \end{itemize}
 
+% -----------------------------------------------------------------------------
+
 \subsection{The Uniqueome}
 
-\citep{Derren2011} quantified the whole genome unique mappability for human, mouse, fly, and worm.
+\citep{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
 Unique mappability rises to 83~\% by increasing the read length to 75~bp; however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
 
@@ -76,7 +86,7 @@ Unique mappability rises to 83~\% by increasing the read length to 75~bp; howeve
 \end{center}
 
 The uniqueome plays an important role in ChIP-seq experiments.
-It is common practice \cite{?} to rely on short (36~bp) reads and discard the non-unique ones.
+It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
 Not only a significant fraction of the sequencing data is thrown out.
 Worse than that, we end up with holes in 30~\% of the genome.
 A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
@@ -84,12 +94,23 @@ A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
 Cite regions of clinical relevance, \eg HLA-A.
 Cite regions of biological relevance, \eg 5S rRNA.
 
+% =============================================================================
 
-\section{Surveys on read mappers}
+\section{Classification of read mappers}
+
+\subsection{Surveys}
 
 Cite tens of surveys classifying hundreds of mappers.
+\citep{Li2010}, \citep{Fonseca2012}.
+
 Critic the surveys.
 Critic the mappers.
+
+\subsection{Benchmarks}
+
+\citep{Hatem2013} \citep{Holtgrewe2011}
+
+% -----------------------------------------------------------------------------
 
 \subsection{Best mappers versus all mappers}
 
@@ -108,12 +129,15 @@ From the former problem, we conclude that considering only one optimal mapping l
 The latter problem tells us to be careful about relying on strict optimality.
 Therefore, in general a read mapper should return a comprehensive set of relevant mapping locations along with the likelihood that they correspond to the original location.
 
+% =============================================================================
 
 \section{Read mappers}
 
+% -----------------------------------------------------------------------------
+
 \subsection{Bowtie}
 
-Bowtie is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation Illumina/Solexa and AB/SOLiD short reads of length up to 50~bp.
+Bowtie \citep{Bowtie} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation Illumina/Solexa and AB/SOLiD short reads of length up to 50~bp.
 It achieves the former goal by indexing the reference genome with an FM-index and the latter goal by performing a greedy depth-first traversal on it.
 
 The greedy depth-first traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
@@ -123,19 +147,21 @@ However this technique is mostly suited for $k=1$ and requires the index of the 
 Bowtie can be configured to search by strata, however the search time increases significantly while the search still misses a large fraction of the search space due to seeding heuristics.
 Main practical drawbacks of the tool are too many cryptic options, and the lack of paired-end mapping?
 
-Bowtie~2 has been designed to quickly report a couple of mapping locations for recent Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
+Bowtie~2 \citep{Bowtie2} has been designed to quickly report a couple of mapping locations for recent Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
 
 This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
 Candidate locations to verify are chosen randomly, to avoid uncompressing large CSA intervals and executing many DP instances.
-Each mapping location is verified using a striped vectorial dynamic programming algorithm, implemented using SIMD instructions, previously introduced by \cite{Farrar2009} and extended to compute end-to-end alignments.
+Each mapping location is verified using a striped vectorial dynamic programming algorithm, implemented using SIMD instructions, previously introduced by \citep{Farrar2007} and extended to compute end-to-end alignments.
 
 Bowtie~2 can be configured to report end-to-end or local alignments, scored using a tunable affine scoring scheme.
 For this reason, it is believed to be good at reporting alignments containing indels.
 However, its completely heuristic filtration strategy, independent of the scoring scheme, makes it hard to believe what it promises.
 
+% -----------------------------------------------------------------------------
+
 \subsection{BWA}
 
-BWA-backtrack is designed to map Illumina/Solexa reads up to 100~bp and report a few best end-to-end alignments.
+BWA-backtrack \citep{BWA} is designed to map Illumina/Solexa reads up to 100~bp and report a few best end-to-end alignments.
 The program performs a greedy breadth-first search on an FM-index of the reference genome.
 Nodes to be visited are ranked by edit distance score: the best node is popped from a priority queue and visited, its children are then inserted again in the queue.
 The traversal considers indels using a more involved 9-fold recursion.
@@ -145,7 +171,7 @@ BWA performs paired-end alignments by trying to anchor both paired-end reads and
 Consequently, the program in paired-end mode aligns reads at a slower rate than in single-end mode.
 The program is not fully multi-threaded, therefore BWA scales poorly on modern multi-core machines.
 
-BWA-SW is designed to map Roche/454 reads, which have an average length of 400~bp.
+BWA-SW \citep{BWA-SW} is designed to map Roche/454 reads, which have an average length of 400~bp.
 It is an heuristic version of BWT-SW, designed to report a few good local alignments.
 
 This version of BWA adopts a double indexing strategy: it indexes all substrings of one read in a DAWG.
@@ -155,23 +181,33 @@ In addition, BWA-SW implements some seeding heuristics to limit backtracking and
 
 This version of BWA does not support paired-end reads, presumably because it was meant for Roche/454 reads.
 
+% -----------------------------------------------------------------------------
+
 \subsection{Soap}
 
-Soap~2 is very similar to Bowtie: it has been designed to produce a very quick but shallow mapping of Illumina/Solexa reads up to 75~bp with no more than 2 mismatches and no indels.
+Soap~2 \citep{Soap2} is very similar to Bowtie: it has been designed to produce a very quick but shallow mapping of Illumina/Solexa reads up to 75~bp with no more than 2 mismatches and no indels.
 However, its underlying algorithm is based on the so-called bi-directional (or 2-way) BWT.
 The tool support paired-end mapping but at a slower alignment rate.
 Practical drawbacks are the lack of native output in the de-facto standard SAM format and is closed source.
 Soap~3 is algorithmically similar to Soap~2 but targets only NVIDIA CUDA accelerators.
 
+% -----------------------------------------------------------------------------
+
+\subsection{SHRiMP}
+
+TODO.
+
+% -----------------------------------------------------------------------------
+
 \subsection{RazerS}
 
-RazerS has been designed to report all mapping locations within a fixed hamming or edit distance error-rate.
+RazerS \citep{Weese2009} has been designed to report all mapping locations within a fixed hamming or edit distance error-rate.
 It is based on a full-sensitive $q$-gram filtration method (SWIFT semi-global) combined with the Myers edit distance verification algorithm.
 On demand, the SWIFT filter can be configured to become lossy within a fixed loss rate.
 The lossy filter becomes more stringent and produces a lower number of candidates to verify, thus improving the overall speed of the program.
 All in all, the SWIFT filter is very slow while not highly specific.
 
-RazerS~3 is a faster version featuring shared-memory parallelism, a faster banded-Myers verification algorithm, and a faster filtration scheme based on exact seeds that however turns out to be very weak on mammal genomes.
+RazerS~3 \citep{RazerS3} is a faster version featuring shared-memory parallelism, a faster banded-Myers verification algorithm, and a faster filtration scheme based on exact seeds that however turns out to be very weak on mammal genomes.
 Because of this, RazerS~3 is one-two orders of magnitude slower than Bowtie~2 and BWA-backtrack on mammal genomes.
 
 All RazerS versions index the reads and scan the reference genome.
@@ -179,9 +215,11 @@ One positive aspect of this strategy is that no preprocessing of the reference g
 However, other mapping strategies beyond all-mapping, \eg mapping by strata, cannot be efficiently implemented.
 Moreover, the program exhibit an high memory footprint as it must remember the mapping locations of all input reads until the whole reference genome has been scanned.
 
+% -----------------------------------------------------------------------------
+
 \subsection{mr(s)Fast}
 
-The tools mrFast and mrsFast are designed to report all mapping locations within a fixed absolute number errors, respectively under the hamming and edit distance, given Illumina/Solexa reads of length ranging from 50~bp to 125~bp.
+The tools mrFast \citep{Ahmadi2011} and mrsFast \citep{Hach2010} are designed to report all mapping locations within a fixed absolute number errors, respectively under the hamming and edit distance, given Illumina/Solexa reads of length ranging from 50~bp to 125~bp.
 Similarly to RazerS~3, they are based on a full-sensitive filtration strategy using exact seeds, which turns out to be very weak on mammal genomes.
 
 The peculiarity of their underlying method is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
@@ -191,9 +229,11 @@ These tools are as slow as RazerS~3 and appealing for nothing more than all-mapp
 They lack multi-threading support and exhibit various bugs.
 Furthermore, they only accept reads of fixed length and produce files of impractical size.
 
+% -----------------------------------------------------------------------------
+
 \subsection{GEM}
 
-The GEM mapper is a flexible read aligner for Illumina/Solexa, AB/SOLiD, and Ion Torrent reads.
+The GEM mapper \citep{Gem} is a flexible read aligner for Illumina/Solexa, AB/SOLiD, and Ion Torrent reads.
 It is full-sensitive and can be configured either as an all-mapper, as a best/unique-mapper, or to search by strata.
 
 GEM uses a combination of state of the art approximate string matching methods, \eg approximate seeds and suffix filters.
@@ -201,10 +241,6 @@ The program indexes the reference genome with an FM-index, tries to find an opti
 Paired-reads are either mapped independently and then combined, or left/right are mapped and their mates verified using an online strategy.
 
 Unfortunately the tool lacks direct SAM output, it is not open source, and provides many obscure parameters.
-
-\subsection{SHRiMP}
-
-TODO.
 
 \begin{table}[h]
   \center
@@ -216,15 +252,49 @@ TODO.
   }
 \end{table}
 
+% =============================================================================
+
 \section{Masai}
+
+% -----------------------------------------------------------------------------
+
 \subsection{Single-end mapping}
+
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
 \subsection{Paired-end mapping}
+
+% =============================================================================
+
+\section{Yara}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Single-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Paired-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
 \subsection{Parallelization}
 \subsection{Hardware acceleration}
+
+% =============================================================================
 
 \section{Assessment of read mappers performance}
 \subsection{Comparison of filtration strategies}
 \subsection{Rabema benchmark results}
 \subsection{Variant detection results}
 \subsection{Runtime results}
+
+% =============================================================================
+
 \section{Discussion}
+
