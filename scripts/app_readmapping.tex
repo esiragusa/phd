@@ -50,7 +50,7 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 \end{eqnarray}
 
 
-\section{Mapping quality score}
+\subsection{Mapping quality score}
 
 Mapping quality has been introduced in \citep{Li2008}.
 The study considers short reads of length ranging from 30~bp to 40~bp, produced by early Illumina/Solexa and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
@@ -77,14 +77,24 @@ which in Phred-scale becomes:
 Q(l|g,r) = -10 \log_{10}[1 - p(l|g,r)]
 \end{eqnarray}
 
-Computing the exact mapping quality $Q(l|g,r)$ requires aligning each read to all positions in the reference genome.
+Computing the exact mapping quality as in equation~\label{eq:mapqual} requires aligning each read to all positions in the reference genome.
 On one hand, this computation would not be practical, indeed the vast majority of a reference genome is discarded when mapping reads by means of filtering and fully-indexed methods.
 On the other hand, the contribution of discarded locations to the sum in equation~\ref{eq:mapprob} can be neglected.
 Therefore, equation~\ref{eq:mapprob} is approximated using only relevant mapping locations found by the read mapper.
 
+Mapping quality has been initially used in \citep{Li2008} and \citep{Li2009} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
+This measure has been widely accepted: nowadays it is computed by most popular read mappers and used by almost all variant calling pipelines \eg the Genome Analysis ToolKit (GATK) \citep{DePristo2011}.
+
+Nonetheless, some important objections can be moved against mapping quality.
+First, the mapping quality score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
+In other words, mapping quality considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
+Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the mapping probability in equation~\ref{eq:mapprob} is diluted in presence of a large number of co-optimal mapping locations.
+Third, mapping quality becomes irrelevant as sequencing technologies improve and thus degenerates in a shallow measure of uniqueness.
+
 % =============================================================================
 
 \section{Genome mappability}
+\label{sec:mappability}
 
 Genome mappability has been recently studied by \citep{Derrien2012}, \citep{Lee2012}.
 We start by giving our generic definition of genome mappability, analogous to \citep{Derrien2012}.

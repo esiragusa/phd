@@ -15,6 +15,15 @@ Baeza-Yates, R.~A. and Navarro, G. (1999).
 \newblock Faster approximate string matching.
 \newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
 
+\bibitem[DePristo \ea(2011)DePristo, Banks, Poplin, Garimella, Maguire, Hartl,
+  Philippakis, del Angel, Rivas, Hanna, \ea]{DePristo2011}
+DePristo, M.~A., Banks, E., Poplin, R., Garimella, K.~V., Maguire, J.~R.,
+  Hartl, C., Philippakis, A.~A., del Angel, G., Rivas, M.~A., Hanna, M., \ea
+  (2011).
+\newblock A framework for variation discovery and genotyping using
+  next-generation dna sequencing data.
+\newblock {\em Nature genetics\/}, {\bf 43}(5), pages 491--498.
+
 \bibitem[Derrien \ea(2012)Derrien, Estell\'e, Marco~Sola, Knowles, Raineri,
   Guig\'o, and Ribeca]{Derrien2012}
 Derrien, T., Estell\'e, J., Marco~Sola, S., Knowles, D.~G., Raineri, E.,
@@ -111,9 +120,17 @@ Li, H., Ruan, J., and Durbin, R. (2008).
   quality scores.
 \newblock {\em Genome research\/}, {\bf 18}(11), pages 1851--1858.
 
-\bibitem[Li \ea(2009)Li, Yu, Li, Lam, Yiu, Kristiansen, and Wang]{Soap2}
+\bibitem[Li \ea(2009a)Li, Handsaker, Wysoker, Fennell, Ruan, Homer, Marth,
+  Abecasis, Durbin, and {1000 Genome Project Data Processing Subgroup}]{Li2009}
+Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth,
+  G., Abecasis, G., Durbin, R., and {1000 Genome Project Data Processing
+  Subgroup} (2009a).
+\newblock The sequence alignment/map format and {SAMtools}.
+\newblock {\em Bioinformatics\/}, {\bf 25}(16), pages 2078--2079.
+
+\bibitem[Li \ea(2009b)Li, Yu, Li, Lam, Yiu, Kristiansen, and Wang]{Soap2}
 Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
-  (2009).
+  (2009b).
 \newblock {SOAP2}: an improved ultrafast tool for short read alignment.
 \newblock {\em Bioinformatics\/}, {\bf 25}(15), pages 1966--1967.
 

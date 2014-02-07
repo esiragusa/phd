@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/MacPorts 2013_3)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: thesis.aux
+A level-1 auxiliary file: scripts/abstract_en.aux
+A level-1 auxiliary file: scripts/asm_background.aux
+A level-1 auxiliary file: scripts/app_readmapping.aux
+A level-1 auxiliary file: scripts/appendix_declaration.aux
+The style file: natbib.bst
+Database file #1: thesis.bib
+Warning--I didn't find a database entry for "Faro2013"
+Warning--I didn't find a database entry for "Navarro1999"
+Warning--I didn't find a database entry for "?"
+You've used 30 entries,
+            2400 wiz_defined-function locations,
+            836 strings with 10771 characters,
+and the built_in function-call counts, 18286 in all, are:
+= -- 1787
+> -- 1000
+< -- 41
++ -- 311
+- -- 296
+* -- 1554
+:= -- 2920
+add.period$ -- 122
+call.type$ -- 30
+change.case$ -- 188
+chr.to.int$ -- 29
+cite$ -- 30
+duplicate$ -- 804
+empty$ -- 1126
+format.name$ -- 344
+if$ -- 3890
+int.to.chr$ -- 2
+int.to.str$ -- 0
+missing$ -- 31
+newline$ -- 154
+num.names$ -- 120
+pop$ -- 185
+preamble$ -- 1
+purify$ -- 189
+quote$ -- 0
+skip$ -- 744
+stack$ -- 0
+substring$ -- 1196
+swap$ -- 346
+text.length$ -- 28
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 267
+warning$ -- 0
+while$ -- 157
+width$ -- 0
+write$ -- 394
+(There were 3 warnings)
