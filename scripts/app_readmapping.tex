@@ -89,7 +89,7 @@ Nonetheless, some important objections can be moved against mapping quality.
 First, the mapping quality score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
 In other words, mapping quality considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the mapping probability in equation~\ref{eq:mapprob} is diluted in presence of a large number of co-optimal mapping locations.
-Third, mapping quality becomes irrelevant as sequencing technologies improve and thus degenerates in a shallow measure of uniqueness.
+Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates in a shallow measure of uniqueness.
 
 % =============================================================================
 
