@@ -68,16 +68,19 @@ p(l) = \frac{1}{|g| - |r| + 1}
 \end{eqnarray}
 Therefore, recalling $p(r | g, l)$ from equation~\ref{eq:phred}, the posterior probability $p(l|g,r)$ equals the probability of the read $r$ originating at location $l$ normalized over all possible locations in the reference genome:
 \begin{eqnarray}
+\label{eq:mapprob}
 p(l|g,r) = \frac{p(r|g,l)}{\sum_{i=1}^{|g| - |r| + 1}{p(r|g,i)}}
 \end{eqnarray}
 which in Phred-scale becomes:
 \begin{eqnarray}
+\label{eq:mapqual}
 Q(l|g,r) = -10 \log_{10}[1 - p(l|g,r)]
 \end{eqnarray}
 
-
-
-
+Computing the exact mapping quality $Q(l|g,r)$ requires aligning each read to all positions in the reference genome.
+On one hand, this computation would not be practical, indeed the vast majority of a reference genome is discarded when mapping reads by means of filtering and fully-indexed methods.
+On the other hand, the contribution of discarded locations to the sum in equation~\ref{eq:mapprob} can be neglected.
+Therefore, equation~\ref{eq:mapprob} is approximated using only relevant mapping locations found by the read mapper.
 
 % =============================================================================
 
