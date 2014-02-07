@@ -19,6 +19,68 @@ Thus, when mapping a read to a reference genome, it is not sufficient to conside
 
 % =============================================================================
 
+\section{Sequencing quality}
+
+\subsection{Phred base quality score}
+
+Phred base quality score have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
+Instead of directly discarding low-quality regions present in capillary reads, Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
+As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
+
+To formally define Phred base quality scores, let us fix the alphabet $\Sigma = \{$ A, C, G, T $\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
+We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i = \Pr \{ r_i \neq g_{l+i-1}\}$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
+Therefore, we define the Phred base quality $Q_i$ at position $i$ as:
+\begin{eqnarray}
+Q_i = -10 \log_{10} \epsilon_i.
+\end{eqnarray}
+
+Given the above, the probability $p(r_i | g_{l+i-1})$ of calling the base $r_i$ in the read $r$, given the donor genome base $g_{l+i-1}$, is:
+\begin{eqnarray}
+p(r_i | g_{l+i-1}) = \left\{
+\begin{array}{ll}
+1-\epsilon_i                  & \text{ if } g_{l+i-1} = r_i\\
+\frac{\epsilon_i}{|\Sigma|-1} & \text{ if } g_{l+i-1} \in \Sigma \setminus \{r_i\}\\
+\end{array}
+\right.
+\end{eqnarray}
+and assuming \iid base calling errors, it follows that the probability $p(r | g, l)$ of observing the read $r$, given the donor genome template $g_{l \dots l+|r|-1}$, is:
+\begin{eqnarray}
+\label{eq:phred}
+p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
+\end{eqnarray}
+
+
+\section{Mapping quality score}
+
+Mapping quality has been introduced in \citep{Li2008}.
+The study considers short reads of length ranging from 30~bp to 40~bp, produced by early Illumina/Solexa and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
+Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
+
+The key point is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
+The authors claim\footnote{\citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.} that:
+\begin{quote}It is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.\end{quote}
+Since base callers output base call probabilities in Phred score along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called mapping quality, giving the probability that a given read has been aligned correctly at a given mapping location in the reference genome.
+
+By applying Bayes' theorem, we can derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
+Assuming uniform coverage, each location $l \in [1, |g| - |r| + 1]$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $p(l)$ is simply:
+\begin{eqnarray}
+p(l) = \frac{1}{|g| - |r| + 1}
+\end{eqnarray}
+Therefore, recalling $p(r | g, l)$ from equation~\ref{eq:phred}, the posterior probability $p(l|g,r)$ equals the probability of the read $r$ originating at location $l$ normalized over all possible locations in the reference genome:
+\begin{eqnarray}
+p(l|g,r) = \frac{p(r|g,l)}{\sum_{i=1}^{|g| - |r| + 1}{p(r|g,i)}}
+\end{eqnarray}
+which in Phred-scale becomes:
+\begin{eqnarray}
+Q(l|g,r) = -10 \log_{10}[1 - p(l|g,r)]
+\end{eqnarray}
+
+
+
+
+
+% =============================================================================
+
 \section{Genome mappability}
 
 Genome mappability has been recently studied by \citep{Derrien2012}, \citep{Lee2012}.
@@ -94,6 +156,7 @@ A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
 Cite regions of clinical relevance, \eg HLA-A.
 Cite regions of biological relevance, \eg 5S rRNA.
 
+
 % =============================================================================
 
 \section{Classification of read mappers}
@@ -137,7 +200,7 @@ Therefore, in general a read mapper should return a comprehensive set of relevan
 
 \subsection{Bowtie}
 
-Bowtie \citep{Bowtie} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation Illumina/Solexa and AB/SOLiD short reads of length up to 50~bp.
+Bowtie \citep{Bowtie} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation Illumina/Solexa and ABI/SOLiD short reads of length up to 50~bp.
 It achieves the former goal by indexing the reference genome with an FM-index and the latter goal by performing a greedy depth-first traversal on it.
 
 The greedy depth-first traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
@@ -201,7 +264,7 @@ SHRiMP~2 TODO.
 
 \subsection{RazerS}
 
-RazerS \citep{Weese2009} has been designed to report all mapping locations within a fixed hamming or edit distance error-rate.
+RazerS \citep{Weese2009} has been designed to report all mapping locations within a fixed hamming or edit distance error rate.
 It is based on a full-sensitive $q$-gram filtration method (SWIFT semi-global) combined with the Myers edit distance verification algorithm.
 On demand, the SWIFT filter can be configured to become lossy within a fixed loss rate.
 The lossy filter becomes more stringent and produces a lower number of candidates to verify, thus improving the overall speed of the program.
@@ -233,7 +296,7 @@ Furthermore, they only accept reads of fixed length and produce files of impract
 
 \subsection{GEM}
 
-The GEM mapper \citep{Gem} is a flexible read aligner for Illumina/Solexa, AB/SOLiD, and Ion Torrent reads.
+The GEM mapper \citep{Gem} is a flexible read aligner for Illumina/Solexa, ABI/SOLiD, and Ion Torrent reads.
 It is full-sensitive and can be configured either as an all-mapper, as a best/unique-mapper, or to search by strata.
 
 GEM uses a combination of state of the art approximate string matching methods, \eg approximate seeds and suffix filters.

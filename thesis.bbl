@@ -22,6 +22,18 @@ Derrien, T., Estell\'e, J., Marco~Sola, S., Knowles, D.~G., Raineri, E.,
 \newblock Fast computation and applications of genome mappability.
 \newblock {\em PLoS ONE\/}, {\bf 7}(1), page e30377.
 
+\bibitem[Ewing and Green(1998)Ewing and Green]{Ewing1998b}
+Ewing, B. and Green, P. (1998).
+\newblock Base-calling of automated sequencer traces using phred. ii. error
+  probabilities.
+\newblock {\em Genome research\/}, {\bf 8}(3), pages 186--194.
+
+\bibitem[Ewing \ea(1998)Ewing, Hillier, Wendl, and Green]{Ewing1998}
+Ewing, B., Hillier, L., Wendl, M.~C., and Green, P. (1998).
+\newblock Base-calling of automated sequencer traces using phred. i. accuracy
+  assessment.
+\newblock {\em Genome research\/}, {\bf 8}(3), pages 175--185.
+
 \bibitem[Farrar(2007)Farrar]{Farrar2007}
 Farrar, M. (2007).
 \newblock Striped smith--waterman speeds database searches six times over other
@@ -92,6 +104,12 @@ Li, H. and Homer, N. (2010).
 \newblock A survey of sequence alignment algorithms for next-generation
   sequencing.
 \newblock {\em Brief Bioinform.}, {\bf 11}(5), pages 473--483.
+
+\bibitem[Li \ea(2008)Li, Ruan, and Durbin]{Li2008}
+Li, H., Ruan, J., and Durbin, R. (2008).
+\newblock Mapping short dna sequencing reads and calling variants using mapping
+  quality scores.
+\newblock {\em Genome research\/}, {\bf 18}(11), pages 1851--1858.
 
 \bibitem[Li \ea(2009)Li, Yu, Li, Lam, Yiu, Kristiansen, and Wang]{Soap2}
 Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
