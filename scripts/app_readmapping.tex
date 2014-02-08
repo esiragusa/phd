@@ -217,11 +217,11 @@ Bowtie \citep{Bowtie} is a mapper designed to have a small memory footprint and 
 It achieves the former goal by indexing the reference genome with an FM-index and the latter goal by performing a greedy depth-first traversal on it.
 
 The greedy depth-first traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
-In addition, Bowtie speeds up backtracking by applying case pruning based, a simple application of the pigeonhole principle.
+In addition, Bowtie speeds up backtracking by applying case pruning, a simple application of the pigeonhole principle.
 However this technique is mostly suited for $k=1$ and requires the index of the forward and reverse text.
 
-Bowtie can be configured to search by strata, however the search time increases significantly while the search still misses a large fraction of the search space due to seeding heuristics.
-Main practical drawbacks of the tool are too many cryptic options, and the lack of paired-end mapping?
+Bowtie can be configured to search by strata, however the search time increases significantly while the traversal still misses a large fraction of the search space due to seeding heuristics.
+Main practical drawbacks of the tool are too many cryptic options.
 
 Bowtie~2 \citep{Bowtie2} has been designed to quickly report a couple of mapping locations for recent Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
 
@@ -241,7 +241,7 @@ BWA-backtrack \citep{BWA} is designed to map Illumina/Solexa reads up to 100~bp 
 The program performs a greedy breadth-first search on an FM-index of the reference genome.
 Nodes to be visited are ranked by edit distance score: the best node is popped from a priority queue and visited, its children are then inserted again in the queue.
 The traversal considers indels using a more involved 9-fold recursion.
-Backtracking is sped up by adopting a more stringent pruning strategy that, however, takes some preprocessing time and requires the index of the reverse reference genome.
+Backtracking is sped up by adopting a more stringent pruning strategy that nonetheless takes some preprocessing time and requires the index of the reverse reference genome.
 
 BWA performs paired-end alignments by trying to anchor both paired-end reads and verifying the corresponding mate, within an estimated insert size, using the classic DP-based Smith-Waterman algorithm.
 Consequently, the program in paired-end mode aligns reads at a slower rate than in single-end mode.
