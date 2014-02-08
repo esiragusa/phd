@@ -29,8 +29,8 @@ Phred base quality values have been introduced in \citep{Ewing1998, Ewing1998b} 
 Instead of directly discarding low-quality regions present in capillary reads, Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
 As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
 
-To formally define Phred base quality values, let us fix the alphabet $\Sigma = \{$ A, C, G, T $\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
-We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i = \Pr \{ r_i \neq g_{l+i-1}\}$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
+To formally define Phred base quality values, let us fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
+We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
 Therefore, we define the Phred base quality $Q_i$ at position $i$ as:
 \begin{eqnarray}
 Q_i = -10 \log_{10} \epsilon_i.
@@ -126,57 +126,13 @@ The next practical challenge is represented by reporting and handling the result
 Genome mappability has been recently studied in \citep{Derrien2012} and \citep{Lee2012}.
 We start by giving our definition of genome mappability, analogous to \citep{Derrien2012}.
 
-
-
 % -----------------------------------------------------------------------------
 
-\subsection{Definitions}
-
-\subsubsection{Mappability}
+\subsection{CRG genome mappability}
 
 We extract a perfect read (without sequencing errors) from a reference genome, we map it back within a given distance, we count to how many loci it maps back.
 Mappability at position $i$, denote by the function $M(i)$, is the inverse mapping frequency.
 Any location $i$ for which $M(i) < 1$ is not unambiguously mappable.
-
-\subsubsection{Pileup mappability}
-
-If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
-Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
-
-$M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
-
-\subsubsection{Genome mappability score}
-
-Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
-Instead of considering the simple inverse mapping multiplicity, \citeauthor{Lee2012} interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
-
-Then, they define the genome mappability score\footnote{Equation~3 in \citep{Lee2012} is not precise, please refer to our equation~\ref{eq:gms}.} $GMS(l)$ as the average mapping probability of any read spanning location $l$:
-\begin{eqnarray}
-\label{eq:gms}
-p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}\\
-\end{eqnarray}
-which in Phread-scale becomes:
-\begin{eqnarray}
-Q(l|g) = \\
-\end{eqnarray}
-and in percent becomes:
-\begin{eqnarray}
-GMS(l) = 100 Q(l|g)\\
-\end{eqnarray}
-
-
-
-\begin{center}
-\input{tables/table_gms}
-\end{center}
-
-\subsubsection{Paired-end mappability}
-
-TODO.
-
-% -----------------------------------------------------------------------------
-
-\subsection{Genome mappability of model organisms}
 
 Genome mappability can bias NGS analysis more than we might think at a first glance.
 By considering a reference genome of length $n$, randomly generated under the uniform bernoulli model, we would expect any string of length $log_4(n)$ to occur about once.
@@ -193,9 +149,7 @@ The expected number of approximate occurrences of a $k$-mer is higher than the e
 Thus the above estimate is a lower bound.
 \end{itemize}
 
-% -----------------------------------------------------------------------------
-
-\subsection{The Uniqueome}
+\subsubsection{Uniqueome}
 
 \citep{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
@@ -214,22 +168,50 @@ A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
 Cite regions of clinical relevance, \eg HLA-A.
 Cite regions of biological relevance, \eg 5S rRNA.
 
+\subsubsection{Paired-end mappability}
+
+\subsubsection{Pileup mappability}
+
+If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
+Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
+
+$M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
+
+\subsection{Genome mappability score}
+
+Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
+Instead of considering the simple inverse mapping multiplicity, \citeauthor{Lee2012} interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
+Therefore, they consider the average mapping probability of any read spanning a location $l$ of a reference genome $g$\footnote{Equation~3 in \citep{Lee2012} is not precise, please refer to our equation~\ref{eq:gms}.}:
+\begin{eqnarray}
+\label{eq:gms}
+p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}
+\end{eqnarray}
+which in Phread-scale becomes:
+\begin{eqnarray}
+Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}
+\end{eqnarray}
+and thus define the genome mappability score GMS(l) as its percentual value:
+\begin{eqnarray}
+\text{GMS}(l) = 100 Q(l|g)
+\end{eqnarray}
+
+
+
+\begin{center}
+\input{tables/table_gms}
+\end{center}
+
+
+TODO.
+
 
 % =============================================================================
 
-\section{Classification of read mappers}
+\section{Categorization of existing read mappers}
 
-\subsection{Surveys}
+Critic the surveys classifying hundreds of mappers \citep{Li2010}, \citep{Fonseca2012}.
 
-Cite tens of surveys classifying hundreds of mappers.
-\citep{Li2010}, \citep{Fonseca2012}.
-
-Critic the surveys.
-Critic the mappers.
-
-\subsection{Benchmarks}
-
-\citep{Hatem2013} \citep{Holtgrewe2011}
+Critic the benchmarks \citep{Hatem2013} \citep{Holtgrewe2011}.
 
 % -----------------------------------------------------------------------------
 
