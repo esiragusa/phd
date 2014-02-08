@@ -14,20 +14,22 @@ Thus, when mapping a read to a reference genome, it is not sufficient to conside
 % =============================================================================
 
 \section{Sequencing technologies}
-\subsection{Illumina}
-\subsection{Ion Torrent}
+\subsection{Illumina / Solexa}
+\subsection{Life Technologies / Ion Torrent}
+\subsection{Roche / 454 Life Sciences}
+\subsection{ABI / SOLiD}
 
 % =============================================================================
 
 \section{Sequencing quality}
 
-\subsection{Phred base quality score}
+\subsection{Phred base quality values}
 
-Phred base quality score have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
+Phred base quality values have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
 Instead of directly discarding low-quality regions present in capillary reads, Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
 As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
 
-To formally define Phred base quality scores, let us fix the alphabet $\Sigma = \{$ A, C, G, T $\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
+To formally define Phred base quality values, let us fix the alphabet $\Sigma = \{$ A, C, G, T $\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
 We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i = \Pr \{ r_i \neq g_{l+i-1}\}$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
 Therefore, we define the Phred base quality $Q_i$ at position $i$ as:
 \begin{eqnarray}
@@ -51,6 +53,7 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 
 
 \subsection{Mapping quality score}
+\label{sub:mapqual}
 
 Mapping quality has been introduced in \citep{Li2008}.
 The study considers short reads of length ranging from 30~bp to 40~bp, produced by early Illumina/Solexa and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
@@ -59,7 +62,7 @@ Given the short lengths and high error rates, a significant fraction of such rea
 The key point is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
 The authors claim\footnote{\citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.} that:
 \begin{quote}It is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.\end{quote}
-Since base callers output base call probabilities in Phred score along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called mapping quality, giving the probability that a given read has been aligned correctly at a given mapping location in the reference genome.
+Since base callers output base call probabilities in Phred-scale along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called mapping quality, giving the probability that a given read has been aligned correctly at a given mapping location in the reference genome.
 
 By applying Bayes' theorem, we can derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
 Assuming uniform coverage, each location $l \in [1, |g| - |r| + 1]$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $p(l)$ is simply:
@@ -96,8 +99,34 @@ Third, mapping quality tends to become less relevant as base calls improve, due 
 \section{Genome mappability}
 \label{sec:mappability}
 
-Genome mappability has been recently studied by \citep{Derrien2012}, \citep{Lee2012}.
-We start by giving our generic definition of genome mappability, analogous to \citep{Derrien2012}.
+The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
+Genomes evolved through multiple types of duplication events, including
+\begin{inparaenum}[(i)]
+\item whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?},
+\item transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?},
+\item proliferation of repetitive structural elements as telomeres and centromeres \citep{?}.
+\end{inparaenum}
+As a result of these events, about 50~\% of the human genome is composed of repeats.
+
+An analysis of the $k$-mer spectra of the genomes of some model organisms shows how genomes are statistically different from texts randomly generated according to uniform bernoulli models.
+
+Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Lee2012}.
+In the case of short reads mapping, the first evident effect of the fat-tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
+But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
+
+Common strategies to deal with multi-reads are
+\begin{inparaenum}[(i)]
+\item to discard them all,
+\item to randomly pick one best mapping location,
+\item to consider all or up to $k$ best mapping locations within a given distance threshold.
+\end{inparaenum}
+
+The next practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
+
+Genome mappability has been recently studied in \citep{Derrien2012} and \citep{Lee2012}.
+We start by giving our definition of genome mappability, analogous to \citep{Derrien2012}.
+
+
 
 % -----------------------------------------------------------------------------
 
@@ -116,10 +145,26 @@ Pileup mappability \citep{Derrien2012} at position $i$ is the average mappabilit
 
 $M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
 
-\citep{Lee2012} genome mappability score (GMS) is analogous to pileup mappability.
-They start by considering the mappability at position $i$ as the probability that the read ending at position $i$ can be mapped correctly.
-This probability is the mapping quality.
-Then, they define the $GMS(i)$ as the average probability that all reads spanning position $i$ can be mapped correctly.
+\subsubsection{Genome mappability score}
+
+Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
+Instead of considering the simple inverse mapping multiplicity, \citeauthor{Lee2012} interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
+
+Then, they define the genome mappability score\footnote{Equation~3 in \citep{Lee2012} is not precise, please refer to our equation~\ref{eq:gms}.} $GMS(l)$ as the average mapping probability of any read spanning location $l$:
+\begin{eqnarray}
+\label{eq:gms}
+p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}\\
+\end{eqnarray}
+which in Phread-scale becomes:
+\begin{eqnarray}
+Q(l|g) = \\
+\end{eqnarray}
+and in percent becomes:
+\begin{eqnarray}
+GMS(l) = 100 Q(l|g)\\
+\end{eqnarray}
+
+
 
 \begin{center}
 \input{tables/table_gms}
