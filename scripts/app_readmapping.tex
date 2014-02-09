@@ -1,4 +1,6 @@
-\chapter{Read Mapping}
+% =============================================================================
+
+\chapter{Sequencing technologies}
 
 Next generation sequencing is a terrific technology.
 A wealth of applications have been developed on top of it.
@@ -11,19 +13,21 @@ Moreover, the donor genome from which reads have been sequenced contains small g
 After all, spotting genomic variation is one reason for which we resequence genomes.
 Thus, when mapping a read to a reference genome, it is not sufficient to consider the loci where the reads map exactly; it is necessary to consider any loci of relevant sequence similarity, being possible origins of the sequenced reads.
 
-% =============================================================================
+\section{Illumina}
+Illumina / Solexa.
 
-\section{Sequencing technologies}
-\subsection{Illumina / Solexa}
-\subsection{Life Technologies / Ion Torrent}
-\subsection{Roche / 454 Life Sciences}
-\subsection{ABI / SOLiD}
+\section{Ion Torrent}
+Life Technologies / Ion Torrent.
 
-% =============================================================================
+\section{454 Life Sciences}
+Roche / 454 Life Sciences.
+
+\section{SOLiD}
+ABI / SOLiD.
 
 \section{Sequencing quality}
 
-\subsection{Phred base quality values}
+%\subsection{Phred base quality values}
 
 Phred base quality values have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
 Instead of directly discarding low-quality regions present in capillary reads, Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
@@ -51,8 +55,102 @@ and assuming \iid base calling errors, it follows that the probability $p(r | g,
 p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 \end{eqnarray}
 
+% =============================================================================
 
-\subsection{Mapping quality score}
+\chapter{Mappability}
+\label{sec:mappability}
+
+The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
+Genomes evolved through multiple types of duplication events, including
+\begin{inparaenum}[(i)]
+\item whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?},
+\item transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?},
+\item proliferation of repetitive structural elements as telomeres and centromeres \citep{?}.
+\end{inparaenum}
+As a result of these events, about 50~\% of the human genome is composed of repeats.
+
+An analysis of the $k$-mer spectra of the genomes of some model organisms shows how genomes are statistically different from texts randomly generated according to uniform bernoulli models.
+
+Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Lee2012}.
+In the case of short reads mapping, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
+But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
+
+Common strategies to deal with multi-reads are
+\begin{inparaenum}[(i)]
+\item to discard them all,
+\item to randomly pick one best mapping location,
+\item to consider all or up to $k$ best mapping locations within a given distance threshold.
+\end{inparaenum}
+
+The next practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
+
+Genome mappability can bias NGS analysis more than we might think at a first glance.
+Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
+
+
+% -----------------------------------------------------------------------------
+
+\section{Genome mappability}
+
+We now give a definition of genome mappability analogous to \citep{Derrien2012}.
+Let fix a $q$-gram length, a distance measure as the Hamming or edit distance, and a distance threshold $k$.
+Given a genomic sequence $g$, we defined the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
+We define the $(q,k)$-mappability $M^q_k(l)$ as the inverse $(q,k)$-frequency, \ie $M^q_k(l) = {F^q_k(l)}^{-1}$ with $M^q_k : \N \rightarrow ]0,1]$.
+Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
+The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up tho distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
+
+Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
+Let consider the simple case of exact $(q,0)$-mappability.
+By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
+It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
+Thus, for $E[F^q_0] \leq 1$ it must hold:
+\begin{eqnarray}
+2n \leq 4^q\\
+\log{2n} \leq \log{4^q}\\
+q \geq log_{4}{2n}
+\end{eqnarray}
+Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
+Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
+However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
+In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
+This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
+
+
+Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
+However, reads have to be mapped approximately to the reference genome.
+The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
+Thus the above estimate is a lower bound.
+
+\subsection{Uniqueome}
+
+\citeauthor{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
+At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
+Unique mappability rises to 83~\% by increasing the read length to 75~bp; however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
+
+\begin{center}
+\input{tables/table_mappability}
+\end{center}
+
+The uniqueome plays an important role in ChIP-seq experiments.
+It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
+Not only a significant fraction of the sequencing data is thrown out.
+Worse than that, we end up with holes in 30~\% of the genome.
+A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
+
+Cite regions of clinical relevance, \eg HLA-A.
+Cite regions of biological relevance, \eg 5S rRNA.
+
+\subsection{Paired-end mappability}
+
+\subsection{Pileup mappability}
+
+If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
+Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
+
+$M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
+
+
+\section{Mapping quality score}
 \label{sub:mapqual}
 
 Mapping quality has been introduced in \citep{Li2008}.
@@ -94,101 +192,7 @@ In other words, mapping quality considers only errors due to base miscalls and d
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the mapping probability in equation~\ref{eq:mapprob} is diluted in presence of a large number of co-optimal mapping locations.
 Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates in a shallow measure of uniqueness.
 
-% =============================================================================
-
-\section{Mappability}
-\label{sec:mappability}
-
-The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
-Genomes evolved through multiple types of duplication events, including
-\begin{inparaenum}[(i)]
-\item whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?},
-\item transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?},
-\item proliferation of repetitive structural elements as telomeres and centromeres \citep{?}.
-\end{inparaenum}
-As a result of these events, about 50~\% of the human genome is composed of repeats.
-
-An analysis of the $k$-mer spectra of the genomes of some model organisms shows how genomes are statistically different from texts randomly generated according to uniform bernoulli models.
-
-Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Lee2012}.
-In the case of short reads mapping, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
-But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
-
-Common strategies to deal with multi-reads are
-\begin{inparaenum}[(i)]
-\item to discard them all,
-\item to randomly pick one best mapping location,
-\item to consider all or up to $k$ best mapping locations within a given distance threshold.
-\end{inparaenum}
-
-The next practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
-
-Genome mappability can bias NGS analysis more than we might think at a first glance.
-Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
-
-
-% -----------------------------------------------------------------------------
-
-\subsection{Genome mappability}
-
-We now give a definition of genome mappability analogous to \citep{Derrien2012}.
-Let fix a $q$-gram length, a distance measure as the Hamming or edit distance, and a distance threshold $k$.
-Given a genomic sequence $g$, we defined the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
-We define the $(q,k)$-mappability $M^q_k(l)$ as the inverse $(q,k)$-frequency, \ie $M^q_k(l) = {F^q_k(l)}^{-1}$ with $M^q_k : \N \rightarrow ]0,1]$.
-Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
-The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up tho distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
-
-Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
-Let consider the simple case of exact $(q,0)$-mappability.
-By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
-It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
-Thus, for $E[F^q_0] \leq 1$ it must hold:
-\begin{eqnarray}
-2n \leq 4^q\\
-\log{2n} \leq \log{4^q}\\
-q \geq log_{4}{2n}
-\end{eqnarray}
-Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
-Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
-However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
-In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
-This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
-
-
-Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
-However, reads have to be mapped approximately to the reference genome.
-The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
-Thus the above estimate is a lower bound.
-
-\subsubsection{Uniqueome}
-
-\citeauthor{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
-At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
-Unique mappability rises to 83~\% by increasing the read length to 75~bp; however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
-
-\begin{center}
-\input{tables/table_mappability}
-\end{center}
-
-The uniqueome plays an important role in ChIP-seq experiments.
-It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
-Not only a significant fraction of the sequencing data is thrown out.
-Worse than that, we end up with holes in 30~\% of the genome.
-A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
-
-Cite regions of clinical relevance, \eg HLA-A.
-Cite regions of biological relevance, \eg 5S rRNA.
-
-\subsubsection{Paired-end mappability}
-
-\subsubsection{Pileup mappability}
-
-If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
-Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
-
-$M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
-
-\subsection{Genome mappability score}
+\section{Genome mappability score}
 
 Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
 Instead of considering the inverse mapping frequency $(q,k)$-mappability, we can interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
@@ -215,7 +219,7 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score G
 
 % =============================================================================
 
-\section{Categorization of existing read mappers}
+\chapter{Read mappers categorization}
 
 Critic the surveys classifying hundreds of mappers \citep{Li2010}, \citep{Fonseca2012}.
 
@@ -223,7 +227,7 @@ Critic the benchmarks \citep{Hatem2013} \citep{Holtgrewe2011}.
 
 % -----------------------------------------------------------------------------
 
-\subsection{Best mappers versus all mappers}
+\section{Best mappers versus all mappers}
 
 The task of a read mapper is to guess where a read originates.
 Fixed a similarity scoring scheme that confidently models this problem, the optimal alignment under this scoring scheme correspond to the most likely explanation and induces a locus being the origin of the read.
@@ -353,6 +357,16 @@ Paired-reads are either mapped independently and then combined, or left/right ar
 
 Unfortunately the tool lacks direct SAM output, it is not open source, and provides many obscure parameters.
 
+% -----------------------------------------------------------------------------
+
+\subsection{Masai}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Yara}
+
+% -----------------------------------------------------------------------------
+
 \begin{landscape}
 \begin{table}[h]
   \center
@@ -367,47 +381,48 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 
 % =============================================================================
 
-\section{Masai}
+\chapter{Masai}
 
-% -----------------------------------------------------------------------------
+\section{Approximate seeds}
 
-\subsection{Single-end mapping}
+\section{Multiple backtracking}
 
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
+\section{Single-end mapping}
+\subsection{All-mapping}
+\subsection{Mapping by strata}
 
-\subsection{Paired-end mapping}
-
-% =============================================================================
-
-\section{Yara}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Single-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Paired-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Parallelization}
-\subsection{Hardware acceleration}
+\section{Paired-end mapping}
 
 % =============================================================================
 
-\section{Assessment of read mappers performance}
-\subsection{Comparison of filtration strategies}
-\subsection{Rabema benchmark results}
-\subsection{Variant detection results}
-\subsection{Runtime results}
+\chapter{Yara}
+
+% -----------------------------------------------------------------------------
+
+\section{Single-end mapping}
+\subsection{All-mapping}
+\subsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
+\section{Paired-end mapping}
+\subsection{All-mapping}
+\subsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
+\section{Parallelization}
+\section{Hardware acceleration}
 
 % =============================================================================
 
-\section{Discussion}
+\chapter{Read mappers performance}
+\section{Comparison of filtration strategies}
+\section{Rabema benchmark results}
+\section{Variant detection results}
+\section{Runtime results}
+
+% =============================================================================
+
+\chapter{Discussion}
 

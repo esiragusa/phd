@@ -1,55 +1,10 @@
-\chapter{Background}
 
-% === Introduction ===
-
-\section{Introduction}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Motivation}
-%\subsection{History of sequencing}
-
-This work has been motivated by recent advances of molecular genetics.
-The human genome has been sequenced in 2001. Also mouse, drosophila, etc.
-Nowadays \# reference model genomes are available in genbank.
-
-Next-generation sequencing has been the second revolution.
-NGS produces billions of reads for 1000\$ dollars.
-Why should one re-sequence a known genome?
-Resequencing applications include variant calling, etc.
-So NGS impacts biomedicine.
-
-Given a set of reads, two approaches are possible: assembly and mapping.
-
-Assembly methods are based on overlaps, de brujin graphs, or...
-
-Read mapping methods work on a previously assembled reference genome.
-
-The typical SNPs analysis pipeline~\ref{fig:ngs-pipeline} consists of...
-
-In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
-
-\begin{figure}[h]
-\caption{NGS pipeline.}
-\label{fig:ngs-pipeline}
-\end{figure}
-
-\begin{itemize}
-\item Plan A: de-novo assembly
-\item Plan B: reference mapping
-\item Plan C: reference guided de-novo assembly
-\end{itemize}
-
-\subsection{Organization of this manuscript}
-
-% -----------------------------------------------------------------------------
-
-\section{Stringology preliminaries}
+\chapter{Stringology preliminaries}
 
 We now introduce fundamental definitions and problems of stringology, in order to keep the manuscript self-contained.
 The reader familiar with basic stringology can skip this section and proceed to section~\ref{?}.
 
-\subsection{Definitions}
+\section{Definitions}
 
 Let us start by defining primitive objects of stringology: alphabets and strings.
 An alphabet is a finite set of symbols (or characters); a string (or word) over an alphabet is a finite sequence of symbols from that alphabet.
@@ -75,7 +30,7 @@ Moreover, the concatenation $x \cdot z$ produces ATA.
 The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
 \end{example}
 
-\subsection{Alignments}
+\section{Alignments}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
 Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ s.t. $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
@@ -117,7 +72,7 @@ See Figure~\ref{?}.
 \end{center}
 \end{figure}
 
-\subsection{Distance functions}
+\section{Distance functions}
 
 We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
 \begin{itemize}
@@ -143,7 +98,7 @@ We obtain it by defining $\omega(\alpha,\beta)$ as in the edit distance, and by 
 TODO: example of edit and hamming distance.
 \end{example}
 
-\subsection{Optimal alignments}
+\section{Optimal alignments}
 
 The problem of finding an optimal alignment between two strings is equivalent to the problem of finding their minimum distance \citep{Gusfield1997}.
 A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
@@ -183,9 +138,9 @@ We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to 
 
 % === Overview of existing methods ===
 
-\section{Overview of string matching}
+\chapter{Overview of string matching}
 
-\subsection{Problem definition}
+\section{Problem definition}
 
 We can now define \emph{exact string matching}, perhaps the most fundamental problem in stringology.
 Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string $t$ (with $|t|=n$) called the \emph{text}, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \citep{Gusfield1997}.
@@ -212,11 +167,11 @@ For an extensive treatment of the subject, we refer the reader to complete surve
 
 % --- Online methods ---
 
-\subsection{Online methods}
+\section{Online methods}
 
 We consider two classes of algorithms for online string matching, those based on automata and those based on dynamic programming.
 
-\subsubsection{Automata}
+\subsection{Automata}
 
 Exact search of one pattern. Knuth-Morris-Pratt automaton.
 
@@ -224,9 +179,9 @@ Exact search of multiple patterns. Aho-corasick automaton.
 
 Approximate search of one pattern. Ukkonen automaton.
 
-%\subsubsection{NFA bit-parallelism}
+%\subsection{NFA bit-parallelism}
 
-\subsubsection{Dynamic programming}
+\subsection{Dynamic programming}
 
 The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
@@ -248,12 +203,12 @@ and since an occurrence of the pattern can end anywhere in the text, we check al
 \end{figure}
 
 
-%\subsubsection{DP bit-parallelism}
+%\subsection{DP bit-parallelism}
 
 
 % --- Indexed methods ---
 
-\subsection{Indexed methods}
+\section{Indexed methods}
 
 No matter how efficient online methods can be, these approaches quickly become impractical when the text is long and searched frequently.
 If the text is static and given in advance, we are allowed to preprocess it.
@@ -262,7 +217,7 @@ To this intent we introduce the \emph{suffix tree}, an optimal data structure to
 We take the suffix tree as an idealized data structure to elegantly expose our indexed algorithms solving string matching problems.
 In chapter~\ref{chr:index} we will consider other substring indices to replace the suffix tree in practice.
 
-\subsubsection{Suffix tree and suffix trie}
+\subsection{Suffix tree and suffix trie}
 
 The suffix tree \citep{Morrison1968} is a lexicographically ordered tree data structure representing all suffixes of a string.
 Assume w.l.o.g. a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
@@ -301,7 +256,7 @@ However, we remark that all given algorithms can be generalized to work on trees
 Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\Ti$.
 Given a node $\Tn$ of $\Ti$, we denote with $label(\Tn)$ the label of the edge entering into $\Tn$, with $\Ci(\Tn)$ the set of children of $\Tn$ being internal nodes, with $\Ei(\Tn)$ the set of children of $\Tn$ being leaves, and with $\Li(\Tn)$ the set of all leaves of the subtree rooted in $\Tn$. We remark that entering edges of internal nodes in $\Ci(\Tn)$ are always labeled with symbols in $\Sigma$, while entering edges of leaves in $\Li(\Tn)$ and $\Ei(\Tn)$ are always labeled with terminator symbols.
 
-\subsubsection{Exact string matching}
+\subsection{Exact string matching}
 
 Using the suffix trie $\Ti$ of the text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(m)$, thus independently of $n$.
 Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
@@ -331,7 +286,7 @@ Algorithm~\ref{alg:st-exact} is correct since each path from the root to any int
 \end{center}
 \end{figure}
 
-\subsubsection{Backtracking $k$-mismatches}
+\subsection{Backtracking $k$-mismatches}
 
 We can solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on the suffix trie $\Ti$, in average time sublinear in $n$ \citep{Navarro2000}.
 A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
@@ -369,7 +324,7 @@ See algorithm~\ref{alg:st-hamming}.
 \end{center}
 \end{figure}
 
-\subsubsection{Backtracking $k$-differences}
+\subsection{Backtracking $k$-differences}
 
 We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
@@ -418,7 +373,7 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 % --- Filtering methods ---
 
-\subsection{Filtering methods}
+\section{Filtering methods}
 \label{sec:intro:filtering}
 
 The goal of filtering methods is to obtain algorithms that have favorable average running times.
@@ -441,7 +396,7 @@ We can derive full-sensitive partitioning strategies by application of the pigeo
 Instead, filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
 Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
 
-\subsubsection{Seed filters}
+\subsection{Seed filters}
 
 We start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
 If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
@@ -494,7 +449,7 @@ How to choose the partitioning? Which length of $q$ makes filtration lossless?
 $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 
-\subsubsection{$q$-Gram filters}
+\subsection{$q$-Gram filters}
 
 $q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit distance\footnote{Thus it relates $q$-gram similarity also to Hamming distance.}.
@@ -540,7 +495,7 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \end{figure}
 
 
-%\subsubsection{Approximate seeds}
+%\subsection{Approximate seeds}
 %Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
 %Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
 %If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
@@ -555,17 +510,17 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 
 % === Related problems ===
 
-\section{Related problems}
+\chapter{Related problems}
 
 % --- Dictionary search ---
 
-\subsection{Dictionary search}
+\section{Dictionary search}
 
 Dictionary search is a restriction of string matching.
 Given a set of database strings $\Dc$ and a query string $q$, the approximate dictionary search problem is to find all strings in $\Dc$ within distance $k$ from $q$.
 Note that usually the query string $q$ has length similar to strings in $\Dc$, as $| |d| - |q| | \leq k$ is a necessary condition for $d_E(d,q) \leq k$.
 
-\subsubsection{Online methods}
+\subsection{Online methods}
 
 The problem can be solved by checking whether $d_E(d,q) \leq k$ for all $d \in \Dc$.
 Answering the question whether the distance $d_E(d,q) \leq k$ is an easier problem than computing the edit distance $d_E(d,q)$: a band of size $k+1$ is sufficient.
@@ -590,7 +545,7 @@ The assumption that the cell is right of the band can be falsified analogously.
 \end{center}
 \end{figure}
 
-\subsubsection{Indexed methods}
+\subsection{Indexed methods}
 
 Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query string $q$, in optimal time $\Oh(|q|)$ and independently of $||\Dc||$.
 
@@ -617,7 +572,7 @@ Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query strin
 \end{center}
 \end{figure}
 
-\subsubsection{Filtering methods}
+\subsection{Filtering methods}
 
 Filtering methods of section~\ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm~\ref{?}.
 
@@ -625,33 +580,33 @@ Filtering methods of section~\ref{sec:intro:filtering} can be directly applied t
 
 % --- Local similarity search ---
 
-\subsection{Local similarity search}
+\section{Local similarity search}
 
 Define score and scoring scheme.
 
 Define local similarity.
 
-\subsubsection{Online methods}
+\subsection{Online methods}
 Give dynamic programming solution.
 
-\subsubsection{Indexed methods}
+\subsection{Indexed methods}
 Backtracking over substring index. BWT-SW.
 
-\subsubsection{Filtering methods}
+\subsection{Filtering methods}
 SWIFT/Stellar is based on the $q$-gram lemma.
 %Lastz resembles a suffix filter.
 
 
 % --- Overlaps computation ---
 
-\subsection{Overlaps computation}
+\section{Overlaps computation}
 
 Define problem.
 
-\subsubsection{Online methods}
+\subsection{Online methods}
 
 DP solution.
 
-\subsubsection{Indexed methods}
+\subsection{Indexed methods}
 
 Indexed solution, exact and approximate.

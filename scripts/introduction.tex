@@ -1,0 +1,38 @@
+\chapter{Introduction}
+
+% -----------------------------------------------------------------------------
+
+\section{Motivation}
+
+This work has been motivated by recent advances of molecular genetics.
+The human genome has been sequenced in 2001. Also mouse, drosophila, etc.
+Nowadays \# reference model genomes are available in genbank.
+
+Next-generation sequencing has been the second revolution.
+NGS produces billions of reads for 1000\$ dollars.
+Why should one re-sequence a known genome?
+Resequencing applications include variant calling, etc.
+So NGS impacts biomedicine.
+
+Given a set of reads, two approaches are possible: assembly and mapping.
+
+Assembly methods are based on overlaps, de brujin graphs, or...
+
+Read mapping methods work on a previously assembled reference genome.
+
+The typical SNPs analysis pipeline~\ref{fig:ngs-pipeline} consists of...
+
+In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
+
+\begin{figure}[h]
+\caption{NGS pipeline.}
+\label{fig:ngs-pipeline}
+\end{figure}
+
+\begin{itemize}
+\item Plan A: de-novo assembly
+\item Plan B: reference mapping
+\item Plan C: reference guided de-novo assembly
+\end{itemize}
+
+\section{Organization of this manuscript}
