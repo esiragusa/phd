@@ -26,7 +26,7 @@
 
 % If true, omit TOC, index, refs and captions.
 \newboolean{noskeleton}
-\setboolean{noskeleton}{false}
+\setboolean{noskeleton}{true}
 
 \chapapp{\chaptername}
 
@@ -247,11 +247,11 @@ Gutachter:\\
 
 % === Bibiliography ==========================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{
+%\ifthenelse{\boolean{noskeleton}}{}{
 \bibliographystyle{natbib}
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{thesis}
-}
+%}
 
 % === Lists ==================================================================================
 

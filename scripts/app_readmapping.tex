@@ -96,7 +96,7 @@ Third, mapping quality tends to become less relevant as base calls improve, due 
 
 % =============================================================================
 
-\section{Genome mappability}
+\section{Mappability}
 \label{sec:mappability}
 
 The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
@@ -111,7 +111,7 @@ As a result of these events, about 50~\% of the human genome is composed of repe
 An analysis of the $k$-mer spectra of the genomes of some model organisms shows how genomes are statistically different from texts randomly generated according to uniform bernoulli models.
 
 Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Lee2012}.
-In the case of short reads mapping, the first evident effect of the fat-tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
+In the case of short reads mapping, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
 But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
 
 Common strategies to deal with multi-reads are
@@ -123,35 +123,46 @@ Common strategies to deal with multi-reads are
 
 The next practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
 
-Genome mappability has been recently studied in \citep{Derrien2012} and \citep{Lee2012}.
-We start by giving our definition of genome mappability, analogous to \citep{Derrien2012}.
+Genome mappability can bias NGS analysis more than we might think at a first glance.
+Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
+
 
 % -----------------------------------------------------------------------------
 
-\subsection{CRG genome mappability}
+\subsection{Genome mappability}
 
-We extract a perfect read (without sequencing errors) from a reference genome, we map it back within a given distance, we count to how many loci it maps back.
-Mappability at position $i$, denote by the function $M(i)$, is the inverse mapping frequency.
-Any location $i$ for which $M(i) < 1$ is not unambiguously mappable.
+We now give a definition of genome mappability analogous to \citep{Derrien2012}.
+Let fix a $q$-gram length, a distance measure as the Hamming or edit distance, and a distance threshold $k$.
+Given a genomic sequence $g$, we defined the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
+We define the $(q,k)$-mappability $M^q_k(l)$ as the inverse $(q,k)$-frequency, \ie $M^q_k(l) = {F^q_k(l)}^{-1}$ with $M^q_k : \N \rightarrow ]0,1]$.
+Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
+The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up tho distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-Genome mappability can bias NGS analysis more than we might think at a first glance.
-By considering a reference genome of length $n$, randomly generated under the uniform bernoulli model, we would expect any string of length $log_4(n)$ to occur about once.
-In the human genome almost all 17-mers would be unique, on fly 15-mers, on worm 13-mers.
-
-Sticking to these assumptions, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability. For two reasons, this is not the case:
-\begin{itemize}
-\item the $k$-mers distribution of model genomes does not fit the uniform bernoulli distribution.
+Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
+Let consider the simple case of exact $(q,0)$-mappability.
+By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
+It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
+Thus, for $E[F^q_0] \leq 1$ it must hold:
+\begin{eqnarray}
+2n \leq 4^q\\
+\log{2n} \leq \log{4^q}\\
+q \geq log_{4}{2n}
+\end{eqnarray}
+Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
+Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
+However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
 In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
-This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}
+This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
 
-\item Reads have to be mapped approximately to the reference genome.
+
+Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
+However, reads have to be mapped approximately to the reference genome.
 The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
 Thus the above estimate is a lower bound.
-\end{itemize}
 
 \subsubsection{Uniqueome}
 
-\citep{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
+\citeauthor{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
 Unique mappability rises to 83~\% by increasing the read length to 75~bp; however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
 
@@ -180,8 +191,8 @@ $M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
 \subsection{Genome mappability score}
 
 Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
-Instead of considering the simple inverse mapping multiplicity, \citeauthor{Lee2012} interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
-Therefore, they consider the average mapping probability of any read spanning a location $l$ of a reference genome $g$\footnote{Equation~3 in \citep{Lee2012} is not precise, please refer to our equation~\ref{eq:gms}.}:
+Instead of considering the inverse mapping frequency $(q,k)$-mappability, we can interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
+Therefore, we consider the average mapping probability of any read spanning a location $l$ of a reference genome $g$\footnote{Equation~3 in \citep{Lee2012} is not precise, please refer to our equation~\ref{eq:gms}.}:
 \begin{eqnarray}
 \label{eq:gms}
 p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}
@@ -190,19 +201,16 @@ which in Phread-scale becomes:
 \begin{eqnarray}
 Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}
 \end{eqnarray}
-and thus define the genome mappability score GMS(l) as its percentual value:
+and thus, fixed a genomic sequence $g$, we define the genome mappability score GMS(l) as its percentual value:
 \begin{eqnarray}
 \text{GMS}(l) = 100 Q(l|g)
 \end{eqnarray}
 
-
+\citeauthor{Lee2012} simulate reads having length and error profiles similar to those issue by actual sequencing technologies, define low GMS regions as those locations for which $\text{GMS}(l) \leq 10$, and measure the percentage of such locations in the human genome.
 
 \begin{center}
 \input{tables/table_gms}
 \end{center}
-
-
-TODO.
 
 
 % =============================================================================
