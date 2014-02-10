@@ -60,6 +60,8 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 \chapter{Mappability}
 \label{sec:mappability}
 
+Genome resequencing is a non-trivial task.
+
 The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
 Genomes evolved through multiple types of duplication events, including
 \begin{inparaenum}[(i)]
@@ -83,7 +85,7 @@ Common strategies to deal with multi-reads are
 \end{inparaenum}
 \citep{Treangen2011}.
 
-The next practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
+A practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
 
 Genome mappability can bias NGS analysis more than we might think at a first glance.
 Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
@@ -95,10 +97,10 @@ Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappab
 
 We now give a definition of genome mappability analogous to \citep{Derrien2012}.
 Let fix a $q$-gram length, a distance measure as the Hamming or edit distance, and a distance threshold $k$.
-Given a genomic sequence $g$, we defined the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
+Given a genomic sequence $g$, we define the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
 We define the $(q,k)$-mappability $M^q_k(l)$ as the inverse $(q,k)$-frequency, \ie $M^q_k(l) = {F^q_k(l)}^{-1}$ with $M^q_k : \N \rightarrow ]0,1]$.
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
-The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up tho distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
+The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
 Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
 Let consider the simple case of exact $(q,0)$-mappability.
@@ -206,7 +208,7 @@ which in Phread-scale becomes:
 \begin{eqnarray}
 Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}
 \end{eqnarray}
-and thus, fixed a genomic sequence $g$, we define the genome mappability score GMS(l) as its percentual value:
+and thus, fixed a genomic sequence $g$, we define the genome mappability score $\text{GMS}(l)$ as its percentual value:
 \begin{eqnarray}
 \text{GMS}(l) = 100 Q(l|g)
 \end{eqnarray}

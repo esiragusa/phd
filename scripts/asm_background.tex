@@ -138,9 +138,9 @@ We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to 
 
 % === Overview of existing methods ===
 
-\chapter{Overview of string matching}
+\section{String matching}
 
-\section{Problem definition}
+\subsection{Problem definition}
 
 We can now define \emph{exact string matching}, perhaps the most fundamental problem in stringology.
 Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string $t$ (with $|t|=n$) called the \emph{text}, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \citep{Gusfield1997}.
@@ -167,11 +167,11 @@ For an extensive treatment of the subject, we refer the reader to complete surve
 
 % --- Online methods ---
 
-\section{Online methods}
+\subsection{Online methods}
 
 We consider two classes of algorithms for online string matching, those based on automata and those based on dynamic programming.
 
-\subsection{Automata}
+\subsubsection{Automata}
 
 Exact search of one pattern. Knuth-Morris-Pratt automaton.
 
@@ -179,9 +179,9 @@ Exact search of multiple patterns. Aho-corasick automaton.
 
 Approximate search of one pattern. Ukkonen automaton.
 
-%\subsection{NFA bit-parallelism}
+%\subsubsection{NFA bit-parallelism}
 
-\subsection{Dynamic programming}
+\subsubsection{Dynamic programming}
 
 The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
@@ -208,7 +208,7 @@ and since an occurrence of the pattern can end anywhere in the text, we check al
 
 % --- Indexed methods ---
 
-\section{Indexed methods}
+\subsection{Indexed methods}
 
 No matter how efficient online methods can be, these approaches quickly become impractical when the text is long and searched frequently.
 If the text is static and given in advance, we are allowed to preprocess it.
@@ -217,7 +217,7 @@ To this intent we introduce the \emph{suffix tree}, an optimal data structure to
 We take the suffix tree as an idealized data structure to elegantly expose our indexed algorithms solving string matching problems.
 In chapter~\ref{chr:index} we will consider other substring indices to replace the suffix tree in practice.
 
-\subsection{Suffix tree and suffix trie}
+\subsubsection{Suffix tree and suffix trie}
 
 The suffix tree \citep{Morrison1968} is a lexicographically ordered tree data structure representing all suffixes of a string.
 Assume w.l.o.g. a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
@@ -256,7 +256,7 @@ However, we remark that all given algorithms can be generalized to work on trees
 Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\Ti$.
 Given a node $\Tn$ of $\Ti$, we denote with $label(\Tn)$ the label of the edge entering into $\Tn$, with $\Ci(\Tn)$ the set of children of $\Tn$ being internal nodes, with $\Ei(\Tn)$ the set of children of $\Tn$ being leaves, and with $\Li(\Tn)$ the set of all leaves of the subtree rooted in $\Tn$. We remark that entering edges of internal nodes in $\Ci(\Tn)$ are always labeled with symbols in $\Sigma$, while entering edges of leaves in $\Li(\Tn)$ and $\Ei(\Tn)$ are always labeled with terminator symbols.
 
-\subsection{Exact string matching}
+\subsubsection{Exact string matching}
 
 Using the suffix trie $\Ti$ of the text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(m)$, thus independently of $n$.
 Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
@@ -286,7 +286,7 @@ Algorithm~\ref{alg:st-exact} is correct since each path from the root to any int
 \end{center}
 \end{figure}
 
-\subsection{Backtracking $k$-mismatches}
+\subsubsection{Backtracking $k$-mismatches}
 
 We can solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on the suffix trie $\Ti$, in average time sublinear in $n$ \citep{Navarro2000}.
 A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
@@ -324,7 +324,7 @@ See algorithm~\ref{alg:st-hamming}.
 \end{center}
 \end{figure}
 
-\subsection{Backtracking $k$-differences}
+\subsubsection{Backtracking $k$-differences}
 
 We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
@@ -373,7 +373,7 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 % --- Filtering methods ---
 
-\section{Filtering methods}
+\subsection{Filtering methods}
 \label{sec:intro:filtering}
 
 The goal of filtering methods is to obtain algorithms that have favorable average running times.
@@ -396,7 +396,7 @@ We can derive full-sensitive partitioning strategies by application of the pigeo
 Instead, filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
 Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
 
-\subsection{Seed filters}
+\subsubsection{Seed filters}
 
 We start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
 If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
@@ -449,7 +449,7 @@ How to choose the partitioning? Which length of $q$ makes filtration lossless?
 $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 
-\subsection{$q$-Gram filters}
+\subsubsection{$q$-Gram filters}
 
 $q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit distance\footnote{Thus it relates $q$-gram similarity also to Hamming distance.}.
@@ -495,7 +495,7 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \end{figure}
 
 
-%\subsection{Approximate seeds}
+%\subsubsection{Approximate seeds}
 %Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
 %Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
 %If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
@@ -507,6 +507,56 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 %We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
 %To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
 %Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+
+
+% === Online Methods ===
+
+\chapter{Online Methods}
+%\section{Classic methods}
+%\section{Bit-vector methods}
+%\subsection{NFA bit-vector emulation}
+%\section{Verification methods}
+\section{Myers' bit-vector algorithm}
+\section{Banded Myers' bit-vector algorithm}
+\section{Increased bit-parallelism using SIMD instructions}
+
+% === Indexed Methods ===
+
+\chapter{Indexed Methods}
+\section{Classic Full-Text Indices}
+\subsection{Trie}
+\subsection{Suffix trie and suffix tree}
+\subsection{Suffix array}
+\subsection{$q$-Gram index}
+\section{Compressed Full-Text Indices}
+\subsection{Burrows-Wheeler transform}
+%\subsubsection{Construction}
+%\subsubsection{The Bwte algorithm}
+%\subsubsection{The BCR algorithm}
+%\subsubsection{Inversion}
+\subsection{FM-index}
+%\subsubsection{Backward search}
+%\subsubsection{Locating occurrences}
+\subsection{Rank dictionaries}
+%\subsubsection{Sequential dictionaries}
+%\subsubsection{Wavelet tree}
+\section{Backtracking}
+\subsection{Pruning methods}
+\subsection{Multiple backtracking}
+
+% === Filtering Methods ===
+
+\chapter{Filtering Methods}
+\section{$q$-Gram filters}
+\subsection{Exact seeds}
+\subsection{Gapped seeds}
+%\subsubsection{Intuition}
+%\subsubsection{Threshold computation}
+%\subsubsection{Sensitivity computation}
+\section{Factor filters}
+\subsection{Exact seeds}
+\subsection{Approximate seeds}
+\section{Suffix filters}
 
 % === Related problems ===
 
