@@ -217,6 +217,8 @@ To this intent we introduce the \emph{suffix tree}, an optimal data structure to
 We take the suffix tree as an idealized data structure to elegantly expose our indexed algorithms solving string matching problems.
 In chapter~\ref{chr:index} we will consider other substring indices to replace the suffix tree in practice.
 
+\subsubsection{Trie}
+
 \subsubsection{Suffix tree and suffix trie}
 
 The suffix tree \citep{Morrison1968} is a lexicographically ordered tree data structure representing all suffixes of a string.
@@ -512,10 +514,6 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 % === Online Methods ===
 
 \chapter{Online Methods}
-%\section{Classic methods}
-%\section{Bit-vector methods}
-%\subsection{NFA bit-vector emulation}
-%\section{Verification methods}
 \section{Myers' bit-vector algorithm}
 \section{Banded Myers' bit-vector algorithm}
 \section{Increased bit-parallelism using SIMD instructions}
@@ -524,15 +522,11 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 
 \chapter{Indexed Methods}
 \section{Classic Full-Text Indices}
-\subsection{Trie}
-\subsection{Suffix trie and suffix tree}
 \subsection{Suffix array}
 \subsection{$q$-Gram index}
 \section{Compressed Full-Text Indices}
 \subsection{Burrows-Wheeler transform}
 %\subsubsection{Construction}
-%\subsubsection{The Bwte algorithm}
-%\subsubsection{The BCR algorithm}
 %\subsubsection{Inversion}
 \subsection{FM-index}
 %\subsubsection{Backward search}
@@ -540,8 +534,7 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \subsection{Rank dictionaries}
 %\subsubsection{Sequential dictionaries}
 %\subsubsection{Wavelet tree}
-\section{Backtracking}
-\subsection{Pruning methods}
+\section{Multiple backtracking}
 \subsection{Multiple backtracking}
 
 % === Filtering Methods ===
