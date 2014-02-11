@@ -597,7 +597,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 
 \subsection{$q$-Gram index}
 
-If we prune our idealized suffix tree to a small depth $q$, we can improve again the query time over the suffix array.
+If we prune our idealized suffix tree to a fixed height $q$, we can improve again the query time over the suffix array.
 The idea is to supplement the suffix array $A$ with an additional $q$-gram directory $D$ storing the suffix array ranges computed by algorithm~\ref{alg:sa-exact} for any possible word of length $q$.
 
 With the aim of addressing $q$-grams in the directory $D$, we impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow [1 \dots \sigma^q]$ defined as in \citep{Knuth19XX}:
