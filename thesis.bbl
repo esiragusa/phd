@@ -80,6 +80,22 @@ Holtgrewe, M., Emde, A.-K., Weese, D., and Reinert, K. (2011).
   read mapping.
 \newblock {\em BMC Bioinformatics\/}, {\bf 12}, page 210.
 
+\bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
+  Sanders]{Karkkainen2003}
+K{\"a}rkk{\"a}inen, J. and Sanders, P. (2003).
+\newblock Simple linear work suffix array construction.
+\newblock {\em ICALP\/}, pages 943--955.
+
+\bibitem[Knuth(1973)Knuth]{Knuth1973}
+Knuth, D. (1973).
+\newblock {\em The Art of Computer Programming. Volume 3, Addision-Wesley\/}.
+
+\bibitem[Kurtz(1999)Kurtz]{Kurtz1999}
+Kurtz, S. (1999).
+\newblock Reducing the space requirement of suffix trees.
+\newblock {\em Software-Practice and Experience\/}, {\bf 29}(13), pages
+  1149--71.
+
 \bibitem[Langmead and Salzberg(2012)Langmead and Salzberg]{Bowtie2}
 Langmead, B. and Salzberg, S.~L. (2012).
 \newblock {Fast gapped-read alignment with Bowtie 2}.
@@ -141,6 +157,11 @@ Liu, C.-M., Wong, T., Wu, E., Luo, R., Yiu, S.-M., Li, Y., Wang, B., Yu, C.,
 \newblock Soap3: ultra-fast gpu-based parallel alignment tool for short reads.
 \newblock {\em Bioinformatics\/}, {\bf 28}(6), pages 878--879.
 
+\bibitem[Manber and Myers(1990)Manber and Myers]{Manber1990}
+Manber, U. and Myers, G. (1990).
+\newblock Suffix arrays: a new method for on-line string searches.
+\newblock In {\em SODA\/}, pages 319--327.
+
 \bibitem[Marco-Sola \ea(2012)Marco-Sola, Sammeth, Guig{\'o}, and Ribeca]{Gem}
 Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
 \newblock The gem mapper: fast, accurate and versatile alignment by filtration.
@@ -162,6 +183,12 @@ Navarro, G. and Baeza-Yates, R.~A. (2000).
 Navarro, G., Baeza-Yates, R.~A., Sutinen, E., and Tarhio, J. (2001).
 \newblock Indexing methods for approximate string matching.
 \newblock {\em IEEE Data Eng. Bull.}, {\bf 24}(4), pages 19--27.
+
+\bibitem[Treangen and Salzberg(2011)Treangen and Salzberg]{Treangen2011}
+Treangen, T.~J. and Salzberg, S.~L. (2011).
+\newblock Repetitive dna and next-generation sequencing: computational
+  challenges and solutions.
+\newblock {\em Nature Reviews Genetics\/}, {\bf 13}(1), pages 36--46.
 
 \bibitem[Ukkonen(1993)Ukkonen]{Ukkonen1993}
 Ukkonen, E. (1993).
