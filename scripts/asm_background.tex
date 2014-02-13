@@ -368,7 +368,7 @@ We can compute $k$-differences on a suffix tree in two different ways. Algorithm
 \end{algorithm}
 
 In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
-However, for theoretical considerations, it is important to consider an algorithm wich computes in $\Oh(1)$ per node.
+However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
 Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
 
 Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
@@ -537,7 +537,7 @@ Over the last years, a significant effort has been devoted to the engineering of
 In particular, much research has been done into designing succint or even compressed data-structure providing efficient query times using space proportional to that of the uncompressed or compressed input.
 Thanks to this research, we are able to index the human genome in as little as 2.X~GB of memory and at the same time improve query time by a factor of X over classic indices!
 
-In this chapter, we introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently succint full-text indices (various FM-indices) replacing suffix trees.
+In this chapter, we introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently succint full-text indices (our FM-index implementations) replacing suffix trees.
 Afterwards we give approximate string matching algorithms working on any of these data structures.
 
 \section{Classic Full-Text Indices}
@@ -646,7 +646,7 @@ Furthermore, this hybrid index can be useful if the suffix array has to reside i
 \end{algorithmic}
 \end{algorithm}
 
-\section{Compressed Full-Text Indices}
+\section{Succint Full-Text Indices}
 
 The Burrows-Wheeler transform (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 The transformed string exposes two important properties: reversibility and compressibility.
@@ -657,11 +657,14 @@ More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-te
 They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact pattern matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
 Over the last years, the FM-index has widely re-implemented and employed by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie}, BWA \citep{BWA}, Soap2 \citep{Soap2}, and is now considered a fundamental method for the indexing of genomic sequences.
 
+In the next subsections, we give the fundamental ideas behind the BWT and the FM-index.
+Subsequently, we discuss our succint FM-index implementations covering texts and text collections.
+
 \subsection{Burrows-Wheeler transform}
 
 Let $t$ be a string of length $n$ over an alphabet $\Sigma$, terminated by a symbol $\$ \notin \Sigma$ such that $\$ <_{lex} c$ for all $c \in \Sigma$.
 Consider the square matrix $M$ consisting of all cyclic shifts of the text $t$ (the $i$-th cyclic shift has the form $t_{i \dots n} t_{1 \dots i-1}$) sorted in lexicographical order.
-Note how the matrix $M$ is related to the suffix array $A$ of $t$: the cyclic rotation in the $i$-th row is $M[i:] = t_{A[i] \dots n} t_{1 \dots A[i-1]}$ (except when $A[i] = 1$).
+Note how the matrix $M$ is related to the suffix array $A$ of $t$: the cyclic shift in the $i$-th row is $M[i:] = t_{A[i] \dots n} t_{1 \dots A[i-1]}$ (except when $A[i] = 1$).
 
 \begin{definition}
 The BWT of $t$ is the string $l$ obtained concatenating the symbols in the last column of $M$, \ie $l = M[:n]$.
@@ -671,20 +674,13 @@ The BWT of $t$ is the string $l$ obtained concatenating the symbols in the last 
 
 The matrix $M$ is conceptual. We do not have to construct it explicitly to derive the BWT of a text.
 We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $t_{A[i]-1}$ (and when $A[i]=1$ the character $t_n$).
-Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not appealing due to its space consumption of $n \log{n}$ bits.
+Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not desirable due to its space consumption of $n \log{n}$ bits.
 
 %\subsubsection{Inversion}
 
-We now describe how to reverse the BWT to reconstruct the original text.
+We now describe how to invert the BWT to reconstruct the original text.
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
-This is possible due to two simple observations on the cyclic shifts of the matrix $M$ \citep{Burrows1994}:
-\begin{itemize}
-\item For all $i \in [1,n] \ I$, the character $l_i$ precedes the character $f_i$ in the original text $t$;
-\item For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
-\end{itemize}
-
-Given the above observations, we can define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
-
+To this extent, we define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
 We recover $t$ by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
 Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
 
@@ -698,6 +694,12 @@ where
 \Psi^{i+1}(j) = \Psi(\Psi^{i}(j))
 \end{eqnarray}
 
+\begin{example}
+Recover $t$.\\
+$l=$\\
+$\Psi = (\dots)$
+\end{example}
+
 We recover $\bar{t}$ as follows:
 \begin{eqnarray}
 \bar{t}_i = t_{LF^{i-1}(j)}
@@ -708,14 +710,37 @@ LF^0(j)=j\\
 LF^{i+1}(j) = LF(LF^{i}(j))
 \end{eqnarray}
 
-\subsection{FM-index}
-%\subsubsection{Backward search}
-%\subsubsection{Locating occurrences}
+\begin{example}
+Recover $\bar{t}$.\\
+$l=$\\
+$LF = (\dots)$
+\end{example}
+
+Again, the permutation $LF$ is conceptual. We do not have to explicitly store it but we can deduce it from the BWT $l$, with the help of some additional character counts.
+This is possible due to two simple observations on the cyclic shifts of the matrix $M$ \citep{Burrows1994}:
+\begin{itemize}
+\item For all $i \in [1,n] \ I$, the character $l_i$ precedes the character $f_i$ in the original text $t$;
+\item For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
+\end{itemize}
+Given the above observations, we define the permutation $LF$ as \citep{Burrows1994,Ferragina2000}:
+\begin{eqnarray}
+LF(i) = C(l_i) + Occ(l_i, i)
+\end{eqnarray}
+where we denote with $C : \Sigma \rightarrow [1,n]$ the total number of occurrences in $t$ of all characters alphabetically smaller than $c$, and with $Occ :  \Sigma \times [1,n] \rightarrow [1,n]$ the number of occurrences of character $c$ in the prefix $l_{1 \dots i}$.
+
+The key problem of representing the permutation $LF$ is how to represent function $Occ$, as function $C$ can be easily tabulated by a small array of size $\sigma \log{n}$ bits.
+In the next subsection we address the problem of representing function $Occ$ efficiently. Subsequently, in subsection~\ref{sub:fmi} we see how to build a full-text index out of function $LF$.
+
 \subsection{Rank dictionaries}
 %\subsubsection{Sequential dictionaries}
 %\subsubsection{Wavelet tree}
+
+\subsection{FM-index}
+\label{sub:fmi}
+\subsubsection{Backward search}
+\subsubsection{Locating occurrences}
+
 \section{Multiple backtracking}
-\subsection{Multiple backtracking}
 
 % === Filtering Methods ===
 
