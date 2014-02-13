@@ -667,7 +667,7 @@ Consider the square matrix $M$ consisting of all cyclic shifts of the text $t$ (
 Note how the matrix $M$ is related to the suffix array $A$ of $t$: the cyclic shift in the $i$-th row is $M[i:] = t_{A[i] \dots n} t_{1 \dots A[i-1]}$ (except when $A[i] = 1$).
 
 \begin{definition}
-The BWT of $t$ is the string $l$ obtained concatenating the symbols in the last column of $M$, \ie $l = M[:n]$.
+The BWT of $t$ is the string $l$ obtained concatenating the symbols in the last column of the cyclic shifts matrix $M$, \ie $l = M[:n]$.
 \end{definition}
 
 %\subsubsection{Construction}
@@ -732,6 +732,42 @@ The key problem of representing the permutation $LF$ is how to represent functio
 In the next subsection we address the problem of representing function $Occ$ efficiently. Subsequently, in subsection~\ref{sub:fmi} we see how to build a full-text index out of function $LF$.
 
 \subsection{Rank dictionaries}
+
+We want to represent the function $Occ$ in succint space and at the same time answer efficiently the question: how many times a given character $c$ occurs in the prefix $l_{1 \dots i}$?
+The general problem on arbitrary sequences has been tackled by several studies on the succint representation of data structures \citep{Jacobson1989, Munro1996, Clark1996, Raman2002}.
+Our specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary}.
+
+\begin{definition}
+Given a sequence $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $rank_c(s, i)$ returns the number of occurrences of $c$ in the prefix $s_{1 \dots i}$.
+\end{definition}
+
+Rank dictionaries maintain a succint (or compressed) representation of the input sequence and attach a dictionary to it.
+By doing so, it is possible to answer rank queries in constant time on the RAM model, using $n+o(n)$ bits for an input binary sequence of $n$ bits \citep{Jacobson1989}.
+We start with a simple rank dictionary answering rank queries in constant time but taking $n \log{\sigma} + n \sigma$ bits of space.
+
+First we consider the binary case $\Sigma_B = \{ 0, 1 \}$ and later we extend it to arbitrary alphabets.
+Given the binary sequence $s \in \Sigma_B$, we partition it in blocks of $\log{n}$ bits.
+We attach to the binary sequence $s$ an array $R$ of length $\log{n}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i \log{n}}$.
+At this point we are already able to answer $rank_1(s, i)$ in constant time by 
+\begin{inparaenum}[(i)]
+\item \label{itm:fetch} fetching the summary from $R[\frac{i}{\log{n}}]$ and
+\item \label{itm:count} adding the number of occurrences of the bit 1 inside the subsequence $s_{\frac{i}{\log{n}} \dots i}$,
+\end{inparaenum}
+as we can always perform operation~\ref{itm:fetch} in constant time and operation~\ref{itm:count} in constant time on modern processors \citep{Intel}.
+Note that $rank_0(s, i) = i - rank_1(s, i)$.
+
+The array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, so we are taking $n$ bits of space for $R$.
+
+The extension to small alphabets, \eg $\Sigma_{\text{DNA}}$ is easy.
+Given an input sequence $s \in \Sigma_{\text{DNA}}$ of length $n$ (and size $n \log{\sigma}$ bits), we partition it in blocks of $b=\frac{\log{n}}{\log{\sigma}}$ symbols.
+We supplement each block with a summary of the occurrences of all symbols in $\Sigma$.
+Thus, this time we use a matrix $R$ of $\sigma \times b$ entries, each one taking $\log{n}$ space.
+Again, we answer $rank_c(s, i)$ in constant time by
+\begin{inparaenum}[(i)]
+\item \label{itm:fetch} fetching the summary from $R[rank(c)][\frac{i}{b}]$ and
+\item \label{itm:count} adding the number of occurrences of the bit 1 inside the subsequence $s_{\frac{i}{b} \dots i}$,
+\end{inparaenum}
+
 %\subsubsection{Sequential dictionaries}
 %\subsubsection{Wavelet tree}
 
