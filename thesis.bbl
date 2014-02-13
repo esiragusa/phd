@@ -15,6 +15,10 @@ Baeza-Yates, R.~A. and Navarro, G. (1999).
 \newblock Faster approximate string matching.
 \newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
 
+\bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
+Burrows, M. and Wheeler, D.~J. (1994).
+\newblock A block-sorting lossless data compression algorithm.
+
 \bibitem[DePristo \ea(2011)DePristo, Banks, Poplin, Garimella, Maguire, Hartl,
   Philippakis, del Angel, Rivas, Hanna, \ea]{DePristo2011}
 DePristo, M.~A., Banks, E., Poplin, R., Garimella, K.~V., Maguire, J.~R.,
@@ -48,6 +52,17 @@ Farrar, M. (2007).
 \newblock Striped smith--waterman speeds database searches six times over other
   simd implementations.
 \newblock {\em Bioinformatics\/}, {\bf 23}(2), pages 156--161.
+
+\bibitem[Ferragina and Manzini(2000)Ferragina and Manzini]{Ferragina2000}
+Ferragina, P. and Manzini, G. (2000).
+\newblock Opportunistic data structures with applications.
+\newblock In {\em Foundations of Computer Science, 2000. Proceedings. 41st
+  Annual Symposium on\/}, pages 390--398. IEEE.
+
+\bibitem[Ferragina and Manzini(2001)Ferragina and Manzini]{Ferragina2001}
+Ferragina, P. and Manzini, G. (2001).
+\newblock An experimental study of an opportunistic index.
+\newblock In {\em SODA\/}, pages 269--278.
 
 \bibitem[Fonseca \ea(2012)Fonseca, Rung, Brazma, and Marioni]{Fonseca2012}
 Fonseca, N.~A., Rung, J., Brazma, A., and Marioni, J.~C. (2012).

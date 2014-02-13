@@ -571,7 +571,7 @@ We now concentrate on replacing suffix tree functionalities. We replace algorith
 The worst case runtime of algorithm~\ref{alg:sa-exact} is $\Oh(m \log{n})$, as the binary search consists of $\Oh(\log{n})$ steps, and each step is performed in $\Oh(m)$ time, as it requires in the worst case a full lexicographical comparison between the pattern and any suffix of the text.
 
 As shown in \citep{Manber1990}, we can decrease the worst case runtime to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $s_{A[i]}$, $s_{A[i+1]}$ for all $1 \leq i < n$.
-Alternative, we can reduce the average case runtime to $\Oh(m + \log{n})$ without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
+Alternatively, we can reduce the average case runtime to $\Oh(m + \log{n})$ without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table.
 
 \begin{algorithm}[h]
@@ -604,9 +604,9 @@ With the aim of addressing $q$-grams in the directory $D$, we impose a canonical
 \begin{eqnarray}
 h(p) = 1 + \sum_{i=1}^{q}{\rho(p_i) \cdot \sigma^{q-i}}
 \end{eqnarray}
-where $p \in \Sigma^q$ is a $q$-gram and the function $\rho : \Sigma \rightarrow [0 \dots \sigma - 1]$ denotes the lexicographic rank of any symbol in the alphabet $\Sigma$.
+where $p \in \Sigma^q$ is any $q$-gram and the function $\rho : \Sigma \rightarrow [0 \dots \sigma - 1]$ denotes the lexicographic rank of any symbol in the alphabet $\Sigma$.
 This allows us to store in and retrieve from $D[h(p)]$, for each $q$-gram $p \in \Sigma^q$, the left suffix array interval returned by algorithm~\ref{alg:sa-lower}, \ie D[h(p)] = LowerSearch(p).
-Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographically following $q$-gram, and therefore available in $D[h(p)+1]$.
+Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographically following $q$-gram and therefore available in $D[h(p)+1]$.
 
 
 \begin{figure}[h]
@@ -617,24 +617,23 @@ Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equival
 \end{figure}
 
 At this point, we are able to replace algorithm~\ref{alg:sa-exact} with algorithm~\ref{alg:qgram-exact}.
-Algorithm~\ref{alg:qgram-exact} runs in $\Oh(q)$ time, but the time to compute the function $h$ can be neglected and  the procedure requires fetching only two memory locations from $D$.
+Algorithm~\ref{alg:qgram-exact} runs in $\Oh(q)$ time, but in practice the time to compute the function $h$ can be neglected and the lookup requires fetching only two memory locations from $D$.
 The downside is that in practice this approach is applicable only for small alphabet and pattern sizes.
 For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M entries that, using a 32 bits encoding, consume 1~GB of memory.
 
-If the patterns are shorter or equal to the fixed $q$, we access the suffix array only to locate the occurrences, as the directory $D$ alone is sufficient to count.
+If the patterns are shorter or equal to the fixed length $q$, we access the suffix array only to locate the occurrences, as the directory $D$ alone is sufficient to count.
 In this case, the total ordering of the text suffixes in the suffix array can be relaxed to prefixes of length $q$.
 This gives us a twofold advantage, as we can:
 \begin{inparaenum}[(i)]
-\item construct the suffix array more efficiently using bucket sorting, and
+\item construct the suffix array more efficiently using bucket sorting and
 \item maintain leaves in each bucket sorted by their relative text positions.
 \end{inparaenum}
-The latter property can allow up to compress the suffix array bucket-wise \eg using Elias $\delta$-coding \citep{?} or to implement cache-oblivious strategies to process the occurrences \citep{?}.
+The latter property allows to compress the suffix array bucket-wise \eg using Elias $\delta$-coding \citep{?} or to devise cache-oblivious strategies to process the occurrences \citep{?}.
 
 If the patterns are longer than $q$, the $q$-gram index is still useful.
 We can devise an hybrid algorithm using the directory $D$ to conduct the search up to depth $q$ and later continue with binary searches.
 This hybrid index cuts the most expensive binary searches and increases memory locality.
 Furthermore, this hybrid index can be useful if the suffix array has to reside in external memory.
-
 
 \begin{algorithm}[h]
 \caption{Exact string matching on a $q$-gram index.}
@@ -647,11 +646,68 @@ Furthermore, this hybrid index can be useful if the suffix array has to reside i
 \end{algorithmic}
 \end{algorithm}
 
-
 \section{Compressed Full-Text Indices}
+
+The Burrows-Wheeler transform (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
+The transformed string exposes two important properties: reversibility and compressibility.
+The former property allows us to reconstruct the original string only from its BWT, the latter property makes the transformed string more amenable to compression.
+Thanks to these two properties, the BWT has been recognized as a fundamental method for text compression and practically used in the bzip2 \citep{?} tool.
+
+More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-text indexing.
+They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact pattern matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
+Over the last years, the FM-index has widely re-implemented and employed by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie}, BWA \citep{BWA}, Soap2 \citep{Soap2}, and is now considered a fundamental method for the indexing of genomic sequences.
+
 \subsection{Burrows-Wheeler transform}
+
+Let $t$ be a string of length $n$ over an alphabet $\Sigma$, terminated by a symbol $\$ \notin \Sigma$ such that $\$ <_{lex} c$ for all $c \in \Sigma$.
+Consider the square matrix $M$ consisting of all cyclic shifts of the text $t$ (the $i$-th cyclic shift has the form $t_{i \dots n} t_{1 \dots i-1}$) sorted in lexicographical order.
+Note how the matrix $M$ is related to the suffix array $A$ of $t$: the cyclic rotation in the $i$-th row is $M[i:] = t_{A[i] \dots n} t_{1 \dots A[i-1]}$ (except when $A[i] = 1$).
+
+\begin{definition}
+The BWT of $t$ is the string $l$ obtained concatenating the symbols in the last column of $M$, \ie $l = M[:n]$.
+\end{definition}
+
 %\subsubsection{Construction}
+
+The matrix $M$ is conceptual. We do not have to construct it explicitly to derive the BWT of a text.
+We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $t_{A[i]-1}$ (and when $A[i]=1$ the character $t_n$).
+Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not appealing due to its space consumption of $n \log{n}$ bits.
+
 %\subsubsection{Inversion}
+
+We now describe how to reverse the BWT to reconstruct the original text.
+Inverting the BWT means being able to know where any BWT character occurs in the original text.
+This is possible due to two simple observations on the cyclic shifts of the matrix $M$ \citep{Burrows1994}:
+\begin{itemize}
+\item For all $i \in [1,n] \ I$, the character $l_i$ precedes the character $f_i$ in the original text $t$;
+\item For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
+\end{itemize}
+
+Given the above observations, we can define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
+
+We recover $t$ by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
+Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
+
+We recover $t$ as follows:
+\begin{eqnarray}
+t_i = f_{\Psi^{i-1}(j)}
+\end{eqnarray}
+where 
+\begin{eqnarray}
+\Psi^0(j)=j\\
+\Psi^{i+1}(j) = \Psi(\Psi^{i}(j))
+\end{eqnarray}
+
+We recover $\bar{t}$ as follows:
+\begin{eqnarray}
+\bar{t}_i = t_{LF^{i-1}(j)}
+\end{eqnarray}
+where 
+\begin{eqnarray}
+LF^0(j)=j\\
+LF^{i+1}(j) = LF(LF^{i}(j))
+\end{eqnarray}
+
 \subsection{FM-index}
 %\subsubsection{Backward search}
 %\subsubsection{Locating occurrences}
