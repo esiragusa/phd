@@ -489,14 +489,6 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \end{center}
 \end{figure}
 
-\begin{figure}[h]
-\begin{center}
-\caption{Filtration with gapped $q$-grams.}
-\label{fig:qgrams-gapped}
-\input{figures/filtration_qgrams_gapped.tikz}
-\end{center}
-\end{figure}
-
 
 %\subsubsection{Approximate seeds}
 %Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
@@ -746,26 +738,28 @@ By doing so, it is possible to answer rank queries in constant time on the RAM m
 We start with a simple rank dictionary answering rank queries in constant time but taking $n \log{\sigma} + n \sigma$ bits of space.
 
 First we consider the binary case $\Sigma_B = \{ 0, 1 \}$ and later we extend it to arbitrary alphabets.
-Given the binary sequence $s \in \Sigma_B$, we partition it in blocks of $\log{n}$ bits.
-We attach to the binary sequence $s$ an array $R$ of length $\log{n}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i \log{n}}$.
-At this point we are already able to answer $rank_1(s, i)$ in constant time by 
+Note that $rank_0(s, i) = i - rank_1(s, i)$ so we consider only $rank_1(s, i)$.
+Given the binary sequence $s \in \Sigma_B$, we partition it in blocks of size $b=\log{n}$ bits.
+We attach to the binary sequence $s$ an array $R$ of length $\frac{n}{b}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i b}$, \ie $R[\frac{i}{b}] = rank_1(s, \frac{i}{b})$.
+Therefore we are able to rewrite our rank query as:
+\begin{eqnarray}
+rank_1(s,i) = R[\frac{i}{b}] + rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, i \mod{b})
+\end{eqnarray}
+and answer it in constant time as 
 \begin{inparaenum}[(i)]
-\item \label{itm:fetch} fetching the summary from $R[\frac{i}{\log{n}}]$ and
-\item \label{itm:count} adding the number of occurrences of the bit 1 inside the subsequence $s_{\frac{i}{\log{n}} \dots i}$,
+\item \label{itm:fetch} we fetch in constant time the rank summary from $R$ and
+\item \label{itm:count} we compute in constant time\footnote{On modern processors \citep{Intel} using the SSE~4.2 popcnt instruction, otherwise by means of the four-Russians tabulation technique \citep{Arlazarov1975}.} the number of occurrences of the bit 1 in the subsequence of length $\Oh(\log{n})$.
 \end{inparaenum}
-as we can always perform operation~\ref{itm:fetch} in constant time and operation~\ref{itm:count} in constant time on modern processors \citep{Intel}.
-Note that $rank_0(s, i) = i - rank_1(s, i)$.
-
-The array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, so we are taking $n$ bits of space for $R$.
+The array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, so we are taking additional $n$ bits of space for $R$.
 
 The extension to small alphabets, \eg $\Sigma_{\text{DNA}}$ is easy.
 Given an input sequence $s \in \Sigma_{\text{DNA}}$ of length $n$ (and size $n \log{\sigma}$ bits), we partition it in blocks of $b=\frac{\log{n}}{\log{\sigma}}$ symbols.
 We supplement each block with a summary of the occurrences of all symbols in $\Sigma$.
-Thus, this time we use a matrix $R$ of $\sigma \times b$ entries, each one taking $\log{n}$ space.
+Thus, this time we use a matrix $R$ of $\sigma \times b$ entries.
 Again, we answer $rank_c(s, i)$ in constant time by
 \begin{inparaenum}[(i)]
 \item \label{itm:fetch} fetching the summary from $R[rank(c)][\frac{i}{b}]$ and
-\item \label{itm:count} adding the number of occurrences of the bit 1 inside the subsequence $s_{\frac{i}{b} \dots i}$,
+\item \label{itm:count} adding the number of occurrences of the character $c$ inside the subsequence $s_{\frac{i}{b} \dots i}$,
 \end{inparaenum}
 
 %\subsubsection{Sequential dictionaries}
@@ -777,19 +771,40 @@ Again, we answer $rank_c(s, i)$ in constant time by
 \subsubsection{Locating occurrences}
 
 \section{Multiple backtracking}
+\subsection{$k$-Mismatches}
+\subsection{$k$-Differences}
 
 % === Filtering Methods ===
 
 \chapter{Filtering Methods}
-\section{$q$-Gram filters}
-\subsection{Exact seeds}
-\subsection{Gapped seeds}
-%\subsubsection{Intuition}
-%\subsubsection{Threshold computation}
-%\subsubsection{Sensitivity computation}
-\section{Factor filters}
-\subsection{Exact seeds}
-\subsection{Approximate seeds}
+
+\section{Gapped $q$-grams}
+
+TODO.
+
+%\subsection{Threshold computation}
+%\subsection{Sensitivity computation}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with gapped $q$-grams.}
+\label{fig:qgrams-gapped}
+\input{figures/filtration_qgrams_gapped.tikz}
+\end{center}
+\end{figure}
+
+\section{Approximate seeds}
+
+TODO.
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with approximate seeds.}
+\label{fig:seeds-apx}
+\input{figures/filtration_exact.tikz}
+\end{center}
+\end{figure}
+
 \section{Suffix filters}
 
 % === Related problems ===
