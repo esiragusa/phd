@@ -1,11 +1,42 @@
 \chapter{Filtering Methods}
-\section{$q$-Gram filters}
-\subsection{Exact seeds}
-\subsection{Gapped seeds}
-%\subsubsection{Intuition}
-%\subsubsection{Threshold computation}
-%\subsubsection{Sensitivity computation}
-\section{Factor filters}
-\subsection{Exact seeds}
-\subsection{Approximate seeds}
+
+\section{Gapped $q$-grams}
+
+TODO.
+
+%\subsection{Threshold computation}
+%\subsection{Sensitivity computation}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with gapped $q$-grams.}
+\label{fig:qgrams-gapped}
+\input{figures/filtration_qgrams_gapped.tikz}
+\end{center}
+\end{figure}
+
+\section{Approximate seeds}
+
+TODO.
+
+%Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
+%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
+%If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
+%A more involved filtering algorithm proposed in \citep{Navarro2000} reduces an approximate search into smaller approximate searches.
+%We partition $p$ into $s \leq k+1$ non-overlapping seeds.
+%According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
+%
+%Approximate seeds can be searched via backtracking on $\Ti$.
+%We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+%To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
+%Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+
+\begin{figure}[h]
+\begin{center}
+\caption{Filtration with approximate seeds.}
+\label{fig:seeds-apx}
+\input{figures/filtration_exact.tikz}
+\end{center}
+\end{figure}
+
 \section{Suffix filters}

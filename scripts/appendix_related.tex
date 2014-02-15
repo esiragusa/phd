@@ -1,0 +1,94 @@
+\chapter{Related problems}
+
+\section{Dictionary search}
+
+Dictionary search is a restriction of string matching.
+Given a set of database strings $\Dc$ and a query string $q$, the approximate dictionary search problem is to find all strings in $\Dc$ within distance $k$ from $q$.
+Note that usually the query string $q$ has length similar to strings in $\Dc$, as $| |d| - |q| | \leq k$ is a necessary condition for $d_E(d,q) \leq k$.
+
+\subsection{Online methods}
+
+The problem can be solved by checking whether $d_E(d,q) \leq k$ for all $d \in \Dc$.
+Answering the question whether the distance $d_E(d,q) \leq k$ is an easier problem than computing the edit distance $d_E(d,q)$: a band of size $k+1$ is sufficient.
+
+\begin{lemma}
+\label{lemma:kband}
+%In contrast to the general global alignment problem, 
+The $k$-differences global alignment problem can be solved by computing only a diagonal band of the DP matrix of width $k+1$, where the leftmost band diagonal is $\left\lfloor\frac{m-n+k}{2}\right\rfloor$ cells left of the main diagonal (see Figure~\ref{fig::BandedDP}).
+\end{lemma}
+\begin{proof}
+Indirect. Assume that a cell outside the band is part of a global alignment with at most $k$ errors.
+If the cell is left of the band, the traceback that starts in the top left corner would go down at least $c=\left\lfloor\frac{m-n+k}{2}\right\rfloor+1$ cells. Then it needs to go right at least $n-m+c$ cells to end in the bottom right corner.
+Hence it contains at least $n-m+2c>n-m+2\frac{m-n+k}{2}=k$ errors.
+The assumption that the cell is right of the band can be falsified analogously.
+\end{proof}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Example of $k$-differences global aligment via DP.]{DP table representing the match of $p=...$ in $t=...$.}
+\label{fig:dict-dp}
+\input{figures/dp_banded.tikz}
+\end{center}
+\end{figure}
+
+\subsection{Indexed methods}
+
+Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query string $q$, in optimal time $\Oh(|q|)$ and independently of $||\Dc||$.
+
+\begin{algorithm}[h]
+\caption{Exact dictionary search on a radix trie.}
+\label{alg:dict-exact}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\Procedure{ExactSearch}{$\Tn,p$}
+	\If {$p = \epsilon$}
+		\State \Report $\Ei(\Tn)$
+	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:dict-exact:comp}}
+		\State \Call{ExactSearch}{$\Cn,p_{2..|p|}$}
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Exact dictionary search on a suffix trie.}
+\label{fig:dict-exact}
+\input{figures/stree.tikz}
+\end{center}
+\end{figure}
+
+\subsection{Filtering methods}
+
+Filtering methods of section~\ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm~\ref{?}.
+
+
+
+\section{Local similarity search}
+
+Define score and scoring scheme.
+
+Define local similarity.
+
+\subsection{Online methods}
+Give dynamic programming solution.
+
+\subsection{Indexed methods}
+Backtracking over substring index. BWT-SW.
+
+\subsection{Filtering methods}
+SWIFT/Stellar is based on the $q$-gram lemma.
+%Lastz resembles a suffix filter.
+
+
+\section{Overlaps computation}
+
+Define problem.
+
+\subsection{Online methods}
+
+DP solution.
+
+\subsection{Indexed methods}
+
+Indexed solution, exact and approximate.
