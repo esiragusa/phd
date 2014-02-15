@@ -227,18 +227,55 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 \input{tables/table_gms}
 \end{center}
 
+% =============================================================================
+
+\chapter{Read mappers engineering}
+
+\section{Masai}
+
+\subsection{Approximate seeds}
+
+\subsection{Multiple backtracking}
+
+\subsection{Single-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
+\subsection{Paired-end mapping}
 
 % =============================================================================
 
-\chapter{Read mappers categorization}
+\section{Yara}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Single-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Paired-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Mapping by strata}
+
+% -----------------------------------------------------------------------------
+
+\subsection{Parallelization}
+\subsection{Hardware acceleration}
+
+% =============================================================================
+
+\chapter{Read mappers evaluation}
+
+
+% =============================================================================
+
+\section{Popular read mappers}
 
 Critic the surveys classifying hundreds of mappers \citep{Li2010}, \citep{Fonseca2012}.
 
 Critic the benchmarks \citep{Hatem2013} \citep{Holtgrewe2011}.
-
-% -----------------------------------------------------------------------------
-
-\section{Best mappers versus all mappers}
 
 The task of a read mapper is to guess where a read originates.
 Fixed a similarity scoring scheme that confidently models this problem, the optimal alignment under this scoring scheme correspond to the most likely explanation and induces a locus being the origin of the read.
@@ -254,10 +291,6 @@ Under the edit distance, an alignment with less than $l$ independent point mutat
 From the former problem, we conclude that considering only one optimal mapping location is not sufficient, no matter how good our scoring scheme can be.
 The latter problem tells us to be careful about relying on strict optimality.
 Therefore, in general a read mapper should return a comprehensive set of relevant mapping locations along with the likelihood that they correspond to the original location.
-
-% =============================================================================
-
-\section{Read mappers}
 
 % -----------------------------------------------------------------------------
 
@@ -390,46 +423,7 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 \end{table}
 \end{landscape}
 
-% =============================================================================
-
-\chapter{Masai}
-
-\section{Approximate seeds}
-
-\section{Multiple backtracking}
-
-\section{Single-end mapping}
-\subsection{All-mapping}
-\subsection{Mapping by strata}
-
-\section{Paired-end mapping}
-
-% =============================================================================
-
-\chapter{Yara}
-
-% -----------------------------------------------------------------------------
-
-\section{Single-end mapping}
-\subsection{All-mapping}
-\subsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\section{Paired-end mapping}
-\subsection{All-mapping}
-\subsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\section{Parallelization}
-\section{Hardware acceleration}
-
-% =============================================================================
-
-\chapter{Read mappers performance}
-\section{Comparison of filtration strategies}
-\section{Rabema benchmark results}
+\section{Rabema results}
 \section{Variant detection results}
 \section{Runtime results}
 
