@@ -1,6 +1,6 @@
 % =============================================================================
 
-\chapter{Sequencing preliminaries}
+\chapter{Background}
 
 Next generation sequencing is a terrific technology.
 A wealth of applications have been developed on top of it.
@@ -65,7 +65,7 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 
 % =============================================================================
 
-\chapter{Mappability}
+\section{Mappability}
 \label{sec:mappability}
 
 Genome resequencing is a non-trivial task.
@@ -101,7 +101,7 @@ Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappab
 
 % -----------------------------------------------------------------------------
 
-\section{Genome mappability}
+\subsection{Genome mappability}
 
 We now give a definition of genome mappability analogous to \citep{Derrien2012}.
 Let fix a $q$-gram length, a distance measure as the Hamming or edit distance, and a distance threshold $k$.
@@ -132,7 +132,7 @@ However, reads have to be mapped approximately to the reference genome.
 The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
 Thus the above estimate is a lower bound.
 
-\subsection{Uniqueome}
+\subsubsection{Uniqueome}
 
 \citeauthor{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
@@ -151,9 +151,9 @@ A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
 Cite regions of clinical relevance, \eg HLA-A.
 Cite regions of biological relevance, \eg 5S rRNA.
 
-\subsection{Paired-end mappability}
+\subsubsection{Paired-end mappability}
 
-\subsection{Pileup mappability}
+\subsubsection{Pileup mappability}
 
 If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
 Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
@@ -161,7 +161,7 @@ Pileup mappability \citep{Derrien2012} at position $i$ is the average mappabilit
 $M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
 
 
-\section{Mapping quality score}
+\subsection{Mapping quality score}
 \label{sub:mapqual}
 
 Mapping quality has been introduced in \citep{Li2008}.
@@ -203,7 +203,7 @@ In other words, mapping quality considers only errors due to base miscalls and d
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the mapping probability in equation~\ref{eq:mapprob} is diluted in presence of a large number of co-optimal mapping locations.
 Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates in a shallow measure of uniqueness.
 
-\section{Genome mappability score}
+\subsection{Genome mappability score}
 
 Genome mappability score (GMS) \citep{Lee2012} is analogous to pileup mappability.
 Instead of considering the inverse mapping frequency $(q,k)$-mappability, we can interpret mapping quality (see subsection~\ref{sub:mapqual}) as the probability that a read originating at a given position can be mapped correctly. %which is effectively a probabilistic mappability measure,
