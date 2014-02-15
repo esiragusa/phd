@@ -15,9 +15,22 @@ Baeza-Yates, R.~A. and Navarro, G. (1999).
 \newblock Faster approximate string matching.
 \newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
 
+\bibitem[Bauer \ea(2013)Bauer, Cox, and Rosone]{Bauer2013}
+Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
+\newblock Lightweight algorithms for constructing and inverting the bwt of
+  string collections.
+\newblock {\em Theoretical Computer Science\/}, {\bf 483}, pages 134--148.
+
 \bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
 Burrows, M. and Wheeler, D.~J. (1994).
 \newblock A block-sorting lossless data compression algorithm.
+
+\bibitem[Crochemore \ea(2013)Crochemore, Grossi, K{\"a}rkk{\"a}inen, and
+  Landau]{Crochemore2013}
+Crochemore, M., Grossi, R., K{\"a}rkk{\"a}inen, J., and Landau, G.~M. (2013).
+\newblock A constant-space comparison-based algorithm for computing the
+  burrows--wheeler transform.
+\newblock In {\em Combinatorial Pattern Matching\/}, pages 74--82. Springer.
 
 \bibitem[DePristo \ea(2011)DePristo, Banks, Poplin, Garimella, Maguire, Hartl,
   Philippakis, del Angel, Rivas, Hanna, \ea]{DePristo2011}
@@ -46,6 +59,12 @@ Ewing, B., Hillier, L., Wendl, M.~C., and Green, P. (1998).
 \newblock Base-calling of automated sequencer traces using phred. i. accuracy
   assessment.
 \newblock {\em Genome research\/}, {\bf 8}(3), pages 175--185.
+
+\bibitem[Faro and Lecroq(2013)Faro and Lecroq]{Faro2013}
+Faro, S. and Lecroq, T. (2013).
+\newblock The exact online string matching problem: a review of the most recent
+  results.
+\newblock {\em ACM Computing Surveys (CSUR)\/}, {\bf 45}(2), page~13.
 
 \bibitem[Farrar(2007)Farrar]{Farrar2007}
 Farrar, M. (2007).
@@ -94,6 +113,12 @@ Holtgrewe, M., Emde, A.-K., Weese, D., and Reinert, K. (2011).
 \newblock A novel and well-defined benchmarking method for second generation
   read mapping.
 \newblock {\em BMC Bioinformatics\/}, {\bf 12}, page 210.
+
+\bibitem[Jacobson(1989)Jacobson]{Jacobson1989}
+Jacobson, G. (1989).
+\newblock Space-efficient static trees and graphs.
+\newblock In {\em Foundations of Computer Science, 1989., 30th Annual Symposium
+  on\/}, pages 549--554. IEEE.
 
 \bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
   Sanders]{Karkkainen2003}
@@ -187,6 +212,11 @@ Morrison, D.~R. (1968).
 \newblock Patricia-Ñpractical algorithm to retrieve information coded in
   alphanumeric.
 \newblock {\em J. ACM\/}, {\bf 15}(4), pages 514--534.
+
+\bibitem[Navarro(2001)Navarro]{Navarro2001b}
+Navarro, G. (2001).
+\newblock A guided tour to approximate string matching.
+\newblock {\em ACM Comput. Surv.}, {\bf 33}(1), pages 31--88.
 
 \bibitem[Navarro and Baeza-Yates(2000)Navarro and Baeza-Yates]{Navarro2000}
 Navarro, G. and Baeza-Yates, R.~A. (2000).
