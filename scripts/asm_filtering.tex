@@ -34,13 +34,13 @@ Note that however, this concept poorly extends to edit distance, and the design 
 
 TODO families.
 
-The idea of approximate seeds is that, to increase the seed length, we can factorize the pattern in less than $k+1$ non-overlapping seeds.
+The idea of approximate seeds is that, to increase seed length, we can factorize the pattern in less than $k+1$ non-overlapping seeds.
 The pigeonhole lemma~\ref{lemma:exact-seeds} however tells us that, by doing so, no seed will be guaranteed to be error-free.
 Therefore, we are obliged to search the seeds approximately, but within a distance threshold smaller than the original threshold $k$.
 We can search approximate seeds with backtracking techniques of section~\ref{sec:backtracking}.
-Summing up, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
+In a nutshell, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
 
-Problem of exact and approximate seeds filters are that
+Problems of exact and approximate seeds filters are that
 \begin{inparaenum}[(i)]
 \item it is not evident which factorization yields optimal filtration, and
 \item they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
@@ -61,18 +61,17 @@ Overall, through this chapter:
 \section{Gapped $q$-grams}
 
 In section~\ref{sec:intro:filtering} we introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
-We now generalize this similarity measure to consider the number of common subsequences of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
+We now generalize this similarity measure to consider the number of common subsequences\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
 %and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
 
 \begin{definition}
-We call $q$-gram shape a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
-We denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $\max{Q}$.
+We call $Q$-gram a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
+We denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $Q$.
 \end{definition}
 
-In literature, $q$-gram shapes are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
-The representation of the shape $Q$ is the word $w \in \{1,*\}^{s(Q)}$ such that $j \in Q$ iff $w_j=1$, or equivalently iff $w_j=\#$.
-We adopt the former notation.
-Figure~\ref{fig:qgram-shape} shows an example of $q$-gram shape.
+In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
+We adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
+Figure~\ref{fig:qgram-shape} shows an example of $Q$-gram.
 
 \begin{figure}[h]
 \begin{center}
@@ -84,7 +83,7 @@ Figure~\ref{fig:qgram-shape} shows an example of $q$-gram shape.
 
 The first thing we remark is that, compared to contiguous $q$-grams, we obtain a higher threshold, as mismatches do not cover don't care positions.
 The $q$-gram lemma (\ref{lemma:exact-qgrams}) does not provide us anymore with a tight threshold, but only with a lower bound.
-Note that, as in the $q$-gram lemma, the threshold depends only on $Q$ and $(m,k)$.
+Note that, as in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
 Indeed, the pattern of covered $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the position of the mismatches in the pattern.
 
 %Don't care positions are immune only to mismatches but not to indels.
@@ -112,13 +111,14 @@ Afterwards, we recapitulate known results for questions \ref{enum:qgram-non-dete
 Consider an arbitrary transcript $\sigma$ as a $m$-dimensional vector over $\Bo$, where $|\sigma|_0$ indicates the Hamming distance of the transcript.
 Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such that $|\sigma|_0 = k$.
 
-A seed $Q$ \emph{occurs} at position $i$ in a similarity $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
-Fixed a $q$-gram threshold $t$, the shape $Q$ detects $\sigma$ iff it occurs at least $t$ times in $\sigma$.
-
+\begin{definition}
+A $Q$-gram \emph{occurs} at position $i$ in a similarity $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
+Fixed a $Q$-gram threshold $t$, the $Q$-gram detects $\sigma$ iff it occurs at least $t$ times in $\sigma$.
+\end{definition}
 
 \subsubsection{Boolean functions}
 
-Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff seed $Q$ occurs at least one time in a similarity $\sigma$ of length $m$.
+Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a similarity $\sigma$ of length $m$.
 We define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
@@ -126,7 +126,7 @@ T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all similarities of length $m$.
-We define an analogous boolean function for a seed family $F$ as the disjunction
+We define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
 \begin{equation}
 \label{eq:family-bool}
 T_{F}^{m}(\sigma) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\sigma)
@@ -144,13 +144,13 @@ We defined such \emph{pseudo-boolean function} as
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
 \end{equation}
-Here $t_{Q}^{m}(\sigma)$ counts how many times seed $Q$ occurs in a similarity $\sigma$ of length $m$.
-It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a seed $Q$ does not occur in a similarity $\sigma$, as
+Here $t_{Q}^{m}(\sigma)$ counts how many times a $Q$-gram occurs in a similarity $\sigma$ of length $m$.
+It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a similarity $\sigma$, as
 \begin{equation}
 \label{eq:qgram-pseudoneg}
 \bar{t}_{Q}^{m}(\sigma) = m - s(Q) + 1 - t_{Q}^{m}(\sigma)
 \end{equation}
-Analogously, we define a pseudo-boolean function for a seed family $F$
+Analogously, we define a pseudo-boolean function for a $Q$-gram family $F$
 \begin{equation}
 \label{eq:family-pseudo}
 t_{F}^{m}(\sigma) = \sum_{Q_i \in F} t_{Q_i}^{m}(\sigma)
@@ -174,7 +174,7 @@ Since super and submodular functions are closed under non-negative linear combin
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A seed $Q$, two integers $m,k$ with $0 < k < m$. \\
+{\bf Instance}	&	A $Q$-gram, two integers $m,k$ with $0 < k < m$. \\
 {\bf Question}	&	Does it exist a similarity $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
 \end{tabular}
 \\
@@ -185,28 +185,28 @@ Since super and submodular functions are closed under non-negative linear combin
 \citeauthor{Nicolas2005} introduce an intermediate problem, called \textsc{Soapy Set Cover}. They reduce \textsc{Exact Cover by 3-Sets} to \textsc{Soapy Set Cover} and \textsc{Soapy Set Cover} to \textsc{Non Detection}.
 Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
 
-\subsubsection{Our FPRAS}
+\subsubsection{Our FPRAS solution}
 
-%Recalling seed pseudo-boolean functions \eqref{sec:seed_pbf}.
+%Recalling $Q$-gram pseudo-boolean functions \eqref{sec:seed_pbf}.
 
 Describe FPRAS.
 
 
 \subsection{Optimal threshold}
 
-Which is the highest $q$-gram threshold $t$ that guarantees full-sensitivity?
+Which is the highest $Q$-gram threshold $t$ that guarantees full-sensitivity?
 This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A seed $Q$, two integers $m,k$ such that $0 < k < m$.\\
+{\bf Instance}	&	A $Q$-gram, two integers $m,k$ such that $0 < k < m$.\\
 {\bf Solution}	&	The largest integer $t^*$ such that \textsc{Non Detection} for $(Q,t^*),m,k$ answers \emph{no}.\\
 \end{tabular}
 \\
 
-Recalling seed pseudo-boolean functions \eqref{sec:seed_pbf}, we can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, we can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \min & t_{Q}^{m} (\sigma)			\\
@@ -219,7 +219,7 @@ w.r.t.								\\
 
 Optimal threshold is fixed-parameter tractable (FPT) in the span of the $q$-gram shape.
 \citeauthor{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $O(m \cdot k \cdot 2^{s(Q)})$ \citep{Burkhardt2001}.
-\citeauthor{Kucherov2005} give an extension for seed families in \citep{Kucherov2005}.
+\citeauthor{Kucherov2005} give an extension for $Q$-gram families in \citep{Kucherov2005}.
 
 All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
 Clause $Q_2$ is considered next...
@@ -262,7 +262,7 @@ Which is the maximum error $k^*$ for which full-sensitivity is guaranteed?
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A seed $Q$, an integer $m$.\\
+{\bf Instance}	&	A $Q$-gram, an integer $m > 0$.\\
 {\bf Solution}	&	The largest integer $k^*$ such that \textsc{Non Detection} for $Q,m,k^*$ answers \emph{no}.\\
 \end{tabular}
 \\
@@ -313,7 +313,7 @@ Again, we compute an approximate solution via deepest descent.
 APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
 
 
-\subsection{Number of false positives}
+\subsection{Specificity}
 
 How many false positives our filter produces?
 
@@ -321,8 +321,8 @@ How many false positives our filter produces?
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A seed $Q$, two integers $m,k$ such that $0 < k < m$.\\
-{\bf Solution}	&	The number of false positives of $Q$.\\
+{\bf Instance}	&	A $Q$-gram, two integers $m,k$ such that $0 < k < m$.\\
+{\bf Solution}	&	The number of false positives produced by the $Q$-gram.\\
 \end{tabular}
 \\
 
@@ -351,12 +351,12 @@ Introduced in \citep{Nicolas2005}.
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A finite set $S$ of similarities.\\
-{\bf Solution}	&	A seed $Q$ that detects all similarities of $S$.\\
-{\bf Measure}	&	The weight of $Q$, $w(Q)$.\\
+{\bf Solution}	&	A $Q$-gram that detects all similarities of $S$.\\
+{\bf Measure}	&	The weight $w(Q)$ of the $Q$-gram.\\
 \end{tabular}
 \\
 
-Given a set of similarities, find the seed of maximum weight detecting all similarities.
+Given a set of similarities, find the $Q$-gram of maximum weight detecting all similarities.
 This applies to the DNA Homology Search Framework as well.
 %The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
 %On one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
