@@ -1,11 +1,78 @@
 \chapter{Filtering Methods}
 
+We now concentrate on designing stronger filters for approximate string matching.
+Whenever the total time of our filtering algorithm is dominated by verification time, we can think of adopting a stronger filter yielding a lower number of candidate locations to verify.
+The idea is to improve the total time by means of a significant reduction of verification time, at the expense of a moderate increase in filtration time.
+
+We have already seen in section~\ref{sec:intro:filtering} an example of such trade-off between filtration speed and strength: non-overlapping seeds versus $q$-gram filters.
+The former filters minimize filtration time but yield weak filtration, the latter provide a more involved but stronger filtration.
+In practice, we know that seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
+Thus we would adopt one or the other filtration method depending on the requested error rate.
+
+The simple analysis of section~\ref{sec:intro:filtering} show us that filtration specificity is strongly correlated to the parameter $q$ (seed or $q$-gram length).
+Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
+To this intent, the following techniques have been proposed in literature:
+\begin{inparaenum}[(i)]
+\item gapped $q$-grams generalizing contiguous $q$-grams,
+\item multiple gapped $q$-grams further generalizing gapped $q$-grams;
+\item approximate seeds generalizing exact seeds,
+\item suffix filters further extending approximate seeds.
+\end{inparaenum}
+
+The idea of gapped $q$-grams is to lower the correlation between consecutive $q$-grams.
+We have seen in the $q$-gram lemma~\ref{lemma:qgram} that one error covers $q$ consecutive $q$-grams.
+Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
+Therefore, we introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
+By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
+As less $q$-grams are now covered by mismatches, we can
+\begin{inparaenum}[(i)]
+\item increase the filtering threshold or
+\item increase the number $q$ of considered characters,
+\end{inparaenum}
+in either cases preserving full-sensitivity.
+Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
+
+TODO families.
+
+The idea of approximate seeds is that, to increase the seed length, we can factorize the pattern in less than $k+1$ non-overlapping seeds.
+The pigeonhole lemma~\ref{lemma:exact-seeds} however tells us that, by doing so, no seed will be guaranteed to be error-free.
+Therefore, we are obliged to search the seeds approximately, but within a distance threshold smaller than the original threshold $k$.
+We can search approximate seeds with backtracking techniques of section~\ref{sec:backtracking}.
+Summing up, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
+
+Problem of exact and approximate seeds filters are that
+\begin{inparaenum}[(i)]
+\item it is not evident which factorization yields optimal filtration, and
+\item they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
+\end{inparaenum}
+Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less redundant, and more adaptive filtration using more efficiently the index.
+The drawback is that the effort to implement them is slightly higher.
+
+In the following of this chapter we first present (multiple) gapped $q$-grams and problems associated with their design.
+Then we move to more practical approximate seeds, which we will adopt later in chapter~\ref{chap:map-eng}.
+Finally we discuss suffix filters and their practicality.
+Overall, through this chapter:
+\begin{itemize}
+\item we present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
+\item we provide generic parallel implementations of filters based on exact and approximate seeds;
+\item we evaluate these filtration schemes in practice.
+\end{itemize}
+
 \section{Gapped $q$-grams}
 
-TODO.
+In section~\ref{sec:intro:filtering} we introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
+We now generalize this similarity measure to consider the number of common subsequences of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
+%and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
 
-%\subsection{Threshold computation}
-%\subsection{Sensitivity computation}
+\begin{definition}
+We call $q$-gram shape a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
+We denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $\max{Q}$.
+\end{definition}
+
+In literature, $q$-gram shapes are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
+The representation of the shape $Q$ is the word $w \in \{1,*\}^{s(Q)}$ such that $j \in Q$ iff $w_j=1$, or equivalently iff $w_j=\#$.
+We adopt the former notation.
+Figure~\ref{fig:qgram-shape} shows an example of $q$-gram shape.
 
 \begin{figure}[h]
 \begin{center}
@@ -15,9 +82,299 @@ TODO.
 \end{center}
 \end{figure}
 
-\section{Approximate seeds}
+The first thing we remark is that, compared to contiguous $q$-grams, we obtain a higher threshold, as mismatches do not cover don't care positions.
+The $q$-gram lemma (\ref{lemma:exact-qgrams}) does not provide us anymore with a tight threshold, but only with a lower bound.
+Note that, as in the $q$-gram lemma, the threshold depends only on $Q$ and $(m,k)$.
+Indeed, the pattern of covered $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the position of the mismatches in the pattern.
 
-TODO.
+%Don't care positions are immune only to mismatches but not to indels.
+
+Gapped $q$-grams raise hard combinatorial questions. Given a gapped $q$-gram, 
+\begin{inparaenum}[(i)]
+\item \label{enum:qgram-non-detection} does it yield a full-sensitive filter for $k$-mismatches? If so, either
+\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? or 
+\item \label{enum:qgram-error} which is the maximum error $k$ for which full-sensitivity is guaranteed?
+If the answer to question~\ref{enum:qgram-nd} is negative and the filter is lossy,
+\item \label{enum:qgram-fn} how many false negatives our filter discards?
+Considering filtration efficiency,
+\item \label{enum:qgram-fp} how many false positives our filter produces?
+If we take the weight as a simplified criterion predicting filtration efficiency, 
+\item \label{enum:qgram-weight} which is the maximum weight lossless shape?
+\end{inparaenum}
+
+Question~\ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005},
+the more general questions~\ref{enum:qgram-non-detection} and \ref{enum:qgram-weight} have been introduced in \citep{Nicolas2005}, while we consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
+With the aim of elucidating these questions, we first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
+Afterwards, we recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-weight} and give new exact and approximate solutions.
+
+\subsection{Characteristic functions}
+
+Consider an arbitrary transcript $\sigma$ as a $m$-dimensional vector over $\Bo$, where $|\sigma|_0$ indicates the Hamming distance of the transcript.
+Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such that $|\sigma|_0 = k$.
+
+A seed $Q$ \emph{occurs} at position $i$ in a similarity $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
+Fixed a $q$-gram threshold $t$, the shape $Q$ detects $\sigma$ iff it occurs at least $t$ times in $\sigma$.
+
+
+\subsubsection{Boolean functions}
+
+Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff seed $Q$ occurs at least one time in a similarity $\sigma$ of length $m$.
+We define such boolean function as the disjunction
+\begin{equation}
+\label{eq:qgram-bool}
+T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
+\end{equation}
+where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
+%The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all similarities of length $m$.
+We define an analogous boolean function for a seed family $F$ as the disjunction
+\begin{equation}
+\label{eq:family-bool}
+T_{F}^{m}(\sigma) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\sigma)
+\end{equation}
+By definition, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
+Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{minimal}.
+
+In general, $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
+
+\subsubsection{Pseudo-boolean functions}
+
+Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
+We defined such \emph{pseudo-boolean function} as
+\begin{equation}
+\label{eq:qgram-pseudo}
+t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
+\end{equation}
+Here $t_{Q}^{m}(\sigma)$ counts how many times seed $Q$ occurs in a similarity $\sigma$ of length $m$.
+It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a seed $Q$ does not occur in a similarity $\sigma$, as
+\begin{equation}
+\label{eq:qgram-pseudoneg}
+\bar{t}_{Q}^{m}(\sigma) = m - s(Q) + 1 - t_{Q}^{m}(\sigma)
+\end{equation}
+Analogously, we define a pseudo-boolean function for a seed family $F$
+\begin{equation}
+\label{eq:family-pseudo}
+t_{F}^{m}(\sigma) = \sum_{Q_i \in F} t_{Q_i}^{m}(\sigma)
+\end{equation}
+along with its complementary function
+\begin{equation}
+\label{eq:family-pseudoneg}
+\bar{t}_{F}^{m}(\sigma) = \sum_{Q_i \in F}{(m - s(Q_i) + 1)} - t_{F}^{m}(\sigma)
+\end{equation}
+
+The above functions expose important properties which will let us devise approximate solutions.
+\emph{Nondecreasing monotonicity} of functions $t_{Q}^{m}$ and $t_{F}^{m}$ follow from nondecreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{F}^{m}$. Consequently $\bar{t}_{Q}^{m}$ and $\bar{t}_{F}^{m}$ are \emph{monotone nonincreasing}.
+From definition~\ref{eq:supermodularity}, function $t_{Q}^{m}$ is \emph{supermodular}, thus it follows that $\bar{t}_{Q}^{m}$ is \emph{submodular}.
+Since super and submodular functions are closed under non-negative linear combination, functions $t_{F}^{m}$ and $\bar{t}_{F}^{m}$ are respectively super and submodular.
+
+\subsection{Full-sensitivity}
+
+\textsc{Non Detection}~\citep{Nicolas2005}. Does a given gapped $q$-gram yield a full-sensitive filter for $k$-mismatches?
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A seed $Q$, two integers $m,k$ with $0 < k < m$. \\
+{\bf Question}	&	Does it exist a similarity $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
+\end{tabular}
+\\
+
+\subsubsection{Hardness results}
+
+\textsc{Non Detection} is \emph{strongly} NP-complete \citep{Nicolas2005}.
+\citeauthor{Nicolas2005} introduce an intermediate problem, called \textsc{Soapy Set Cover}. They reduce \textsc{Exact Cover by 3-Sets} to \textsc{Soapy Set Cover} and \textsc{Soapy Set Cover} to \textsc{Non Detection}.
+Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
+
+\subsubsection{Our FPRAS}
+
+%Recalling seed pseudo-boolean functions \eqref{sec:seed_pbf}.
+
+Describe FPRAS.
+
+
+\subsection{Optimal threshold}
+
+Which is the highest $q$-gram threshold $t$ that guarantees full-sensitivity?
+This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A seed $Q$, two integers $m,k$ such that $0 < k < m$.\\
+{\bf Solution}	&	The largest integer $t^*$ such that \textsc{Non Detection} for $(Q,t^*),m,k$ answers \emph{no}.\\
+\end{tabular}
+\\
+
+Recalling seed pseudo-boolean functions \eqref{sec:seed_pbf}, we can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
+\begin{equation}
+\begin{array}{ll}
+\min & t_{Q}^{m} (\sigma)			\\
+w.r.t.								\\
+& \sigma \in \Bo^m_k				\\
+\end{array}
+\end{equation}
+
+\subsubsection{Exact DP solution}
+
+Optimal threshold is fixed-parameter tractable (FPT) in the span of the $q$-gram shape.
+\citeauthor{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $O(m \cdot k \cdot 2^{s(Q)})$ \citep{Burkhardt2001}.
+\citeauthor{Kucherov2005} give an extension for seed families in \citep{Kucherov2005}.
+
+All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
+Clause $Q_2$ is considered next...
+
+\subsubsection{Our exact ILP solution}
+
+We reduce this problem to \emph{maximum coverage} \citep{NemhauserWolsey99} and solve it with the following ILP
+\begin{equation}
+\begin{array}{ll}
+\max & |c|_1					\\
+w.r.t.							\\
+& \sigma \in \Bo^m_k			\\
+& c \in \Bo^{m - s(Q) + 1}		\\
+& \sigma_i \geq c_j				\\
+\end{array}
+\end{equation}
+where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$. Given the ILP solution $c^*$, we obtain the optimal threshold $t^* = |c^*|_1$.
+
+\subsubsection{Our APX solution}
+
+We reduce the complementary optimal threshold problem to the maximization of a submodular function subject to linear constraints
+\begin{equation}
+\begin{array}{ll}
+\max & \bar{t}_{Q}^{m}(\sigma)		\\
+w.r.t.								\\
+& \sigma \in \bar{\Bo}^m_k			\\
+\end{array}
+\end{equation}
+where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
+
+We compute an approximate solution via deepest descent.
+Our greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{NemhauserWolseyFisher78}.
+The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
+
+\subsection{Maximum error}
+
+Which is the maximum error $k^*$ for which full-sensitivity is guaranteed?
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A seed $Q$, an integer $m$.\\
+{\bf Solution}	&	The largest integer $k^*$ such that \textsc{Non Detection} for $Q,m,k^*$ answers \emph{no}.\\
+\end{tabular}
+\\
+
+Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, we define our problem as the minimization of a linear function subject to submodular constraints
+\begin{equation}
+\begin{array}{ll}
+\min & |\sigma|_1			\\
+w.r.t.									\\
+& \bar{t}_{Q}^{m}(\sigma) = 0			\\
+& \sigma \in \Bo^m					\\
+\end{array}
+\end{equation}
+
+\subsubsection{Our ILP solution}
+
+We reduce our problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
+\begin{equation}
+\begin{array}{ll}
+\min & |\sigma|_1	\\
+w.r.t.				\\
+& \sigma \in \Bo^m	\\
+& b \in \Bo^m-s(Q)+1\\
+& A\sigma \geq b	\\
+\end{array}
+\end{equation}
+where the value $A_{ij}$ of the coefficient matrix $A$ is defined as
+\begin{equation}
+A_{ij} = 
+\left\{
+	\begin{array}{ll}
+		1  & \mbox{if } i-j+1 \in Q		\\
+		0  & \mbox{if } i-j+1 \notin Q	\\
+	\end{array}
+\right.
+\end{equation}
+and find the maximum error for which full-sensitivity is guaranteed as $k^* = |\bar{\sigma}^*|_1$ given the solution $\sigma^*$ to the ILP.
+
+Note that contiguous $q$-grams provide an interesting special case of this ILP.
+If $A$ has the \emph{consecutive ones property}, it is \emph{totally unimodular}.
+The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{integral}.
+Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
+
+
+\subsubsection{Our APX solution}
+
+Again, we compute an approximate solution via deepest descent.
+APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
+
+
+\subsection{Number of false positives}
+
+How many false positives our filter produces?
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A seed $Q$, two integers $m,k$ such that $0 < k < m$.\\
+{\bf Solution}	&	The number of false positives of $Q$.\\
+\end{tabular}
+\\
+
+False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q^t}^{m}$.
+Hence we define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
+\begin{equation}
+\text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} T_{Q,t}^{m}(\sigma)
+\end{equation}
+
+\subsubsection{Our FPRAS solution}
+
+We reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
+The latter problem can be approximated via importance sampling.
+\citeauthor{Vazirani01} introduces a \emph{RPTAS} approximating the number of true points of a DNF.
+% Karp & Luby ??
+
+%\subsection{Sensitivity and specificity}
+%and \ref{enum:qgram-fn}.
+
+\subsection{Optimal gapped $q$-grams}
+
+Introduced in \citep{Nicolas2005}.
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A finite set $S$ of similarities.\\
+{\bf Solution}	&	A seed $Q$ that detects all similarities of $S$.\\
+{\bf Measure}	&	The weight of $Q$, $w(Q)$.\\
+\end{tabular}
+\\
+
+Given a set of similarities, find the seed of maximum weight detecting all similarities.
+This applies to the DNA Homology Search Framework as well.
+%The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
+%On one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
+
+\subsubsection{Hardness and inapproximability results}
+
+Nicolas et al. \citep{Nicolas2005} perform an approximation preserving reduction from \textsc{Maximum Independent Set}.
+MWLS is NP-hard and APX-hard within $(|S|)^{0.25 - \epsilon}$ unless $P = NP$.
+If $S = \Bo^{m}_{k}$, $|S| = \binom{m}{k}$.
+
+\subsubsection{Branch-and-bound search}
+
+Burkhardt et al. \citep{Burkhardt2001} bounding criterion. If $Q_1 \subseteq Q_2$, then $t_{Q_2}(m,k) \leq t_{Q_1}(m,k)$.
+Such bounding criterion allows to discard parts of the search space which do not solve the considered $(m,k)$ instance.
+%The search space of seed families is more dense than the search space of single seeds (i.e. almost all seed families solve a give Non Detection instance). Thus search space pruning would not be as effective.
+
+
+\section{Approximate seeds}
 
 %Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
 %Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
@@ -27,9 +384,10 @@ TODO.
 %According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
 %
 %Approximate seeds can be searched via backtracking on $\Ti$.
-%We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
-%To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
-%Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+
+We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
+Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
 
 \begin{figure}[h]
 \begin{center}

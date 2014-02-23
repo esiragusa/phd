@@ -21,6 +21,11 @@ Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
   string collections.
 \newblock {\em Theoretical Computer Science\/}, {\bf 483}, pages 134--148.
 
+\bibitem[Burkhardt and Karkkainen(2001)Burkhardt and Karkkainen]{Burkhardt2001}
+Burkhardt, S. and Karkkainen, J. (2001).
+\newblock Better filtering with gapped q-grams.
+\newblock In {\em CPM\/}, volume~1, pages 73--85. Springer.
+
 \bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
 Burrows, M. and Wheeler, D.~J. (1994).
 \newblock A block-sorting lossless data compression algorithm.
@@ -130,6 +135,12 @@ K{\"a}rkk{\"a}inen, J. and Sanders, P. (2003).
 Knuth, D. (1973).
 \newblock {\em The Art of Computer Programming. Volume 3, Addision-Wesley\/}.
 
+\bibitem[Kucherov \ea(2005)Kucherov, No{\'e}, and Roytberg]{Kucherov2005}
+Kucherov, G., No{\'e}, L., and Roytberg, M. (2005).
+\newblock Multiseed lossless filtration.
+\newblock {\em IEEE/ACM Transactions on Computational Biology and
+  Bioinformatics (TCBB)\/}, {\bf 2}(1), pages 51--61.
+
 \bibitem[Kurtz(1999)Kurtz]{Kurtz1999}
 Kurtz, S. (1999).
 \newblock Reducing the space requirement of suffix trees.
@@ -228,6 +239,11 @@ Navarro, G. and Baeza-Yates, R.~A. (2000).
 Navarro, G., Baeza-Yates, R.~A., Sutinen, E., and Tarhio, J. (2001).
 \newblock Indexing methods for approximate string matching.
 \newblock {\em IEEE Data Eng. Bull.}, {\bf 24}(4), pages 19--27.
+
+\bibitem[Nicolas and Rivals(2005)Nicolas and Rivals]{Nicolas2005}
+Nicolas, F. and Rivals, E. (2005).
+\newblock Hardness of optimal spaced seed design.
+\newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
 
 \bibitem[Treangen and Salzberg(2011)Treangen and Salzberg]{Treangen2011}
 Treangen, T.~J. and Salzberg, S.~L. (2011).

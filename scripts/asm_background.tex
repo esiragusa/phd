@@ -466,6 +466,8 @@ Let $x,y$ be two strings with edit distance $k$ and $\min\{|x|,|y|\} = m$, then 
 By induction on k.
 \end{proof}
 
+Note how the threshold depends on $q$ and $(m,k)$.
+
 How can we use this result to solve approximate string matching?
 The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. the pattern can match any substring of the text.
 In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
