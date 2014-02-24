@@ -224,6 +224,11 @@ Morrison, D.~R. (1968).
   alphanumeric.
 \newblock {\em J. ACM\/}, {\bf 15}(4), pages 514--534.
 
+\bibitem[Myers(1994)Myers]{Myers1994}
+Myers, E.~W. (1994).
+\newblock A sublinear algorithm for approximate keyword searching.
+\newblock {\em Algorithmica\/}, {\bf 12}(4-5), pages 345--374.
+
 \bibitem[Navarro(2001)Navarro]{Navarro2001b}
 Navarro, G. (2001).
 \newblock A guided tour to approximate string matching.
@@ -244,6 +249,12 @@ Navarro, G., Baeza-Yates, R.~A., Sutinen, E., and Tarhio, J. (2001).
 Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
+
+\bibitem[Siragusa \ea(2013)Siragusa, Weese, and Reinert]{Siragusa2013}
+Siragusa, E., Weese, D., and Reinert, K. (2013).
+\newblock Fast and accurate read mapping with approximate seeds and multiple
+  backtracking.
+\newblock {\em Nucleic Acids Res.}
 
 \bibitem[Treangen and Salzberg(2011)Treangen and Salzberg]{Treangen2011}
 Treangen, T.~J. and Salzberg, S.~L. (2011).

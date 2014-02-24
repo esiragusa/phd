@@ -9,7 +9,7 @@ The former filters minimize filtration time but yield weak filtration, the latte
 In practice, we know that seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
 Thus we would adopt one or the other filtration method depending on the requested error rate.
 
-The simple analysis of section~\ref{sec:intro:filtering} show us that filtration specificity is strongly correlated to the parameter $q$ (seed or $q$-gram length).
+The simple analysis of section~\ref{sec:intro:filtering} show us that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
 Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
 To this intent, the following techniques have been proposed in literature:
 \begin{inparaenum}[(i)]
@@ -20,7 +20,7 @@ To this intent, the following techniques have been proposed in literature:
 \end{inparaenum}
 
 The idea of gapped $q$-grams is to lower the correlation between consecutive $q$-grams.
-We have seen in the $q$-gram lemma~\ref{lemma:qgram} that one error covers $q$ consecutive $q$-grams.
+We have seen in the $q$-gram lemma~\ref{lemma:qgrams} that one error covers $q$ consecutive $q$-grams.
 Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
 Therefore, we introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
 By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
@@ -271,9 +271,9 @@ Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, we define our problem 
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1			\\
-w.r.t.									\\
-& \bar{t}_{Q}^{m}(\sigma) = 0			\\
+w.r.t.								\\
 & \sigma \in \Bo^m					\\
+& \bar{t}_{Q}^{m}(\sigma) \leq 0	\\
 \end{array}
 \end{equation}
 
@@ -285,7 +285,7 @@ We reduce our problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, s
 \min & |\sigma|_1	\\
 w.r.t.				\\
 & \sigma \in \Bo^m	\\
-& b \in \Bo^m-s(Q)+1\\
+& b \in \Bo^{m-s(Q)+1}\\
 & A\sigma \geq b	\\
 \end{array}
 \end{equation}
@@ -376,18 +376,24 @@ Such bounding criterion allows to discard parts of the search space which do not
 
 \section{Approximate seeds}
 
-%Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
-%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |p|/(k+1) \rfloor$.
-%If we want to improve filtration specificity by increasing seed length, we can resort to approximate seeds.
-%A more involved filtering algorithm proposed in \citep{Navarro2000} reduces an approximate search into smaller approximate searches.
+Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for edit and Hamming distance.
+The key idea of approximate seeds is to reduce an approximate search into smaller approximate searches.
+
 %We partition $p$ into $s \leq k+1$ non-overlapping seeds.
 %According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
-%
-%Approximate seeds can be searched via backtracking on $\Ti$.
 
-We search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+%Consider two arbitrary strings $x,y$ within edit distance $k$.
+%If we partition w.l.o.g. $y$ into $s$ non-overlapping seeds with $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance...
+\begin{lemma}
+\label{lemma:apx-seeds}
+\citep{Siragusa2013}
+Let $x,y$ be two strings \st $d_E(x,y) = k$ for some $k \in \N$.
+If we assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$, at least one seed occurs within its assigned distance.
+\end{lemma}
+\begin{proof}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
-Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+%Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
+\end{proof}
 
 \begin{figure}[h]
 \begin{center}
@@ -396,5 +402,54 @@ Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be foun
 \input{figures/filtration_exact.tikz}
 \end{center}
 \end{figure}
+
+Note that we can assign arbitrary error thresholds to seeds, as long as the total sum $t$ of the thresholds plus the number of seeds is bigger than $k+1$
+\begin{equation}
+s + \sum{t}-1 \geq k
+\end{equation}
+but we usually distribute error thresholds evenly because the seeds with the highest threshold dominate the overall filtration time.
+
+\subsection{Filter parameterization}
+
+With approximate seeds we are free to choose the number of seeds $s$ which gives us $q =\lfloor m/s \rfloor$, or vice versa, if we fix the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
+The resulting filter is flexible, indeed by increasing $q$ filtration becomes more specific at the expense of a higher filtration time.
+For $s=1$ we obtain the most specific filtration \ie we perform only backtracking and we do not even need to verify the reported locations, while for $s=k+1$ we obtain the fastest but weakest filtration.
+
+In practice, it is not easy to find which filter parameterization yields an optimal filtration.
+Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+\citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
+However, these results did not help us in our experiments.
+The optimal partitioning depends on
+\begin{inparaenum}[(i)]
+\item the full-text index,
+\item the verification algorithm,
+\item the statistical properties of the text.
+\end{inparaenum}
+One seed more or less than the optimal can result in a runtime penalty even of an order of magnitude.
+
+\subsection{Filter redundancy}
+
+Another practical problem of seeds is redundant filtration.
+Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds} or \ref{lemma:apx-seeds}, more than one seed reports the same candidate location.
+Consider the case of exact seeds: If two errors fall in some seed, then at least two seeds will occur exactly.
+
+In practice, we can choose to avoid redundancy before or after verifying candidate locations.
+After collecting all candidate locations for a pattern, we have to consider only the induced diagonal positions in the implicit DP matrix.
+This requires locating and sorting all candidate locations for a pattern.
+Alternatively, we can prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
+Nonetheless, to avoid reporting duplicate occurrences, we have to consider redundant all occurrences either beginning or ending at the same position in the text.
+This requires memorizing and sorting all occurrences of a pattern.
+
+How many redundant error configurations\footnote{Here we consider the fraction of redundant error combinations and not the fraction of redundant candidate locations reported by the filter.} are produced by seeds filters?
+For simplicity we consider exact seeds and combinations of exactly $k$ errors.
+We have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
+However, for a fixed seed, we cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
+Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
+\begin{equation}
+\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
+\end{equation}
+For instance, filtration with exact seeds covers three times more combinations than required when $k=5$.
+With approximate seeds we partition in less seeds and thus we indirectly reduce filter redundancy.
+In the next section we see how suffix filters consider only minimal error combinations.
 
 \section{Suffix filters}
