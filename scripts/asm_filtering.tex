@@ -409,7 +409,7 @@ s + \sum{t}-1 \geq k
 \end{equation}
 but we usually distribute error thresholds evenly because the seeds with the highest threshold dominate the overall filtration time.
 
-\subsection{Filter parameterization}
+\subsection{Parameterization}
 
 With approximate seeds we are free to choose the number of seeds $s$ which gives us $q =\lfloor m/s \rfloor$, or vice versa, if we fix the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
 The resulting filter is flexible, indeed by increasing $q$ filtration becomes more specific at the expense of a higher filtration time.
@@ -427,7 +427,7 @@ The optimal partitioning depends on
 \end{inparaenum}
 One seed more or less than the optimal can result in a runtime penalty even of an order of magnitude.
 
-\subsection{Filter redundancy}
+\subsection{Redundancy}
 
 Another practical problem of seeds is redundant filtration.
 Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds} or \ref{lemma:apx-seeds}, more than one seed reports the same candidate location.
