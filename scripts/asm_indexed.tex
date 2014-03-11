@@ -317,6 +317,87 @@ Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
 
 TODO.
 
-\section{Multiple backtracking}
+\section{Backtracking}
+
 \subsection{$k$-Mismatches}
+
+\begin{algorithm}[h]
+\caption{$k$-mismatches on a virtual suffix trie.}
+\label{alg:vst-hamming}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\algnotext{EndIf}
+\algnotext{EndProcedure}
+\Procedure{KMismatches}{$t,p,e$}
+	\If {$e = k$}
+		\If {\Call{goDown}{$t,p$}}
+			\State \Report ($t,p,e$)
+		\EndIf
+	\ElsIf {$e < k$}
+		\If {\Call{atEnd}{$p$}}
+			\State \Report ($t,p,e$)
+		\ElsIf {\Call{goDown}{$t$}}
+			\Repeat
+				\State {$d \gets \omega(label(t), value(p))$}
+				\State {\Call{goNext}{$p$}}
+				\State \Call{KMismatches}{$t,p,e + d$}
+				\State {\Call{goPrevious}{$p$}}
+			\Until {\Call{goRight}{$t$}}
+		\EndIf
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Multiple exact search on a virtual suffix trie.}
+\label{alg:vst-exact-multi}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\algnotext{EndIf}
+\algnotext{EndProcedure}
+\Procedure{ExactSearch}{$t,p$}
+	\If {\Call{isLeaf}{$p$}}
+		\State \Report ($t,p$)
+	\Else
+		\State {\Call{goDown}{$p$}}
+		\Repeat
+			\If {\Call{goDown}{$t, label(p)$}}
+				\State \Call{ExactSearch}{$t,p$}
+				\State {\Call{goUp}{$t$}}
+			\EndIf
+		\Until {\Call{goRight}{$p$}}
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[h]
+\caption{Multiple $k$-mismatches on a virtual suffix trie.}
+\label{alg:vst-hamming-multi}
+\begin{algorithmic}[1]
+\algnotext{EndFor}
+\algnotext{EndIf}
+\algnotext{EndProcedure}
+\Procedure{KMismatches}{$t,p,e$}
+	\If {$e = k$}
+		\State {\Call{ExactSearch}{$t,p$}}
+	\ElsIf {$e < k$}
+		\If {\Call{isLeaf}{$p$}}
+			\State \Report ($t,p,e$)
+		\ElsIf {\Call{goDown}{$t$}}
+			\Repeat
+				\State {\Call{goDown}{$p$}}
+				\Repeat
+					\State {$d \gets \omega(label(t), label(p))$}
+					\State \Call{KMismatches}{$t,p,e+d$}
+				\Until {\Call{goRight}{$p$}}
+				\State {\Call{goUp}{$p$}}
+			\Until {\Call{goRight}{$t$}}
+		\EndIf
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{$k$-Differences}
