@@ -315,17 +315,19 @@ Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
 
 TODO.
 
-\section{Backtracking}
+\section{String matching algorithms}
 
-\subsection{$k$-Mismatches}
+\subsection{Exact matching}
+
+We start by giving the simple exact string matching algorithm using virtual suffix tree iterators.
 
 \begin{algorithm}[h]
-\caption{Exact search on a virtual suffix trie.}
+\caption{Exact string matching on a virtual suffix trie.}
 \label{alg:vst-exact}
 \begin{algorithmic}[1]
 \Procedure{ExactSearch}{$t,p$}
 	\If {\Call{atEnd}{$p$}}
-		\State \Report ($t,p$)
+		\State \Report \Call{getOccurrences}{$t$}
 	\Else
 		\State {\Call{goNext}{$p$}}
 		\If {\Call{goDown}{$t, value(p)$}}
@@ -337,12 +339,12 @@ TODO.
 \end{algorithm}
 
 \begin{algorithm}[h]
-\caption{Multiple exact search on a virtual suffix trie.}
+\caption{Multiple exact string matching on a virtual suffix trie.}
 \label{alg:vst-exact-multi}
 \begin{algorithmic}[1]
 \Procedure{MultipleExactSearch}{$t,p$}
 	\If {\Call{isLeaf}{$p$}}
-		\State \Report ($t,p$)
+		\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
 	\Else
 		\State {\Call{goDown}{$p$}}
 		\Repeat
@@ -356,6 +358,10 @@ TODO.
 \end{algorithmic}
 \end{algorithm}
 
+\subsection{$k$-Mismatches}
+
+Algorithm for $k$-mismatches.
+
 \begin{algorithm}[h]
 \caption{$k$-mismatches on a virtual suffix trie.}
 \label{alg:vst-hamming}
@@ -365,7 +371,7 @@ TODO.
 		\State {\Call{ExactSearch}{$t,p$}}
 	\ElsIf {$e < k$}
 		\If {\Call{atEnd}{$p$}}
-			\State \Report ($t,p,e$)
+			\State \Report \Call{getOccurrences}{$t$}
 		\ElsIf {\Call{goDown}{$t$}}
 			\Repeat
 				\State {$d \gets \omega(label(t), value(p))$}
@@ -388,7 +394,7 @@ TODO.
 		\State {\Call{MultipleExactSearch}{$t,p$}}
 	\ElsIf {$e < k$}
 		\If {\Call{isLeaf}{$p$}}
-			\State \Report ($t,p,e$)
+			\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
 		\ElsIf {\Call{goDown}{$t$}}
 			\Repeat
 				\State {\Call{goDown}{$p$}}
@@ -406,22 +412,20 @@ TODO.
 
 \subsection{$k$-Differences}
 
+Algorithm for $k$-differences.
+
 \begin{algorithm}[h]
 \caption{$k$-differences on a virtual suffix trie.}
 \label{alg:vst-edit}
 \begin{algorithmic}[1]
-\Procedure{KDifferences}{$t,p,d$}
-	\If {$e = k$}
-		\State {\Call{ExactSearch}{$t,p$}}
-	\ElsIf {$e < k$}
-		\If {\Call{atEnd}{$p$}}
-			\State \Report ($t,p,e$)
-		\ElsIf {\Call{goDown}{$t$}}
+\Procedure{KDifferences}{$t,p,D$}
+	\If {$D[m] \leq k$}
+		\State \Report \Call{getOccurrences}{$t$}
+	\ElsIf {$\min{D} \leq k$}
+		\If {\Call{goDown}{$t$}}
 			\Repeat
-				\State {$d \gets \omega(label(t), value(p))$}
-				\State {\Call{goNext}{$p$}}
-				\State \Call{KMismatches}{$t,p,e + d$}
-				\State {\Call{goPrevious}{$p$}}
+				\State {$D' \gets$ \Call{DP}{$D, label(t), p$}}
+				\State \Call{KDifferences}{$t,p,D'$}
 			\Until {\Call{goRight}{$t$}}
 		\EndIf
 	\EndIf
