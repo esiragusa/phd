@@ -268,7 +268,6 @@ Algorithm~\ref{alg:st-exact} is correct since each path from the root to any int
 \caption{Exact string matching on a suffix trie.}
 \label{alg:st-exact}
 \begin{algorithmic}[1]
-\algnotext{EndFor}
 \Procedure{ExactSearch}{$\Tn,p$}
 	\If {$p = \epsilon$}
 		\State \Report $\Li(\Tn)$
@@ -300,7 +299,6 @@ See algorithm~\ref{alg:st-hamming}.
 \caption{$k$-mismatches on a suffix trie.}
 \label{alg:st-hamming}
 \begin{algorithmic}[1]
-\algnotext{EndFor}
 \Procedure{KMismatches}{$\Tn,p,e$}
 	\If {$e = 0$}
 		\State \Call{ExactSearch}{$\Tn,p$}
@@ -333,7 +331,6 @@ We can compute $k$-differences on a suffix tree in two different ways. Algorithm
 \caption{$k$-differences on a suffix trie.}
 \label{alg:st-edit-explicit}
 \begin{algorithmic}[1]
-\algnotext{EndFor}
 \Procedure{KDifferences}{$\Tn,p,e$}
 	\If {$e = 0$}
 		\State \Call{ExactSearch}{$\Tn,p$}
@@ -356,7 +353,6 @@ We can compute $k$-differences on a suffix tree in two different ways. Algorithm
 \caption{$k$-difference on a suffix trie.}
 \label{alg:st-edit}
 \begin{algorithmic}[1]
-\algnotext{EndFor}
 \Procedure{KDifferences}{$\Tn,p,e$}
 	\ForAll {$\Cn \in \Ci(\Tn)$}
 		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
