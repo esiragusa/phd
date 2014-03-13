@@ -1,4 +1,5 @@
 \chapter{Indexed Methods}
+\label{chr:index}
 
 Suffix trees are elegant data structures but they are rarely used in practice.
 Although suffix trees provides optimal construction and query time, their high space consumption prohibits practical applicability to large text collections.
@@ -317,30 +318,13 @@ TODO.
 
 \section{String matching algorithms}
 
-\subsection{Exact matching}
+%\subsection{Exact matching}
 
 We start by giving the simple exact string matching algorithm using virtual suffix tree iterators.
 
 \begin{algorithm}[h]
-\caption{Exact string matching on a virtual suffix trie.}
-\label{alg:vst-exact}
-\begin{algorithmic}[1]
-\Procedure{ExactSearch}{$t,p$}
-	\If {\Call{atEnd}{$p$}}
-		\State \Report \Call{getOccurrences}{$t$}
-	\Else
-		\State {\Call{goNext}{$p$}}
-		\If {\Call{goDown}{$t, value(p)$}}
-			\State \Call{ExactSearch}{$t,p$}
-		\EndIf
-	\EndIf
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h]
 \caption{Multiple exact string matching on a virtual suffix trie.}
-\label{alg:vst-exact-multi}
+\label{alg:st-exact-multi}
 \begin{algorithmic}[1]
 \Procedure{MultipleExactSearch}{$t,p$}
 	\If {\Call{isLeaf}{$p$}}
@@ -358,13 +342,18 @@ We start by giving the simple exact string matching algorithm using virtual suff
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{$k$-Mismatches}
+\subsection{Backtracking $k$-mismatches}
 
-Algorithm for $k$-mismatches.
+We can solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on the suffix trie $\Ti$, in average time sublinear in $n$ \citep{Navarro2000}.
+A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, we incrementally compute the distance between the query and the spelled string.
+If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
+Conversely, if we completely spelled the pattern $p$ and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+See algorithm~\ref{alg:st-hamming}.
 
 \begin{algorithm}[h]
 \caption{$k$-mismatches on a virtual suffix trie.}
-\label{alg:vst-hamming}
+\label{alg:st-hamming}
 \begin{algorithmic}[1]
 \Procedure{KMismatches}{$t,p,e$}
 	\If {$e = k$}
@@ -385,9 +374,18 @@ Algorithm for $k$-mismatches.
 \end{algorithmic}
 \end{algorithm}
 
+\begin{figure}[h]
+\begin{center}
+\caption{Approximate string matching on a suffix tree.}
+\label{fig:st-hamming}
+\input{figures/stree.tikz}
+\end{center}
+\end{figure}
+
+
 \begin{algorithm}[h]
 \caption{Multiple $k$-mismatches on a virtual suffix trie.}
-\label{alg:vst-hamming-multi}
+\label{alg:st-hamming-multi}
 \begin{algorithmic}[1]
 \Procedure{MultipleKMismatches}{$t,p,e$}
 	\If {$e = k$}
@@ -410,13 +408,13 @@ Algorithm for $k$-mismatches.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{$k$-Differences}
+\subsubsection{Backtracking $k$-differences}
 
 Algorithm for $k$-differences.
 
 \begin{algorithm}[h]
 \caption{$k$-differences on a virtual suffix trie.}
-\label{alg:vst-edit}
+\label{alg:st-edit}
 \begin{algorithmic}[1]
 \Procedure{KDifferences}{$t,p,D$}
 	\If {$D[m] \leq k$}
@@ -432,3 +430,46 @@ Algorithm for $k$-differences.
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
+
+We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
+
+%\begin{algorithm}[h]
+%\caption{$k$-differences on a suffix trie.}
+%\label{alg:st-edit-explicit}
+%\begin{algorithmic}[1]
+%\Procedure{KDifferences}{$\Tn,p,e$}
+%	\If {$e = 0$}
+%		\State \Call{ExactSearch}{$\Tn,p$}
+%	\Else 
+%		\State \Call{KDifferences}{$\Tn,p_{2..|p|},e-1$}
+%		\ForAll {$\Cn \in \Ci(\Tn)$}
+%			\State \Call{KDifferences}{$\Cn,p,e-1$}
+%			\If {$label(\Cn) = p_1$}
+%				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e$}
+%			\Else
+%				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e-1$}
+%			\EndIf
+%		\EndFor
+%	\EndIf
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
+%
+%\begin{algorithm}[h]
+%\caption{$k$-difference on a suffix trie.}
+%\label{alg:st-edit}
+%\begin{algorithmic}[1]
+%\Procedure{KDifferences}{$\Tn,p,e$}
+%	\ForAll {$\Cn \in \Ci(\Tn)$}
+%		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
+%	\EndFor
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
+
+In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
+However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
+Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
+
+Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
+Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.

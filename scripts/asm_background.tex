@@ -209,35 +209,47 @@ and since an occurrence of the pattern can end anywhere in the text, we check al
 \subsection{Indexed methods}
 \label{sub:introindex}
 
-No matter how efficient online methods can be, these approaches quickly become impractical when the text is long and searched frequently.
-If the text is static and given in advance, we are allowed to preprocess it.
-Therefore we build an index of the text beforehand and use it to speed up subsequent searches.
-To this intent we introduce the \emph{suffix tree}, an optimal data structure to index all substrings of a text.
-We take the suffix tree as an idealized data structure to elegantly expose our indexed algorithms solving string matching problems.
-In chapter~\ref{chr:index} we will consider other substring indices to replace the suffix tree in practice.
+
+Indexed methods are more attractive than online methods when several patterns are to be searched in the same static text.
+These methods work by building an index of the text beforehand to speed up subsequent searches.
+To this intent, we now introduce \emph{suffix tries}, idealized data structures to index texts.
+Moreover, we define a set of generic operations to traverse suffix tries in a top-down fashion.
+In chapter~\ref{chr:index}, we will consider various data structures replacing suffix tries in practice.
+The generic traversal operations here introduced will let us formulate generic algorithms solving string matching problems on any of these data structures.
 
 \subsubsection{Trie}
 
-\subsubsection{Suffix tree and suffix trie}
+Consider a collection of strings, \ie an ordered multiset $\S = \{ s^1, s^2, \dots, s^c \}$ of strings over a common alphabet $\Sigma$.
+Assume \wlogs each string $s^i \in \S$ to be padded with a \emph{terminator symbol} $\$^i$ not being part of the string alphabet $\Sigma$.
+In addition, assume $\$^i <_{lex} \$^j$ for all indices $i,j$ with $i < j < c$.
+Note that the terminator symbol is necessary to ensure that no string $s^i$ is a prefix of another string $s^j$.
 
-The suffix tree \citep{Morrison1968} is a lexicographically ordered tree data structure representing all suffixes of a string.
-Assume w.l.o.g. a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
-The suffix tree $\Si$ of the string $s$ has one node designated as the root and $n$ leaves, each one pointing to a distinct suffix of $s$, denoted as $\Ln_1 \dots \Ln_n$.
-Each internal node has more than one child, and each edge is labeled with a non-empty substring of $s$.
-Each path from the root to a leaf $\Ln_i$ spells the suffix $s_{i..n}$.
+The trie $\Si$ of the strings collection $\S$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+The entering edge of any node of $\Si$ is labeled with a symbol in $\Sigma$, while the entering edge of any leaf of $\Si$ is labeled with a terminator symbol.
+Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
+Figure~\ref{fig:trie} illustrates.
+
+\subsubsection{Suffix trie}
+
+We define the suffix trie as the trie of all suffixes of a string.
+Given a string $s$ of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves and leaf $\Ln_i$ points to suffix $s_{i..n}$.
+We easily generalize the suffix trie to index string collections.
+Given a collection of padded strings $\Sc = \{ s^1, s^2, \dots, s^c \}$, any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n$ points to one of the $n$ suffixes of $s^i$.
+Thus each path from the root to a leaf $(i,j)$ spells the suffix $s^i_{j..n}$.
 Figure~\ref{fig:stree} illustrates.
 
-%The suffix tree can be built in time and space linear in the length of the string.
+Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet we only consider the suffix trie as an idealized data structure to expose our algorithms.
+The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
+However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see Figure~\ref{fig:stree}).
+This latter property slightly complicates the exposition of our string matching algorithms but it does not affect their runtime complexity nor their result.
+For this reason, in the following of this manuscript we always consider \wlogs suffix tries instead of suffix trees.
+%We remark that all given algorithms can be generalized to work on trees.
 
-%The definition of suffix tree can be generalized to index set of strings.
-%Given a set of strings $\Dc = \{ s^1, s^2, \dots, s^z \}$, assume w.l.o.g. that each string $s^i \in \Dc$ is padded with distinct terminator symbol $\$_i$.
-%Leaves of the \emph{generalized suffix tree} are labeled with with pairs $(i,j)$ such that $1 \leq i \leq z$ and $1 \leq j \leq | s^i |$.
-%Each path from the root to a leaf $(i,j)$ spells the suffix $s_{j..n}^i$.
+%Assume \wlogs a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
+%The suffix tree $\Si$ of the string $s$ has one node designated as the root and $n$ leaves, each one pointing to a distinct suffix of $s$, denoted as $\Ln_1 \dots \Ln_n$.
+%Each internal node has more than one child, and each edge is labeled with a non-empty substring of $s$.
+%Each path from the root to a leaf $\Ln_i$ spells the suffix $s_{i..n}$.
 
-In the following of this manuscript we consider w.l.o.g. \emph{suffix tries} instead of suffix trees.
-On suffix tries, internal nodes can have only one child and each edge is labeled by one single character (see Figure~\ref{fig:st}).
-This fact simplifies the exposition of all given algorithms without affecting their runtime complexity nor their result.
-However, we remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
 \caption{Suffix tree and suffix trie for the string ANANAS.}
@@ -254,25 +266,54 @@ However, we remark that all given algorithms can be generalized to work on trees
 \end{subfigure}
 \end{figure}
 
-Therefore, from now on we assume the text $t$ to be indexed using a suffix trie $\Ti$.
-Given a node $\Tn$ of $\Ti$, we denote with $label(\Tn)$ the label of the edge entering into $\Tn$, with $\Ci(\Tn)$ the set of children of $\Tn$ being internal nodes, with $\Ei(\Tn)$ the set of children of $\Tn$ being leaves, and with $\Li(\Tn)$ the set of all leaves of the subtree rooted in $\Tn$. We remark that entering edges of internal nodes in $\Ci(\Tn)$ are always labeled with symbols in $\Sigma$, while entering edges of leaves in $\Li(\Tn)$ and $\Ei(\Tn)$ are always labeled with terminator symbols.
+\subsubsection{Top-down traversal}
 
-\subsubsection{Exact string matching}
+We now give a set of generic operations to traverse tries in a top-down fashion.
+Given a trie $\Ti$, we denote by $i$ the \emph{iterator} pointing to an arbitrary node $\Tn$ of $\Ti$.
+On the iterator $i$, we define the following operations inspecting the pointed node:
+\begin{itemize}
+%\item \textsc{isRoot}($i$)
+%\item \textsc{isLeaf}($i$)
+%\item \textsc{depth}($i$)
+\item \textsc{label}($i$) returns the symbol labeling the edge entering the node $\Tn$;
+\item \textsc{getOccurrences}($i$) returns the list of positions pointed by leaves below node $\Tn$;
+\end{itemize}
+and the following operations moving the pointed node and returning $true$ on success:
+\begin{itemize}
+\item \textsc{goDown}($i$) moves $i$ to the lexicographically smallest child of $\Tn$;
+\item \textsc{goDown}($i, c$) moves $i$ to the child of $\Tn$ whose entering edge is labeled by $c$;
+\item \textsc{goRight}($i$) moves $i$ to the lexicographically next child of $\Tn$;
+\item \textsc{goUp}($i$) moves $i$ to the parent node of $\Tn$.
+\end{itemize}
 
-Using the suffix trie $\Ti$ of the text $t$, we can find all occurrences of a pattern $p$ into $t$ in optimal time $\Oh(m)$, thus independently of $n$.
+Time complexities of the above operations depend on the data structure implementing the trie.
+Usually \textsc{label} is $\Oh(1)$, \textsc{goDown} and \textsc{goRight} are $\Oh(1)$ or sublinear in $n$, \textsc{getOccurrences} can be linear in the size of the occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity.
+In chapter~\ref{chr:index}, we consider various data structures to implement suffix tries, we show how to implement these operations and give their complexities.
+
+\subsubsection{String matching algorithms}
+
+Using the above generic top-down traversal operations we are able to formulate generic string matching algorithms.
+Here we formulate the simple algorithm for exact string matching on a suffix trie.
+In chapter~\ref{chr:index}, we give analogous algorithms solving $k$-mismatches and $k$-differences by means of a backtracking top-down traversal \citep{Ukkonen1993, Baeza1999}.
+
+We assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
-If the search ends up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m} = p$.
-Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
+If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m} = p$.
+%Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
+If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in linear time, we find all occurrences of $p$ into $t$ in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
 \begin{algorithm}[h]
 \caption{Exact string matching on a suffix trie.}
 \label{alg:st-exact}
 \begin{algorithmic}[1]
-\Procedure{ExactSearch}{$\Tn,p$}
-	\If {$p = \epsilon$}
-		\State \Report $\Li(\Tn)$
-	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:st-exact:comp}}
-		\State \Call{ExactSearch}{$\Cn,p_{2..|p|}$}
+\Procedure{ExactSearch}{$t,p$}
+	\If {\Call{atEnd}{$p$}}
+		\State \Report \Call{getOccurrences}{$t$}
+	\Else
+		\State {\Call{goNext}{$p$}}
+		\If {\Call{goDown}{$t, value(p)$}}
+			\State \Call{ExactSearch}{$t,p$}
+		\EndIf
 	\EndIf
 \EndProcedure
 \end{algorithmic}
@@ -286,87 +327,6 @@ Algorithm~\ref{alg:st-exact} is correct since each path from the root to any int
 \end{center}
 \end{figure}
 
-\subsubsection{Backtracking $k$-mismatches}
-
-We can solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on the suffix trie $\Ti$, in average time sublinear in $n$ \citep{Navarro2000}.
-A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, we incrementally compute the distance between the query and the spelled string.
-If the computed distance exceeds $k$, we stop the traversal and proceed on the next branch.
-Conversely, if we completely spelled the pattern $p$ and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
-See algorithm~\ref{alg:st-hamming}.
-
-\begin{algorithm}[h]
-\caption{$k$-mismatches on a suffix trie.}
-\label{alg:st-hamming}
-\begin{algorithmic}[1]
-\Procedure{KMismatches}{$\Tn,p,e$}
-	\If {$e = 0$}
-		\State \Call{ExactSearch}{$\Tn,p$}
-	\Else 
-		\ForAll {$\Cn \in \Ci(\Tn)$}
-			\If {$label(\Cn) = p_1$}
-				\State \Call{KMismatches}{$\Cn,p_{2..|p|},e$}
-			\Else
-				\State \Call{KMismatches}{$\Cn,p_{2..|p|},e-1$}
-			\EndIf
-		\EndFor
-	\EndIf
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-\begin{figure}[h]
-\begin{center}
-\caption{Approximate string matching on a suffix tree.}
-\label{fig:st-hamming}
-\input{figures/stree.tikz}
-\end{center}
-\end{figure}
-
-\subsubsection{Backtracking $k$-differences}
-
-We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
-
-\begin{algorithm}[h]
-\caption{$k$-differences on a suffix trie.}
-\label{alg:st-edit-explicit}
-\begin{algorithmic}[1]
-\Procedure{KDifferences}{$\Tn,p,e$}
-	\If {$e = 0$}
-		\State \Call{ExactSearch}{$\Tn,p$}
-	\Else 
-		\State \Call{KDifferences}{$\Tn,p_{2..|p|},e-1$}
-		\ForAll {$\Cn \in \Ci(\Tn)$}
-			\State \Call{KDifferences}{$\Cn,p,e-1$}
-			\If {$label(\Cn) = p_1$}
-				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e$}
-			\Else
-				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e-1$}
-			\EndIf
-		\EndFor
-	\EndIf
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[h]
-\caption{$k$-difference on a suffix trie.}
-\label{alg:st-edit}
-\begin{algorithmic}[1]
-\Procedure{KDifferences}{$\Tn,p,e$}
-	\ForAll {$\Cn \in \Ci(\Tn)$}
-		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
-	\EndFor
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
-However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
-Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
-
-Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
-Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 % --- Filtering methods ---
 
@@ -396,7 +356,7 @@ Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that 
 \subsubsection{Seed filters}
 
 We start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
-If we partition w.l.o.g. $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
 \citep{Baeza1999b}
