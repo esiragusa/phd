@@ -234,8 +234,8 @@ Figure~\ref{fig:trie} illustrates.
 We define the suffix trie as the trie of all suffixes of a string.
 Given a string $s$ of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves and leaf $\Ln_i$ points to suffix $s_{i..n}$.
 We easily generalize the suffix trie to index string collections.
-Given a collection of padded strings $\Sc = \{ s^1, s^2, \dots, s^c \}$, any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n$ points to one of the $n$ suffixes of $s^i$.
-Thus each path from the root to a leaf $(i,j)$ spells the suffix $s^i_{j..n}$.
+Given a collection of padded strings $\Sc = \{ s^1, s^2, \dots, s^c \}$, any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+Thus each path from the root to a leaf $(i,j)$ spells the suffix $s^i_{j..n^i}$.
 Figure~\ref{fig:stree} illustrates.
 
 Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet we only consider the suffix trie as an idealized data structure to expose our algorithms.
@@ -244,12 +244,6 @@ However, the suffix tree comes with the restriction that internal nodes must hav
 This latter property slightly complicates the exposition of our string matching algorithms but it does not affect their runtime complexity nor their result.
 For this reason, in the following of this manuscript we always consider \wlogs suffix tries instead of suffix trees.
 %We remark that all given algorithms can be generalized to work on trees.
-
-%Assume \wlogs a string $s$ of length $n$, padded with a \emph{terminator symbol} $\$$ not being part of the string alphabet $\Sigma$\footnote{The terminator symbol is necessary to ensure that no suffix $s_{i..n}$ is a prefix of another suffix $s_{j..n}$.}.
-%The suffix tree $\Si$ of the string $s$ has one node designated as the root and $n$ leaves, each one pointing to a distinct suffix of $s$, denoted as $\Ln_1 \dots \Ln_n$.
-%Each internal node has more than one child, and each edge is labeled with a non-empty substring of $s$.
-%Each path from the root to a leaf $\Ln_i$ spells the suffix $s_{i..n}$.
-
 
 \begin{figure}[h]
 \caption{Suffix tree and suffix trie for the string ANANAS.}
@@ -269,21 +263,20 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 \subsubsection{Top-down traversal}
 
 We now give a set of generic operations to traverse tries in a top-down fashion.
-Given a trie $\Ti$, we denote by $i$ the \emph{iterator} pointing to an arbitrary node $\Tn$ of $\Ti$.
-On the iterator $i$, we define the following operations inspecting the pointed node:
+Given a trie $\Ti$, we define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
 \begin{itemize}
-%\item \textsc{isRoot}($i$)
-%\item \textsc{isLeaf}($i$)
-%\item \textsc{depth}($i$)
-\item \textsc{label}($i$) returns the symbol labeling the edge entering the node $\Tn$;
-\item \textsc{getOccurrences}($i$) returns the list of positions pointed by leaves below node $\Tn$;
+\item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
+\item \textsc{isLeaf}($\Tn$) returns true iff the pointed node is a leaf;
+\item \textsc{depth}($\Tn$) returns the number of edges from the root to $\Tn$;
+\item \textsc{label}($\Tn$) returns the symbol labeling the edge entering $\Tn$;
+\item \textsc{getOccurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
 \end{itemize}
-and the following operations moving the pointed node and returning $true$ on success:
+and the following operations moving from pointed node $\Tn$, and returning true on success and false otherwise:
 \begin{itemize}
-\item \textsc{goDown}($i$) moves $i$ to the lexicographically smallest child of $\Tn$;
-\item \textsc{goDown}($i, c$) moves $i$ to the child of $\Tn$ whose entering edge is labeled by $c$;
-\item \textsc{goRight}($i$) moves $i$ to the lexicographically next child of $\Tn$;
-\item \textsc{goUp}($i$) moves $i$ to the parent node of $\Tn$.
+\item \textsc{goDown}($\Tn$) moves to the lexicographically smallest child of $\Tn$;
+\item \textsc{goDown}($\Tn, c$) moves to the child of $\Tn$ whose entering edge is labeled by $c$;
+\item \textsc{goRight}($\Tn$) moves to the lexicographically next child of $\Tn$;
+\item \textsc{goUp}($\Tn$) moves to the parent node of $\Tn$.
 \end{itemize}
 
 Time complexities of the above operations depend on the data structure implementing the trie.
@@ -298,7 +291,7 @@ In chapter~\ref{chr:index}, we give analogous algorithms solving $k$-mismatches 
 
 We assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
-If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m} = p$.
+If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in linear time, we find all occurrences of $p$ into $t$ in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
@@ -311,7 +304,7 @@ If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in 
 		\State \Report \Call{getOccurrences}{$t$}
 	\Else
 		\State {\Call{goNext}{$p$}}
-		\If {\Call{goDown}{$t, value(p)$}}
+		\If {\Call{goDown}{$t,\Call{value}{p}$}}
 			\State \Call{ExactSearch}{$t,p$}
 		\EndIf
 	\EndIf
