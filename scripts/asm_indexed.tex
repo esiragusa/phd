@@ -63,52 +63,19 @@ The suffix array itself fits in 15~GB of memory and we are able to construct it 
 
 We now concentrate on implementing suffix trie functionalities.
 Any suffix trie node is univocally identified by an interval of the suffix array $A$.
-Thus, while traversing the trie, we maintain the interval $[l,r]$ of the current node $\Tn$.
-In addition, in order to answer \textsc{depth}$(\Tn)$, we also maintain the depth of the current node.
-
-The root node of the suffix trie is represented by the interval $[1,n]$, containing the full suffix array.
+Thus, while traversing the trie, we maintain the interval $[l,r]$ associated to the pointed node.
+In addition, we also remember the depth $d$ of the pointed node.
+%The root node of the suffix trie is represented by the interval $[1,n]$, containing the full suffix array.
 Any leaf node is defined by an interval containing only terminator symbols.
-The label of the edge entering any suffix trie node at depth $d$ is defined by the symbol at position $d$ in any suffix $\Sc_{A[i]}$ with $i \in [l,r]$.
+The edge label entering any internal node at depth $d$ is defined by the $d$-th symbol in any suffix $\Sc_{A[i]}$ with $i \in [l,r]$.
 The occurrences below any node correspond by definition to the interval $[l,r]$ of $A$.
-
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-isroot}
-\begin{algorithmic}[1]
-\Procedure{isRoot}{$\Tn$}
-	\State \Return \Call{depth}{$\Tn$} = 0 %$[l,r] = [1,n]$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-isleaf}
-\begin{algorithmic}[1]
-\Procedure{isLeaf}{$\Tn$}
-	\State \Return $A[r]$ + \Call{depth}{$\Tn$} = $n^{A[r]}$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
-%\vspace
-%\hrule
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-label}
-\begin{algorithmic}[1]
-\Procedure{label}{$\Tn$}
-	\State \Return $\Sc_{A[l] + \Call{depth}{\Tn}}$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-label}
-\begin{algorithmic}[1]
-\Procedure{getOccurrences}{$\Tn$}
-	\State \Return $A[l \dots r]$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
+Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
+\begin{itemize}
+\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
+\item \textsc{isLeaf}($\Tn$) returns true iff $A[r] + d = n^{A[r]}$;
+\item \textsc{label}($\Tn$) returns $\Sc_{A[l] + d}$;
+\item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
+\end{itemize}
 
 Binary search is the key to perform a top-down traversal of the suffix array.
 Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute by binary search the position the current left and right interval in $A$ of...
@@ -118,18 +85,18 @@ The binary search consists of $\Oh(\log{n})$ steps.
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:sa-lower}
 \begin{algorithmic}[1]
-\Procedure{L}{$x,p$}
-	\State {$b \gets l$}
-	\State {$e \gets r$}
-	\While {$b < e$}
-		\State {$i \gets \lfloor \frac{b+e}{2} \rfloor$}
-		\If {$\Sc_{A[i] + \Call{depth}{\Tn} \dots n} <_{lex} p$}
-			\State {$b \gets i+1$}
+\Procedure{L}{$\Tn \rightarrow \{ l, r ,d \},c$}
+	\State {$l_1 \gets l$}
+	\State {$l_2 \gets r$}
+	\While {$l_1 < l_2$}
+		\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
+		\If {$\Sc_{A[i] + d \dots n} <_{lex} p$}
+			\State {$l_1 \gets i+1$}
 		\Else
-			\State {$e \gets i$}
+			\State {$l_2 \gets i$}
 		\EndIf
 	\EndWhile
-	\State {$l \gets b$}
+	\State {$l \gets l_1$}
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -137,18 +104,18 @@ The binary search consists of $\Oh(\log{n})$ steps.
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:sa-upper}
 \begin{algorithmic}[1]
-\Procedure{R}{$x,p$}
-	\State {$b \gets l$}
-	\State {$e \gets r$}
-	\While {$b < e$}
-		\State {$i \gets \lfloor \frac{b+e}{2} \rfloor$}
-		\If {$\Sc_{A[i] + \Call{depth}{\Tn} \dots n} \leq_{lex} p$}
-			\State {$b \gets i+1$}
+\Procedure{R}{$\Tn \rightarrow \{ l, r ,d \},c$}
+	\State {$r_1 \gets l$}
+	\State {$r_2 \gets r$}
+	\While {$r_1 < r_2$}
+		\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
+		\If {$\Sc_{A[i] + d \dots n} \leq_{lex} p$}
+			\State {$r_1 \gets i+1$}
 		\Else
-			\State {$e \gets i$}
+			\State {$r_2 \gets i$}
 		\EndIf
 	\EndWhile
-	\State {$r \gets e$}
+	\State {$r \gets r_1$}
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -162,22 +129,22 @@ Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:sa-godown}
 \begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn$}
+\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \}$}
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$\Inc \Call{depth}{\Tn}$}
-%	\While {$|\Sc_{A[l] \dots n^{A[l]}}| \leq \Call{depth}{\Tn}$}
-%		\State \Inc l
+	\While {$|\Sc_{A[l] \dots n^{A[l]}}| \leq d$}
+		\State {$l \gets l+1$}
 %%		\If {}
 %%			\Return \False
 %%		\EndIf
-%	\EndWhile
-	\State {$c_l \gets \Sc_{A[l] + \Call{depth}{\Tn}}$}
-	\State {$c_r \gets \Sc_{A[r] + \Call{depth}{\Tn}}$}
+	\EndWhile
+	\State {$c_l \gets \Sc_{A[l] + d}$}
+	\State {$c_r \gets \Sc_{A[r] + d}$}
 	\If {$c_l \neq c_r$}
 		\State {$r \gets$ \Call{R}{$l,r,c_l$}}
 	\EndIf
+	\State {$d \gets d+1$}
 	\State \Return \True
 \EndProcedure
 \end{algorithmic}
@@ -187,16 +154,23 @@ Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:sa-goright}
 \begin{algorithmic}[1]
-\Procedure{goRight}{$\Tn$}
+\Procedure{goRight}{$\Tn \rightarrow \{ l, r ,d \}$}
 	\If {\Call{isRoot}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$c_l \gets \Sc_{A[l] + \Call{depth}{\Tn} - 1}$}
-	\State {$c_r \gets \Sc_{A[r] + \Call{depth}{\Tn} - 1}$}
+	\State {$c_l \gets \Sc_{A[l] + d - 1}$}
+	\State {$c_r \gets \Sc_{A[r] + d - 1}$}
 	\If {$c_l \neq c_r$}
 		\State {$l \gets r$}
 		\State {$r \gets$ \Call{R}{$l,r,c_l$}}
 	\EndIf
+	\State \Return $l < r$
+\EndProcedure
+\end{algorithmic}
+\begin{algorithmic}[1]
+\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \},c$}
+	\State {$l \gets$ \Call{L}{$x,c$}}
+	\State {$r \gets$ \Call{R}{$x,c$}}
 	\State \Return $l < r$
 \EndProcedure
 \end{algorithmic}
@@ -209,29 +183,6 @@ The worst case runtime of algorithm~\ref{alg:sa-exact} is still $\Oh(m \log{n})$
 As shown in \citep{Manber1990}, we can decrease the worst case runtime to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Sc_{A[i] \dots}$, $\Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
 Alternatively, we can reduce the average case runtime to $\Oh(m + \log{n})$ without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table.
-
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-godownc}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn,c$}
-	\State {$l \gets$ \Call{L}{$l,r,c$}}
-	\State {$r \gets$ \Call{R}{$l,r,c$}}
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-exact}
-\begin{algorithmic}[1]
-\Procedure{ExactSearch}{$\Tn,p$}
-\If {\Call{goDown}{$\Tn$,p}}
-	\State \Report \Call{getOccurrences}{$\Tn$}
-\EndIf
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
 
 \begin{figure}[h]
 \begin{center}
@@ -265,27 +216,12 @@ Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equival
 
 We extend the suffix array traversal operations.
 Again we maintain the current range $[l,r]$ and the current depth.
-In addition, while traversing the trie, we maintain the interval $[h_l,h_r]$ of the current node $\Tn$ and, in order to answer \textsc{label}$(\Tn)$, we also maintain the label of the edge entering the current node.
-We redefine \textsc{isRoot} and \textsc{isLeaf}.
-
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:qgram-isroot}
-\begin{algorithmic}[1]
-\Procedure{isRoot}{$\Tn$}
-	\State \Return $[l,r] = [1,n]$ \And $[h_l, h_r] = [1, \sigma^q]$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:qgram-isleaf}
-\begin{algorithmic}[1]
-\Procedure{isLeaf}{$\Tn$}
-	\State \Return $l \geq r$ \Or $h_l \geq h_r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
+In addition, while traversing the trie, we maintain the interval $[h_l,h_r]$ of the current node $\Tn$ and, in order to answer \textsc{label}$(\Tn)$, we also maintain the label $c$ of the edge entering the current node.
+We redefine \textsc{isLeaf} and \textsc{label} as follows:
+\begin{itemize}
+\item \textsc{isLeaf}($\Tn$) returns true iff ?;
+\item \textsc{label}($\Tn$) returns $c$;
+\end{itemize}
 
 At this point, we are able to replace algorithm~\ref{alg:sa-exact} with algorithm~\ref{alg:qgram-exact}.
 Algorithm~\ref{alg:qgram-exact} runs in $\Oh(q)$ time, but in practice the time to compute the function $h$ can be neglected and the lookup requires fetching only two memory locations from $D$.
@@ -300,24 +236,11 @@ For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M 
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$\Inc \Call{depth}{\Tn}$}
+	\State {$d \gets d+1$}
 	\State {$h_l \gets h_l + h(c)$}
 	\State {$h_r \gets h_r - h(c)$}
 	\State {$l \gets D[h_l]$}
 	\State {$r \gets D[h_r]$}
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-%\end{algorithm}
-%\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:qgram-godownp}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn,p$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
-	\EndIf
 	\State \Return $l < r$
 \EndProcedure
 \end{algorithmic}
@@ -566,16 +489,12 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 \end{eqnarray}
 Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
 
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.37\textwidth}
-\label{alg:sa-isleaf}
-\begin{algorithmic}%[1]
-\Procedure{isLeaf}{$\Tn$}
-	\State \Return $X[l]$ = $1$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
+\begin{itemize}
+\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
+\item \textsc{isLeaf}($\Tn$) returns true iff $X[l] = 1$;
+\item \textsc{label}($\Tn$) returns $c$;
+%\item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
+\end{itemize}
 
 \subsubsection{Locating occurrences}
 
