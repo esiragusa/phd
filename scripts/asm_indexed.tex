@@ -90,13 +90,13 @@ The binary search consists of $\Oh(\log{n})$ steps.
 	\State {$l_2 \gets r$}
 	\While {$l_1 < l_2$}
 		\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-		\If {$\Sc_{A[i] + d \dots n} <_{lex} p$}
+		\If {$\Sc_{A[i] + d} <_{lex} c$}
 			\State {$l_1 \gets i+1$}
 		\Else
 			\State {$l_2 \gets i$}
 		\EndIf
 	\EndWhile
-	\State {$l \gets l_1$}
+	\State \Return $l_1$
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -109,13 +109,13 @@ The binary search consists of $\Oh(\log{n})$ steps.
 	\State {$r_2 \gets r$}
 	\While {$r_1 < r_2$}
 		\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-		\If {$\Sc_{A[i] + d \dots n} \leq_{lex} p$}
+		\If {$\Sc_{A[i] + d} \leq_{lex} c$}
 			\State {$r_1 \gets i+1$}
 		\Else
 			\State {$r_2 \gets i$}
 		\EndIf
 	\EndWhile
-	\State {$r \gets r_1$}
+	\State \Return $r_1$
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -133,7 +133,7 @@ Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\While {$|\Sc_{A[l] \dots n^{A[l]}}| \leq d$}
+	\While {$A[l] + d < n^{A[l]}$}
 		\State {$l \gets l+1$}
 %%		\If {}
 %%			\Return \False
