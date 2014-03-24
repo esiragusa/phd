@@ -301,11 +301,9 @@ If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in 
 \Procedure{ExactSearch}{$t,p$}
 	\If {\Call{atEnd}{$p$}}
 		\State \Report \Call{getOccurrences}{$t$}
-	\Else
-		\State {\Call{goNext}{$p$}}
-		\If {\Call{goDown}{$t,\Call{value}{p}$}}
+	\ElsIf {\Call{goDown}{$t,\Call{value}{p}$}}
+			\State {\Call{goNext}{$p$}}
 			\State \Call{ExactSearch}{$t,p$}
-		\EndIf
 	\EndIf
 \EndProcedure
 \end{algorithmic}

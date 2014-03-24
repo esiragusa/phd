@@ -44,7 +44,7 @@ The space consumption of the suffix array is $n \log{n}$ bits.
 When $n < 2^{32}$, a 32 bit integer is sufficient to encode any value in the range $[1,n]$.
 Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 n$ bytes.
 
-\subsubsection{Multiple sequences}
+\subsubsection{String collections}
 
 We define the generalized suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
 
@@ -77,9 +77,9 @@ Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ 
 \item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
 \end{itemize}
 
-Binary search is the key to perform a top-down traversal of the suffix array.
-Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute by binary search the position the current left and right interval in $A$ of...
-The binary search consists of $\Oh(\log{n})$ steps.
+Binary search is the key to implement functions \textsc{goDown} and \textsc{goRight}.
+Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute by binary search the position in $A$ of the left and right interval corresponding to the child node following the edge labeled by a given symbol $c$.
+Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, however we defined $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
 
 \begin{algorithm}[h!]
 \begin{minipage}[t]{.5\textwidth}
@@ -121,8 +121,34 @@ The binary search consists of $\Oh(\log{n})$ steps.
 \end{minipage}
 \end{algorithm}
 
-We can iterate the trie down or right using only \textsc{R}.
-The time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$.
+\begin{algorithm}[h!]
+\begin{minipage}[t]{.5\textwidth}
+%\label{alg:sa-goroot}
+\begin{algorithmic}[1]
+\Procedure{goRoot}{$\Tn \rightarrow \{ l, r, d\}$}
+	\State {$l \gets 1$}
+	\State {$r \gets n$}
+	\State {$d \gets 0$}
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithmic}[1]
+\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \},c$}
+	\If {\Call{isLeaf}{$\Tn$}}
+		\State \Return \False
+	\EndIf
+	\State {$d \gets d+1$}
+	\State {$l \gets \Call{L}{x,c}$}
+	\State {$r \gets \Call{R}{x,c}$}
+	\State \Return $l < r$
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\end{algorithm}
+
+We can implement \textsc{goDown} and \textsc{goRight} using only \textsc{R}.
+The time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$, as the binary search consists of $\Oh(\log{n})$ steps.
 Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 
 \begin{algorithm}[h!]
@@ -133,19 +159,20 @@ Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\While {$A[l] + d < n^{A[l]}$}
-		\State {$l \gets l+1$}
-%%		\If {}
-%%			\Return \False
-%%		\EndIf
-	\EndWhile
+	\State {$d \gets d+1$}
+	\State {$l \gets$ \Call{R}{$x,\epsilon$}}
+%	\While {$A[l] + d < n^{A[l]}$}
+%		\State {$l \gets l+1$}
+%	\EndWhile
+%	\If {$l \geq r$}
+%		\State \Return \False
+%	\EndIf
 	\State {$c_l \gets \Sc_{A[l] + d}$}
 	\State {$c_r \gets \Sc_{A[r] + d}$}
 	\If {$c_l \neq c_r$}
-		\State {$r \gets$ \Call{R}{$l,r,c_l$}}
+		\State {$r \gets$ \Call{R}{$x,c_l$}}
 	\EndIf
-	\State {$d \gets d+1$}
-	\State \Return \True
+	\State \Return $l < r$
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -158,19 +185,12 @@ Thus the time complexity of algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 	\If {\Call{isRoot}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$c_l \gets \Sc_{A[l] + d - 1}$}
-	\State {$c_r \gets \Sc_{A[r] + d - 1}$}
+	\State {$c_l \gets \Sc_{A[l] + d}$}
+	\State {$c_r \gets \Sc_{A[r] + d}$}
 	\If {$c_l \neq c_r$}
 		\State {$l \gets r$}
-		\State {$r \gets$ \Call{R}{$l,r,c_l$}}
+		\State {$r \gets$ \Call{R}{$x,c_l$}}
 	\EndIf
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \},c$}
-	\State {$l \gets$ \Call{L}{$x,c$}}
-	\State {$r \gets$ \Call{R}{$x,c$}}
 	\State \Return $l < r$
 \EndProcedure
 \end{algorithmic}
@@ -199,9 +219,9 @@ The idea is to supplement the suffix array $A$ with an additional $q$-gram direc
 
 With the aim of addressing $q$-grams in the directory $D$, we impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow [1 \dots \sigma^q]$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
-h(p) = 1 + \sum_{i=1}^{q}{\rho(p_i) \cdot \sigma^{q-i}}
+h(p) = \sum_{i=1}^{q}{\rho(p_i) \cdot \sigma^{q-i-1}}
 \end{eqnarray}
-where $p \in \Sigma^q$ is any $q$-gram and the function $\rho : \Sigma \rightarrow [0 \dots \sigma - 1]$ denotes the lexicographic rank of any symbol in the alphabet $\Sigma$.
+where $p \in \Sigma^q$ is any $q$-gram and the function $\rho : \Sigma \rightarrow [1 \dots \sigma]$ denotes the lexicographic rank of any symbol in the alphabet $\Sigma$.
 This allows us to store in and retrieve from $D[h(p)]$, for each $q$-gram $p \in \Sigma^q$, the left suffix array interval returned by algorithm~\ref{alg:sa-lower}, \ie $D[h(p)] = \textsc{L}(1,n,p)$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographically following $q$-gram and therefore available in $D[h(p)+1]$.
 
@@ -216,32 +236,63 @@ Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equival
 
 We extend the suffix array traversal operations.
 Again we maintain the current range $[l,r]$ and the current depth.
-In addition, while traversing the trie, we maintain the interval $[h_l,h_r]$ of the current node $\Tn$ and, in order to answer \textsc{label}$(\Tn)$, we also maintain the label $c$ of the edge entering the current node.
-We redefine \textsc{isLeaf} and \textsc{label} as follows:
+In addition, while traversing the trie, we maintain the interval $[l_h,r_h]$ of the current node $\Tn$ and, in order to answer \textsc{label}$(\Tn)$, we also maintain the label $c$ of the edge entering the current node.
+We define \textsc{isRoot} and \textsc{getOccurrences} as for the suffix array, while we redefine \textsc{isLeaf} and \textsc{label} as follows:
 \begin{itemize}
 \item \textsc{isLeaf}($\Tn$) returns true iff ?;
 \item \textsc{label}($\Tn$) returns $c$;
 \end{itemize}
 
-At this point, we are able to replace algorithm~\ref{alg:sa-exact} with algorithm~\ref{alg:qgram-exact}.
-Algorithm~\ref{alg:qgram-exact} runs in $\Oh(q)$ time, but in practice the time to compute the function $h$ can be neglected and the lookup requires fetching only two memory locations from $D$.
-The downside is that in practice this approach is applicable only for small alphabet and pattern sizes.
-For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M entries that, using a 32 bits encoding, consume 1~GB of memory.
+\begin{algorithm}[h!]
+\begin{minipage}[t]{.5\textwidth}
+\label{alg:qgram-lower}
+\begin{algorithmic}[1]
+\Procedure{L}{$\Tn \rightarrow \{ l_h, d \},c$}
+	\State {$l_h \gets l_h + h(c)$}
+	\State \Return $D[l_h]$
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.5\textwidth}
+\label{alg:qgram-upper}
+\begin{algorithmic}[1]
+\Procedure{R}{$\Tn \rightarrow \{ r_h, d \},c$}
+	\State {$r_h \gets r_h - h(c)$}
+	\State \Return $D[r_h]$
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\end{algorithm}
 
 \begin{algorithm}[h!]
 \begin{minipage}[t]{.5\textwidth}
+\label{alg:qgram-goroot}
+\begin{algorithmic}[1]
+\Procedure{goRoot}{$\Tn \rightarrow \{ l_h, r_h, l, r, d\}$}
+	\State {$l_h \gets 1$}
+	\State {$r_h \gets \Sigma^q$}
+	\State {$l \gets 1$}
+	\State {$r \gets n$}
+	\State {$d \gets 0$}
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\begin{minipage}[t]{.5\textwidth}
 \label{alg:qgram-godownc}
 \begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn,c$}
+\Procedure{goDown}{$\Tn \rightarrow \{ l, r, d, e \} ,c$}
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
 	\State {$d \gets d+1$}
-	\State {$h_l \gets h_l + h(c)$}
-	\State {$h_r \gets h_r - h(c)$}
-	\State {$l \gets D[h_l]$}
-	\State {$r \gets D[h_r]$}
+	\State {$e \gets c$}
+	\State {$l \gets \Call{L}{x,c}$}
+	\State {$r \gets \Call{R}{x,c}$}
 	\State \Return $l < r$
+%	\State {$l_h \gets l_h + h(c)$}
+%	\State {$r_h \gets r_h - h(c)$}
+%	\State \Return $D[l_h] < D[r_h]$
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
@@ -251,13 +302,13 @@ For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M 
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:qgram-godown}
 \begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn$}
+\Procedure{goDown}{$\Tn \rightarrow \{ l, r, e \}$}
 	\If {\Call{isLeaf}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$c \gets \min{\Sigma}$}
-	\While {\Call{goDown}{$x,c$}}
-		\State {$\Inc c$}
+	\State {$e \gets \min_{lex}{\Sigma}$}
+	\While {\Call{goDown}{$x,e$}}
+		\State {$\Inc e$}
 	\EndWhile
 	\State \Return $l < r$
 \EndProcedure
@@ -268,19 +319,23 @@ For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M 
 \begin{minipage}[t]{.5\textwidth}
 \label{alg:qgram-goright}
 \begin{algorithmic}[1]
-\Procedure{goRight}{$\Tn$}
+\Procedure{goRight}{$\Tn \rightarrow \{ l, r, e \}$}
 	\If {\Call{isRoot}{$\Tn$}}
 		\State \Return \False
 	\EndIf
-	\State {$c \gets \Call{label}{\Tn}$}
 	\Repeat
-		\State {$\Inc c$}
-	\Until \Call{goDown}{$x,c$}	
+		\State {$\Inc e$}
+	\Until \Call{goDown}{$x,e$}
 	\State \Return $l < r$
 \EndProcedure
 \end{algorithmic}
 \end{minipage}
 \end{algorithm}
+
+At this point, we are able to replace algorithm~\ref{alg:sa-exact} with algorithm~\ref{alg:qgram-exact}.
+Algorithm~\ref{alg:qgram-exact} runs in $\Oh(q)$ time, but in practice the time to compute the function $h$ can be neglected and the lookup requires fetching only two memory locations from $D$.
+The downside is that in practice this approach is applicable only for small alphabet and pattern sizes.
+For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M entries that, using a 32 bits encoding, consume 1~GB of memory.
 
 If the patterns are shorter or equal to the fixed length $q$, we access the suffix array only to locate the occurrences, as the directory $D$ alone is sufficient to count.
 In this case, the total ordering of the text suffixes in the suffix array can be relaxed to prefixes of length $q$.
@@ -296,15 +351,15 @@ We can devise an hybrid algorithm using the directory $D$ to conduct the search 
 This hybrid index cuts the most expensive binary searches and increases memory locality.
 Furthermore, this hybrid index can be useful if the suffix array has to reside in external memory.
 
-\begin{algorithm}[h]
-\caption{Exact string matching on a $q$-gram index.}
-\label{alg:qgram-exact}
-\begin{algorithmic}[1]
-\Procedure{ExactSearch}{$A,D,p$}
-	\State \Report $A[D[h(p)] \dots D[h(p)+1]]$
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
+%\begin{algorithm}[h]
+%\caption{Exact string matching on a $q$-gram index.}
+%\label{alg:qgram-exact}
+%\begin{algorithmic}[1]
+%\Procedure{ExactSearch}{$A,D,p$}
+%	\State \Report $A[D[h(p)] \dots D[h(p)+1]]$
+%\EndProcedure
+%\end{algorithmic}
+%\end{algorithm}
 
 \section{Succint Full-Text Indices}
 
@@ -336,7 +391,7 @@ The matrix $M$ is conceptual. We do not have to construct it explicitly to deriv
 We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $t_{A[i]-1}$ (and when $A[i]=1$ the character $t_n$).
 Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not desirable due to its space consumption of $n \log{n}$ bits.
 
-\subsubsection{Multiple sequences}
+\subsubsection{String collections}
 
 TODO.
 
