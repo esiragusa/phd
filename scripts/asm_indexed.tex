@@ -406,11 +406,11 @@ We recover $s^i$ by starting at the position of $\$^i$ and following the cycle o
 
 \subsubsection{LF-mapping}
 
-The permutation $LF$ is conceptual: we do not have to explicitly store it but we can deduce it from the BWT $l$, with the help of some additional character counts.
+The permutation $LF$ is conceptual: we do not have to explicitly store it but we can deduce it from the BWT $l$ with the help of some additional character counts.
 This is possible due to two simple observations on the cyclic shifts of the matrix $M$ \citep{Burrows1994}:
 \begin{itemize}
-\item For all $i \in [1,n] \ I$, the character $l_i$ precedes the character $f_i$ in the original text $t$;
-\item For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
+\item for all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original text $t$ (except when $l_i = \$$);
+\item for all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{itemize}
 Given the above observations, we define the permutation $LF$ as \citep{Burrows1994,Ferragina2000}:
 \begin{eqnarray}
@@ -489,8 +489,9 @@ Later we focus on how to represent the leaves, which is necessary to locate the 
 \subsubsection{Top-down traversal}
 
 We represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
+In order to answer \textsc{isLeaf}, we consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 \begin{itemize}
-\item \textsc{isLeaf}($\Tn$) returns true iff $X[l] = 1$;
+\item \textsc{isLeaf}($\Tn$) returns true iff $l \in \mathbb{I}$;
 \item \textsc{label}($\Tn$) returns $e$.
 \end{itemize}
 
