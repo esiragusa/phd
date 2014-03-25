@@ -266,7 +266,7 @@ We now give a set of generic operations to traverse tries in a top-down fashion.
 Given a trie $\Ti$, we define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
 \begin{itemize}
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
-\item \textsc{isLeaf}($\Tn$) returns true iff the pointed node is a leaf;
+\item \textsc{isLeaf}($\Tn$) returns true iff all outgoing edges are labeled by terminator symbols;
 \item \textsc{label}($\Tn$) returns the symbol labeling the edge entering $\Tn$;
 \item \textsc{getOccurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
 \end{itemize}
@@ -279,8 +279,45 @@ and the following operations moving from pointed node $\Tn$, and returning true 
 \end{itemize}
 
 Time complexities of the above operations depend on the data structure implementing the trie.
-Usually \textsc{label} is $\Oh(1)$, \textsc{goDown} and \textsc{goRight} are $\Oh(1)$ or sublinear in $n$, \textsc{getOccurrences} can be linear in the size of the occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity.
+Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $n$, \textsc{getOccurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity to stack all parent nodes.
+Note that is always possible to implement \textsc{goDown} and \textsc{goRight} by relying on \textsc{goDown} a symbol and \textsc{goUp}, but their complexity becomes $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, we consider various data structures to implement suffix tries, we show how to implement these operations and give their complexities.
+
+\begin{algorithm}[h!]
+\begin{minipage}[t]{.5\textwidth}
+\label{alg:generic-godown}
+\begin{algorithmic}[1]
+\Procedure{goDown}{$\Tn$}
+	\If {\Call{isLeaf}{$\Tn$}}
+		\State \Return \False
+	\EndIf
+	\If {\Call{goDown}{$\Tn, \min_{lex}{\Sigma}$}}
+		\State \Return \True
+	\Else
+		\State \Return $\Call{goRight}{$\Tn$}$		
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\begin{minipage}[t]{.5\textwidth}
+\label{alg:generic-goright}
+\begin{algorithmic}[1]
+\Procedure{goRight}{$\Tn \rightarrow \{ e \}$}
+	\If {\Call{isRoot}{$\Tn$}}
+		\State \Return \False
+	\EndIf
+	\While {$c \gets \text{successor}_{lex}{e, \Sigma}$}
+		\State {$\Call{goUp}{x}$}
+		\If {$\Call{goDown}{x, c}$}
+			\State \Return \True
+		\EndIf
+	\EndWhile
+	\State \Return \False
+\EndProcedure
+\end{algorithmic}
+\end{minipage}
+\end{algorithm}
+
 
 \subsubsection{String matching algorithms}
 
