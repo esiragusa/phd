@@ -168,18 +168,20 @@ For an extensive treatment of the subject, we refer the reader to complete surve
 % --- Online methods ---
 
 \subsection{Online methods}
+\label{sub:introonline}
 
-We consider two classes of algorithms for online string matching, those based on automata and those based on dynamic programming.
+%We consider two classes of algorithms for online string matching, those based on automata and those based on dynamic programming.
 
-\subsubsection{Automata}
-
-Exact search of one pattern. Knuth-Morris-Pratt automaton.
-
-Exact search of multiple patterns. Aho-corasick automaton.
-
-Approximate search of one pattern. Ukkonen automaton.
+%\subsubsection{Automata}
+%
+%Exact search of one pattern. Knuth-Morris-Pratt automaton.
+%
+%Exact search of multiple patterns. Aho-corasick automaton.
+%
+%Approximate search of one pattern. Ukkonen automaton.
 
 \subsubsection{Dynamic programming}
+
 
 The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
@@ -201,7 +203,7 @@ and since an occurrence of the pattern can end anywhere in the text, we check al
 \end{figure}
 
 
-%\subsection{DP bit-parallelism}
+%\subsubsection{DP bit-parallelism}
 
 
 % --- Indexed methods ---
@@ -360,8 +362,8 @@ If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in 
 \subsection{Filtering methods}
 \label{sec:intro:filtering}
 
-The goal of filtering methods is to obtain algorithms that have favorable average running times.
-The principle under which they work is that large and uninteresting portions of the text can be quickly discarded, while narrow and highly similar portions can be verified with a conventional online method.
+The goal of filtering methods is to obtain algorithms with favourable average running times.
+The principle under which they work is that large and uninteresting portions of the text can be quickly discarded, while only narrow and highly similar portions have to be verified with a conventional online method.
 We remark that any filtering method can either work in a online fashion or take advantage of an index of the text to speed up the filtration phase.
 Here we always consider the filtration phase to be indexed.
 
@@ -376,13 +378,13 @@ We focus our attention on lossless filters.
 
 We now consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters based on seeds partition the pattern into \emph{non-overlapping} factors called seeds.
-We can derive full-sensitive partitioning strategies by application of the pigeonhole principle.
+We easily derive full-sensitive partitioning strategies by applying the pigeonhole principle.
 Instead, filters based on $q$-grams consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Eventually, simple lemmas gives us lower bounds on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an occurrence of the pattern.
+A simple lemma gives us a lower bound on the number of $q$-grams that must be present in a narrow window of the text as necessary condition for an approximate occurrence of the pattern.
 
 \subsubsection{Seed filters}
 
-We start by considering the case of two arbitrary strings $x,y$ \st $d_E(x,y) \leq k$.
+We start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
 If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
@@ -392,7 +394,7 @@ If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
 \end{lemma}
 \begin{proof}
 We proceed by induction on $k$.
-For $k=0$, the string $y$ is partitioned into only one factor, $y$ itself.
+For $k=0$, the string $y$ is partitioned into one factor, $y$ itself.
 The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
 We suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
 We consider the case $k=j$. The $j$-th error can be in
@@ -406,10 +408,10 @@ In case~\ref{lemma:exact-seeds:infix}, if we partition $y^i$ in two factors $y^{
 \end{proof}
 
 Thus, we solve $k$-differences by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
-Figure~\ref{fig:seeds-ext} shows an example.
-Note that we are reducing one approximate search into many smaller exact searches.
 As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of the pattern in the text.
 Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m + k$ containing one seed of $p$.
+Note how we are reducing one approximate search into many smaller exact searches.
+Figure~\ref{fig:seeds-ext} shows an example.
 
 \begin{figure}[h]
 \begin{center}
@@ -420,16 +422,32 @@ Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m +
 \end{figure}
 
 How many verifications we expect to have?
+Let assume the text to be generated according to the uniform Bernoulli model.
+The emission probability of any symbol $\alpha$ is
 \begin{eqnarray}
-p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma\\
-\text{Pr}(H > 0) = \frac{1}{\sigma^q}\\
-E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}\\
+p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma
+\end{eqnarray}
+and under \iid the probability of any $q$-gram is simply
+\begin{eqnarray}
+\text{Pr}(H > 0) = \frac{1}{\sigma^q}
+\end{eqnarray}
+and the expected number of occurrences of a $q$-gram in a text of length $n$ is
+\begin{eqnarray}
+E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}
+\end{eqnarray}
+thus the expected number of verifications produced by filtration with exact seeds is
+\begin{eqnarray}
 E(V) = (k + 1) \cdot E(H) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
 
 Which is the runtime of the algorithm?
+If we use the classic DP algorithm of section~\ref{sec:introonline} to verify candidate locations, we obtain a $k$-differences algorithm that is sublinear for an error rate
+\begin{eqnarray}
+\epsilon < \frac{m}{\log_{\sigma}{m}} < \frac{1}{\log_{\sigma}{m}}
+\end{eqnarray}
 
-How to choose the partitioning? Which length of $q$ makes filtration lossless?
+How to choose the partitioning?
+Which length of $q$ makes filtration lossless?
 $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 
@@ -437,7 +455,7 @@ $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 $q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit distance\footnote{Thus it relates $q$-gram similarity also to Hamming distance.}.
-It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ for any two strings $x,y$ for which $d_E(x,y) = k$.
+It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ of any two strings $x,y$ for which $d_E(x,y) = k$.
 This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
 \begin{lemma}
 \label{lemma:qgrams}
