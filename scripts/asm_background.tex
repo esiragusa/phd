@@ -421,11 +421,15 @@ Figure~\ref{fig:seeds-ext} shows an example.
 \end{center}
 \end{figure}
 
+How to choose the partitioning?
+Which length of $q$ makes filtration lossless?
+$q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
+
 How many verifications we expect to have?
 Let assume the text to be generated according to the uniform Bernoulli model.
-The emission probability of any symbol $\alpha$ is
+The emission probability of any symbol $c$ is
 \begin{eqnarray}
-p_\alpha = \frac{1}{\sigma} \text{ for all } \alpha \in \Sigma
+p_c = \frac{1}{\sigma} \text{ for all } c \in \Sigma
 \end{eqnarray}
 and under \iid the probability of any $q$-gram is simply
 \begin{eqnarray}
@@ -445,10 +449,6 @@ If we use the classic DP algorithm of section~\ref{sec:introonline} to verify ca
 \begin{eqnarray}
 \epsilon < \frac{m}{\log_{\sigma}{m}} < \frac{1}{\log_{\sigma}{m}}
 \end{eqnarray}
-
-How to choose the partitioning?
-Which length of $q$ makes filtration lossless?
-$q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
 
 
 \subsubsection{$q$-Gram filters}
