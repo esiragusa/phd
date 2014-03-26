@@ -239,7 +239,7 @@ For instance, $|\Sigma| = 4$ and $q=14$ require a directory consisting of 268~M 
 
 \begin{figure}[h]
 \begin{center}
-\caption{$q$-Gram index for the string ANANAS and $\Sigma = \{ A, N, S \}$.}
+\caption{$q$-Gram index for the string ANANAS under the alphabet $\Sigma = \{ A, N, S \}$.}
 \label{fig:qgram}
 \small
 \ttfamily
@@ -385,10 +385,6 @@ We easily generalize the BWT to string collections.
 Consider a strings collection $\Sc = \{ s^1, s^2, \dots, s^c \}$ where each string $s^i$ is padded with a terminator symbol $\$^i$.
 Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
 
-The matrix $M$ is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
-We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $t_{A[i]-1}$ (and when $A[i]=1$ the character $t_n$).
-Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not desirable due to its space consumption of $n \log{n}$ bits.
-
 \begin{figure}[h]
 \begin{center}
 \caption{Burrows-Wheeler transform for the string {\ttfamily ANANAS\$}.}
@@ -408,6 +404,16 @@ $i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i-1]}$\\
 \end{tabular}
 \end{center}
 \end{figure}
+
+The matrix $M$ is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
+We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $t_{A[i]-1}$ (and when $A[i]=1$ the character $t_n$).
+Various direct BWT construction algorithms have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not desirable due to its space consumption of $n \log{n}$ bits.
+
+\subsubsection{Inversion}
+
+We now describe how to invert the BWT to reconstruct the original text.
+Inverting the BWT means being able to know where any BWT character occurs in the original text.
+To this extent, we define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
 
 \begin{figure}[h]
 \begin{center}
@@ -429,29 +435,31 @@ $i$ & $LF(i)$ & $\Psi(i)$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i-1]}$\\
 \end{center}
 \end{figure}
 
-\subsubsection{Inversion}
-
-We now describe how to invert the BWT to reconstruct the original text.
-Inverting the BWT means being able to know where any BWT character occurs in the original text.
-To this extent, we define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
-We recover $t$ by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
-Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
-
-We recover $t$ as follows:
+We define $t_i$ as:
 \begin{eqnarray}
 t_i = f_{\Psi^{i-1}(j)}
 \end{eqnarray}
 where 
 \begin{eqnarray}
-\Psi^0(j)=j\\
-\Psi^{i+1}(j) = \Psi(\Psi^{i}(j))
+\begin{array}{lcl}
+\Psi^0(j)     &=& j\\
+\Psi^{i+1}(j) &=& \Psi(\Psi^{i}(j))
+\end{array}
+\end{eqnarray}
+Conversely, we define $\bar{t}_i$ as:
+\begin{eqnarray}
+\bar{t}_i = t_{LF^{i-1}(j)}
+\end{eqnarray}
+where 
+\begin{eqnarray}
+\begin{array}{lcl}
+LF^0(j)     &=& j\\
+LF^{i+1}(j) &=& LF(LF^{i}(j))
+\end{array}
 \end{eqnarray}
 
-\begin{example}
-Recover $t$.\\
-$l=$\\
-$\Psi = (\dots)$
-\end{example}
+We recover $t$ by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
+Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
 
 \begin{figure}[h]
 \begin{center}
@@ -472,21 +480,12 @@ $i$ & $\Psi(i)$ & $s_{A[i]}$\\
 \end{tabular}
 \end{center}
 \end{figure}
-We recover $\bar{t}$ as follows:
-\begin{eqnarray}
-\bar{t}_i = t_{LF^{i-1}(j)}
-\end{eqnarray}
-where 
-\begin{eqnarray}
-LF^0(j)=j\\
-LF^{i+1}(j) = LF(LF^{i}(j))
-\end{eqnarray}
 
-\begin{example}
-Recover $\bar{t}$.\\
-$l=$\\
-$LF = (\dots)$
-\end{example}
+%\begin{example}
+%Recover $\bar{t}$.\\
+%$l=$\\
+%$LF = (\dots)$
+%\end{example}
 
 Inverting the generalized BWT works in the same way.
 Indeed, permutations $\Psi$ and $LF$ are composed of $c$ cycles, where each cycle corresponds to a distinct string in the collection.
