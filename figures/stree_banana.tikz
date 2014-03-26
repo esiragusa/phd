@@ -13,6 +13,9 @@
 
 \node[inner](r) {}
 child[transparent] {
+node[leaf](D) {$7$}
+}
+child[transparent] {
 node[inner](A) {}
 child[transparent] {
 node[inner](ANA) {}
@@ -41,6 +44,7 @@ node[leaf](S) {$6$}
 }
 ;
 
+\draw[el] (r) -- (D) \labelA{\$};
 \draw[el] (r) -- (A) \labelA{A};
 \draw[el] (A) -- (ANA) \labelB{N}{A};
 \draw[el] (ANA) -- (ANANAS) \labelD{N}{A}{S}{\$};

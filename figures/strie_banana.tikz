@@ -17,6 +17,9 @@
 
 \node[inner](r) {}
 child[transparent] {
+node[leaf](D) {$7$}
+}
+child[transparent] {
 node[inner](A) {}
 child[transparent] {
 node[inner](AN) {}
@@ -81,6 +84,7 @@ node[leaf](SD) {$6$}
 }
 ;
 
+\draw[el] (r) -- (D) \labelA{\$};
 \draw[el] (r) -- (A) \labelA{A};
 \draw[el] (A) -- (AN) \labelA{N};
 \draw[el] (AN) -- (ANA) \labelA{A};
@@ -105,4 +109,3 @@ node[leaf](SD) {$6$}
 \draw[el] (S) -- (SD) \labelA{\$};
 
 \end{tikzpicture}
-
