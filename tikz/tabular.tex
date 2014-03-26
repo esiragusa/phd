@@ -1,0 +1,33 @@
+%
+% Tabular cell and link arrows
+%
+
+\newcommand\cell[2]{%
+    \tikz[remember picture] \node[inner sep=0, outer sep=0] (#1){#2};%
+}
+
+\newcommand\around[1]{%
+\begin{tikzpicture}[remember picture, overlay, shift={(0,0)}]
+	\node [draw,circle,thick,densely dashed,fit=(#1),inner sep=1pt] {};
+\end{tikzpicture}%
+}
+
+\newcommand\link[2]{%
+\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
+	\path [thick,->] (#1.east) edge (#2.west);
+\end{tikzpicture}%
+}
+
+\newcommand\linkdown[3]{%
+\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
+    \path [thick,bend left=10 ] (#1.east) edge (#2.west);
+    \path [thick,bend left=10,->] (#2.west) edge (#3.east);
+\end{tikzpicture}%
+}
+
+\newcommand\linkup[3]{%
+\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
+    \path [thick,bend right=10 ] (#1.east) edge (#2.west);
+    \path [thick,bend right=10,->] (#2.west) edge (#3.east);
+\end{tikzpicture}%
+}

@@ -422,16 +422,20 @@ To this extent, we define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\
 \small
 \ttfamily
 \begin{tabular}{ccccccc}
-$i$ & $LF(i)$ & $\Psi(i)$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i-1]}$\\
+$i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i-1]}$\\
 \midrule
-1 & 7 & 2 & & \$& ANANA  & S\\
-2 & 1 & 5 & & A & NANAS  & \$\\
-3 & 5 & 6 & & A & NAS\$A & N\\
-4 & 6 & 7 & & A & S\$ANA & N\\
-5 & 2 & 3 & & N & ANAS\$ & A\\
-6 & 3 & 4 & & N & AS\$AN & A\\
-7 & 4 & 1 & & S & \$ANAN & A\\
+1 & 2 & 7                        & & \$           & ANANA  & S\\
+2 & 5 & 1                        & & A            & NANAS  & \$\\
+3 & 6 & \cell{lf3}{5} & & A      & NAS\$A & \cell{l3}{N}\\
+4 & 7 & 6                        & & A            & S\$ANA & N\\
+5 & \cell{psi5}{3} & 2           & & \cell{f5}{N} & ANAS\$ & A\\
+6 & 4 & 3                        & & N            & AS\$AN & A\\
+7 & 1 & 4                        & & S            & \$ANAN & A\\
 \end{tabular}
+\around{lf3}
+\around{psi5}
+\around{f5}
+\around{l3}
 \end{center}
 \end{figure}
 
@@ -461,22 +465,6 @@ LF^{i+1}(j) &=& LF(LF^{i}(j))
 We recover $t$ by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
 Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
 
-\newcommand\cell[2]{%
-    \tikz[remember picture] \node[inner sep=0, outer sep=0] (#1){#2};%
-}
-
-\newcommand\linkdown[3]{%
-\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
-    \path [thick,bend left=10 ] (#1.east) edge (#2.west);
-    \path [thick,bend left=10,->] (#2.west) edge (#3.east);
-\end{tikzpicture}%
-}
-\newcommand\linkup[3]{%
-\begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
-    \path [thick,bend right=10 ] (#1.east) edge (#2.west);
-    \path [thick,bend right=10,->] (#2.west) edge (#3.east);
-\end{tikzpicture}%
-}
 
 \begin{figure}[h]
 \begin{center}
@@ -484,20 +472,22 @@ Or we recover the reverse text $\bar{t}$ by starting in $l$ at the position of \
 \label{fig:psi}
 \small
 \ttfamily
-\begin{tabular}{cccc}
-$i$ & $\Psi(i)$ & $s_{A[i]}$\\
+\begin{tabular}{ccc}
+$s_{A[i]}$ & $i$ & $\Psi(i)$\\
 \midrule
-\cell{i1}{1} & \cell{p1}{2} & \$\\
-\cell{i2}{2} & \cell{p2}{5} & A\\
-\cell{i3}{3} & \cell{p3}{6} & A\\
-\cell{i4}{4} & \cell{p4}{7} & A\\
-\cell{i5}{5} & \cell{p5}{3} & N\\
-\cell{i6}{6} & \cell{p6}{4} & N\\
-\cell{i7}{7} & \cell{p7}{1} & S\\
+\cell{s1}{\$} & \cell{i1}{1} & \cell{psi1}{2}\\
+\cell{s2}{A}  & \cell{i2}{2} & \cell{psi2}{5}\\
+\cell{s3}{A}  & \cell{i3}{3} & \cell{psi3}{6}\\
+\cell{s4}{A}  & \cell{i4}{4} & \cell{psi4}{7}\\
+\cell{s5}{N}  & \cell{i5}{5} & \cell{psi5}{3}\\
+\cell{s6}{N}  & \cell{i6}{6} & \cell{psi6}{4}\\
+\cell{s7}{S}  & \cell{i7}{7} & \cell{psi7}{1}\\
 \end{tabular}
-\linkdown{i1}{p1}{i2}
-\linkdown{i2}{p2}{i5}
-\linkup{i5}{p5}{i3}
+\linkdown{i1}{psi1}{i2}
+\linkdown{i2}{psi2}{i5}
+\linkup{i5}{psi5}{i3}
+\around{s2}
+\around{s5}
 \end{center}
 \end{figure}
 
