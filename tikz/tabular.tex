@@ -12,6 +12,12 @@
 \end{tikzpicture}%
 }
 
+\newcommand\eround[2]{%
+\begin{tikzpicture}[remember picture, overlay, shift={(0,0)}]
+	\node [draw,rectangle,rounded corners,thick,densely dashed,fit=(#1) (#2),inner sep=3pt] {};
+\end{tikzpicture}%
+}
+
 \newcommand\link[2]{%
 \begin{tikzpicture}[remember picture, overlay, >=stealth, shift={(0,0)}]
 	\path [thick,->] (#1.east) edge (#2.west);

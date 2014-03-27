@@ -147,10 +147,10 @@ Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string 
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice.
 
 The definition of distance functions between strings let us generalize exact string matching into a more challenging problem: \emph{approximate string matching}.
-Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching (a.s.m.) problem is to find all occurrences of $p$ into $t$ within distance $k$.
-The a.s.m. problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
+Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
+The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern occurs at any position in the text if we substitute all its $m$ characters.
-Under these distances, we define the \emph{error rate} as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions, and we alternatively refer to these a.s.m. problems as $\epsilon$-mismatches and $\epsilon$-differences.
+Under these distances, we define the \emph{error rate} as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.%, and we alternatively refer to these problems as $\epsilon$-mismatches and $\epsilon$-differences.
 
 We can classify string matching problems in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left); their worst-case runtime complexity ranges from $\Oh(nm)$ to $\Oh(n)$ while their worst-case memory complexity ranges from $\Oh(\sigma^k m^k)$ to $\Oh(m)$.
@@ -184,7 +184,7 @@ For an extensive treatment of the subject, we refer the reader to complete surve
 
 
 The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
-Since an occurrence of the pattern can start and end anywhere in the text, a.s.m. consists of computing the edit distance between the pattern and all substrings of the text.
+Since an occurrence of the pattern can start and end anywhere in the text, $k$-differences consists of computing the edit distance between the pattern and all substrings of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
 We pose $x=p$ and $y=t$ and consider Equation~\ref{eq:dp-min}.
@@ -460,7 +460,7 @@ and since we chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len
 \begin{eqnarray}
 \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
 \end{eqnarray}
-thus we expect this $k$-differences algorithm to have sublinear runtime for an error rate of
+thus this $k$-differences algorithm has expected sublinear runtime for an error rate of
 \begin{eqnarray}
 \epsilon < \frac{m}{\log_{\sigma}{m}}.
 \end{eqnarray}

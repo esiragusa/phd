@@ -249,14 +249,19 @@ $p$ & $h$ & $D[h]$ & \phantom{-} & $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 AA & 1 & 2 & & 1 & 7 & \$\\
 AN & 2 & 2 & & 2 & 1 & ANANAS\$\\
 AS & 3 & 4 & & 3 & 3 & ANAS\$\\
-NA & 4 & 5 & & 4 & 5 & AS\$\\
-NN & 5 & 6 & & 5 & 2 & NANAS\$\\
-NS & 6 & 6 & & 6 & 4 & NAS\$\\
+\cell{p}{NA} & \cell{h4}{4} & \cell{d5}{5} & & 4 & 5 & AS\$\\
+NN & \cell{h5}{5} & \cell{d6}{6} & & \cell{i5}{5} & \cell{a5}{2} & NANAS\$\\
+NS & 6 & 6 & & \cell{i6}{6} & \cell{a6}{4} & NAS\$\\
 SA & 7 & 6 & & 7 & 6 & S\$\\
 SN & 8 & 6 \\
 SS & 9 & 6 \\
    & 10 & 6 \\
 \end{tabular}
+\around{p}
+\eround{h4}{h5}
+\eround{d5}{d6}
+\eround{i5}{i6}
+\eround{a5}{a6}
 \end{center}
 \end{figure}
 
@@ -365,7 +370,7 @@ Thanks to these two properties, the BWT has been recognized as a fundamental met
 
 More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-text indexing.
 They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact pattern matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
-Over the last years, the FM-index has widely re-implemented and employed by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie}, BWA \citep{BWA}, Soap2 \citep{Soap2}, and is now considered a fundamental method for the indexing of genomic sequences.
+Over the last years, the FM-index has been widely re-implemented and employed by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie}, BWA \citep{BWA}, Soap2 \citep{Soap2}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the next subsections, we give the fundamental ideas behind the BWT and the FM-index.
 Subsequently, we discuss our succint FM-index implementations covering texts and text collections.
