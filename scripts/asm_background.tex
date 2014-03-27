@@ -421,35 +421,54 @@ Figure~\ref{fig:seeds-ext} shows an example.
 \end{center}
 \end{figure}
 
-How to choose the partitioning?
-Which length of $q$ makes filtration lossless?
-$q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
-
-How many verifications we expect to have?
-Let assume the text to be generated according to the uniform Bernoulli model.
-The emission probability of any symbol $c$ is
-\begin{eqnarray}
-p_c = \frac{1}{\sigma} \text{ for all } c \in \Sigma
-\end{eqnarray}
-and under \iid the probability of any $q$-gram is simply
+How many verifications a seed produces?
+Let us assume the text to be generated according to the uniform Bernoulli model.
+The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission probability of any word of length $q$ is simply
 \begin{eqnarray}
 \text{Pr}(H > 0) = \frac{1}{\sigma^q}
 \end{eqnarray}
-and the expected number of occurrences of a $q$-gram in a text of length $n$ is
+thus the expected number of occurrences of a seed of length $q$ in a text of length $n$ is
 \begin{eqnarray}
-E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}
-\end{eqnarray}
-thus the expected number of verifications produced by filtration with exact seeds is
-\begin{eqnarray}
-E(V) = (k + 1) \cdot E(H) < \frac{n (k + 1)}{\sigma^q}
+E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
 \end{eqnarray}
 
-Which is the runtime of the algorithm?
-If we use the classic DP algorithm of section~\ref{sec:introonline} to verify candidate locations, we obtain a $k$-differences algorithm that is sublinear for an error rate
+Note how lemma~\ref{lemma:exact-seeds} requires us to partition the pattern into $k+1$ seeds but leaves us free to choose their length.
+This leads to the question of which is an optimal pattern partitioning, \ie a partitioning that minimises the expected number of verifications.
+We fix\footnote{We ignore for simplicity that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
 \begin{eqnarray}
-\epsilon < \frac{m}{\log_{\sigma}{m}} < \frac{1}{\log_{\sigma}{m}}
+\label{eq:seed-len}
+q=\left \lfloor \frac{m}{k+1} \right \rfloor
+\end{eqnarray}
+to minimise the expected number of occurrences of any seed.
+Under these conditions, the expected number of verifications produced by our seed filter is
+\begin{eqnarray}
+E(V) = E(H) \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
 
+We now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
+For which error rate we expect the resulting algorithm to have sublinear runtime?
+If we use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sec:introonline} to verify candidate locations, the expected runtime must be
+\begin{eqnarray}
+E(V) \cdot m^2 < cn
+\end{eqnarray}
+for some constant $c$.
+By substituting $E(V)$ and solving for $q$, we obtain
+\begin{eqnarray}
+q > \log_{\sigma}{\frac{m^3}{c}}
+\end{eqnarray}
+and since we chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len}, it follows that
+\begin{eqnarray}
+\frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
+\end{eqnarray}
+thus we expect this $k$-differences algorithm to have sublinear runtime for an error rate of
+\begin{eqnarray}
+\epsilon < \frac{m}{\log_{\sigma}{m}}.
+\end{eqnarray}
+
+Nonetheless, texts of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
+On those texts uniform seed length can lead to suboptimal filtration.
+In section~\ref{sec:seeds-apx} we analyse the statistical properties of these texts and the effects of pattern partitioning.
+Later, in order to obtain more robust filters, we generalize filtration with seeds to consider approximate seeds.
 
 \subsubsection{$q$-Gram filters}
 
@@ -466,22 +485,7 @@ Let $x,y$ be two strings with edit distance $k$ and $\min\{|x|,|y|\} = m$, then 
 By induction on k.
 \end{proof}
 
-Note how the threshold depends on $q$ and $(m,k)$.
-
-How can we use this result to solve approximate string matching?
-The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings, while in a.s.m. the pattern can match any substring of the text.
-In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
-In the case of edit distance, it must hold $m - k \leq |s| \leq m + k$.
-The dot-plot representation helps us to visualize this concept.
-Hamming distance occurrences cover one single diagonal of the dot-plot, while edit distance occurrences are enclosed inside a parallelogram of side $2k+1$.
-
-Overlapping parallelograms?
-
-We can design a filtration algorithm that scans the text and counts how many $q$-grams of the pattern falls into each parallelograms.
-Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
-To speed up the filtration phase, the $q$-grams can be counted with the help of a substring index.
-
-Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \right \rfloor$.
+Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ and not on any specific $q$-gram.
 
 \begin{figure}[h]
 \begin{center}
@@ -490,3 +494,20 @@ Which length of $q$ makes filtration lossless? $q=\left \lfloor \frac{m}{k+1} \r
 \input{figures/filtration_qgrams.tikz}
 \end{center}
 \end{figure}
+
+How can we use lemma~\ref{lemma:qgrams} to solve the approximate string matching problem?
+The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings; conversely, in approximate string matching, the pattern can match any substring of the text.
+In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
+In the case of edit distance, it must hold $m - k \leq |s| \leq m + k$.
+The dot-plot representation helps us to visualize this concept.
+Hamming distance occurrences cover one single diagonal of the dot-plot, while edit distance occurrences are enclosed inside a parallelogram of side $2k+1$.
+Overlapping parallelograms???
+
+We can design a filtration algorithm that scans the text and counts how many $q$-grams of the pattern falls into each parallelograms.
+Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
+Alternatively, to speed up the filtration phase, the $q$-grams can be counted with the help of a substring index.
+
+Similarly to seed filters, which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
+In order to satistfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
+Thus by substituting $\tau$, we obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len}.
+
