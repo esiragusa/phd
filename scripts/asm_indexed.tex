@@ -8,7 +8,7 @@ For instance, two years before completing the sequencing of the human genome, \c
 
 We might be tempted to think that such memory requirements are not anymore a limiting factor as, at the time of writing, standard personal computers come with 32~GB of main memory.
 Indeed, over the last decades, the semiconductors industry followed the exponential trends dictated by Moores' law and yielded not only exponentially faster microprocessors but also larger memories.
-Unfortunately, memory latency improvements have been more modest, leading to the so called memory wall effect \citep{?}: data access times are taking an increasingly fraction of total computation times.
+Unfortunately, memory latency improvements have been more modest, leading to the so called memory wall effect \citep{Wilkes1995}: data access times are taking an increasingly fraction of total computation times.
 Thus, if in \citeyear{Knuth1973} \citeauthor{Knuth1973} wrote that ``space optimization is closely related to time optimization in a disk memory'', forty years later we can simply say that space optimization is closely related to time optimization.
 
 Over the last years, a significant effort has been devoted to the engineering of more space-efficient data structures to replace the suffix tree in practical applications.
@@ -67,7 +67,7 @@ Consequently, the space consumption of suffix arrays for texts shorter than 4~GB
 The space consumption of the generalized suffix array is $n \log{cn^*}$ bits, where $n^* = \max{\,n^i}$.
 For instance, the human genome GRCh38 is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
 Hence, to represent the generalized suffix array of GRCh38 we use pairs of $1+4$~bytes.
-Our suffix array of GRCh38 fits in 15~GB of memory and we are able to construct it in about one hour on a modern computer \cite{Weese2013}.
+Our suffix array of GRCh38 fits in 15~GB of memory and we are able to construct it in about one hour on a modern computer \citep{Weese2013}.
 
 \subsubsection{Top-down traversal}
 
@@ -356,7 +356,7 @@ This gives us a twofold advantage, as we can:
 \item construct the suffix array more efficiently using bucket sorting and
 \item maintain leaves in each bucket sorted by their relative text positions.
 \end{inparaenum}
-The latter property allows to compress the suffix array bucket-wise \eg using Elias $\delta$-coding \citep{?} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
+The latter property allows to compress the suffix array bucket-wise \eg using Elias $\delta$ encoding \citep{Elias1975} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
 
 If the patterns are longer than $q$, the $q$-gram index is still usable.
 We can devise an hybrid algorithm that uses the directory $D$ to conduct the search up to depth $q$ and later continue with binary searches on the suffix array.
@@ -367,7 +367,7 @@ Furthermore, this hybrid index becomes useful whenever the suffix array is too b
 
 The Burrows-Wheeler transform (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 The transformed string exposes two important properties: reversibility and compressibility.
-The former property allows us to reconstruct the original string from its BWT, the latter property makes the transformed string more amenable to compression \citep{?}.
+The former property allows us to reconstruct the original string from its BWT, the latter property makes the transformed string more amenable to compression.
 Thanks to these two properties, the BWT has been recognized as a fundamental method for text compression and practically used in the bzip2 \citep{Seward1996} tool.
 
 More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-text indexing.
@@ -496,7 +496,7 @@ We recover $s^i$ by starting at the position of $\$^i$ and following the cycle o
 
 \subsubsection{Permutation LF}
 
-The permutation $LF$ is conceptual: we do not have to explicitly store it but we can deduce it from the BWT $l$ with the help of some additional character counts.
+The permutation $LF$ is conceptual: we do not have to represent it explicitly but we can deduce it from the BWT $l$ with the help of some additional character counts.
 This is possible due to two simple observations on the cyclic shifts matrix \citep{Burrows1994}:
 \begin{itemize}
 \item for all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$ (except when $l_i = \$$);

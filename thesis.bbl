@@ -53,6 +53,12 @@ Derrien, T., Estell\'e, J., Marco~Sola, S., Knowles, D.~G., Raineri, E.,
 \newblock Fast computation and applications of genome mappability.
 \newblock {\em PLoS ONE\/}, {\bf 7}(1), page e30377.
 
+\bibitem[Elias(1975)Elias]{Elias1975}
+Elias, P. (1975).
+\newblock Universal codeword sets and representations of the integers.
+\newblock {\em Information Theory, IEEE Transactions on\/}, {\bf 21}(2), pages
+  194--203.
+
 \bibitem[Ewing and Green(1998)Ewing and Green]{Ewing1998b}
 Ewing, B. and Green, P. (1998).
 \newblock Base-calling of automated sequencer traces using phred. ii. error
@@ -130,6 +136,12 @@ Jacobson, G. (1989).
 \newblock Space-efficient static trees and graphs.
 \newblock In {\em Foundations of Computer Science, 1989., 30th Annual Symposium
   on\/}, pages 549--554. IEEE.
+
+\bibitem[Jokinen and Ukkonen(1991)Jokinen and Ukkonen]{Jokinen1991}
+Jokinen, P. and Ukkonen, E. (1991).
+\newblock Two algorithms for approxmate string matching in static texts.
+\newblock In {\em Mathematical Foundations of Computer Science 1991\/}, pages
+  240--248. Springer.
 
 \bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
   Sanders]{Karkkainen2003}
@@ -300,5 +312,11 @@ Weese, D., Holtgrewe, M., and Reinert, K. (2012).
 \newblock {RazerS\,3}: Faster, fully sensitive read mapping.
 \newblock {\em Bioinformatics\/}.
 \newblock 10.1093/bioinformatics/bts505.
+
+\bibitem[Wilkes(1995)Wilkes]{Wilkes1995}
+Wilkes, M.~V. (1995).
+\newblock The memory wall and the cmos end-point.
+\newblock {\em ACM SIGARCH Computer Architecture News\/}, {\bf 23}(4), pages
+  4--6.
 
 \end{thebibliography}
