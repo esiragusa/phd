@@ -119,6 +119,12 @@ Holtgrewe, M., Emde, A.-K., Weese, D., and Reinert, K. (2011).
   read mapping.
 \newblock {\em BMC Bioinformatics\/}, {\bf 12}, page 210.
 
+\bibitem[Intel(2011)Intel]{Intel2011}
+Intel (2011).
+\newblock {\em Intel\textsuperscript*{\textregistered}\xspace 64 and IA-32
+  Architectures Optimization Reference Manual\/}.
+\newblock Intel Corporation.
+
 \bibitem[Jacobson(1989)Jacobson]{Jacobson1989}
 Jacobson, G. (1989).
 \newblock Space-efficient static trees and graphs.
@@ -250,6 +256,17 @@ Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
 
+\bibitem[Sch{\"u}rmann and Stoye(2007)Sch{\"u}rmann and Stoye]{Schurmann2007}
+Sch{\"u}rmann, K.-B. and Stoye, J. (2007).
+\newblock An incomplex algorithm for fast suffix array construction.
+\newblock {\em Software: Practice and Experience\/}, {\bf 37}(3), pages
+  309--329.
+
+\bibitem[Seward(1996)Seward]{Seward1996}
+Seward, J. (1996).
+\newblock bzip2 and libbzip2.
+\newblock {\em avaliable at http://www. bzip. org\/}.
+
 \bibitem[Siragusa \ea(2013)Siragusa, Weese, and Reinert]{Siragusa2013}
 Siragusa, E., Weese, D., and Reinert, K. (2013).
 \newblock Fast and accurate read mapping with approximate seeds and multiple
@@ -266,6 +283,11 @@ Treangen, T.~J. and Salzberg, S.~L. (2011).
 Ukkonen, E. (1993).
 \newblock Approximate string-matching over suffix trees.
 \newblock In {\em CPM\/}, pages 228--242.
+
+\bibitem[Weese(2013)Weese]{Weese2013}
+Weese, D. (2013).
+\newblock {\em Indices and Applications in High-Throughput Sequencing\/}.
+\newblock Ph.D. thesis, Freie Universit{\"a}t Berlin.
 
 \bibitem[Weese \ea(2009)Weese, Emde, Rausch, D\"{o}ring, and
   Reinert]{Weese2009}
