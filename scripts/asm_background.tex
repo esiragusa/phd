@@ -248,18 +248,26 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 %We remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\caption[Example of suffix tree and suffix trie]{Suffix tree and suffix trie for the string ANANAS.}
+\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree for the string ANANAS.}
 \label{fig:stree}
-\begin{subfigure}{.5\textwidth}
-\begin{center}
-\input{figures/stree_banana.tikz}
-\end{center}
-\end{subfigure}%
 \begin{subfigure}{.5\textwidth}
 \begin{center}
 \input{figures/strie_banana.tikz}
 \end{center}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+\begin{center}
+\input{figures/stree_banana.tikz}
+\end{center}
 \end{subfigure}
+\end{figure}
+
+\begin{figure}[h]
+\caption[Example of generalized suffix trie]{Generalized suffix trie for the string collection $\Sc = \{$ {\ttfamily ANANAS}, {\ttfamily CACAO} $\}$.}
+\label{fig:gstrie}
+\begin{center}
+\input{figures/gstrie.tikz}
+\end{center}
 \end{figure}
 
 \subsubsection{Top-down traversal}

@@ -414,13 +414,9 @@ Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the
 The BWT of $s$ is the string $l$ obtained concatenating the symbols in the last column of the cyclic shifts matrix, \ie $l = s_{A[i]-1}$.
 \end{definition}
 
-We easily generalize the BWT to string collections.
-Consider a strings collection $\Sc = \{ s^1, s^2, \dots, s^c \}$ where each string $s^i$ is padded with a terminator symbol $\$^i$.
-Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
-
 \begin{figure}[h]
 \begin{center}
-\caption[Example of Burrows-Wheeler transform.]{Burrows-Wheeler transform for the string {\ttfamily ANANAS\$}.}
+\caption[Example of Burrows-Wheeler transform]{Burrows-Wheeler transform for the string {\ttfamily ANANAS\$}.}
 \label{fig:bwt}
 \ttfamily
 \begin{tabular}{cccccc}
@@ -437,6 +433,10 @@ $i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i]-1}$\\
 \eround{l1}{l7}
 \end{center}
 \end{figure}
+
+We easily generalize the BWT to string collections.
+Consider a strings collection $\Sc = \{ s^1, s^2, \dots, s^c \}$ where each string $s^i$ is padded with a terminator symbol $\$^i$.
+Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
 We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $s_{A[i]-1}$ (and when $A[i]=1$ the character $s_n$).
