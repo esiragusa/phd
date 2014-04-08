@@ -633,6 +633,31 @@ We pose $b=\frac{\log{n}}{\log{\sigma}}$ symbols, thus $b=\log{n}$ bits as in th
 The matrix $R_{\sigma}$ has $\frac{n}{\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
 Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole rank dictionary $n + n \sigma$ bits.
 
+\begin{figure}[h]
+\begin{center}
+\caption[Example of rank dictionaries.]{Example of rank dictionaries for the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{DNA}$.}
+\label{fig:rd_dna}
+\ttfamily
+\begin{tabular}{rccc}
+$i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R[\frac{i}{b}]$\\
+\midrule
+1   & C & 0     & 0\\
+2   &   & 1\\
+3   & C & 0\\
+4   &   & 1\\
+5   & C & \cell{s5}{0} & \cell{R5}{2}\\
+\cell{i6}{6} & & \cell{s6}{1}\\
+7   & G & 1\\
+8   &   & 0\\
+9   & C & 0     & 4\\
+10  &   & 1\\
+11  & A & 0\\
+12  &   & 0\\
+\end{tabular}
+\end{center}
+\end{figure}
+
+
 \subsubsection{Wavelet tree}
 
 For large alphabets.
