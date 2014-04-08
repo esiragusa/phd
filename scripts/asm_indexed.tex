@@ -397,7 +397,7 @@ Thanks to these two properties, the BWT has been recognized as a fundamental met
 
 More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-text indexing.
 They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact pattern matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
-Over the last years, the FM-index has been widely employed under different re-implementations by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie}, BWA \citep{BWA}, Soap2 \citep{Soap2}, and is now considered a fundamental method for the indexing of genomic sequences.
+Over the last years, the FM-index has been widely employed under different re-implementations by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie} and BWA \citep{BWA}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the next subsections we give the fundamental ideas behind the BWT and the FM-index.
 Subsequently, we discuss our succinct FM-index implementations covering texts and text collections.
@@ -405,10 +405,11 @@ Subsequently, we discuss our succinct FM-index implementations covering texts an
 \subsection{Burrows-Wheeler transform}
 
 Let $s$ be a string of length $n$ over an alphabet $\Sigma$, terminated by a symbol $\$ \notin \Sigma$ such that $\$ <_{lex} c$ for all $c \in \Sigma$.
+In the following we consider the string $s$ to be cyclic and its subscript $s_i$ to be modular, \eg $s_0 = s_{n-1}$ and $s_{n+i} = s_i$ for any $i \in \N$.
 Consider the square matrix consisting of all cyclic shifts of the string $s$ (the $i$-th cyclic shift has the form $s_{i \dots n} s_{1 \dots i-1}$) sorted in lexicographical order.
 See figure~\ref{fig:bwt}.
-Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $s_{A[i] \dots n} s_{1 \dots A[i]-1}$ (except when $A[i] = 1$).
-
+Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $s_{A[i] \dots n} s_{1 \dots A[i]-1}$.
+% (except when $A[i] = 1$).
 \begin{definition}
 \label{def:bwt}
 The BWT of $s$ is the string $l$ obtained concatenating the symbols in the last column of the cyclic shifts matrix, \ie $l = s_{A[i]-1}$.
@@ -439,7 +440,7 @@ Consider a strings collection $\Sc = \{ s^1, s^2, \dots, s^c \}$ where each stri
 Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
-We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $s_{A[i]-1}$ (and when $A[i]=1$ the character $s_n$).
+We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $s_{A[i]-1}$.
 Various direct BWT construction algorithms working within $o(n)$ bits plus constant space have been recently proposed \citep{Bauer2013, Crochemore2013}, as constructing the suffix array is not desirable due to its space consumption of $n \log{n}$ bits.
 
 \subsubsection{Inversion}
@@ -524,7 +525,7 @@ We recover $s^i$ by starting at the position of $\$^i$ and following the cycle o
 The permutation $LF$ is conceptual: we do not have to represent it explicitly but we can deduce it from the BWT $l$ with the help of some additional character counts.
 This is possible due to two simple observations on the cyclic shifts matrix \citep{Burrows1994}:
 \begin{itemize}
-\item for all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$ (except when $l_i = \$$);
+\item for all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$;% (except when $l_i = \$$);
 \item for all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{itemize}
 These observation are obvious since $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:bwt}).
