@@ -527,7 +527,7 @@ This is possible due to two simple observations on the cyclic shifts matrix \cit
 \item for all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$ (except when $l_i = \$$);
 \item for all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{itemize}
-These observation are obvious since $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:lf_psi}).
+These observation are obvious since $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:bwt}).
 Given the above observations, we define the permutation $LF$ as \citep{Burrows1994,Ferragina2000}:
 \begin{eqnarray}
 LF(i) = C(l_i) + Occ(l_i, i)
