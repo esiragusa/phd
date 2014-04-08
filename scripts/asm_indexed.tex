@@ -35,7 +35,7 @@ The suffix array of a string $s$ of length $n$ is defined as an array $A$ contai
 
 \begin{figure}[h]
 \begin{center}
-\caption{Suffix array for the string {\ttfamily ANANAS\$}.}
+\caption[Example of suffix array]{Suffix array for the string {\ttfamily ANANAS\$}.}
 \label{fig:sa}
 \ttfamily
 \begin{tabular}{ccl}
@@ -60,7 +60,7 @@ Pairs are ordered such that $\Sc_{A[i] \dots n^{A[i]}} <_{lex} \Sc_{A[i+1] \dots
 
 \begin{figure}[h]
 \begin{center}
-\caption{Generalized suffix array for the string collection $\Sc = \{$ {\ttfamily ANANAS}, {\ttfamily CACAO} $\}$.}
+\caption[Example of generalized suffix array]{Generalized suffix array for the string collection $\Sc = \{$ {\ttfamily ANANAS}, {\ttfamily CACAO} $\}$.}
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
@@ -241,7 +241,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 
 \begin{figure}[h]
 \begin{center}
-\caption[Exact string matching on a suffix array.]{Exact string matching on a suffix array. The pattern NA is searched exactly in the text ANANAS.}
+\caption[Exact string matching on a suffix array]{Exact string matching on a suffix array. The pattern NA is searched exactly in the text ANANAS.}
 \label{fig:sa-exact}
 %\input{figures/stree.tikz}
 \end{center}
@@ -265,7 +265,7 @@ For instance, parameters $|\Sigma| = 4$ and $q=14$ require a $q$-gram directory 
 
 \begin{figure}[h]
 \begin{center}
-\caption{$q$-Gram index for the string ANANAS under the alphabet $\Sigma = \{ A, N, S \}$.}
+\caption[Example of $q$-gram index]{$q$-Gram index for the string ANANAS over the alphabet $\Sigma = \{ A, N, S \}$.}
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
@@ -451,7 +451,7 @@ Figure~\ref{fig:lf_psi} illustrates.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of functions $LF$ and $\Psi$.]{Functions $LF$ and $\Psi$ for the string {\ttfamily ANANAS\$}. Note how $LF(\Psi(i)) = \Psi(LF(i)) = i$ for any $i$. Also note how the $i$-th occurrence of any character $c$ in $l$ is the $i$-th occurrence of $c$ in $f$.}
+\caption[Example of functions $LF$ and $\Psi$]{Functions $LF$ and $\Psi$ for the string {\ttfamily ANANAS\$}. Note how $LF(\Psi(i)) = \Psi(LF(i)) = i$ for any $i$. Also note how the $i$-th occurrence of any character $c$ in $l$ is the $i$-th occurrence of $c$ in $f$.}
 \label{fig:lf_psi}
 \ttfamily
 \begin{tabular}{ccccccc}
@@ -492,7 +492,7 @@ Or we recover the reverse string $\bar{s}$ by starting in $l$ at the position of
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of BWT inversion.]{Recovering the string {\ttfamily ANANAS\$} from the permutation $\Psi$. Here we depict only the first two steps of the inversion recovering {\ttfamily AN}.}
+\caption[Example of BWT inversion]{Recovering the string {\ttfamily ANANAS\$} from the permutation $\Psi$. Here we depict only the first two steps of the inversion recovering {\ttfamily AN}.}
 \label{fig:psi}
 \ttfamily
 \begin{tabular}{ccc}
@@ -575,9 +575,9 @@ Thus, this rank dictionary consumes $2n$ bits.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of rank dictionaries.]{Example of rank dictionaries for the string $s=$ {\ttfamily 010101100100}. On the one-level rank dictionary, $b=4$ and $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. On the two-levels rank dictionary, $b=2$ and $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{6 \dots 6}, 1) = 3$.}
+\caption[Example of rank dictionaries]{Example of rank dictionaries for the string $s=$ {\ttfamily 010101100100}. On the one-level rank dictionary, $b=4$ and $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. On the two-levels rank dictionary, $b=2$ and $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{6 \dots 6}, 1) = 3$.}
 \begin{tabular}{lcr}
-%\caption[One-level rank dictionary.]{One-level rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=4$. In the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$.}
+%\caption[One-level rank dictionary]{One-level rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=4$. In the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$.}
 \label{fig:rd1}
 \ttfamily
 \begin{tabular}{rcc}
@@ -602,7 +602,7 @@ $i$	& $s_i$	& $R[\frac{i}{b}]$\\
 &
 \phantom{----}
 &
-%\caption[Two-levels rank dictionary.]{Two-levels rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=2$.}
+%\caption[Two-levels rank dictionary]{Two-levels rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=2$.}
 \label{fig:rd2}
 \ttfamily
 \begin{tabular}{rccc}
@@ -660,7 +660,7 @@ Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole rank dictionary $n + n
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of rank dictionaries.]{Example of rank dictionaries for the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{DNA}$.}
+\caption[Example of rank dictionaries]{Example of rank dictionaries for the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{DNA}$.}
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcccc}

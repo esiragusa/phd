@@ -40,7 +40,7 @@ See Figure~\ref{fig:edit-transcript} for an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of edit transcript.]{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
+\caption[Example of edit transcript]{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
 \label{fig:edit-transcript}
 \input{figures/transcript.tikz}
 \end{center}
@@ -66,7 +66,7 @@ See Figure~\ref{?}.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of dotplot.]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
+\caption[Example of dotplot]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
 \label{fig:dotplot}
 \input{figures/dotplot.tikz}
 \end{center}
@@ -129,7 +129,7 @@ We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to 
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of DP table.]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
+\caption[Example of DP table]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
 \label{fig:edit-dp}
 \input{figures/dp_edit.tikz}
 \end{center}
@@ -196,7 +196,7 @@ and since an occurrence of the pattern can end anywhere in the text, we check al
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of approximate string matching via DP.]{DP table representing the match of $p=...$ in $t=...$.}
+\caption[Example of approximate string matching via DP]{DP table representing the match of $p=...$ in $t=...$.}
 \label{fig:asm-dp}
 \input{figures/dp_asm.tikz}
 \end{center}
@@ -248,7 +248,7 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 %We remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\caption{Suffix tree and suffix trie for the string ANANAS.}
+\caption[Example of suffix tree and suffix trie]{Suffix tree and suffix trie for the string ANANAS.}
 \label{fig:stree}
 \begin{subfigure}{.5\textwidth}
 \begin{center}
@@ -350,7 +350,7 @@ If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in 
 
 \begin{figure}[h]
 \begin{center}
-\caption[Exact string matching on a suffix tree.]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS.}
+\caption[Exact string matching on a suffix tree]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS.}
 \label{fig:st-exact}
 \input{figures/strie_exact.tikz}
 \end{center}
