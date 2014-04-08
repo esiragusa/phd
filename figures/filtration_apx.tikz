@@ -1,0 +1,19 @@
+\begin{tikzpicture}[font=\normalsize\sffamily]
+
+\transcript{25}{G/M/G, C/M/C, T/M/T, N/R/A, T/M/T, G/M/G, G/D/$ $, G/M/G, C/M/C, A/M/A, T/M/T, T/M/T, A/R/G, T/M/T, G/M/G, G/M/G, C/M/C, $ $/I/C, C/M/C, A/M/A, T/M/T, T/M/T, T/M/T, T/R/A, T/M/T}{1}
+\band{25}
+\seed{1}{25}{1}
+
+\node[left=0.25cm of read_1] {$p$} ;
+\node[left=0.25cm of genome_1] {$t$} ;
+
+\qgrama{1}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
+\qgrama{9}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
+\qgramai{17}{$\#$, $ $, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
+
+\draw[strike] (qgram_1_4.north) -- (qgram_1_4.south) ;
+\draw[strike] (qgram_1_7.north) -- (qgram_1_7.south) ;
+\draw[strike] (qgram_9_5.center)  -- (qgram_9_5.south) ;
+\draw[strike] (qgram_17_8.north) -- (qgram_17_8.south) ;
+
+\end{tikzpicture}

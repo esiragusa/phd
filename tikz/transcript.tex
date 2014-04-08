@@ -61,20 +61,29 @@
 
 \newcommand{\qgram}[3]
 {
+	\pgfmathsetmacro\ypos{0.4*4}
+	
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
     {
-    	\node[n] (qgram_#1_\i) at (0.4*\pos,1.6-0.4*#3) {\phantom{\r}};
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,\ypos-0.4*#3) {\phantom{\r}};
 	}
 	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
 }
 
-\newcommand{\qgramo}[3]
+\newcommand{\qgrama}[4]
 {
+	\pgfmathsetmacro\ypos{0.4}
+
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
     {
-    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,\ypos-0.4*#3) {\phantom{\r}};
 	}
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_#4)] {};
+}
+
+\newcommand{\qgramo}[3]
+{
+	\qgrama{#1}{#2}{#3}{4}
 }
 
 \newcommand{\qgrami}[3]
@@ -92,6 +101,24 @@
 	\draw[line] (qgram_#1_2.north east) -- (qgram_#1_5.north east) ;
 	\draw[line] (qgram_#1_5.north east) -- (qgram_#1_5.south east) ;
 	\draw[line] (qgram_#1_2.south east) -- (qgram_#1_5.south east) ;
+	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
+}
+
+\newcommand{\qgramai}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,0.4-0.4*#3) {\phantom{\r}};
+	}
+
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_2.north west) ;
+	\draw[line] (qgram_#1_1.north west) -- (qgram_#1_1.south west) ;
+	\draw[line] (qgram_#1_1.south west) -- (qgram_#1_2.south west) ;
+	\draw[break] (qgram_#1_1.north east) -- (qgram_#1_2.south west) ;
+
+	\draw[line] (qgram_#1_2.north east) -- (qgram_#1_9.north east) ;
+	\draw[line] (qgram_#1_9.north east) -- (qgram_#1_9.south east) ;
+	\draw[line] (qgram_#1_2.south east) -- (qgram_#1_9.south east) ;
 	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
 }
 
