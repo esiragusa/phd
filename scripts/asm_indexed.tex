@@ -239,13 +239,13 @@ Alternatively, we can reduce the \emph{average case} runtime to $\Oh(m + \log{n}
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table.
 %Thus we replace algorithm~\ref{alg:st-exact} by algorithm~\ref{alg:sa-exact}.
 
-\begin{figure}[h]
-\begin{center}
-\caption[Exact string matching on a suffix array]{Exact string matching on a suffix array. The pattern NA is searched exactly in the text ANANAS.}
-\label{fig:sa-exact}
-%\input{figures/stree.tikz}
-\end{center}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Exact string matching on a suffix array]{Exact string matching on a suffix array. The pattern NA is searched exactly in the text ANANAS.}
+%\label{fig:sa-exact}
+%%\input{figures/stree.tikz}
+%\end{center}
+%\end{figure}
 
 \subsection{$q$-Gram index}
 
@@ -638,8 +638,11 @@ Summing up, this two-levels rank dictionary consumes $n$ bits for the input stri
 By posing $b=\log{n}$ we have $\Oh(\frac{n}{\log{n}})$ bits for $R^2$ and $\Oh(\frac{n \log{\log{n}}}{\log{n}})$ bits for $R$.
 Hence, the two-levels rank dictionary consumes $n + o(n)$ bits.
 
-In practice we pose $b = 32$ bits.
-On modern processors we compute step~\ref{itm:count} in $\Oh(1)$ using the SSE~4.2 popcnt instruction \citep{Intel2011}.
+We implemented generic multi-levels rank dictionaries where the block size $b$ is a template parameter adjustable at compile time.
+Whenever the input string has length inferior to 4~GB, we employ one-level rank dictionaries with $b = 32$ bits or two-levels rank dictionaries with $b = 16$ bits and $b^2 = 32$ bits;
+otherwise, we employ two-levels rank dictionaries with $b = 32$ bits and $b^2 = 64$ bits, or three-levels rank dictionaries with $b = 16$ bits, $b^2 = 32$ bits and $b^3 = 64$ bits.
+In order to reduce the number of cache misses, we interleaved the succinct representation of the input string with the lowest level summaries array $R$.
+Moreover, we compute step~\ref{itm:count} in $\Oh(1)$ using the SSE~4.2 popcnt instruction \citep{Intel2011}.
 
 \subsubsection{Small alphabets}
 
