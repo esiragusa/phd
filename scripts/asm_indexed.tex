@@ -762,10 +762,14 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \end{minipage}
 \end{algorithm}
 
-\subsubsection{Locating occurrences}
+In order to locate occurrences we need the suffix array $A$, yet we do not want to maintain the whole array $A$.
+As proposed by \citeauthor{Ferragina2000}, we maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
+In order to determine if and where we sampled any $A[i]$ in $A^{\epsilon}$, we maintain a binary rank dictionary $S$ of length $n$: if $S[i]=1$, then we sampled $A[i]$ in $A^{\epsilon}[rank_1(S,i)]$.
+We obtain any $A[i]$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $A^{\epsilon}$, and then $A[i] = A[LF^j(i)] + j$.
 
-The full suffix array $A$ is required to locate the occurrences.
-We can sample the values of $A$ in $A^{\epsilon}$ and define \textsc{getOccurrences}($\Tn$) to return $A^{\epsilon}[l \dots r]$.
+If we sample one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon > 0$, then $A^{\epsilon}$ consumes $\Oh(\frac{n}{\log^{\epsilon}{n}})$ space and \textsc{getOccurrences}($\Tn$) returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{n})$ time \citep{Ferragina2000}.
+In practice, we usually sample text positions at rates between $2^{-3}$ and $2^{-5}$.
+The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 \section{String matching algorithms}
 
