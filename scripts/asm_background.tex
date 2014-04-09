@@ -169,7 +169,7 @@ d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
 The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$) and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
 An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
-We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of Equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
+We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
 \begin{figure}[h]
 \begin{center}
@@ -203,10 +203,10 @@ In practice, if the text is long, static and searched frequently, offline method
 
 We can subdivide algorithms for offline string matching in two categories: \emph{fully-indexed} and \emph{filtering}.
 Fully-indexed algorithms work solely on the index of the text, while filtering methods first use the index to discard uninteresting portions of the text and subsequently use an online method to verify narrow areas of the text.
-Filtering methods outperform fully-indexed methods for a vast range of inputs\footnote{When the error rate is low.} and are thus very interesting from a practical standpoint. Nonetheless, filtering methods are just opportunistic combinations of online and fully-indexed methods.
+Filtering methods outperform fully-indexed methods for a vast range of inputs (when the error rate is low) and are thus very interesting from a practical standpoint. Nonetheless, filtering methods are just opportunistic combinations of online and fully-indexed methods.
 
 In the following of this section we thus give a brief and non-exhaustive overview of the fundamental techniques for online and (both fully-indexed and filtering) offline string matching.
-This overview serves as an introduction to the more involved algorithms presented in chapter~\ref{?} and directly used in applications of part~\ref{part:apps}.
+This overview serves as an introduction to the more involved algorithms presented in the next chapters and directly used in applications of part~\ref{part:rm}.
 For an extensive treatment of the subject, we refer the reader to complete surveys on exact \citep{Faro2013} and approximate \citep{Navarro2001b} online string matching methods, as well as to a succinct survey on indexed methods \citep{Navarro2001}.
 
 % --- Online methods ---
@@ -231,7 +231,7 @@ The dynamic programming algorithm~\ref{?} to compute the distance of two strings
 Since an occurrence of the pattern can start and end anywhere in the text, $k$-differences consists of computing the edit distance between the pattern and all substrings of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
-We pose $x=p$ and $y=t$ and consider Equation~\ref{eq:dp-min}.
+We pose $x=p$ and $y=t$ and consider equation~\ref{eq:dp-min}.
 Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row $D[0:]$ of the DP matrix according to the condition:
 \begin{eqnarray}
 d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
