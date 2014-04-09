@@ -2,7 +2,7 @@
 \label{chr:index}
 
 Suffix trees are elegant data structures but they are rarely used in practice.
-Although suffix trees provides optimal construction and query time, their high space consumption prohibits practical applicability to large text collections.
+Although suffix trees provides optimal construction and query time, their high space consumption prohibits practical applicability to large string collections.
 A practical study on suffix trees \citep{Kurtz1999} reports that efficient implementations achieve sizes between $12~n$ and $20~n$ bytes per character.
 For instance, two years before completing the sequencing of the human genome, \citeauthor{Kurtz1999} conjectured the resources required for computing the suffix tree for the complete human genome (consisting of about $3 \cdot 10^9$~bp) in 45.31~GB of memory and nine hours of CPU time, and concluded that ``it seems feasible to compute the suffix tree for the entire human genome on some computers''.
 
@@ -54,7 +54,7 @@ $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 
 We define the generalized suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
 \begin{definition}
-The generalized suffix array of a collection of strings $\Sc = \{ s^1, s^2, \dots, s^c \}$, with $\norm{\Sc}=n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+The generalized suffix array of a padded string collection $\Sc$, consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
 Pairs are ordered such that $\Sc_{A[i] \dots n^{A[i]}} <_{lex} \Sc_{A[i+1] \dots n^{A[i+1]}}$ for all $1 \leq i < n$.
 \end{definition}
 
@@ -400,7 +400,7 @@ They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact 
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie} and BWA \citep{BWA}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the next subsections we give the fundamental ideas behind the BWT and the FM-index.
-Subsequently, we discuss our succinct FM-index implementations covering texts and text collections.
+Subsequently, we discuss our succinct FM-index implementations covering strings and string collections.
 
 \subsection{Burrows-Wheeler transform}
 
@@ -436,7 +436,7 @@ $i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i]-1}$\\
 \end{figure}
 
 We easily generalize the BWT to string collections.
-Consider a strings collection $\Sc = \{ s^1, s^2, \dots, s^c \}$ where each string $s^i$ is padded with a terminator symbol $\$^i$.
+Consider a padded string collection $\Sc$.
 Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
