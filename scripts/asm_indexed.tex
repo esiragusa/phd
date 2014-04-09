@@ -256,7 +256,7 @@ With the aim of addressing $q$-grams in the directory $D$, we impose a canonical
 \begin{eqnarray}
 h(p) = 1 + \sum_{i=1}^{q}{\rho(p_i) \cdot \sigma^{q-i}}
 \end{eqnarray}
-where $p \in \Sigma^q$ is any $q$-gram and the function $\rho : \Sigma \rightarrow [1 \dots \sigma]$ denotes the lexicographic rank of any symbol in the alphabet $\Sigma$.
+where $p \in \Sigma^q$ is any $q$-gram and $\rho$ is the lexicographic rank function from definition~\ref{def:rho}.
 This allows us to store in and retrieve from $D[h(p)]$, for each $q$-gram $p \in \Sigma^q$, the left suffix array interval returned by algorithm~\ref{alg:sa-lower}, \ie $D[h(p)] = \textsc{L}(1,n,p)$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $D[h(p)+1]$.
 
