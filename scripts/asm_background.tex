@@ -234,10 +234,10 @@ For an extensive treatment of the subject, we refer the reader to complete surve
 
 
 The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
-Since an occurrence of the pattern can start and end anywhere in the text, $k$-differences consists of computing the edit distance between the pattern and all substrings of the text.
+Since an occurrence of the pattern can start and end anywhere in the text, $k$-differences consists of computing the edit distance between the pattern and any substring of the text.
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
-We pose $x=p$ and $y=t$ and consider equation~\ref{eq:dp-min}.
+Consider equation~\ref{eq:dp-min} and pose $x=p$ and $y=t$.
 Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row $D[0:]$ of the DP matrix according to the condition:
 \begin{eqnarray}
 d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
@@ -301,7 +301,7 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 %We remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree for the string ANANAS.}
+\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree for the string ANANAS\$.}
 \label{fig:stree}
 \begin{subfigure}{.5\textwidth}
 \begin{center}
@@ -316,7 +316,7 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 \end{figure}
 
 \begin{figure}[h]
-\caption[Example of generalized suffix trie]{Generalized suffix trie for the string collection $\Sc = \{$ {\ttfamily ANANAS}, {\ttfamily CACAO} $\}$.}
+\caption[Example of generalized suffix trie]{Generalized suffix trie for the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
 \input{figures/gstrie.tikz}
@@ -411,7 +411,7 @@ If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in 
 
 \begin{figure}[h]
 \begin{center}
-\caption[Exact string matching on a suffix tree]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS.}
+\caption[Exact string matching on a suffix tree]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS\$.}
 \label{fig:st-exact}
 \input{figures/strie_exact.tikz}
 \end{center}
