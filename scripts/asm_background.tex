@@ -55,15 +55,13 @@ We call \emph{terminator symbol} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \
 
 \begin{definition}
 \label{def:strd}
-Given a string $s$ over $\Sigma$, we define the \emph{padded string} $s\$$ by concatenating $s$ with a terminator symbol \$.
+Given a string $s$ over $\Sigma$, we call \emph{padded string} the concatenation of $s$ with a terminator symbol \$.
 \end{definition}
 
 \begin{definition}
 \label{def:coltd}
-Given a string collection $\Sc$ over $\Sigma$, we define the \emph{padded string collection} $\Sc\$$ consisting of strings $s^i$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
+Given a string collection $\Sc$ over $\Sigma$, we call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
-
-%Assume \wlogs each string $s^i \in \S$ to be padded with a \emph{terminator symbol} $\$^i$ not being part of the string alphabet $\Sigma$.
 
 %\begin{example}
 %These definitions allow us to model basic biological sequences.
@@ -187,14 +185,22 @@ We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to 
 %\subsection{Problem definition}
 
 We can now define \emph{exact string matching}, perhaps the most fundamental problem in stringology.
-Given a string $p$ (with $|p|=m$) called the \emph{pattern} and a longer string $t$ (with $|t|=n$) called the \emph{text}, the exact string matching problem is to find all occurrences, if any, of pattern $p$ into text $t$ \citep{Gusfield1997}.
-This problem has been extensively studied from the theoretical standpoint and is well solved in practice.
+\begin{definition}
+\citep{Gusfield1997}
+Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of length $n$, called the \emph{text}, the exact string matching problem is to find all occurrences of pattern $p$ into text $t$.
+\end{definition}
 
-The definition of distance functions between strings let us generalize exact string matching into a more challenging problem: \emph{approximate string matching}.
+This problem has been extensively studied from the theoretical standpoint and is well solved in practice.
+Nonetheless, the definition of distance functions between strings let us generalize exact string matching into a more challenging problem: \emph{approximate string matching}.
+
+\begin{definition}
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
+\end{definition}
 The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern occurs at any position in the text if we substitute all its $m$ characters.
-Under these distances, we define the \emph{error rate} as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.%, and we alternatively refer to these problems as $\epsilon$-mismatches and $\epsilon$-differences.
+\begin{definition}
+Under the edit or Hamming distance, we define the \emph{error rate} as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
+\end{definition}
 
 We can classify string matching problems in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left); their worst-case runtime complexity ranges from $\Oh(nm)$ to $\Oh(n)$ while their worst-case memory complexity ranges from $\Oh(\sigma^k m^k)$ to $\Oh(m)$.
@@ -265,24 +271,27 @@ The generic traversal operations here introduced will let us formulate generic a
 
 \subsubsection{Trie}
 
-Consider a collection of strings, \ie an ordered multiset $\S = \{ s^1, s^2, \dots, s^c \}$ of strings over a common alphabet $\Sigma$.
-Assume \wlogs each string $s^i \in \S$ to be padded with a \emph{terminator symbol} $\$^i$ not being part of the string alphabet $\Sigma$.
-In addition, assume $\$^i <_{lex} \$^j$ for all indices $i,j$ with $i < j < c$.
-Note that the terminator symbol is necessary to ensure that no string $s^i$ is a prefix of another string $s^j$.
-
-The trie $\Si$ of the strings collection $\S$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+Consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) consisting of $c$ strings.
+Note that padding is necessary to ensure that no string $s^i \in \Sc$ is a prefix of another string $s^j \in \Sc$.
+\begin{definition}
+The trie $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
 The entering edge of any node of $\Si$ is labeled with a symbol in $\Sigma$, while the entering edge of any leaf of $\Si$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
-Figure~\ref{fig:trie} illustrates.
+%Figure~\ref{fig:trie} illustrates.
+\end{definition}
 
 \subsubsection{Suffix trie}
 
 We define the suffix trie as the trie of all suffixes of a string.
-Given a string $s$ of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves and leaf $\Ln_i$ points to suffix $s_{i..n}$.
-We easily generalize the suffix trie to index string collections.
-Given a collection of padded strings $\Sc = \{ s^1, s^2, \dots, s^c \}$, any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
-Thus each path from the root to a leaf $(i,j)$ spells the suffix $s^i_{j..n^i}$.
-Figure~\ref{fig:stree} illustrates.
+\begin{definition}
+Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves where leaf $\Ln_i$ points to suffix $s_{i..n}$.
+\end{definition}
+We generalize the suffix trie to index string collections.
+\begin{definition}
+Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
+\end{definition}
+%Figure~\ref{fig:stree} illustrates.
 
 Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet we only consider the suffix trie as an idealized data structure to expose our algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.

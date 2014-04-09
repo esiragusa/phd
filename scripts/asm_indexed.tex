@@ -54,8 +54,8 @@ $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 
 We define the generalized suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
 \begin{definition}
-The generalized suffix array of a padded string collection $\Sc$, consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
-Pairs are ordered such that $\Sc_{A[i] \dots n^{A[i]}} <_{lex} \Sc_{A[i+1] \dots n^{A[i+1]}}$ for all $1 \leq i < n$.
+The generalized suffix array of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+Pairs are ordered such that $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
 \end{definition}
 
 \begin{figure}[h]
@@ -64,7 +64,7 @@ Pairs are ordered such that $\Sc_{A[i] \dots n^{A[i]}} <_{lex} \Sc_{A[i+1] \dots
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
-$i$ & $A[i]$ & $\Sc_{A[i]\dots n}$\\
+$i$ & $A[i]$ & $\Sc_{A[i]\dots}$\\
 \midrule
 1 & (1,7) & $\$_1$\\
 2 & (2,6) & $\$_2$\\
@@ -404,8 +404,8 @@ Subsequently, we discuss our succinct FM-index implementations covering strings 
 
 \subsection{Burrows-Wheeler transform}
 
-Let $s$ be a string of length $n$ over an alphabet $\Sigma$, terminated by a symbol $\$ \notin \Sigma$ such that $\$ <_{lex} c$ for all $c \in \Sigma$.
-In the following we consider the string $s$ to be cyclic and its subscript $s_i$ to be modular, \eg $s_0 = s_{n-1}$ and $s_{n+i} = s_i$ for any $i \in \N$.
+Let $s$ be a padded string (definition~\ref{def:strd}) of length $n$ over an alphabet $\Sigma$.
+In the following we consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = s_{n-1}$ and $s_{n+i} = s_i$ for any $i \in \N$.
 Consider the square matrix consisting of all cyclic shifts of the string $s$ (the $i$-th cyclic shift has the form $s_{i \dots n} s_{1 \dots i-1}$) sorted in lexicographical order.
 See figure~\ref{fig:bwt}.
 Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $s_{A[i] \dots n} s_{1 \dots A[i]-1}$.
@@ -436,8 +436,7 @@ $i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i]-1}$\\
 \end{figure}
 
 We easily generalize the BWT to string collections.
-Consider a padded string collection $\Sc$.
-Definition~\ref{def:bwt} still holds if we consider $M$ to consist of all cyclic shifts of $\Sc$ sorted in lexicographical order.
+Indeed, definition~\ref{def:bwt} still holds if we consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and we do not have to construct it explicitly to derive the BWT of a text.
 We can obtain the BWT in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $s_{A[i]-1}$.
