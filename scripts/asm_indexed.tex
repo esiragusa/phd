@@ -60,7 +60,7 @@ Pairs are ordered such that $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for al
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of generalized suffix array]{Generalized suffix array for the string collection $\Sc = \{$ {\ttfamily ANANAS}, {\ttfamily CACAO} $\}$.}
+\caption[Example of generalized suffix array]{Generalized suffix array for the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
@@ -405,14 +405,15 @@ Subsequently, we discuss our succinct FM-index implementations covering strings 
 \subsection{Burrows-Wheeler transform}
 
 Let $s$ be a padded string (definition~\ref{def:strd}) of length $n$ over an alphabet $\Sigma$.
-In the following we consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = s_{n-1}$ and $s_{n+i} = s_i$ for any $i \in \N$.
-Consider the square matrix consisting of all cyclic shifts of the string $s$ (the $i$-th cyclic shift has the form $s_{i \dots n} s_{1 \dots i-1}$) sorted in lexicographical order.
-See figure~\ref{fig:bwt}.
+In the following we consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = s_{n}$ and $s_{n+i} = s_i$ for any $i \in \N$.
+Consider the square matrix consisting of all cyclic shifts of the string $s$ (the $i$-th cyclic shift has the form $s_{i \dots n} s_{1 \dots i-1}$) sorted in lexicographical order (see figure~\ref{fig:bwt}).
+For convenience, we denote by $f$ the first column $s_{A[i]}$, and by $l$ the last column $s_{A[i] - 1}$.
 Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $s_{A[i] \dots n} s_{1 \dots A[i]-1}$.
+
 % (except when $A[i] = 1$).
 \begin{definition}
 \label{def:bwt}
-The BWT of $s$ is the string $l$ obtained concatenating the symbols in the last column of the cyclic shifts matrix, \ie $l = s_{A[i]-1}$.
+The BWT of $s$ is the string obtained concatenating the symbols in the last column of the cyclic shifts matrix of $s$, \ie it is the string $l=s_{A[i]-1}$.
 \end{definition}
 
 \begin{figure}[h]
@@ -535,7 +536,7 @@ LF(i) = C(l_i) + Occ(l_i, i)
 where we denote with $C : \Sigma \rightarrow [1,n]$ the total number of occurrences in $s$ of all characters alphabetically smaller than $c$, and with $Occ :  \Sigma \times [1,n] \rightarrow [1,n]$ the number of occurrences of character $c$ in the prefix $l_{1 \dots i}$.
 
 The key problem of representing the permutation $LF$ is how to represent function $Occ$, as function $C$ can be easily tabulated by a small array of size $\sigma \log{n}$ bits.
-In the next subsection we address the problem of representing function $Occ$ efficiently. Subsequently, in subsection~\ref{sub:fmi} we see how to build a full-text index out of function $LF$.
+In the next subsection we address the problem of representing function $Occ$ efficiently. Subsequently, in subsection~\ref{sub:fmtrie} we see how to build a full-text index out of function $LF$.
 
 \subsection{Rank dictionaries}
 
@@ -691,9 +692,10 @@ $i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
 For large alphabets.
 
 \subsection{Top-down traversal}
-%\label{sub:fmi}
+\label{sub:fmtrie}
 
-We now turn to the problem of implementing a full-text index exploiting the $LF$-mapping.
+We now turn to the problem of implementing a full-text index relying on the permutation $LF$.
+This is possible because of the relationship between the cyclic shifts matrix and the suffix array $A$.
 First we see how to emulate a top-down traversal of the suffix trie, which is sufficient to count the number of occurrences of any substring in the original text.
 Later we focus on how to represent the leaves, which are necessary to locate occurrences in the original text.
 
@@ -705,14 +707,16 @@ We represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r
 \item \textsc{label}($\Tn$) returns $e$.
 \end{itemize}
 
-We can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
-This is possible because of the relationship between the cyclic shifts matrix and the suffix array $A$.
-We show how to answer $sl^{-1}(v,c)$, \ie given a node $v$ and a character $c \in \Sigma$, return the node $w$ such that $repr(w) = c \cdot repr(v)$.
+Given a padded string collection $\Sc$, its BWT plus its associated permutation $LF$ let us recover any substring of $\bar{\Sc}$.
+Nonetheless, we want to recover substrings of $\Sc$ in forward direction, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
+Therefore, given a string $\Sc$ we consider the BWT of $\bar{\Sc}$, such that $LF$ let us recover any substring of $\Sc$.
+Now we can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
 
-We easily obtain the interval of the node labeled by $c$ as $[C(c),C(c+1)]$.
-Now we suppose that we are in an arbitrary node $v$ of known interval $[b_v, e_v]$ and we want to navigate to the node $w$ of unknown interval $[b_w, e_w]$ such that $repr(w)=c \cdot repr(v)$ for some $c \in \Sigma$.
-Thus, we know all suffixes of $s$ prefixed by $repr(v)$ and we are looking for all the suffixes of $s$ prefixed by $c \cdot repr(v)$.
-All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $s_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
+From the root node, we easily obtain the interval of its child node labeled by $c$ as $[C(c),C(c+1)]$.
+Now suppose an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$;
+we want to reach the node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
+Thus, we know all prefixes of $\bar{\Sc}$ ending with $s_v$ (hence all suffixes of $\Sc$ starting with $s_v$) and we are looking for all the prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$ (hence all suffixes of $\Sc$ starting with $s_v \cdot c$).
+All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Sc_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
 Moreover, we know that these characters $c$ are
 \begin{inparaenum}[(i)]
 \item contiguous and
@@ -729,7 +733,8 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 \end{array}
 \end{eqnarray}
 Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
-Therefore, we implement \textsc{goDown} a symbol to work in time $\Oh(1)$, and \textsc{goDown} \textsc{goRight} in $\Oh(\sigma)$ time.
+Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and runs in time $\Oh(1)$.
+Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see algorithm~\ref{?}).
 
 \begin{algorithm}[h!]
 \begin{minipage}[t]{.5\textwidth}
