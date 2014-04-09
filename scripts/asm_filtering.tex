@@ -16,7 +16,7 @@ To this intent, the following techniques have been proposed in literature:
 \item gapped $q$-grams generalizing contiguous $q$-grams,
 \item multiple gapped $q$-grams further generalizing gapped $q$-grams;
 \item approximate seeds generalizing exact seeds,
-\item suffix filters further extending approximate seeds.
+%\item suffix filters further extending approximate seeds.
 \end{inparaenum}
 
 The idea of gapped $q$-grams is to lower the correlation between consecutive $q$-grams.
@@ -50,7 +50,7 @@ The drawback is that the effort to implement them is slightly higher.
 
 In the following of this chapter we first present (multiple) gapped $q$-grams and problems associated with their design.
 Then we move to more practical approximate seeds, which we will adopt later in chapter~\ref{chap:map-eng}.
-Finally we discuss suffix filters and their practicality.
+%Finally we discuss suffix filters and their practicality.
 Overall, through this chapter:
 \begin{itemize}
 \item we present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
@@ -451,6 +451,6 @@ Thus the fraction of error combinations covered by filtration with exact seeds o
 \end{equation}
 For instance, filtration with exact seeds covers three times more combinations than required when $k=5$.
 With approximate seeds we partition the pattern in less seeds and thus we indirectly reduce filter redundancy.
-In the next section we see how suffix filters consider only minimal error combinations.
+%In the next section we see how suffix filters consider only minimal error combinations.
 
-\section{Suffix filters}
+%\section{Suffix filters}
