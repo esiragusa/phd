@@ -104,11 +104,11 @@ Given two string $x,y$ of length $m,n$, a dotplot is a $m \times n$ matrix conta
 We define a dotplot trace to be a monotonical path in the matrix connecting non-decreasing positions of the matrix.
 A dotplot trace corresponds to an alignment and vice versa.
 In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
-See Figure~\ref{?}.
+See Figure~\ref{fig:dotplot}.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of dotplot]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of Example~\ref{ex:alignment}.}
+\caption[Example of dotplot]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of example~\ref{ex:alignment}.}
 \label{fig:dotplot}
 \input{figures/dotplot.tikz}
 \end{center}
@@ -446,32 +446,29 @@ A simple lemma gives us a lower bound on the number of $q$-grams that must be pr
 \subsubsection{Seed filters}
 
 We start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
-If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+%If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
 \citep{Baeza1999b}
-Let $x,y$ be two strings \st $d_E(x,y) = k$ for some $k \in \N_0$.
-If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
+Let $x,y$ be two strings \st $d_E(x,y) = k$.
+%If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
+If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \end{lemma}
-\begin{proof}
-We proceed by induction on $k$.
-For $k=0$, the string $y$ is partitioned into one factor, $y$ itself.
-The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
-We suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
-We consider the case $k=j$. The $j$-th error can be in
-\begin{inparaenum}[(i)]
-\item\label{lemma:exact-seeds:prefix} $y^1\dots y^{i-1}$,
-\item\label{lemma:exact-seeds:infix} $y^i$, or
-\item\label{lemma:exact-seeds:suffix} $y^{i+1}\dots y^{j}$.
-\end{inparaenum}
-In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
-In case~\ref{lemma:exact-seeds:infix}, if we partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
-\end{proof}
-
-Thus, we solve $k$-differences by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
-As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of the pattern in the text.
-Thus, we verify any substring $s$ of the text of length $m - k \leq |s| \leq m + k$ containing one seed of $p$.
-Note how we are reducing one approximate search into many smaller exact searches.
+%\begin{proof}
+%We proceed by induction on $k$.
+%For $k=0$, the string $y$ is partitioned into one factor, $y$ itself.
+%The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
+%We suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
+%We consider the case $k=j$. The $j$-th error can be in
+%\begin{inparaenum}[(i)]
+%\item\label{lemma:exact-seeds:prefix} $y^1\dots y^{i-1}$,
+%\item\label{lemma:exact-seeds:infix} $y^i$, or
+%\item\label{lemma:exact-seeds:suffix} $y^{i+1}\dots y^{j}$.
+%\end{inparaenum}
+%In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
+%In case~\ref{lemma:exact-seeds:infix}, if we partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
+%\end{proof}
+It is immediate to see that any edit distance error can cover at most one seed, therefore at least one seed of $y$ will not be covered by any seed and occur as a factor of $x$.
 Figure~\ref{fig:seeds-ext} shows an example.
 
 \begin{figure}[h]
@@ -482,70 +479,70 @@ Figure~\ref{fig:seeds-ext} shows an example.
 \end{center}
 \end{figure}
 
+Thus, we solve $k$-differences by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
+As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of the pattern in the text.
+Thus, we verify any substring $s$ of the text of length $|s| \in [m - k, m + k]$ containing one seed of $p$.
+Note how we are reducing one approximate search into many smaller exact searches.
+
 How many verifications a seed produces?
 Let us assume the text to be generated according to the uniform Bernoulli model.
-The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission probability of any word of length $q$ is simply
+The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
 \begin{eqnarray}
 \text{Pr}(H > 0) = \frac{1}{\sigma^q}
 \end{eqnarray}
 thus the expected number of occurrences of a seed of length $q$ in a text of length $n$ is
 \begin{eqnarray}
-E(H) = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
+E[H] = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
 \end{eqnarray}
 
 Note how lemma~\ref{lemma:exact-seeds} requires us to partition the pattern into $k+1$ seeds but leaves us free to choose their length.
-This leads to the question of which is an optimal pattern partitioning, \ie a partitioning that minimises the expected number of verifications.
+This leads to the question of which is an optimal pattern partitioning, \ie a partitioning that minimizes the expected number of verifications.
 We fix\footnote{We ignore for simplicity that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
 \begin{eqnarray}
 \label{eq:seed-len}
 q=\left \lfloor \frac{m}{k+1} \right \rfloor
 \end{eqnarray}
-to minimise the expected number of occurrences of any seed.
+to minimize the expected number of occurrences of any seed.
 Under these conditions, the expected number of verifications produced by our seed filter is
 \begin{eqnarray}
-E(V) = E(H) \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
+E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
 
 We now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
 For which error rate we expect the resulting algorithm to have sublinear runtime?
-If we use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sec:introonline} to verify candidate locations, the expected runtime must be
+%\citeauthor{Gusfield1997} gives a rough estimate to this question.
+If we use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sub:introonline} to verify candidate locations, the expected runtime must be
 \begin{eqnarray}
-E(V) \cdot m^2 < cn
+E[V] \cdot m^2 < cn
 \end{eqnarray}
 for some constant $c$.
-By substituting $E(V)$ and solving for $q$, we obtain
+By substituting $E[V]$ and solving for $q$, we obtain
 \begin{eqnarray}
 q > \log_{\sigma}{\frac{m^3}{c}}
 \end{eqnarray}
 and since we chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len}, it follows that
 \begin{eqnarray}
-\frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
+\epsilon = \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
 \end{eqnarray}
-thus this $k$-differences algorithm has expected sublinear runtime for an error rate of
-\begin{eqnarray}
-\epsilon < \frac{m}{\log_{\sigma}{m}}.
-\end{eqnarray}
+is the error rate for which this $k$-differences algorithm has expected sublinear runtime.
 
 Nonetheless, texts of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
 On those texts uniform seed length can lead to suboptimal filtration.
-In section~\ref{sec:seeds-apx} we analyse the statistical properties of these texts and the effects of pattern partitioning.
+In section~\ref{sec:seeds-apx} we analyze the statistical properties of these texts and the effects of pattern partitioning.
 Later, in order to obtain more robust filters, we generalize filtration with seeds to consider approximate seeds.
 
 \subsubsection{$q$-Gram filters}
 
 $q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
-The following lemma relates $q$-gram similarity to edit distance\footnote{Thus it relates $q$-gram similarity also to Hamming distance.}.
-It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ of any two strings $x,y$ for which $d_E(x,y) = k$.
+The following lemma relates $q$-gram similarity to edit and Hamming distance.
+It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ of any two strings $x,y$ within edit distance $k$.
 This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
-\begin{lemma}
+\begin{lemma}[The $q$-gram lemma] \citep{Jokinen1991}
 \label{lemma:qgrams}
-\citep{Jokinen1991}
-Let $x,y$ be two strings with edit distance $k$ and $\min\{|x|,|y|\} = m$, then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
+Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ and $|x| = m$. Then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
-\begin{proof}
-By induction on k.
-\end{proof}
-
+The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors ($kq$, \ie at most $q$ per error).
+Figure~\ref{fig:qgrams-ext} illustrates.
 Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ and not on any specific $q$-gram.
 
 \begin{figure}[h]
@@ -556,19 +553,18 @@ Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ an
 \end{center}
 \end{figure}
 
-How can we use lemma~\ref{lemma:qgrams} to solve the approximate string matching problem?
-The lemma itself does not give us the direct solution, indeed it considers the edit distance between two arbitrary strings; conversely, in approximate string matching, the pattern can match any substring of the text.
-In the case of Hamming distance, if the pattern matches any substring $s$ of $t$, then $s$ must have length $m$.
-In the case of edit distance, it must hold $m - k \leq |s| \leq m + k$.
-The dot-plot representation helps us to visualize this concept.
-Hamming distance occurrences cover one single diagonal of the dot-plot, while edit distance occurrences are enclosed inside a parallelogram of side $2k+1$.
-Overlapping parallelograms???
+Lemma~\ref{lemma:qgrams} itself does not give us a direct solution to approximate string matching.
+Indeed, it considers the edit distance between two arbitrary strings, while in approximate string matching the pattern can match any substring of the text.
+More precisely, if the pattern approximately matches any substring $s$ of $t$, then in the case of $k$-mismatches $s$ must have length $m$; in the case of $k$-difference, the length of $s$ must be within $m - k$ and $m + k$.
+The dot plot representation helps us to visualize this concept: $k$-mismatches occurrences cover one single diagonal of the dot plot, while $k$-difference occurrences are enclosed inside a parallelogram of side $2k+1$.
 
-We can design a filtration algorithm that scans the text and counts how many $q$-grams of the pattern falls into each parallelograms.
+%How do we use lemma~\ref{lemma:qgrams} to solve approximate string matching?
+Therefore, we can design an online filtration algorithm scanning the text and counting how many $q$-grams of the pattern fall into each parallelograms.
 Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
-Alternatively, to speed up the filtration phase, the $q$-grams can be counted with the help of a substring index.
+Alternatively, to speed up the filtration phase, we can count the $q$-grams with the help of a substring index.
+%Overlapping parallelograms?
 
-Similarly to seed filters, which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
-In order to satistfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus by substituting $\tau$, we obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len}.
+Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
+In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
+Thus, by substituting $\tau$, we obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
 
