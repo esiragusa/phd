@@ -377,24 +377,28 @@ Such bounding criterion allows to discard parts of the search space which do not
 \section{Approximate seeds}
 \label{sec:seeds-apx}
 
-Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for edit and Hamming distance.
-The key idea of approximate seeds is to reduce an approximate search into smaller approximate searches.
+Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for $k$-mismatches and $k$-difference.
+The key idea of approximate seeds is to reduce an approximate search into \emph{smaller} approximate searches, as opposed to exact seeds reducing an approximate search into smaller exact searches.
 
-%We partition $p$ into $s \leq k+1$ non-overlapping seeds.
-%According to the pigeonhole principle each approximate occurrence of $p$ in $t$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
-
-%Consider two arbitrary strings $x,y$ within edit distance $k$.
-%If we partition w.l.o.g. $y$ into $s$ non-overlapping seeds with $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance...
+Again, we start by considering two arbitrary strings $x,y$ within edit distance $k$.
 \begin{lemma}
 \label{lemma:apx-seeds}
-\citep{Siragusa2013}
-Let $x,y$ be two strings \st $d_E(x,y) = k$ for some $k \in \N$.
-If we assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$, at least one seed occurs within its assigned distance.
+\citep{Myers1994,Navarro2000}
+Let $x,y$ be two strings \st $d_E(x,y) = k$.
+If we partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance $\lfloor k/s \rfloor$.
 \end{lemma}
-\begin{proof}
-To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
-%Hence all approximate occurrences of $p$ in $t$ within distance $k$ will be found.
-\end{proof}
+To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
+Figure~\ref{fig:seeds-apx} illustrates.
+
+In order to solve $k$-mismatches, we partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$. According to lemma~\ref{lemma:apx-seeds}, full-sensitivity is guaranteed if we search all seeds $p^i$ within a distance threshold of $\lfloor k/s \rfloor$.
+Note that we are not obliged to assign the same distance threshold to all seeds.
+Indeed, we can assign any arbitrary distance threshold $k_i$ to each seed $p^i$, as long as we satisfy the following inequality
+\begin{equation}
+s + \sum_{i=1}^{s}{k_i} > k.
+\end{equation}
+We usually tend to distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
+Therefore, we assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
+Also note how we obtain lemma~\ref{lemma:exact-seeds} for exact seeds by posing $s=k+1$ and all $k_i = 0$.
 
 \begin{figure}[h]
 \begin{center}
@@ -404,11 +408,6 @@ To prove full-sensitivity it suffices to see that, if none of the seeds occurs w
 \end{center}
 \end{figure}
 
-Note that we can assign arbitrary error thresholds to seeds, as long as the total sum $t$ of the thresholds plus the number of seeds is bigger than $k+1$
-\begin{equation}
-s + \sum{t}-1 \geq k
-\end{equation}
-but we usually distribute error thresholds evenly because the seeds with the highest threshold dominate the overall filtration time.
 
 \subsection{Parameterization}
 
@@ -426,7 +425,7 @@ The optimal partitioning depends on
 \item the verification algorithm,
 \item the statistical properties of the text.
 \end{inparaenum}
-One seed more or less than the optimal can result in a runtime penalty even of an order of magnitude.
+A difference of one from the optimal number of seeds can result in a runtime penalty of an order of magnitude.
 
 \subsection{Redundancy}
 
