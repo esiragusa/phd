@@ -288,7 +288,7 @@ Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix 
 \end{definition}
 We generalize the suffix trie to index string collections.
 \begin{definition}
-Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
 Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.

@@ -54,7 +54,7 @@ $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 
 We define the generalized suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
 \begin{definition}
-The generalized suffix array of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n^i$ points to one of the $n^i$ suffixes of $s^i$.
+The generalized suffix array of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
 Pairs are ordered such that $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
 \end{definition}
 
@@ -89,7 +89,7 @@ When $n < 2^{32}$, a 32 bit integer is sufficient to encode any value in the ran
 Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 n$ bytes.
 
 \citep{Weese2013} gives a generalization of \citeauthor{Karkkainen2003} algorithm to construct the generalized suffix array in $\Oh(n)$ time.
-The space consumption of the generalized suffix array is $n \log{cn^*}$ bits, where $n^* = \max{\,n^i}$.
+The space consumption of the generalized suffix array is $n \log{cn^*}$ bits, where $n^* = \max{\,n_i}$.
 For instance, the human genome GRCh38 is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
 Hence, to represent the generalized suffix array of GRCh38 we use pairs of $1+4$~bytes.
 Our suffix array of GRCh38 fits in 15~GB of memory and we are able to construct it in about one hour on a modern computer \citep{Weese2013}.
@@ -107,7 +107,7 @@ The occurrences below any node correspond by definition to the interval $[l,r]$ 
 Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
 \begin{itemize}
 %\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $A[r] + d = n^{A[r]}$;
+\item \textsc{isLeaf}($\Tn$) returns true iff $A[r] + d = n_{A[r]}$;
 \item \textsc{label}($\Tn$) returns $\Sc_{A[l] + d}$;
 \item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
 \end{itemize}
@@ -196,7 +196,7 @@ In this way, the time complexity of exact string matching algorithm~\ref{alg:st-
 	\EndIf
 	\State {$d \gets d+1$}
 	\State {$l \gets$ \Call{R}{$x,\epsilon$}}
-%	\While {$A[l] + d < n^{A[l]}$}
+%	\While {$A[l] + d < n_{A[l]}$}
 %		\State {$l \gets l+1$}
 %	\EndWhile
 %	\If {$l \geq r$}
