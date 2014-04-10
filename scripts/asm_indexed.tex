@@ -250,13 +250,13 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 \subsection{$q$-Gram index}
 
 If we restrict the traversal of our idealized suffix trie to a fixed depth $q$, we can remove the logarithmic factor introduced by the suffix array.
-The idea is to supplement the suffix array $A$ with an additional array $D$ (called $q$-gram directory) storing the suffix array ranges computed by algorithm~\ref{alg:sa-exact} for any possible word of length $q$.
+The idea is to supplement the suffix array $A$ with a so-called $q$-gram directory: an additional array $D$ of length $\Sigma^q + 1$, storing the suffix array ranges computed by algorithm~\ref{alg:sa-exact} for any possible word of length $q$.
 
 With the aim of addressing $q$-grams in the directory $D$, we impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow [1 \dots \sigma^q]$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
-h(p) = 1 + \sum_{i=1}^{q}{\rho(p_i) \cdot \sigma^{q-i}}
+h(p) = 1 + \sum_{i=1}^{q}{\rho_0(p_i) \cdot \sigma^{q-i}}
 \end{eqnarray}
-where $p \in \Sigma^q$ is any $q$-gram and $\rho$ is the lexicographic rank function from definition~\ref{def:rho}.
+where $p \in \Sigma^q$ is any $q$-gram and $\rho_0$ is the zero-based lexicographic rank defined on $\Sigma$ (recall the lexicographic rank function $\rho$ from definition~\ref{def:rho} and pose $\rho_0(x) = \rho(x) - 1$).
 This allows us to store in and retrieve from $D[h(p)]$, for each $q$-gram $p \in \Sigma^q$, the left suffix array interval returned by algorithm~\ref{alg:sa-lower}, \ie $D[h(p)] = \textsc{L}(1,n,p)$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $D[h(p)+1]$.
 
@@ -311,7 +311,7 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \label{alg:qgram-lower}
 \begin{algorithmic}[1]
 \Procedure{L}{$\Tn \rightarrow \{ l_h, d \},c$}
-	\State {$l_h \gets l_h + \rho(c) \cdot \sigma^d $}
+	\State {$l_h \gets l_h + \rho_0(c) \cdot \sigma^d $}
 	\State \Return $D[l_h]$
 \EndProcedure
 \end{algorithmic}
@@ -321,7 +321,7 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \label{alg:qgram-upper}
 \begin{algorithmic}[1]
 \Procedure{R}{$\Tn \rightarrow \{ r_h, d \},c$}
-	\State {$r_h \gets r_h - \rho(c) \cdot \sigma^d$}
+	\State {$r_h \gets r_h - \rho_0(c) \cdot \sigma^d$}
 	\State \Return $D[r_h]$
 \EndProcedure
 \end{algorithmic}
