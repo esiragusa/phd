@@ -739,13 +739,13 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \label{alg:fm-goroot}
-\Algorithm{goRoot}{$\Tn \rightarrow \{ l, r \}$}
+\Algorithm{goRoot}{$\Tn$}
 \begin{tabular}{lll}
 \textbf{Input}  & $\Tn$ : pointer& FM-index node\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$l \gets 1$}
-\State {$r \gets n$}
+\State {$x.l \gets 1$}
+\State {$x.r \gets n$}
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
@@ -753,7 +753,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \label{alg:fm-godownc}
-\Algorithm{goDown}{$\Tn \rightarrow \{ l, r, e \}, c$}
+\Algorithm{goDown}{$\Tn, c$}
 \begin{tabular}{lll}
 \textbf{Input}  & $\Tn$ : pointer& FM-index node\\
 				& $c$ : char& query character\\
@@ -762,10 +762,10 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \If {\Call{isLeaf}{$\Tn$}}
 	\State \Return \False
 \EndIf
-\State {$l \gets \Call{LF}{l,c}$}
-\State {$r \gets \Call{LF}{r,c}$}
-\State {$e \gets c$}
-\State \Return $l < r$
+\State {$x.l \gets \Call{LF}{x.l,c}$}
+\State {$x.r \gets \Call{LF}{x.r,c}$}
+\State {$x.e \gets c$}
+\State \Return $x.l < x.r$
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
