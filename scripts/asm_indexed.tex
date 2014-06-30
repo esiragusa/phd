@@ -735,31 +735,41 @@ Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
 Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and runs in time $\Oh(1)$.
 Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see algorithm~\ref{?}).
 
-\begin{algorithm}[h!]
+\begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:fm-goroot}
+\Algorithm{goRoot}{$\Tn \rightarrow \{ l, r \}$}
+\begin{tabular}{lll}
+\textbf{Input}  & $\Tn$ : pointer& FM-index node\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{goRoot}{$\Tn \rightarrow \{ l, r \}$}
-	\State {$l \gets 1$}
-	\State {$r \gets n$}
-\EndProcedure
+\State {$l \gets 1$}
+\State {$r \gets n$}
 \end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:fm-godownc}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn \rightarrow \{ l, r, e \}, c$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\State {$l \gets \Call{LF}{l,c}$}
-	\State {$r \gets \Call{LF}{r,c}$}
-	\State {$e \gets c$}
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
 \end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
+\label{alg:fm-godownc}
+\Algorithm{goDown}{$\Tn \rightarrow \{ l, r, e \}, c$}
+\begin{tabular}{lll}
+\textbf{Input}  & $\Tn$ : pointer& FM-index node\\
+				& $c$ : char& query character\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {\Call{isLeaf}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\State {$l \gets \Call{LF}{l,c}$}
+\State {$r \gets \Call{LF}{r,c}$}
+\State {$e \gets c$}
+\State \Return $l < r$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\end{figure*}
 
 In order to locate occurrences we need the suffix array $A$, yet we do not want to maintain the whole array $A$.
 As proposed by \citeauthor{Ferragina2000}, we maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
@@ -774,21 +784,28 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 \subsection{Bounded top-down traversal}
 
-\begin{algorithm}[h]
-\caption{Top-down traversal of a suffix trie bounded by depth.}
+%Top-down traversal of a suffix trie bounded by depth.
+\begin{center}
+\begin{minipage}[t]{.7\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-dfs}
+\Algorithm{Dfs}{$x,d$}
+\begin{tabular}{lll}
+\textbf{Input}  & $x$ : pointer& root node of the suffix trie\\
+ 			    & $d$ : integer& bounding depth\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{Dfs}{$x,d$}
-	\If {$d > 0$}
-		\If {\Call{goDown}{$x$}}
-			\Repeat
-				\State \Call{Dfs}{$x,d - 1$}
-			\Until \Call{goRight}{$x$}
-		\EndIf
+\If {$d > 0$}
+	\If {\Call{goDown}{$x$}}
+		\Repeat
+			\State \Call{Dfs}{$x,d - 1$}
+		\Until \Call{goRight}{$x$}
 	\EndIf
-\EndProcedure
+\EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 \begin{figure}[h]
 \begin{center}
@@ -930,50 +947,51 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 We start by giving the simple exact string matching algorithm using suffix trie iterators.
 
+%Multiple exact string matching on a suffix trie.
 \begin{algorithm}[h]
-%\caption{Multiple exact string matching on a suffix trie.}
-\caption{$\textsc{MultipleExactSearch}(t,p)$}
 \label{alg:st-exact-multi}
+\Algorithm{MultipleExactSearch}{$t,p$}
+\begin{tabular}{lll}
+\textbf{Input}  & $t$ : pointer& root node of the suffix trie of the text\\
+ 			    & $p$ : pointer& root node of the trie of the patterns\\
+\textbf{Output} & list & all occurrences of any pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Input {root node $t$ to the suffix trie of the text}
-%\Procedure{MultipleExactSearch}{$t,p$}
-	\If {\Call{isLeaf}{$p$}}
-		\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
-	\Else
-		\State \Call{goDown}{$p$}
-		\Repeat
-			\If {\Call{goDown}{$t, \Call{label}{p}$}}
-				\State \Call{MultipleExactSearch}{$t,p$}
-				\State \Call{goUp}{$t$}
-			\EndIf
-		\Until {\Call{goRight}{$p$}}
-	\EndIf
-%\EndProcedure
+\If {\Call{isLeaf}{$p$}}
+	\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
+\Else
+	\State \Call{goDown}{$p$}
+	\Repeat
+		\If {\Call{goDown}{$t, \Call{label}{p}$}}
+			\State \Call{MultipleExactSearch}{$t,p$}
+			\State \Call{goUp}{$t$}
+		\EndIf
+	\Until {\Call{goRight}{$p$}}
+\EndIf
 \end{algorithmic}
 \end{algorithm}
 
+%Multiple $k$-mismatches on a suffix trie.
 \begin{algorithm}[h]
-\caption{Multiple $k$-mismatches on a suffix trie.}
+\Algorithm{MultipleKMismatches}{$t,p,e$}
 \label{alg:st-hamming-multi}
 \begin{algorithmic}[1]
-\Procedure{MultipleKMismatches}{$t,p,e$}
-	\If {$e = k$}
-		\State {\Call{MultipleExactSearch}{$t,p$}}
-	\ElsIf {$e < k$}
-		\If {\Call{isLeaf}{$p$}}
-			\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
-		\ElsIf {\Call{goDown}{$t$}}
+\If {$e = k$}
+	\State {\Call{MultipleExactSearch}{$t,p$}}
+\ElsIf {$e < k$}
+	\If {\Call{isLeaf}{$p$}}
+		\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
+	\ElsIf {\Call{goDown}{$t$}}
+		\Repeat
+			\State {\Call{goDown}{$p$}}
 			\Repeat
-				\State {\Call{goDown}{$p$}}
-				\Repeat
-					\State {$d \gets \omega(\Call{label}{t}, \Call{label}{p})$}
-					\State \Call{MultipleKMismatches}{$t,p,e+d$}
-				\Until {\Call{goRight}{$p$}}
-				\State {\Call{goUp}{$p$}}
-			\Until {\Call{goRight}{$t$}}
-		\EndIf
+				\State {$d \gets \omega(\Call{label}{t}, \Call{label}{p})$}
+				\State \Call{MultipleKMismatches}{$t,p,e+d$}
+			\Until {\Call{goRight}{$p$}}
+			\State {\Call{goUp}{$p$}}
+		\Until {\Call{goRight}{$t$}}
 	\EndIf
-\EndProcedure
+\EndIf
 \end{algorithmic}
 \end{algorithm}
 
