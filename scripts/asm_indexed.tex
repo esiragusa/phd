@@ -388,7 +388,7 @@ We can devise an hybrid algorithm that uses the directory $D$ to conduct the sea
 This hybrid index cuts the most expensive binary searches and increases memory locality.
 Furthermore, this hybrid index becomes useful whenever the suffix array is too big to fit in main memory and has to reside in external memory.
 
-\section{FM-index}
+\section{FM-indices}
 
 The Burrows-Wheeler transform (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 The transformed string exposes two important properties: reversibility and compressibility.
@@ -770,7 +770,37 @@ If we sample one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon
 In practice, we usually sample text positions at rates between $2^{-3}$ and $2^{-5}$.
 The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
-\section{String matching algorithms}
+\section{Algorithms}
+
+\subsection{Bounded top-down traversal}
+
+\begin{algorithm}[h]
+\caption{Top-down traversal of a suffix trie bounded by depth.}
+\label{alg:st-dfs}
+\begin{algorithmic}[1]
+\Procedure{Dfs}{$x,d$}
+	\If {$d > 0$}
+		\If {\Call{goDown}{$x$}}
+			\Repeat
+				\State \Call{Dfs}{$x,d - 1$}
+			\Until \Call{goRight}{$x$}
+		\EndIf
+	\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Top-down traversal runtime]{Runtime of bounded top-down traversal of various suffix trie implementations.}
+\label{fig:visit-dna}
+\includegraphics[scale=0.4]{visit.dna.celegans.pdf}
+\end{center}
+\end{figure}
+
+\subsection{Exact pattern matching}
+
+We now benchmark algorithm~\ref{?}.
 
 \subsection{Backtracking $k$-mismatches}
 
@@ -803,15 +833,6 @@ See algorithm~\ref{alg:st-hamming}.
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
-
-\begin{figure}[h]
-\begin{center}
-\caption{Approximate string matching on a suffix trie.}
-\label{fig:st-hamming}
-\input{figures/strie_exact.tikz}
-\end{center}
-\end{figure}
-
 
 \subsection{Backtracking $k$-differences}
 
@@ -880,15 +901,42 @@ Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\re
 Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 
+\begin{figure}[h]
+\begin{center}
+\caption[Exact string matching runtime]{Runtime of exact string matching on various suffix trie implementations.}
+\label{fig:query-dna-exact}
+\includegraphics[scale=0.4]{query.dna.celegans.0.pdf}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\caption{Approximate string matching on a suffix trie.}
+\label{fig:st-hamming}
+\input{figures/strie_exact.tikz}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\caption[$k$-mismatches runtime]{Runtime of $k$-mismatches on various suffix trie implementations.}
+\label{fig:query-dna-apx}
+\includegraphics[scale=0.4]{query.dna.celegans.1.pdf}
+\end{center}
+\end{figure}
+
+
 \subsection{Multiple backtracking}
 
 We start by giving the simple exact string matching algorithm using suffix trie iterators.
 
 \begin{algorithm}[h]
-\caption{Multiple exact string matching on a suffix trie.}
+%\caption{Multiple exact string matching on a suffix trie.}
+\caption{$\textsc{MultipleExactSearch}(t,p)$}
 \label{alg:st-exact-multi}
 \begin{algorithmic}[1]
-\Procedure{MultipleExactSearch}{$t,p$}
+\Input {root node $t$ to the suffix trie of the text}
+%\Procedure{MultipleExactSearch}{$t,p$}
 	\If {\Call{isLeaf}{$p$}}
 		\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
 	\Else
@@ -900,7 +948,7 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 			\EndIf
 		\Until {\Call{goRight}{$p$}}
 	\EndIf
-\EndProcedure
+%\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
@@ -928,4 +976,20 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations.}
+\label{fig:query-dna-exact-multi}
+\includegraphics[scale=0.4]{multi.dna.celegans.0.15.pdf}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Multiple $k$-mismatches runtime]{Runtime of multiple $k$-mismatches on various suffix trie implementations.}
+\label{fig:query-dna-apx-multi}
+\includegraphics[scale=0.4]{multi.dna.celegans.1.30.pdf}
+\end{center}
+\end{figure}
 
