@@ -374,51 +374,66 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \end{minipage}
 \end{figure*}
 
-\begin{algorithm}[h!]
+\begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:qgram-goroot}
+\Algorithm{goRoot}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{goRoot}{$\Tn \rightarrow \{ l, r, d, l_h, r_h \}$}
-	\State {$d \gets 0$}
-	\State {$l \gets 1$}
-	\State {$r \gets n$}
-	\State {$l_h \gets 1$}
-	\State {$r_h \gets \sigma^q$}
-\EndProcedure
+\State {$\Tn \gets \{ 1, n, 0, 1, \sigma^q\}$}
 \end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:qgram-godownc}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn \rightarrow \{ l, r, d, e \} ,c$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\State {$d \gets d+1$}
-	\State {$e \gets c$}
-	\State {$l \gets \Call{L}{x,e}$}
-	\State {$r \gets \Call{R}{x,e}$}
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
 \end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
+\label{alg:qgram-godownc}
+\Algorithm{goDown}{$\Tn,c$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
+				& $c$ : character to query\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {\Call{isLeaf}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\State {$\Tn.d \gets \Tn.d+1$}
+\State {$\Tn.e \gets c$}
+\State {$\Tn.l \gets \Call{L}{\Tn,\Tn.e}$}
+\State {$\Tn.r \gets \Call{R}{\Tn,\Tn.e}$}
+\State \Return $\Tn.l < \Tn.r$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\end{figure*}
 
 %At this point, we are able to replace algorithm~\ref{alg:sa-exact} with algorithm~\ref{alg:qgram-exact}.
 Exact string matching algorithm~\ref{alg:st-exact} runs in time $\Oh(q)$, nonetheless we can improve it to perform $\Oh(1)$ lookups in $D$.
 It suffices to compute the canonical code of the pattern in one step, as shown in algorithm~\ref{alg:qgram-exact}.
 
-\begin{algorithm}[h]
-\caption{Exact string matching on a $q$-gram index.}
+%Exact string matching on a $q$-gram index.
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
 \label{alg:qgram-exact}
+\Algorithm{ExactSearch}{$t,p$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the $q$-gram index of the text\\
+				& $p$ : string to query\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{ExactSearch}{$t,p$}
-	\State {$l \gets D[h(p)]$}
-	\State {$r \gets D[h(p) + 1]$}
-	\State \Report $A[l \dots r]$
-\EndProcedure
+\State {$l \gets D[h(p)]$}
+\State {$r \gets D[h(p) + 1]$}
+\State \Report $A[l \dots r]$
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 If the patterns are shorter or equal to the fixed length $q$, we access the suffix array only to locate the occurrences, as the directory $D$ alone is sufficient to count the occurrences.
 In this case, the total ordering of the text suffixes in the suffix array can be relaxed to prefixes of length $q$.
