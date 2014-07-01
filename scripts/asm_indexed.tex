@@ -116,121 +116,155 @@ Binary search is the key to implement function \textsc{goDown} a symbol.
 Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{n})$ binary search steps the position in $A$ of the left and right interval corresponding to the child node following the edge labeled by a given symbol $c$.
 Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, however we defined $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
 
-\begin{algorithm}[h!]
+\begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:sa-lower}
+\Algorithm{L}{$\Tn,c$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+				& $c$ : character to query\\
+\textbf{Output} & integer denoting the left interval\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{L}{$\Tn \rightarrow \{ l, r ,d \},c$}
-	\State {$l_1 \gets l$}
-	\State {$l_2 \gets r$}
-	\While {$l_1 < l_2$}
-		\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-		\If {$\Sc_{A[i] + d} <_{lex} c$}
-			\State {$l_1 \gets i+1$}
-		\Else
-			\State {$l_2 \gets i$}
-		\EndIf
-	\EndWhile
-	\State \Return $l_1$
-\EndProcedure
+\State {$l_1 \gets x.l$}
+\State {$l_2 \gets x.r$}
+\While {$l_1 < l_2$}
+	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
+	\If {$\Sc_{A[i] + x.d} <_{lex} c$}
+		\State {$l_1 \gets i+1$}
+	\Else
+		\State {$l_2 \gets i$}
+	\EndIf
+\EndWhile
+\State \Return $l_1$
 \end{algorithmic}
+\end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:sa-upper}
+\Algorithm{R}{$\Tn,c$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+				& $c$ : character to query\\
+\textbf{Output} & integer denoting the right interval\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{R}{$\Tn \rightarrow \{ l, r ,d \},c$}
-	\State {$r_1 \gets l$}
-	\State {$r_2 \gets r$}
-	\While {$r_1 < r_2$}
-		\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-		\If {$\Sc_{A[i] + d} \leq_{lex} c$}
-			\State {$r_1 \gets i+1$}
-		\Else
-			\State {$r_2 \gets i$}
-		\EndIf
-	\EndWhile
-	\State \Return $r_1$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\end{algorithm}
-
-\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-%\label{alg:sa-goroot}
-\begin{algorithmic}[1]
-\Procedure{goRoot}{$\Tn \rightarrow \{ l, r, d\}$}
-	\State {$d \gets 0$}
-	\State {$l \gets 1$}
-	\State {$r \gets n$}
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-\begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \},c$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
+\State {$r_1 \gets x.l$}
+\State {$r_2 \gets x.r$}
+\While {$r_1 < r_2$}
+	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
+	\If {$\Sc_{A[i] + x.d} \leq_{lex} c$}
+		\State {$r_1 \gets i+1$}
+	\Else
+		\State {$r_2 \gets i$}
 	\EndIf
-	\State {$d \gets d+1$}
-	\State {$l \gets \Call{L}{x,c}$}
-	\State {$r \gets \Call{R}{x,c}$}
-	\State \Return $l < r$
-\EndProcedure
+\EndWhile
+\State \Return $r_1$
 \end{algorithmic}
-\end{minipage}
 \end{algorithm}
+\end{minipage}
+\end{figure*}
+
+\begin{figure*}
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
+\label{alg:sa-goroot}
+\Algorithm{goRoot}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\end{tabular}
+\begin{algorithmic}[1]
+\State {$x \gets \{ 0, 1, n\}$}
+%\State {$x.d \gets 0$}
+%\State {$x.l \gets 1$}
+%\State {$x.r \gets n$}
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
+\label{alg:sa-godownc}
+\Algorithm{goDown}{$\Tn,c$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+				& $c$ : character to query\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {\Call{isLeaf}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\State {$x.d \gets x.d+1$}
+\State {$x.l \gets \Call{L}{x,c}$}
+\State {$x.r \gets \Call{R}{x,c}$}
+\State \Return $x.l < x.r$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\end{figure*}
 
 We now implement \textsc{goDown} and \textsc{goRight} to have time complexity independent of the alphabet size $\sigma$.
 Indeed, the time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$, as they rely on a single call of using only \textsc{R}.
 In this way, the time complexity of exact string matching algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 
-\begin{algorithm}[h!]
+\begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:sa-godown}
+\Algorithm{goDown}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn \rightarrow \{ l, r ,d \}$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\State {$d \gets d+1$}
-	\State {$l \gets$ \Call{R}{$x,\epsilon$}}
-%	\While {$A[l] + d < n_{A[l]}$}
-%		\State {$l \gets l+1$}
-%	\EndWhile
-%	\If {$l \geq r$}
-%		\State \Return \False
-%	\EndIf
-	\State {$c_l \gets \Sc_{A[l] + d}$}
-	\State {$c_r \gets \Sc_{A[r] + d}$}
-	\If {$c_l \neq c_r$}
-		\State {$r \gets$ \Call{R}{$x,c_l$}}
-	\EndIf
-	\State \Return $l < r$
-\EndProcedure
+\If {\Call{isLeaf}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\State {$x.d \gets x.d+1$}
+\State {$x.l \gets$ \Call{R}{$x,\epsilon$}}
+%\While {$A[l] + d < n_{A[l]}$}
+%	\State {$l \gets l+1$}
+%\EndWhile
+%\If {$l \geq r$}
+%	\State \Return \False
+%\EndIf
+\State {$c_l \gets \Sc_{A[x.l] + x.d}$}
+\State {$c_r \gets \Sc_{A[x.r] + x.d}$}
+\If {$c_l \neq c_r$}
+	\State {$x.r \gets$ \Call{R}{$x,c_l$}}
+\EndIf
+\State \Return $x.l < x.r$
 \end{algorithmic}
-\end{minipage}
-%\end{algorithm}
-%\begin{algorithm}[h!]
-\begin{minipage}[t]{.5\textwidth}
-\label{alg:sa-goright}
-\begin{algorithmic}[1]
-\Procedure{goRight}{$\Tn \rightarrow \{ l, r ,d \}$}
-	\If {\Call{isRoot}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\State {$c_l \gets \Sc_{A[l] + d}$}
-	\State {$c_r \gets \Sc_{A[r] + d}$}
-	\If {$c_l \neq c_r$}
-		\State {$l \gets r$}
-		\State {$r \gets$ \Call{R}{$x,c_l$}}
-	\EndIf
-	\State \Return $l < r$
-\EndProcedure
-\end{algorithmic}
-\end{minipage}
 \end{algorithm}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
+\label{alg:sa-goright}
+\Algorithm{goRight}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {\Call{isRoot}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\State {$c_l \gets \Sc_{A[x.l] + x.d}$}
+\State {$c_r \gets \Sc_{A[x.r] + x.d}$}
+\If {$c_l \neq c_r$}
+	\State {$x.l \gets x.r$}
+	\State {$x.r \gets$ \Call{R}{$x,c_l$}}
+\EndIf
+\State \Return $x.l < x.r$
+\end{algorithmic}
+\end{algorithm}
+\end{minipage}
+\end{figure*}
 
 Note that we can iterate down the trie spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
 However, the worst case runtime of algorithm~\ref{alg:st-exact} remains $\Oh(m \log{n})$, as each step of the binary search now requires a full lexicographical comparison between the pattern and any suffix of the text, which is performed in $\Oh(m)$ time in the worst case.
