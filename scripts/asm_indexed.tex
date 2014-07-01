@@ -109,7 +109,7 @@ Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ 
 %\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
 \item \textsc{isLeaf}($\Tn$) returns true iff $A[r] + d = n_{A[r]}$;
 \item \textsc{label}($\Tn$) returns $\Sc_{A[l] + d}$;
-\item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
+\item \textsc{occurrences}($\Tn$) returns $A[l \dots r]$.
 \end{itemize}
 
 Binary search is the key to implement function \textsc{goDown} a symbol.
@@ -300,7 +300,7 @@ We define the basic node operations as follows:
 \begin{itemize}
 \item \textsc{isLeaf}($\Tn$) returns true iff $d=q$;
 \item \textsc{label}($\Tn$) returns $e$;
-\item \textsc{getOccurrences}($\Tn$) returns $A[l \dots r]$.
+\item \textsc{occurrences}($\Tn$) returns $A[l \dots r]$.
 \end{itemize}
 
 We define functions \textsc{L} and \textsc{R} to use the directory $D$ instead of $A$ and obtain \textsc{goDown} in $\Oh(1)$.
@@ -776,7 +776,7 @@ As proposed by \citeauthor{Ferragina2000}, we maintain a \emph{sampled} suffix a
 In order to determine if and where we sampled any $A[i]$ in $A^{\epsilon}$, we maintain a binary rank dictionary $S$ of length $n$: if $S[i]=1$, then we sampled $A[i]$ in $A^{\epsilon}[rank_1(S,i)]$.
 We obtain any $A[i]$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $A^{\epsilon}$, and then $A[i] = A[LF^j(i)] + j$.
 
-If we sample one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon > 0$, then $A^{\epsilon}$ consumes $\Oh(\frac{n}{\log^{\epsilon}{n}})$ space and \textsc{getOccurrences}($\Tn$) returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{n})$ time \citep{Ferragina2000}.
+If we sample one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon > 0$, then $A^{\epsilon}$ consumes $\Oh(\frac{n}{\log^{\epsilon}{n}})$ space and \textsc{occurrences}($\Tn$) returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{n})$ time \citep{Ferragina2000}.
 In practice, we usually sample text positions at rates between $2^{-3}$ and $2^{-5}$.
 The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
@@ -837,7 +837,7 @@ See algorithm~\ref{alg:st-hamming}.
 		\State {\Call{ExactSearch}{$t,p$}}
 	\ElsIf {$e < k$}
 		\If {\Call{atEnd}{$p$}}
-			\State \Report \Call{getOccurrences}{$t$}
+			\State \Report \Call{occurrences}{$t$}
 		\ElsIf {\Call{goDown}{$t$}}
 			\Repeat
 				\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
@@ -861,7 +861,7 @@ Algorithm for $k$-differences.
 \begin{algorithmic}[1]
 \Procedure{KDifferences}{$t,p,D$}
 	\If {$D[m] \leq k$}
-		\State \Report \Call{getOccurrences}{$t$}
+		\State \Report \Call{occurrences}{$t$}
 	\ElsIf {$\min{D} \leq k$}
 		\If {\Call{goDown}{$t$}}
 			\Repeat
@@ -958,7 +958,7 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$p$}}
-	\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
+	\State \Report \Call{occurrences}{$t$} $\times$ \Call{occurrences}{$p$}
 \Else
 	\State \Call{goDown}{$p$}
 	\Repeat
@@ -980,7 +980,7 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 	\State {\Call{MultipleExactSearch}{$t,p$}}
 \ElsIf {$e < k$}
 	\If {\Call{isLeaf}{$p$}}
-		\State \Report \Call{getOccurrences}{$t$} $\times$ \Call{getOccurrences}{$p$}
+		\State \Report \Call{occurrences}{$t$} $\times$ \Call{occurrences}{$p$}
 	\ElsIf {\Call{goDown}{$t$}}
 		\Repeat
 			\State {\Call{goDown}{$p$}}

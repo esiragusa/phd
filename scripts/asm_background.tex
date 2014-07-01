@@ -331,7 +331,7 @@ Given a trie $\Ti$, we define the following operations inspecting any pointed no
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
 \item \textsc{isLeaf}($\Tn$) returns true iff all outgoing edges are labeled by terminator symbols;
 \item \textsc{label}($\Tn$) returns the symbol labeling the edge entering $\Tn$;
-\item \textsc{getOccurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
+\item \textsc{occurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
 \end{itemize}
 and the following operations moving from pointed node $\Tn$, and returning true on success and false otherwise:
 \begin{itemize}
@@ -342,44 +342,54 @@ and the following operations moving from pointed node $\Tn$, and returning true 
 \end{itemize}
 
 Time complexities of the above operations depend on the data structure implementing the trie.
-Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $n$, \textsc{getOccurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity to stack all parent nodes.
+Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $n$, \textsc{occurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity to stack all parent nodes.
 Note that is always possible to implement \textsc{goDown} and \textsc{goRight} by relying on \textsc{goDown} a symbol and \textsc{goUp}, but their complexity becomes $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, we consider various data structures to implement suffix tries, we show how to implement these operations and give their complexities.
 
-\begin{algorithm}[h!]
+\begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:generic-godown}
+\Algorithm{goDown}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{goDown}{$\Tn$}
-	\If {\Call{isLeaf}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\If {\Call{goDown}{$\Tn, \min_{lex}{\Sigma}$}}
-		\State \Return \True
-	\Else
-		\State \Return $\Call{goRight}{$\Tn$}$		
-	\EndIf
-\EndProcedure
+\If {\Call{isLeaf}{$\Tn$}}
+	\State \Return \False
+\EndIf
+\If {\Call{goDown}{$\Tn, \min_{lex}{\Sigma}$}}
+	\State \Return \True
+\Else
+	\State \Return $\Call{goRight}{$\Tn$}$		
+\EndIf
 \end{algorithmic}
+\end{algorithm}
 \end{minipage}
+\hfill
 \begin{minipage}[t]{.5\textwidth}
+\begin{algorithm}[H]
 \label{alg:generic-goright}
+\Algorithm{goRight}{$\Tn$}
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
+\textbf{Output} & boolean indicating success\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{goRight}{$\Tn \rightarrow \{ e \}$}
-	\If {\Call{isRoot}{$\Tn$}}
-		\State \Return \False
-	\EndIf
-	\While {$c \gets \text{successor}_{lex}{e, \Sigma}$}
+\If {\NotB \Call{isRoot}{$\Tn$}}
+	\While {$c \gets \text{next}_{lex}{\Sigma,\Call{label}{\Tn}}$}
 		\State {$\Call{goUp}{x}$}
 		\If {$\Call{goDown}{x, c}$}
 			\State \Return \True
 		\EndIf
 	\EndWhile
-	\State \Return \False
-\EndProcedure
+\EndIf
+\State \Return \False
 \end{algorithmic}
-\end{minipage}
 \end{algorithm}
+\end{minipage}
+\end{figure*}
 
 
 \subsubsection{String matching algorithms}
@@ -392,22 +402,30 @@ We assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
-If we implement \textsc{goDown} in constant time and \textsc{getOccurrences} in linear time, we find all occurrences of $p$ into $t$ in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
+If we implement \textsc{goDown} in constant time and \textsc{occurrences} in linear time, we find all occurrences of $p$ into $t$ in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
-\begin{algorithm}[h]
-\caption{Exact string matching on a suffix trie.}
+%Exact string matching on a suffix trie.
+\begin{center}
+\begin{minipage}[t]{.7\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-exact}
+\Algorithm{ExactSearch}{$t,p$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to a suffix trie node\\
+				& $p$ : pointer to a pattern\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{ExactSearch}{$t,p$}
-	\If {\Call{atEnd}{$p$}}
-		\State \Report \Call{getOccurrences}{$t$}
-	\ElsIf {\Call{goDown}{$t,\Call{value}{p}$}}
-			\State {\Call{goNext}{$p$}}
-			\State \Call{ExactSearch}{$t,p$}
-	\EndIf
-\EndProcedure
+\If {\Call{atEnd}{$p$}}
+	\State \Report \Call{occurrences}{$t$}
+\ElsIf {\Call{goDown}{$t,\Call{value}{p}$}}
+		\State {\Call{goNext}{$p$}}
+		\State \Call{ExactSearch}{$t,p$}
+\EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 \begin{figure}[h]
 \begin{center}
