@@ -114,12 +114,11 @@ Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ 
 
 Binary search is the key to implement function \textsc{goDown} a symbol.
 Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{n})$ binary search steps the position in $A$ of the left and right interval corresponding to the child node following the edge labeled by a given symbol $c$.
-Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, however we defined $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
+Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, however we defined $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
 
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-lower}
 \Algorithm{L}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -139,12 +138,12 @@ Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may inv
 \EndWhile
 \State \Return $l_1$
 \end{algorithmic}
+\label{alg:sa-lower}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-upper}
 \Algorithm{R}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -164,6 +163,7 @@ Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may inv
 \EndWhile
 \State \Return $r_1$
 \end{algorithmic}
+\label{alg:sa-upper}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
@@ -171,7 +171,6 @@ Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may inv
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-goroot}
 \Algorithm{goRoot}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -182,12 +181,12 @@ Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may inv
 %\State {$\Tn.r \gets n$}
 %\State {$\Tn.d \gets 0$}
 \end{algorithmic}
+\label{alg:sa-goroot}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-godownc}
 \Algorithm{goDown}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -203,18 +202,18 @@ Note that line 6 of algorithms~\ref{alg:sa-lower} and \ref{alg:sa-upper} may inv
 \State {$\Tn.r \gets \Call{R}{\Tn,c}$}
 \State \Return $\Tn.l < \Tn.r$
 \end{algorithmic}
+\label{alg:sa-godownc}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
 
-We now implement \textsc{goDown} and \textsc{goRight} to have time complexity independent of the alphabet size $\sigma$.
-Indeed, the time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$, as they rely on a single call of using only \textsc{R}.
+We now implement \textsc{goDown} (algorithm~\ref{alg:sa-godown}) and \textsc{goRight} (algorithm~\ref{alg:sa-goright}) to have time complexity independent of the alphabet size $\sigma$.
+Indeed, the time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$, as they rely on a single call of \textsc{R}.
 In this way, the time complexity of exact string matching algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
 
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-godown}
 \Algorithm{goDown}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -239,12 +238,12 @@ In this way, the time complexity of exact string matching algorithm~\ref{alg:st-
 \EndIf
 \State \Return $\Tn.l < \Tn.r$
 \end{algorithmic}
+\label{alg:sa-godown}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:sa-goright}
 \Algorithm{goRight}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
@@ -262,11 +261,12 @@ In this way, the time complexity of exact string matching algorithm~\ref{alg:st-
 \EndIf
 \State \Return $\Tn.l < \Tn.r$
 \end{algorithmic}
+\label{alg:sa-goright}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
 
-Note that we can iterate down the trie spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
+Note that we can iterate down the trie spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
 However, the worst case runtime of algorithm~\ref{alg:st-exact} remains $\Oh(m \log{n})$, as each step of the binary search now requires a full lexicographical comparison between the pattern and any suffix of the text, which is performed in $\Oh(m)$ time in the worst case.
 As shown in \citep{Manber1990}, we can decrease the worst case runtime to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Sc_{A[i] \dots}$, $\Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
 Alternatively, we can reduce the \emph{average case} runtime to $\Oh(m + \log{n})$ without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
@@ -343,7 +343,6 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:qgram-lower}
 \Algorithm{L}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
@@ -354,12 +353,12 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \State {$\Tn.l_h \gets \Tn.l_h + \rho_0(c) \cdot \sigma^{\Tn.d} $}
 \State \Return $D[\Tn.l_h]$
 \end{algorithmic}
+\label{alg:qgram-lower}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:qgram-upper}
 \Algorithm{R}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
@@ -370,6 +369,7 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \State {$\Tn.r_h \gets \Tn.r_h - \rho_0(c) \cdot \sigma^{\Tn.d}$}
 \State \Return $D[\Tn.r_h]$
 \end{algorithmic}
+\label{alg:qgram-upper}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
@@ -377,7 +377,6 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:qgram-goroot}
 \Algorithm{goRoot}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
@@ -385,12 +384,12 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \begin{algorithmic}[1]
 \State {$\Tn \gets \{ 1, n, 0, 1, \sigma^q, \epsilon \}$}
 \end{algorithmic}
+\label{alg:qgram-goroot}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:qgram-godownc}
 \Algorithm{goDown}{$\Tn,c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
@@ -407,6 +406,7 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \State {$\Tn.r \gets \Call{R}{\Tn,\Tn.e}$}
 \State \Return $\Tn.l < \Tn.r$
 \end{algorithmic}
+\label{alg:qgram-godownc}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
@@ -419,7 +419,6 @@ It suffices to compute the canonical code of the pattern in one step, as shown i
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\label{alg:qgram-exact}
 \Algorithm{ExactSearch}{$t,p$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the $q$-gram index of the text\\
@@ -431,6 +430,7 @@ It suffices to compute the canonical code of the pattern in one step, as shown i
 \State {$r \gets D[h(p) + 1]$}
 \State \Report $A[l \dots r]$
 \end{algorithmic}
+\label{alg:qgram-exact}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -794,12 +794,11 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 \end{eqnarray}
 Analogously, we can rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
 Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and runs in time $\Oh(1)$.
-Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see algorithm~\ref{?}).
+Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see algorithms~\ref{alg:st-godown, alg:st-goright}).
 
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:fm-goroot}
 \Algorithm{goRoot}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
@@ -809,12 +808,12 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 %\State {$x.l \gets 1$}
 %\State {$x.r \gets n$}
 \end{algorithmic}
+\label{alg:fm-goroot}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:fm-godownc}
 \Algorithm{goDown}{$\Tn, c$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
@@ -830,6 +829,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \State {$x.e \gets c$}
 \State \Return $x.l < x.r$
 \end{algorithmic}
+\label{alg:fm-godownc}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
@@ -851,7 +851,6 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-dfs}
 \Algorithm{Dfs}{$x,d$}
 \begin{tabular}{ll}
 \textbf{Input}  & $x$ : pointer to the root node of the suffix trie\\
@@ -866,6 +865,7 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 	\EndIf
 \EndIf
 \end{algorithmic}
+\label{alg:st-dfs}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -880,7 +880,7 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 \subsection{Exact pattern matching}
 
-We now benchmark algorithm~\ref{?}.
+We now benchmark algorithm~\ref{alg:st-exact}.
 
 \subsection{Backtracking $k$-mismatches}
 
@@ -895,7 +895,6 @@ See algorithm~\ref{alg:st-hamming}.
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-hamming}
 \Algorithm{KMismatches}{$t,p,e$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
@@ -919,6 +918,7 @@ See algorithm~\ref{alg:st-hamming}.
 	\EndIf
 \EndIf
 \end{algorithmic}
+\label{alg:st-hamming}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -931,7 +931,6 @@ Algorithm for $k$-differences.
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-edit}
 \Algorithm{KDifferences}{$t,p,D$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
@@ -951,6 +950,7 @@ Algorithm for $k$-differences.
 	\EndIf
 \EndIf
 \end{algorithmic}
+\label{alg:st-edit}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -1032,7 +1032,6 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-exact-multi}
 \Algorithm{MultipleExactSearch}{$t,p$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
@@ -1052,6 +1051,7 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 	\Until {\Call{goRight}{$p$}}
 \EndIf
 \end{algorithmic}
+\label{alg:st-exact-multi}
 \end{algorithm}
 \end{minipage}
 \end{center}
@@ -1060,7 +1060,6 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-hamming-multi}
 \Algorithm{MultipleKMismatches}{$t,p,e$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
@@ -1086,6 +1085,7 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 	\EndIf
 \EndIf
 \end{algorithmic}
+\label{alg:st-hamming-multi}
 \end{algorithm}
 \end{minipage}
 \end{center}

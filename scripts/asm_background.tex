@@ -349,7 +349,6 @@ In chapter~\ref{chr:index}, we consider various data structures to implement suf
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:generic-godown}
 \Algorithm{goDown}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
@@ -365,12 +364,12 @@ In chapter~\ref{chr:index}, we consider various data structures to implement suf
 	\State \Return $\Call{goRight}{$\Tn$}$		
 \EndIf
 \end{algorithmic}
+\label{alg:st-godown}
 \end{algorithm}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\label{alg:generic-goright}
 \Algorithm{goRight}{$\Tn$}
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
@@ -387,6 +386,7 @@ In chapter~\ref{chr:index}, we consider various data structures to implement suf
 \EndIf
 \State \Return \False
 \end{algorithmic}
+\label{alg:st-goright}
 \end{algorithm}
 \end{minipage}
 \end{figure*}
@@ -408,7 +408,6 @@ If we implement \textsc{goDown} in constant time and \textsc{occurrences} in lin
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
-\label{alg:st-exact}
 \Algorithm{ExactSearch}{$t,p$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to a suffix trie node\\
@@ -423,6 +422,7 @@ If we implement \textsc{goDown} in constant time and \textsc{occurrences} in lin
 		\State \Call{ExactSearch}{$t,p$}
 \EndIf
 \end{algorithmic}
+\label{alg:st-exact}
 \end{algorithm}
 \end{minipage}
 \end{center}
