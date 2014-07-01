@@ -740,8 +740,8 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \begin{algorithm}[H]
 \label{alg:fm-goroot}
 \Algorithm{goRoot}{$\Tn$}
-\begin{tabular}{lll}
-\textbf{Input}  & $\Tn$ : pointer& FM-index node\\
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$x.l \gets 1$}
@@ -754,9 +754,9 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \begin{algorithm}[H]
 \label{alg:fm-godownc}
 \Algorithm{goDown}{$\Tn, c$}
-\begin{tabular}{lll}
-\textbf{Input}  & $\Tn$ : pointer& FM-index node\\
-				& $c$ : char& query character\\
+\begin{tabular}{ll}
+\textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
+				& $c$ : char to query\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$\Tn$}}
@@ -790,9 +790,9 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 \begin{algorithm}[H]
 \label{alg:st-dfs}
 \Algorithm{Dfs}{$x,d$}
-\begin{tabular}{lll}
-\textbf{Input}  & $x$ : pointer& root node of the suffix trie\\
- 			    & $d$ : integer& bounding depth\\
+\begin{tabular}{ll}
+\textbf{Input}  & $x$ : pointer to the root node of the suffix trie\\
+ 			    & $d$ : integer bounding the visit depth\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {$d > 0$}
@@ -951,10 +951,10 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \begin{algorithm}[h]
 \label{alg:st-exact-multi}
 \Algorithm{MultipleExactSearch}{$t,p$}
-\begin{tabular}{lll}
-\textbf{Input}  & $t$ : pointer& root node of the suffix trie of the text\\
- 			    & $p$ : pointer& root node of the trie of the patterns\\
-\textbf{Output} & list & all occurrences of any pattern in the text\\
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+ 			    & $p$ : pointer to the root node of the trie of the patterns\\
+\textbf{Output} & list of all occurrences of any pattern in the text\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$p$}}
