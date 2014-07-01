@@ -757,6 +757,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \begin{tabular}{ll}
 \textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
 				& $c$ : char to query\\
+\textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$\Tn$}}
@@ -792,7 +793,7 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 \Algorithm{Dfs}{$x,d$}
 \begin{tabular}{ll}
 \textbf{Input}  & $x$ : pointer to the root node of the suffix trie\\
- 			    & $d$ : integer bounding the visit depth\\
+ 			    & $d$ : integer bounding the traversal depth\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {$d > 0$}
@@ -828,51 +829,69 @@ If the computed distance exceeds $k$, we stop the traversal and proceed on the n
 Conversely, if we completely spelled the pattern $p$ and we ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
 See algorithm~\ref{alg:st-hamming}.
 
-\begin{algorithm}[h]
-\caption{$k$-mismatches on a suffix trie.}
+%$k$-mismatches on a suffix trie.
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-hamming}
+\Algorithm{KMismatches}{$t,p,e$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+ 			    & $p$ : pointer to the root node of the trie of the patterns\\
+ 			    & $e$ : integer bounding the number of mismatches\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{KMismatches}{$t,p,e$}
-	\If {$e = k$}
-		\State {\Call{ExactSearch}{$t,p$}}
-	\ElsIf {$e < k$}
-		\If {\Call{atEnd}{$p$}}
-			\State \Report \Call{occurrences}{$t$}
-		\ElsIf {\Call{goDown}{$t$}}
-			\Repeat
-				\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
-				\State \Call{goNext}{$p$}
-				\State \Call{KMismatches}{$t,p,e + d$}
-				\State \Call{goPrevious}{$p$}
-			\Until \Call{goRight}{$t$}
-		\EndIf
+\If {$e = k$}
+	\State {\Call{ExactSearch}{$t,p$}}
+\ElsIf {$e < k$}
+	\If {\Call{atEnd}{$p$}}
+		\State \Report \Call{occurrences}{$t$}
+	\ElsIf {\Call{goDown}{$t$}}
+		\Repeat
+			\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
+			\State \Call{goNext}{$p$}
+			\State \Call{KMismatches}{$t,p,e + d$}
+			\State \Call{goPrevious}{$p$}
+		\Until \Call{goRight}{$t$}
 	\EndIf
-\EndProcedure
+\EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 \subsection{Backtracking $k$-differences}
 
 Algorithm for $k$-differences.
 
-\begin{algorithm}[h]
-\caption{$k$-differences on a suffix trie.}
+%$k$-differences on a suffix trie.
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-edit}
+\Algorithm{KDifferences}{$t,p,D$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+ 			    & $p$ : pointer to the root node of the trie of the patterns\\
+ 			    & $D$ : vector of integers\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
-\Procedure{KDifferences}{$t,p,D$}
-	\If {$D[m] \leq k$}
-		\State \Report \Call{occurrences}{$t$}
-	\ElsIf {$\min{D} \leq k$}
-		\If {\Call{goDown}{$t$}}
-			\Repeat
-				\State {$D' \gets$ \Call{DP}{$D, \Call{label}{t}, p$}}
-				\State \Call{KDifferences}{$t,p,D'$}
-			\Until {\Call{goRight}{$t$}}
-		\EndIf
+\If {$D[m] \leq k$}
+	\State \Report \Call{occurrences}{$t$}
+\ElsIf {$\min{D} \leq k$}
+	\If {\Call{goDown}{$t$}}
+		\Repeat
+			\State {$D' \gets$ \Call{DP}{$D, \Call{label}{t}, p$}}
+			\State \Call{KDifferences}{$t,p,D'$}
+		\Until {\Call{goRight}{$t$}}
 	\EndIf
-\EndProcedure
+\EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 We can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
