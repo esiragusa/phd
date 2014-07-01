@@ -948,7 +948,9 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 We start by giving the simple exact string matching algorithm using suffix trie iterators.
 
 %Multiple exact string matching on a suffix trie.
-\begin{algorithm}[h]
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-exact-multi}
 \Algorithm{MultipleExactSearch}{$t,p$}
 \begin{tabular}{ll}
@@ -970,11 +972,21 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 %Multiple $k$-mismatches on a suffix trie.
-\begin{algorithm}[h]
-\Algorithm{MultipleKMismatches}{$t,p,e$}
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
 \label{alg:st-hamming-multi}
+\Algorithm{MultipleKMismatches}{$t,p,e$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+ 			    & $p$ : pointer to the root node of the trie of the patterns\\
+ 			    & $e$ : integer bounding the number of mismatches\\
+\textbf{Output} & list of all occurrences of any pattern in the text\\
+\end{tabular}
 \begin{algorithmic}[1]
 \If {$e = k$}
 	\State {\Call{MultipleExactSearch}{$t,p$}}
@@ -994,6 +1006,8 @@ We start by giving the simple exact string matching algorithm using suffix trie 
 \EndIf
 \end{algorithmic}
 \end{algorithm}
+\end{minipage}
+\end{center}
 
 \begin{figure}[h]
 \begin{center}
