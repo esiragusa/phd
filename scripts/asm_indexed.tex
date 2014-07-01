@@ -107,9 +107,9 @@ The occurrences below any node correspond by definition to the interval $[l,r]$ 
 Summing up, we represent the pointed node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
 \begin{itemize}
 %\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $A[r] + d = n_{A[r]}$;
-\item \textsc{label}($\Tn$) returns $\Sc_{A[l] + d}$;
-\item \textsc{occurrences}($\Tn$) returns $A[l \dots r]$.
+\item \textsc{isLeaf}($\Tn$) returns true iff $A[\Tn.r] + \Tn.d = n_{A[\Tn.r]}$;
+\item \textsc{label}($\Tn$) returns $\Sc_{A[\Tn.l] + \Tn.d}$;
+\item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
 \end{itemize}
 
 Binary search is the key to implement function \textsc{goDown} a symbol.
@@ -332,9 +332,9 @@ In addition, while traversing the trie, we maintain the interval $[l_h,r_h]$ in 
 Summing up, we represent the pointed node $\Tn$ by the elements $\{ l, r, d, l_h, r_h, e \}$.
 We define the basic node operations as follows:
 \begin{itemize}
-\item \textsc{isLeaf}($\Tn$) returns true iff $d=q$;
-\item \textsc{label}($\Tn$) returns $e$;
-\item \textsc{occurrences}($\Tn$) returns $A[l \dots r]$.
+\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.d=q$;
+\item \textsc{label}($\Tn$) returns $\Tn.e$;
+\item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
 \end{itemize}
 
 We define functions \textsc{L} and \textsc{R} to use the directory $D$ instead of $A$ and obtain \textsc{goDown} in $\Oh(1)$.
@@ -383,7 +383,7 @@ Note how the canonical code assigned by $h$ preserves the lexicographical orderi
 \textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\Tn \gets \{ 1, n, 0, 1, \sigma^q\}$}
+\State {$\Tn \gets \{ 1, n, 0, 1, \sigma^q, \epsilon \}$}
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
@@ -762,9 +762,9 @@ Later we focus on how to represent the leaves, which are necessary to locate occ
 We represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 %In order to answer \textsc{isLeaf}, we consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 \begin{itemize}
-%\item \textsc{isLeaf}($\Tn$) returns true iff $r \in \mathbb{I}$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $l_r = \$$;
-\item \textsc{label}($\Tn$) returns $e$.
+%\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.r \in \mathbb{I}$;
+\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.l_r = \$$;
+\item \textsc{label}($\Tn$) returns $\Tn.e$.
 \end{itemize}
 
 Given a padded string collection $\Sc$, its BWT plus its associated permutation $LF$ let us recover any substring of $\bar{\Sc}$.
@@ -805,8 +805,9 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$x.l \gets 1$}
-\State {$x.r \gets n$}
+\State {$x \gets \{ 1, n, \epsilon \}$}
+%\State {$x.l \gets 1$}
+%\State {$x.r \gets n$}
 \end{algorithmic}
 \end{algorithm}
 \end{minipage}
