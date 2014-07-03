@@ -75,7 +75,7 @@ Genomes evolved through multiple types of duplication events, including
 \begin{inparaenum}[(i)]
 \item whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?},
 \item transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?},
-\item proliferation of repetitive structural elements as telomeres and centromeres \citep{?}.
+\item proliferation of repetitive structural elements such as telomeres and centromeres \citep{?}.
 \end{inparaenum}
 As a result of these events, about 50~\% of the human genome is composed of repeats.
 
@@ -368,11 +368,7 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 
 % -----------------------------------------------------------------------------
 
-\subsection{Masai}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Yara}
+\subsection{Masai and Yara}
 
 % -----------------------------------------------------------------------------
 
@@ -392,62 +388,49 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 
 \chapter{Masai}
 
-We present Masai, a read mapper that combines for the first time filtering with backtracking.
-Our filtering approach is based on non-heuristic and full-sensitive filtration strategies using exact and \emph{approximate seeds}, which are searched in the reference genome via backtracking.
-Approximate seeds, compared to exact seeds, increase filtration specificity while preserving sensitivity.
-Moreover, we introduce a \emph{multiple backtracking} method which speeds up filtration by searching all seeds simultaneously with the help of an additional index.
-Combined together, these methods yield a flexible and efficient filter that significantly speeds up approximate search on genomic datasets.
+In this chapter we present our first attempt to engineer an efficient all-mapper.
+When we started this project, in October 2011, the fastest all-mappers (MrFast and RazerS~3) were two order of magnitude slower than prominent best-mappers (Bowtie and BWA).
+On one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration strategy would had been beneficial.
+On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
+After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking.
 
-Masai targets all-mapping, but eventually it can be used as a best-mapper achieving even better runtimes.
-We extensively compared Masai with popular read mappers on simulated and real datasets.
-Compared to the considered all-mappers, Masai is an order of magnitude faster and has comparable sensitivity.
-In addition, Masai is more accurate than the considered best-mappers and 2--4 times faster than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
-% showing that it represents the state of the art in terms of speed and sensitivity.
-Masai is implemented in \CC using the SeqAn library and distributed under the BSD license.
-It can be downloaded from \url{http://www.seqan.de/projects/masai}.
+In the engineering section, we explain which data structures we adopt for indexing, how our filtration method works, and how we perform seed extension.
+In particular, our filtration method is based on exact or approximate seeds;
+we obtain a stronger filter for mammal genomes, which is still non-heuristic and full-sensitive, by employing approximate seeds instead of exact seeds.
+We find approximate seeds by backtracking the index of the reference genome.
+Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
+Lastly, we improve our method to perform best-mapping in a more efficient way.
+
+Our method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate \emph{s}eeds on a suffix \emph{a}rray \emph{i}ndex.
+Masai is part of the SeqAn library, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
+
+In the evaluation section, we extensively compare Masai with popular read mappers, both on simulated and real datasets.
+Compared to MrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
+In addition, Masai is more accurate and 2--4 times faster than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+
+Finally, we discuss the limitations of Masai that led us to engineer Yara, yet another read aligner.
 
 % -----------------------------------------------------------------------------
 
 \section{Engineering}
 
-In order to map reads to a reference genome, we proceed as follows.
+Here we give an overview of the process to map reads to a reference genome.
 
 We first construct a conceptual \emph{suffix tree} of the reference genome, then store it on disk and reuse it for each read mapping job.
 Any data structure equivalent to the generalized suffix tree in terms of allowing a top-down traversal can be used to this intent. We implemented a generic algorithm using the suffix array \citep{Manber1990}, the enhanced suffix array \citep{Abouelhoda2004}, and the FM-index \citep{Ferragina2001}.
 
-At mapping time we choose a filtration strategy according to the reference genome and the specified error rate.
+At mapping time we choose a filtration strategy according to the reference genome and the specified absolute number of errors.
 Our filtration strategies are based on \citep{Navarro2000}, make use of \emph{exact and} approximate non-overlapping seeds and are guaranteed to be full-sensitive by the pigeonhole principle.
 In Figure~\ref{fig:FiltrationStrategies} we show an example providing two alternative filtration strategies.
 
 Therefore we partition all reads and their reverse complements in non-overlapping seeds and subsequently arrange all seeds in a conceptual \emph{radix tree}.
-The time spent to construct the radix tree is easily justified since the tree allows us to perform multiple backtracking.
-We indeed apply our \emph{multiple backtracking algorithm} to the radix tree, in order to search simultaneously all seeds in the suffix tree of the reference genome.
+The time spent to construct the radix tree is easily justified, since this additional index allows us to perform backtracking more efficiently.
+We indeed apply our \emph{multiple backtracking algorithm}, in order to search simultaneously all seeds in the suffix tree of the reference genome.
 
 Finally we perform seed extension on each seed reported by the multiple backtracking algorithm.
-We extend both ends of each seed using a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999} presented in \citep{Razers3}.
+We extend both ends of each seed using a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999},  already adopted in \citep{Razers3}.
 
 In the following of this section we give a detailed explanation of each mapping step.
-
-\subsection{Seeding}
-%Refer to exact and approximate seeds
-
-We now consider formally the read mapping problem.
-Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
-
-Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
-Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
-If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
-
-With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
-Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
-The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
-
-The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
-When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
-Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
-
-In Masai Algorithm~\ref{MultipleApproximateSearch} is implemented only for mismatches, consequently full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
-However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
 
 \subsection{Indexing}
 
@@ -472,6 +455,35 @@ We build the $q$-gram index efficiently and in linear time by bucket sort.
 Below depth $q$ the properties of the radix tree are lost, however multiple backtracking is still applicable.
 %We observed that the $q$-Gram index is more convenient than the lazy suffix tree for exact search.
 
+\subsection{Seeding}
+%Refer to exact and approximate seeds
+
+We now consider formally the read mapping problem.
+Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
+
+Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
+Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
+If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
+
+We partition $r$ into $s \leq k+1$ non-overlapping seeds.
+According to the pigeonhole principle each approximate occurrence of $r$ in $g$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
+
+%Moreover, since the number of seeds within distance $\lfloor k/s \rfloor$ is $s - (k \bmod s)$,
+Moreover, we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
+Hence all approximate occurrences of $r$ in $g$ within distance $k$ will be found.
+
+With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
+Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
+The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
+
+The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
+When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
+Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
+
+In Masai Algorithm~\ref{MultipleApproximateSearch} is implemented only for mismatches, consequently full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
+However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
+
 \subsection{Seed extension}
 
 We use a banded version of Myers bit-vector algorithm \citep{Myers1999} already presented in \citep{Razers3}.
@@ -486,9 +498,7 @@ Only if the seed extension on the left side succeeds, we perform a seed extensio
 Moreover, we first compute the longest common prefix on each side of the seed and let the global alignment algorithm start from the first mismatching positions.
 We observed that this approach is up to two times faster than \citep{Razers3}.
 
-\subsection{Mapping strategies}
-\subsubsection{All-mapping}
-\subsubsection{Best-mapping}
+\subsection{Best-mapping}
 
 % -----------------------------------------------------------------------------
 
