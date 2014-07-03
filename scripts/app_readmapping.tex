@@ -24,8 +24,8 @@ Life Technologies / Ion Torrent.
 \subsection{454 Life Sciences}
 Roche / 454 Life Sciences.
 
-\subsection{SOLiD}
-ABI / SOLiD.
+%\subsection{SOLiD}
+%ABI / SOLiD.
 
 \section{Sequencing protocols and applications}
 
@@ -138,9 +138,12 @@ Thus the above estimate is a lower bound.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
 Unique mappability rises to 83~\% by increasing the read length to 75~bp; however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
 
+\begin{table}[h]
 \begin{center}
+\caption[Mappability]{Mappability of model genomes.}
 \input{tables/table_mappability}
 \end{center}
+\end{table}
 
 The uniqueome plays an important role in ChIP-seq experiments.
 It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
@@ -223,53 +226,15 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 
 \citeauthor{Lee2012} simulate reads having length and error profiles similar to those issue by actual sequencing technologies, define low GMS regions as those locations for which $\text{GMS}(l) \leq 10$, and measure the percentage of such locations in the human genome.
 
+\begin{table}[h]
 \begin{center}
+\caption[Genome mappability score]{Human genome mappability score of various sequencing technologies.}
 \input{tables/table_gms}
 \end{center}
+\end{table}
 
 % =============================================================================
 
-\chapter{Read mappers engineering}
-
-\section{Masai}
-
-\subsection{Approximate seeds}
-
-\subsection{Multiple backtracking}
-
-\subsection{Single-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
-
-\subsection{Paired-end mapping}
-
-% =============================================================================
-
-\section{Yara}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Single-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Paired-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Mapping by strata}
-
-% -----------------------------------------------------------------------------
-
-\subsection{Parallelization}
-\subsection{Hardware acceleration}
-
-% =============================================================================
-
-\chapter{Read mappers evaluation}
-
-
-% =============================================================================
 
 \section{Popular read mappers}
 
@@ -423,11 +388,469 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 \end{table}
 \end{landscape}
 
-\section{Rabema results}
-\section{Variant detection results}
-\section{Runtime results}
+% =============================================================================
+
+\chapter{Masai}
+
+We present Masai, a read mapper that combines for the first time filtering with backtracking.
+Our filtering approach is based on non-heuristic and full-sensitive filtration strategies using exact and \emph{approximate seeds}, which are searched in the reference genome via backtracking.
+Approximate seeds, compared to exact seeds, increase filtration specificity while preserving sensitivity.
+Moreover, we introduce a \emph{multiple backtracking} method which speeds up filtration by searching all seeds simultaneously with the help of an additional index.
+Combined together, these methods yield a flexible and efficient filter that significantly speeds up approximate search on genomic datasets.
+
+Masai targets all-mapping, but eventually it can be used as a best-mapper achieving even better runtimes.
+We extensively compared Masai with popular read mappers on simulated and real datasets.
+Compared to the considered all-mappers, Masai is an order of magnitude faster and has comparable sensitivity.
+In addition, Masai is more accurate than the considered best-mappers and 2--4 times faster than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+% showing that it represents the state of the art in terms of speed and sensitivity.
+Masai is implemented in \CC using the SeqAn library and distributed under the BSD license.
+It can be downloaded from \url{http://www.seqan.de/projects/masai}.
+
+% -----------------------------------------------------------------------------
+
+\section{Engineering}
+
+In order to map reads to a reference genome, we proceed as follows.
+
+We first construct a conceptual \emph{suffix tree} of the reference genome, then store it on disk and reuse it for each read mapping job.
+Any data structure equivalent to the generalized suffix tree in terms of allowing a top-down traversal can be used to this intent. We implemented a generic algorithm using the suffix array \citep{Manber1990}, the enhanced suffix array \citep{Abouelhoda2004}, and the FM-index \citep{Ferragina2001}.
+
+At mapping time we choose a filtration strategy according to the reference genome and the specified error rate.
+Our filtration strategies are based on \citep{Navarro2000}, make use of \emph{exact and} approximate non-overlapping seeds and are guaranteed to be full-sensitive by the pigeonhole principle.
+In Figure~\ref{fig:FiltrationStrategies} we show an example providing two alternative filtration strategies.
+
+Therefore we partition all reads and their reverse complements in non-overlapping seeds and subsequently arrange all seeds in a conceptual \emph{radix tree}.
+The time spent to construct the radix tree is easily justified since the tree allows us to perform multiple backtracking.
+We indeed apply our \emph{multiple backtracking algorithm} to the radix tree, in order to search simultaneously all seeds in the suffix tree of the reference genome.
+
+Finally we perform seed extension on each seed reported by the multiple backtracking algorithm.
+We extend both ends of each seed using a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999} presented in \citep{Razers3}.
+
+In the following of this section we give a detailed explanation of each mapping step.
+
+\subsection{Seeding}
+%Refer to exact and approximate seeds
+
+We now consider formally the read mapping problem.
+Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
+
+Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
+Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
+If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
+
+With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
+Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
+The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
+
+The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
+When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
+Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
+
+In Masai Algorithm~\ref{MultipleApproximateSearch} is implemented only for mismatches, consequently full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
+However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
+
+\subsection{Indexing}
+
+We implemented a generic suffix tree top-down traversal on the \emph{suffix array} \citep{Manber1990}, the \emph{enhanced suffix array} (Esa) \citep{Abouelhoda2004}, and the \emph{FM-index} \citep{Ferragina2001}.
+The Esa preserves the asymptotic performances of the suffix tree and consumes, as implemented in SeqAn, $13n$ bytes for a sequence of length $n$.
+Nevertheless, the suffix array, despite consuming $5n$ bytes and being theoretically slower, always showed better performance than the Esa (Supplementary Data).
+The FM-index implicitly represents a prefix trie in only $1.5n$ bytes and provides constant time node traversal, while being slower than the other two data structures.
+
+\subsubsection{Indexing the reference genome}
+
+We prefer the suffix array because it provides a good compromise between speed and memory consumption, but nevertheless leave the possibility to choose among the aforementioned data structures.
+We construct the (generalized) suffix array using an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences.
+For construction of the Esa or FM-index we additionally use the algorithms proposed in \citep{Kasai2001,Abouelhoda2004} and \citep{Grossi2003}.
+Similarly to all read mappers relying on an index of the reference genome, we build the index of the reference genome only once, store it on disk, and reuse it for each mapping job.
+
+\subsubsection{Indexing the reads}
+
+We implemented a lazy radix tree based on the \emph{wotd}-algorithm \citep{Giegerich1999}, since a radix tree is a partial suffix tree only containing certain suffixes. The radix tree is constructed in linear time by subsequent radix sort steps.
+However, when performing multiple backtracking with exact seeds, the radix tree construction time dominates the overall filtration time.
+Therefore in this case we resort to the \emph{$q$-gram index} to emulate the radix tree.
+We build the $q$-gram index efficiently and in linear time by bucket sort.
+Below depth $q$ the properties of the radix tree are lost, however multiple backtracking is still applicable.
+%We observed that the $q$-Gram index is more convenient than the lazy suffix tree for exact search.
+
+\subsection{Seed extension}
+
+We use a banded version of Myers bit-vector algorithm \citep{Myers1999} already presented in \citep{Razers3}.
+Myers' algorithm is an efficient DP alignment algorithm \citep{Needleman1970} for edit distance. 
+Instead of computing DP cells one after another, it encodes the whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
+We implemented a bit-parallel version that computes only a diagonal band of the DP matrix and is faster and more specific than the original algorithm by Myers.
+More details can be found in the Supplementary Data.
+
+However differently from \citep{Razers3}, instead of performing a semi-global alignment to verify a parallelogram surrounding the seed, we perform a global alignment on both ends of a seed.
+Given a seed occurring with $e$ errors, we first perform seed extension on the left side within an error threshold of $k - e$ errors.
+Only if the seed extension on the left side succeeds, we perform a seed extension on the right side within the remaining error threshold.
+Moreover, we first compute the longest common prefix on each side of the seed and let the global alignment algorithm start from the first mismatching positions.
+We observed that this approach is up to two times faster than \citep{Razers3}.
+
+\subsection{Mapping strategies}
+\subsubsection{All-mapping}
+\subsubsection{Best-mapping}
+
+% -----------------------------------------------------------------------------
+
+\section{Evaluation}
+
+We thoroughly compared Masai with the best-mappers Bowtie\,2, BWA and Soap\,2 as well as with the all-mappers RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
+We remark that Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
+When relevant, read mappers that accept an absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or an error rate (RazerS\,3) were configured accordingly.
+We used default parameters, except where stated otherwise (Supplementary Data).
+
+We performed runtime experiments on real data.
+All read sets are given by their SRA/ENA id.
+As references we used whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh37.p2).
+The mapping times were measured on a cluster of nodes with 72\,GB RAM and 2 Intel Xeon X5650 processors running Linux~3.2.0.
+For running time comparison, we ran the tools using a single thread and used local disks for I/O.
+
+\subsection{Read mappers parametrization}
+
+In the following, we describe how we configured all read mappers considered in the evaluation section.
+%\texttt{MIN} and \texttt{MAX} were placeholders for minimal and maximal insert size, \texttt{INS} is the mean insert size and \texttt{IERR} the allowed deviation (\texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}).
+
+\paragraph{Masai}
+Version 0.5 was used.
+In order to use Masai as an all-mapper we passed the argument \texttt{--all}, otherwise the argument \texttt{--any-best} is used by default.
+We set the maximal edit distance using the parameter \texttt{-e}.
+We configured the seed length with the parameter \texttt{--seed-length}; on E.~coli, D.~melanogaster and C.~elegans we chose a seed length of $16$, while on H.~sapiens we chose a seed length of $33$.
+We selected the SAM output format with \texttt{-os} and enabled CIGAR output with \texttt{-oc}.
+
+\paragraph{Bowtie\,2}
+Version 2.0.0-beta6 was used.
+We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
+For the Rabema benchmark we used the parameter \texttt{-k 100}.
+%In paired-end mode, we used the parameters \texttt{--minins MIN --maxins MAX}.
+%The number of threads was selected using the parameter ({\tt -p}).
+
+\paragraph{BWA}
+Version 0.6.1-r104 was used.
+For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
+%The insert size was not passed to BWA, however we pass the insert size and allowed error from BWA's output to the other read mappers.
+%We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step.
+%The {\tt sampe} and {\tt samse} steps were performed using one thread since BWA does not offer a paralellization here.
+
+\paragraph{Soap\,2}
+Version 2.1 was used.
+%The number of threads was selected with \texttt{-p}.
+%In paired-end mode, the options used are \texttt{-m MIN -x MAX}.
+
+\paragraph{RazerS\,3}
+Version 3.1 was used.
+We mapped with indels using the pigeonhole filter (default) and set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
+We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
+%In paired-end mode, the parameters used were \texttt{--library-length INS --library-error IERR}.
+%The number of threads was set with the \texttt{-tc} parameter.
+
+\paragraph{Hobbes}
+Version 1.3 was used.
+We built the index using the recommended
+%\footnote{\url{http://hobbes.ics.uci.edu/manual.jsp}}
+$q$-gram length 11.
+Since we focus on edit distance, we used the 16\,bit bit-vector version.% as described in~\citep{Ahmadi2011}. 
+We enabled indels with \texttt{--indels} and set maximal edit distance using the parameter \texttt{-v}.
+For resource measurement we used the output without CIGAR, for analyzing the results we enabled CIGAR output using \texttt{--cigar}.
+%In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
+%Multi-threading was enabled using \texttt{-p}.
+
+\paragraph{mrFAST}
+Version 2.1.0.6 was used.
+%It was used as explained in the manual\footnote{\url{http://mrfast.sourceforge.net/manual.html}}.
+We set maximal edit distance using the parameter \texttt{-e}.
+%mrFAST does not support multithreading.
+%We divided the input into blocks of 500\,k reads and processed each chunk in a separate process using the program \texttt{ts}\footnote{\url{http://vicerveza.homeunix.net/~viric/soft/ts/}}.
+%Long reads were split into packages of 100\,k reads.
+%This way, always 8 processes were executed in parallel.
+
+\paragraph{SHRiMP\,2}
+Version 2.2.2 was used.
+%The number of threads was selected with \texttt{--threads}.
+%In paired-end mode, the options used are \texttt{--pair-mode opp-in --isize MIN,MAX}.
+
+\subsection{Rabema}
+
+We first used the Rabema benchmark~\citep{Holtgrewe2011} (v1.1) for a thorough evaluation and comparison of read mapping sensitivity.
+Similarly to \citep{Bowtie2}, we used the read simulator Mason \citep{SeqAnReadSimulator} with default profile settings to simulate from each whole genome 100\,k reads of length 100\,bp having sequencing errors distributed like in a typical Illumina run (Supplementary Data).
+
+The benchmark contains the categories \emph{all}, \emph{all-best}, \emph{any-best}, \emph{precision}, and \emph{recall}.
+In the categories all, all-best, and any-best a read mapper had to find all, all of the best, or any of the best edit distance locations for each read.
+The categories precision and recall required a read mapper to find the \emph{original} location of each read, which is a measure independent of the used scoring model, \eg edit distance or quality based.
+A read is mapped \emph{correctly} if the mapper reported its original location, 
+and it is mapped \emph{uniquely} if the mapper reported only one location.
+Rabema defines \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
+
+The benchmark was performed for an error rate of 5\,\%, which corresponds to edit distance 5 for reads of length 100\,bp. Therefore we built a Rabema gold standard for each dataset by running RazerS~3 in full-sensitive mode up to edit distance 5. We further classified mapping locations in each category by their edit distance.
+
+For a more fair and thorough comparison we also configured BWA and Bowtie\,2 as all-mappers (Soap\,2 could not be configured accordingly).
+To this extent, we parametrized them to be highly sensitive and output all found mapping locations.
+Since BWA and Bowtie\,2 were not designed to be used as all-mappers, they spent much more time than proper all-mappers, \ie up to 3~hours in a run compared to several minutes.
+The aim here is to investigate read mapping sensitivity and therefore we do not report running times.
+
+Results for H.~sapiens are shown in Table~\ref{tab:Rabema}.
+Additional results for E.~coli, C.~elegans and D.~Melanogaster are shown in the Supplementary Data.
+
+\subsubsection{Best-mappers}
+Masai showed the best recall values, not loosing more than 3.3\,\% recall on edit distance 5.
+Conversely, recall values of BWA and Bowtie\,2 dropped significantly with increasing edit distance up to loosing respectively 15.4\,\% and 11.5\,\% on edit distance 5.
+As expected, Soap\,2 turned out to be inadequate for mapping reads of length 100\,bp at this error rates.
+
+Precision values have less variance than recall values. Masai showed the best precision values with 97.8\,\%, followed by Soap\,2 with 97.7\,\%, and BWA with 97.5\,\%. Interestingly, Bowtie\,2 showed the worst precision values, loosing up to 5.6\,\% on edit distance 5.
+%Interestingly, Rabema any-best values provide a quite tight upper bound to recall values.
+%We deduce that edit distance is a pertinent and adequate scoring scheme for read mapping.
+%Vice versa, scoring schemes based on quality values as well as the heuristics on which other best-mappers rely lead to a generalized and substantial loss of mapping accuracy.
+
+\subsubsection{All-mappers}
+As expected, RazerS\,3 showed full-sensitivity and mrFAST lost only a minimal percentage of mapping locations.
+Overall Masai did not loose more than 0.1\,\% of all mapping locations.
+In particular, Masai was full-sensitive for low-error locations and it lost only a small percentage of high-error locations, \ie its loss was limited to 0.1\,\% and 1.4\,\% of mapping locations at edit distance 4 and 5.
+
+On the other side, BWA and Bowtie\,2 missed 35\,\% and 45\,\% of all mapping locations at edit distance 5 and their recall values as all-mappers did not substantially increase.
+Likewise SHRiMP\,2 could not enumerate all mapping locations, although its recall values were good.
+Again Hobbes had the worst performance.
+
+We remark that Masai is not full-sensitive whenever approximate seeds are used, \eg on H.~sapiens. Indeed, Masai lost 0.1\,\% overall sensitivity in respect to RazerS\,3. Conversely, full-sensitivity is attained whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~Melanogaster (Supplementary Data).
+In general, RazerS\,3 should be used when full-sensitivity is required, \ie for read mapper benchmarking. However, our results show that Masai can replace RazerS\,3 or mrFAST as an all-mapper in practical setups.
+
+\begin{table*}[t]
+  \caption[Rabema results]
+  {
+  \label{tab:Rabema}
+    {\bfseries Rabema results.}
+    Rabema scores in percent
+    (average fraction of edit distance locations reported per read).
+    Large numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
+    }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.95\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_masai_rabema}
+  }
+\end{table*}
+
+\subsection{Variant detection}
+
+The second experiment analyzes the applicability of Masai and other read mappers in genomic variation pipelines.
+Similarly to \citep{Shrimp2}, we simulated from the whole human genome 5 million reads of length $100$\,bp containing sequencing errors, SNPs and indels such that each read had an edit distance of at most 5 to its genomic origin.
+To distribute sequencing errors according to a typical Illumina run, we used the read simulator Mason.
+The reads were grouped according to the numbers of contained SNPs and indels, where the class $(s,i)$ consists of all reads with $s$ SNPs and $i$ indels.
+We mapped the reads with each tool and measured its sensitivity in each class.
+
+We say that a read is mapped \emph{correctly} if a mapping location has been reported within 10\,bp of its genomic origin.
+It is considered to map \emph{uniquely} if only one location was reported by the mapper.
+For each class we define \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
+Table~\ref{tab:Variant} shows the results for each read mapper and class.
+
+\subsubsection{Best-mappers}
+Among best-mappers, Masai showed the highest precision and recall in all classes.
+In particular, Masai did not loose more than 3.2\,\% recall in class (4,0), whether Bowtie\,2 and BWA lost respectively 17.5\,\% and 14.9\,\% and Soap\,2 was not able to map any read.
+
+Interestingly, we observed that recall values of Bowtie\,2, BWA and Soap\,2 were negatively correlated with the amount of genomic variation.
+For instance, in the Rabema benchmark Bowtie\,2 lost respectively 7.2\,\% and 11.5\,\% of mapping locations at distance 4 and 5, but in this experiment it lost 17.5\,\% recall in class (4,0).
+We noticed a similar trend for BWA and Soap\,2.
+%We deduced that Bowtie\,2, BWA and Soap\,2 are not well suited to reliably detect the origin of reads with variants. Indeed 
+These tools rely on quality values to guess the best mapping location for a read and tend to prefer alignments which can be explained by sequencing errors instead of true genomic variations.
+The low performance of Soap\,2 is also due to its limitation to at most 2 mismatches and no support for indels.
+
+\subsubsection{All-mappers}
+Looking at all-mappers results, Masai showed 100\,\% precision and recall in all classes, except for classes (2,0) and (1,1) where it lost only 0.1\,\% and 0.7\,\% recall.
+Masai is therefore roughly comparable to the full-sensitive read mappers RazerS\,3 and mrFAST.
+SHRiMP\,2 showed 100\,\% precision in all classes but lost between 0.3\,\% and 0.8\,\% recall in each class.
+Hobbes had the lowest performance among all-mappers.
+It appears to have problems with indels, indeed it lost 9.5\,\% recall in class (0,3).
+
+\begin{table*}[tH!]
+  \caption[Variant detection results]
+  {
+  \label{tab:Variant}
+    {\bfseries Variant detection results.} We show the percentages of found origins (recall) and fraction of unique reads mapped to their origin (precision) classed by reads with $s$ SNPs and $i$ indels $(s,i)$.
+  }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.8\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_masai_variant}
+  }
+\end{table*}
+
+\subsection{Performance on real data}
+
+In the last experiment we focused on comparing read mappers performance on real data.
+To this end, we mapped the first $10\,\text{M}\times 100\,\text{bp}$ reads from an Illumina lane of E.~coli (ERR022075, Genome Analyzer IIx), D.~melanogaster (SRR497711, HiSeq 2000), C.~elegans (SRR065390, Genome Analyzer II), and H.~sapiens (ERR012100, Genome Analyzer II).
+In order to measure scalability, we also mapped the full $60\,\text{M}\times 100\,\text{bp}$ (ERR012100) and $150\,\text{M}\times 100\,\text{bp}$ (ERR161544, HiSeq 2000) H.~sapiens datasets.
+Whenever possible we asked mappers to map reads within edit distance 5.
+We measured running times, peak memory consumptions, mapped reads and Rabema any-best scores.
+
+We could not measure precision and recall values since real reads have unknown origins. Therefore for the evaluation we adopted the commonly used measure of percentage of \emph{mapped reads}, \ie the fraction of reads for which the read mapper reports a mapping location.
+However, as some mappers report mapping locations without constraints on the number of errors, we also included Rabema \emph{any-best} scores.
+The Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (minimum) number of errors.
+Final Rabema any-best scores are normalized by the number of reads.
+
+It should be noted, that in this evaluation we are interested on the capability of the mapper to retrieve the location of a single read without the help of read pairs, which can of course disambiguate mapping locations of the partner.
+
+Results for C.~elegans and H.~sapiens are shown in Table~\ref{tab:Runtime}.
+Additional results for E.~coli, D.~melanogaster, and two very large ($60\,\text{M}$ and $150\,\text{M}$ reads)  H.~sapiens datasets are shown in the Supplementary Data.
+
+\subsubsection{Best-mappers}
+On the C.~elegans dataset Masai was 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
+On the H.~sapiens dataset Masai was 2.6 times faster than Bowtie\,2, 3.6 times faster than BWA but 2.1 times slower than Soap\,2.
+On one hand, Soap\,2 was not able to map a consistent fraction of reads because of its limitation to 2 mismatches.
+On the other hand, Bowtie\,2 reported more mapped reads than Masai but, taking any-best scores into account, it reported less mapping locations than Masai.
+In fact, Bowtie\,2 uses a scoring scheme based on quality values and does not impose a maximal error rate threshold.
+On the C.~elegans and H.~sapiens datasets, Bowtie\,2 missed respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5.
+
+%In the Rabema benchmark we pointed out that any-best scores are well correlated with recall.
+%Therefore, from any-best scores we estimated that Bowtie\,2 could wrongly map up to 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 in our C.~elegans and H.~sapiens datasets. An analogous estimation can be done for BWA and Soap\,2.
+
+\subsubsection{All-mappers}
+On the C.~elegans dataset Masai was 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
+Hobbes constantly crashed and mapped less reads than all other mappers in this category.
+Likewise for Bowtie\,2, also SHRiMP\,2 does not impose a maximal error rate threshold and reported more mapped reads than Masai.
+However its Rabema any-best score was inferior to Masai.
+This could be due to the use of a different scoring scheme where two mismatches cost less than opening a gap.
+Anyway this hypothesis does not explain why SHRiMP\,2 did not report some mapping locations at distance 0.
+
+On the H.~sapiens dataset Masai was 11.9 times faster than RazerS\,3, 14.6 times faster than mrFAST, and 7.6 times faster than Hobbes. It  should be noted, that the current implementation of Hobbes often crashed and mapped only half of the reads.
+SHRiMP\,2 was not able to map the H.~sapiens dataset within 4 days.
+
+\begin{table*}[t]
+  \caption[Performance on real data]{
+    \label{tab:Runtime}
+    \textbf{Performance on real data.}
+	Results of mapping $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.
+	\textbf{Mapped reads.}
+	In large we show the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
+	\textbf{Rabema any-best.}
+    In large we show the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
+	\textbf{Remarks.}
+    SHRiMP\,2 was not able to map the H.~sapiens dataset within 4 days.
+    Hobbes constantly crashed and was not able to map completely nor the C.~Elegans nor the H.~sapiens dataset.
+  }
+	\vspace{-3mm}
+	\center
+	\sffamily
+	\resizebox{1.0\textwidth}{!}
+	{
+		\renewcommand{\tabcolsep}{0.8ex}
+		\input{tables/table_masai_runtime}
+	}
+\end{table*}
+
+
+\subsection{Filtration results}
+
+We assessed the contribution of approximate seeds and multiple backtracking on runtime results.
+To this intent we performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
+The optimal combination of seeding and backtracking that was used for runtime results is shown in bold.
+
+Table\,S5 shows the results.
+Filtration time consists of the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
+Candidates reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
+
+Since we concentrate on filtration, we did not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
+Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of Table\,S5 from respective Masai all-mappers times of Table\,3 and Table\,S4.
+
+On E.\,coli, D.\,melanogaster and C.\,elegans approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
+Nevertheless we still prefer exact seeds since filtration dominates the total runtime.
+Multiple backtracking on exact seeds compared to single backtracking speeds up filtration by 2.9 times on E.\,coli, and 3.8 times on D.\,melanogaster and C.\,elegans.
+Without the contribution of multiple backtracking Masai would not be faster than RazerS\,3, the second fastest all-mapper.
+
+Approximate seeds become effective on H.\,sapiens, where they reduce the number of candidates by 10.8 times. 
+On H.\,sapiens seed extensions largely dominate the total runtime, therefore we prefer approximate seeds.
+Multiple backtracking on approximate seeds provides a speed-up of 3.2 times over single backtracking.
+The combination of the two methods makes Masai an order of magnitude faster than any other all-mapper.
+
+\begin{table*}[h]
+  \center
+  \caption{
+    \label{tab:Filtration}%
+    \textbf{Filtration results for all-mapping.}
+    Filtration time is given as [min:s] and includes seeds indexing time.
+  }
+  {
+  \sf\footnotesize
+  \begin{tabular}{llllrr}
+    \toprule
+	organism & dataset & seeding & backtracking & filtration time & candidates\\
+    \midrule
+E.\,coli & ERR022075 & exact & single & 3:55 & 69.17\,M\\
+E.\,coli & ERR022075 & \textbf{exact} & \textbf{multiple} & \textbf{1:20} & \textbf{69.17\,M}\\
+E.\,coli & ERR022075 & approximate & single & 38:42 & 33.08\,M\\
+E.\,coli & ERR022075 & approximate & multiple & 9:00 & 33.08\,M\\
+    \midrule
+D.\,melanogaster & SRR497711 & exact & single & 8:15 & 1020.28\,M\\
+D.\,melanogaster & SRR497711 & \textbf{exact} & \textbf{multiple} & \textbf{2:11} & \textbf{1020.28\,M}\\
+D.\,melanogaster & SRR497711 & approximate & single & 100:18 & 102.78\,M\\
+D.\,melanogaster & SRR497711 & approximate & multiple & 20:48 & 102.78\,M\\
+    \midrule
+C.\,elegans & SRR065390 & exact & single & 8:25 & 1065.70\,M\\
+C.\,elegans & SRR065390 & \textbf{exact} & \textbf{multiple} & \textbf{2:11} & \textbf{1065.70\,M}\\
+C.\,elegans & SRR065390 & approximate & single & 102:02 & 246.65\,M\\
+C.\,elegans & SRR065390 & approximate & multiple & 21:33 & 246.65\,M\\
+	\midrule
+H.\,sapiens & ERR012100 & exact & single & 55:54 & 294943.86\,M\\
+H.\,sapiens & ERR012100 & exact & multiple & 41:52 & 294943.86\,M\\
+H.\,sapiens & ERR012100 & approximate & single & 165:45 & 27396.01\,M\\
+H.\,sapiens & ERR012100 & \textbf{approximate} & \textbf{multiple} & \textbf{52:15} & \textbf{27396.01\,M}\\
+    \bottomrule
+  \end{tabular}
+  }
+  \vspace{2mm}
+\end{table*}
+
+\section{Discussion}
+
+\subsection{Achievements}
+
+We improved all-mapping speed by an order of magnitude.
+We highlighted the importance of approximate seeds.
+We adapted the algorithm to perform best-mapping.
+We shown that it is better to stick to edit distance and guarantee full-sensitivity rather than adopting an involved scoring scheme and being heuristic.
+
+\subsection{Limitations}
+
+We realized that one best is not enough, all often is too much.
+
+We missed very important features: paired-end or mate-pairs, mapping qualities; auto parameterization, error-rate; parallelization, low memory footprint.
+
 
 % =============================================================================
 
-\chapter{Discussion}
+\chapter{Yara}
 
+% -----------------------------------------------------------------------------
+
+\section{Mapping strategies}
+
+\subsection{Single-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Strata-mapping}
+
+\subsection{Paired-end mapping}
+\subsubsection{All-mapping}
+\subsubsection{Strata-mapping}
+
+% -----------------------------------------------------------------------------
+
+\section{Indexing}
+\subsection{Parallelization}
+
+% -----------------------------------------------------------------------------
+
+\section{Evaluation}
+\subsection{Rabema}
+\subsection{Accuracy}
+\subsection{Throughput}
+\subsection{Variant calling}
+
+
+% -----------------------------------------------------------------------------
+
+\section{Discussion}
+
+We do not consider local alignments and chimeric reads.
