@@ -533,10 +533,10 @@ We observed that this approach is up to two times faster than \citep{Razers3}.
 
 \section{Evaluation}
 
-In order to evaluate Masai, we designed three experiments: \begin{inparaenum}[(i)]
-\item Rabema,
+In order to evaluate Masai, we propose three experiments: \begin{inparaenum}[(i)]
+\item the Rabema benchmark,
 \item variant detection, and
-\item runtime.
+\item performance on real data.
 \end{inparaenum}
 
 It should be noted, that in this evaluation we are interested on the capability of the mapper to retrieve the location of a single read without the help of read pairs, which can of course disambiguate mapping locations of the partner.
@@ -633,7 +633,7 @@ Precision values have less variance than recall values. Masai shows the best pre
 %Vice versa, scoring schemes based on quality values as well as the heuristics on which other best-mappers rely lead to a generalized and substantial loss of mapping accuracy.
 
 \subsubsection{All-mappers}
-As expected, RazerS\,3 shows full-sensitivity and mrFAST loose only a minimal percentage of mapping locations.
+As expected, RazerS\,3 shows full-sensitivity and mrFAST looses only a minimal percentage of mapping locations.
 Overall, Masai does not loose more than 0.1\,\% of all mapping locations.
 In particular, Masai is full-sensitive for low-error locations and looses only a small percentage of high-error locations, \ie its loss is limited to 0.1\,\% and 1.4\,\% of mapping locations at edit distance 4 and 5.
 
