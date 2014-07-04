@@ -141,6 +141,7 @@ Unique mappability rises to 83~\% by increasing the read length to 75~bp; howeve
 \begin{table}[h]
 \begin{center}
 \caption[Mappability]{Mappability of model genomes. Data extrapolated from \citep{Derrien2012}.}
+\sffamily
 \input{tables/table_mappability}
 \end{center}
 \end{table}
@@ -229,6 +230,7 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 \begin{table}[h]
 \begin{center}
 \caption[Genome mappability score]{Human genome mappability score of various sequencing technologies. Data extrapolated from \citep{Lee2012}.}
+\sffamily
 \input{tables/table_gms}
 \end{center}
 \end{table}
@@ -394,7 +396,7 @@ On one hand, all-mappers were using filtration based on exact seeds, which is fi
 On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
 After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking.
 
-In the engineering section, we explain which data structures we adopt for indexing, how our filtration method works, and how we perform seed extension.
+In the engineering section, we explain how our filtration method works, which data structures we adopt for indexing, and how we perform seed extension.
 In particular, our filtration method is based on exact or approximate seeds; by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
 We find approximate seeds by backtracking the index of the reference genome.
 Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
@@ -433,6 +435,49 @@ we extend both ends of each seed using a banded version of \emph{Myers bit-vecto
 %In all-mapping, we perform one round of seeding and extension; we immediately write to disk each found mapping location.
 %In best-mapping, we perform have to remember one best location per read until we are able to guarantee optimality.
 
+\subsection{Filtration}
+\label{masai:engineering:seeding}
+
+Our strongest requirement is to build on a non-heuristic and full-sensitive filtration.
+
+RazerS, the read mapper developed by \citeauthor{RazerS}, was based on a $q$-gram filter.
+Gapped $q$-grams are not easy to generalize to edit distance. Contiguous $q$-grams are much slower than exact seeds for moderate error rates. 
+RazerS~3 went back to exact seeds, similarly to mr(s)Fast. Which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration strategy would had been beneficial.
+
+Filtration specificity in terms of candidate locations to be verified is strongly correlated to seed length.
+%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
+If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
+
+We rediscovered the works of \citeauthor{Navarro2000} and \citeauthor{Myers1994}. Approximate seeds are a generalization of exact seeds providing not only stronger but flexible filtration. This generalization is full-sensitive and works for edit distance.
+%In particular, our filtration method is based on exact or approximate seeds; by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
+
+%We now consider formally the read mapping problem.
+%Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
+We partition $r$ into $s \leq k+1$ non-overlapping seeds.
+According to the pigeonhole principle each approximate occurrence of $r$ in $g$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
+
+Moreover, we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
+Hence all approximate occurrences of $r$ in $g$ within distance $k$ will be found.
+
+With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
+Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
+The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
+
+%Our read mapping method requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
+%Default parameters work well for actual Illumina reads, otherwise the user has to parametrize adequately the tool for optimal performance.
+%Nonetheless, independently of the chosen parameterization, filtration is guaranteed to be quasi full-sensitive (see section~\ref{masai:engineering:seeding}).
+%This method works only for reads of uniform read length, like Illumina reads.
+
+The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
+When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
+Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
+
+%We find approximate seeds by backtracking the index of the reference genome.
+%Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
+
+In Masai, we implemented algorithm~\ref{MultipleApproximateSearch} only for $k$-mismatches, consequently strict full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
+However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
 
 \subsection{Indexing}
 \label{masai:engineering:index}
@@ -455,7 +500,7 @@ The ESA preserves the asymptotic performances of the suffix trie.
 Nevertheless, the suffix array (SA), despite consuming $5n$ bytes and being theoretically slower, always showed better performance than the ESA (see figure~\ref{?}).
 The FM-index consumes about $1.5n$ bytes and provides constant time node traversal, while being slower than the other two data structures.
 
-We prefer the SA because it provides a good compromise between speed and memory consumption, but nevertheless leave the possibility to choose among the aforementioned data structures.
+We prefer the SA because it provides a good compromise between speed and memory consumption, but nevertheless we leave the possibility to choose among the aforementioned data structures.
 
 We construct the generalized SA using an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences.
 For construction of the ESA we additionally use the algorithms proposed in \citep{Kasai2001,Abouelhoda2004} whereas for the wavelet tree based FM-index we use the from \citep{Grossi2003}.
@@ -470,49 +515,14 @@ The LST explicitly contains all trie nodes, as opposed to the SA.
 The memory footprint of the additional LST nodes is negligible in our setup.
 Quicksorting the SA is faster than constructing the LST but the latter pays off in query time.
 
-
 However, when performing multiple backtracking with exact seeds, the radix tree construction time dominates the overall filtration time.
 Therefore in this case we resort to the \emph{$q$-gram index} to emulate the radix tree.
 We build the $q$-gram index efficiently and in linear time by bucket sort.
 Below depth $q$ the properties of the radix tree are lost, however multiple backtracking is still applicable.
 %We observed that the $q$-Gram index is more convenient than the lazy suffix tree for exact search.
 
-\subsection{Seeding strategy}
-\label{masai:engineering:seeding}
 
-%At mapping time, we choose a filtration strategy according to the reference genome and the specified absolute number of errors.
-%Our filtration strategies are based on \citep{Navarro2000}, make use of \emph{exact and} approximate non-overlapping seeds and are guaranteed to be full-sensitive by the pigeonhole principle.
-%In figure~\ref{fig:FiltrationStrategies} we show an example providing two alternative filtration strategies.
-
-%Refer to exact and approximate seeds
-
-We now consider formally the read mapping problem.
-Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
-
-Filtration specificity in terms of candidate locations to verify is strongly correlated to seed length.
-Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
-If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
-
-We partition $r$ into $s \leq k+1$ non-overlapping seeds.
-According to the pigeonhole principle each approximate occurrence of $r$ in $g$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
-
-%Moreover, since the number of seeds within distance $\lfloor k/s \rfloor$ is $s - (k \bmod s)$,
-Moreover, we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
-To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
-Hence all approximate occurrences of $r$ in $g$ within distance $k$ will be found.
-
-With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
-Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
-The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
-
-The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
-When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
-Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
-
-In Masai, we implemented algorithm~\ref{MultipleApproximateSearch} only for $k$-mismatches, consequently strict full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
-However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
-
-\subsection{Seed extension}
+\subsection{Verification}
 \label{masai:engineering:extension}
 
 We use a banded version of Myers bit-vector algorithm \citep{Myers1999} already presented in \citep{Razers3}.
@@ -646,12 +656,11 @@ We remark that Masai is not full-sensitive whenever approximate seeds are used, 
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie for read mappers benchmarking. However, our results show that Masai can replace RazerS\,3 or mrFAST as an all-mapper in practical setups.
 
 \begin{table*}[t]
-  \caption[Rabema results]
+  \caption[Rabema benchmark results]
   {
   \label{tab:Rabema}
-    {\bfseries Rabema results.}
-    Rabema scores in percent
-    (average fraction of edit distance locations reported per read).
+    Rabema benchmark results on $100\,\text{k}\times 100\,\text{bp}$ Illumina-like reads.
+    We show Rabema scores in percent (average fraction of edit distance locations reported per read).
     Large numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
     }
   \vspace{-3mm}
@@ -699,7 +708,8 @@ Hobbes has the lowest performance among all-mappers: it appears to have problems
   \caption[Variant detection results]
   {
   \label{tab:Variant}
-    {\bfseries Variant detection results.} We show the percentages of found origins (recall) and fraction of unique reads mapped to their origin (precision) classed by reads with $s$ SNPs and $i$ indels $(s,i)$.
+    Variant detection results on $5\,\text{M}\times 100\,\text{bp}$ Illumina-like reads.
+    We show the percentages of found origins (recall) and fraction of unique reads mapped to their origin (precision) classed by reads with $s$ SNPs and $i$ indels $(s,i)$.
   }
   \vspace{-3mm}
   \center
@@ -759,14 +769,11 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 \begin{table*}[t]
   \caption[Performance on real data]{
     \label{tab:Runtime}
-    \textbf{Performance on real data.}
-	Results of mapping $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.
-	\textbf{Mapped reads.}
-	In large we show the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
-	\textbf{Rabema any-best.}
-    In large we show the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
-	\textbf{Remarks.}
-    SHRiMP\,2 is not able to map the H.~sapiens dataset within 4 days.
+    Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
+	Rabema any-best: in large we show the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
+	Mapped reads: in large we show the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
+	Remarks:
+    SHRiMP\,2 is not able to map the H.~sapiens dataset within 4 days;
     Hobbes constantly crashes and is not able to map completely nor the C.~elegans nor the H.~sapiens dataset.
   }
 	\vspace{-3mm}
@@ -786,12 +793,12 @@ We assessed the contribution of approximate seeds and multiple backtracking on r
 To this intent we performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
 The optimal combination of seeding and backtracking that was used for runtime results is shown in bold.
 
-Table\,S5 shows the results.
+Table~\ref{tab:Filtration} shows the results.
 Filtration time consists of the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
 Candidates reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
 
 Since we concentrate on filtration, we did not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
-Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table\,S5 from respective Masai all-mappers times of table\,3 and table\,S4.
+Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:Filtration} from respective Masai all-mappers times of table~\ref{tab:Runtime} and table~\ref{?}.
 
 On E.\,coli, D.\,melanogaster and C.\,elegans approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
 Nevertheless we still prefer exact seeds as filtration dominates the total runtime.
@@ -811,7 +818,8 @@ The combination of the two methods makes Masai an order of magnitude faster than
     Filtration time is given as [min:s] and includes seeds indexing time.
   }
   {
-  \sf\footnotesize
+  \sffamily
+  \footnotesize
   \begin{tabular}{llllrr}
     \toprule
 	organism & dataset & seeding & backtracking & filtration time & candidates\\
