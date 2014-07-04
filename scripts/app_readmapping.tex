@@ -450,32 +450,27 @@ Thus RazerS~3 \citep{RazerS3} went back to filtration with exact seeds (similarl
 Nonetheless, we wanted to improve again filtration specificity, as the runtime of RazerS~3 on mammal genomes became dominated by verifications, and we knew that to improve filtration specificity we had to increase the seed length, as these two things are strongly correlated.
 
 While reviewing past literature in the field of approximate string matching, we rediscovered the works of \citeauthor{Myers1994}, \citeauthor{Navarro2000} on approximate seeds, providing stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
-Their idea is to partition the pattern into $s \leq k+1$ non-overlapping seeds, which are longer but have to be searched within distance $\lfloor k/s \rfloor$ (see section~\ref{filter:apx}).
+Their idea is to partition the pattern into $s \leq k+1$ non-overlapping seeds, which obviously can be longer than exact seeds but have to be searched within distance $\lfloor k/s \rfloor$ (see section~\ref{filter:apx}).
 
-First, we slightly improved their filtration lemma:
+Following \citep{Navarro2000}, we decided to find approximate seeds by backtracking the suffix trie of the reference genome (in section~\ref{masai:engineering:index} we recall our engineering work to find approximate seeds efficiently).
+For simplicity, we decided to find approximate seeds only under the hamming distance.
+For this reason, when resorting to approximate seeds, Masai does not attain strict full-sensitivity under the edit distance.
+Nonetheless, in section~\ref{masai:evaluation} we show that such implementation detail sacrifices less than 1\% sensitivity.
+
+Then, we slightly improved the filtration lemma of \citep{Navarro2000}:
 we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
 Hence all approximate occurrences will be found.
 
-Then, we chose to parameterize our filter by the seed length rather than by the number of seeds.
+Finally, we chose to parameterize our filter by the seed length rather than by the number of seeds.
 Clearly, these two parameterization are dual: if we choose the number of seeds to be $s$, the minimum seed length $l$ has to be $\lfloor |r|/s \rfloor$; vice versa, if we fix the minimum seed length to $l$, the number of seeds $s$ has to be $\lfloor |r|/l \rfloor$.
 Nonetheless we prefer the latter, as the minimum seed length gives us a direct estimate of the expected number of verifications produced by the filter.
 The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
 
-%Our read mapping method requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
-%Default parameters work well for actual Illumina reads, otherwise the user has to parametrize adequately the tool for optimal performance.
-%Nonetheless, independently of the chosen parameterization, filtration is guaranteed to be quasi full-sensitive (see section~\ref{masai:engineering:seeding}).
-%This method works only for reads of uniform read length, like Illumina reads.
-
 The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
+We experimentally evaluated filtration with exact and approximate seeds (see section~\ref{masai:evaluation:filter}).
 When mapping current Illumina reads on short to medium length genomes, exact seeds are still more efficient than approximate seeds.
 Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperform exact seeds by an order of magnitude.
-
-%We find approximate seeds by backtracking the index of the reference genome.
-%Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
-
-In Masai, we implemented algorithm~\ref{MultipleApproximateSearch} only for $k$-mismatches, consequently strict full-sensitivity is not attained when using approximate seeds and considering mapping locations with indels.
-However in the results section we show that such implementation detail sacrifices less than 1\% sensitivity.
 
 \subsection{Indexing}
 \label{masai:engineering:index}
