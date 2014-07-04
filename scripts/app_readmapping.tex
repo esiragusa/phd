@@ -396,8 +396,8 @@ On one hand, all-mappers were using filtration based on exact seeds, which is fi
 On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
 After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking.
 
-In the engineering section, we explain how our filtration method works, which data structures we adopt for indexing, and how we perform seed extension.
-In particular, our filtration method is based on exact or approximate seeds; by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
+In the engineering section, we see how our filtration method works, which data structures we adopt for indexing, and how we perform seed extension.
+In particular, our filtration method is based on exact or approximate seeds: by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
 We find approximate seeds by backtracking the index of the reference genome.
 Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
 Lastly, we improve our method to perform best-mapping in a more efficient way.
@@ -406,8 +406,8 @@ Our method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \e
 Masai is part of the SeqAn library, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
 
 In the evaluation section, we extensively compare Masai with popular read mappers, both on simulated and real datasets.
-Compared to mrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
-In addition, Masai is more accurate and 2--4 times faster than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+Compared to all-mappers mrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
+In addition, Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
 
 Finally, we discuss the limitations of Masai that led us to engineer Yara, yet another read aligner.
 
@@ -415,7 +415,8 @@ Finally, we discuss the limitations of Masai that led us to engineer Yara, yet a
 
 \section{Engineering}
 
-Here we outline our method to map reads to a reference genome.
+%We do not simply see what is , but we explain and motivate relevant engineering choices that led us to the final implementation.
+We start by giving an outline of our method to map reads to a reference genome.
 In the following of this section we give a detailed explanation of each mapping step.
 
 Our method requires an index capable of simulating a top-down traversal of the suffix trie of the reference genome.
@@ -438,30 +439,27 @@ we extend both ends of each seed using a banded version of \emph{Myers bit-vecto
 \subsection{Filtration}
 \label{masai:engineering:seeding}
 
-Our strongest requirement is to build on a non-heuristic and full-sensitive filtration.
-
-RazerS, the read mapper developed by \citeauthor{RazerS}, was based on a $q$-gram filter.
-Gapped $q$-grams are not easy to generalize to edit distance. Contiguous $q$-grams are much slower than exact seeds for moderate error rates. 
-RazerS~3 went back to exact seeds, similarly to mr(s)Fast. Which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration strategy would had been beneficial.
-
-Filtration specificity in terms of candidate locations to be verified is strongly correlated to seed length.
-%Since we want to maximize the length of the shortest seed, we let the minimum seed length be $\lfloor |r|/(k+1) \rfloor$.
-If we want to improve filtration specificity by increasing seed length, we resort to approximate seeds.
-
-We rediscovered the works of \citeauthor{Navarro2000} and \citeauthor{Myers1994}. Approximate seeds are a generalization of exact seeds providing not only stronger but flexible filtration. This generalization is full-sensitive and works for edit distance.
-%In particular, our filtration method is based on exact or approximate seeds; by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
-
 %We now consider formally the read mapping problem.
 %Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
-We partition $r$ into $s \leq k+1$ non-overlapping seeds.
-According to the pigeonhole principle each approximate occurrence of $r$ in $g$ then contains an approximate occurrence of some seed within distance $\lfloor k/s \rfloor$.
 
-Moreover, we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
+Our original intent was to improve the speed of our all-mapper RazerS \citep{Weese2009}, while preserving full-sensitivity under the edit distance.
+RazerS was based on a $q$-gram filter;
+we were aware that gapped $q$-grams could have brought a huge speedup, but we could not see any straightforward generalization of gapped $q$-grams to the edit distance.
+At the same time, we experienced that weaker but quicker filtration using exact seeds was more advantageous than filtration using $q$-grams (indeed, a typical Illumina read mapping setup requires only moderate error rates, in the range of 4--6~\%).
+Thus RazerS~3 \citep{RazerS3} went back to filtration with exact seeds (similarly to mrFast).
+Nonetheless, we wanted to improve again filtration specificity, as the runtime of RazerS~3 on mammal genomes became dominated by verifications, and we knew that to improve filtration specificity we had to increase the seed length, as these two things are strongly correlated.
+
+While reviewing past literature in the field of approximate string matching, we rediscovered the works of \citeauthor{Myers1994}, \citeauthor{Navarro2000} on approximate seeds, providing stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
+Their idea is to partition the pattern into $s \leq k+1$ non-overlapping seeds, which are longer but have to be searched within distance $\lfloor k/s \rfloor$ (see section~\ref{filter:apx}).
+
+First, we slightly improved their filtration lemma:
+we search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the remaining seeds within distance $\lfloor k/s \rfloor - 1$.
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
-Hence all approximate occurrences of $r$ in $g$ within distance $k$ will be found.
+Hence all approximate occurrences will be found.
 
-With approximate seeds we are free to choose the number of seeds $s$, which in turn enforces the minimum seed length $l$ to be $\lfloor |r|/s \rfloor$.
-Or vice versa we fix $l$, which enforces $s$ to be $\lfloor |r|/l \rfloor$.
+Then, we chose to parameterize our filter by the seed length rather than by the number of seeds.
+Clearly, these two parameterization are dual: if we choose the number of seeds to be $s$, the minimum seed length $l$ has to be $\lfloor |r|/s \rfloor$; vice versa, if we fix the minimum seed length to $l$, the number of seeds $s$ has to be $\lfloor |r|/l \rfloor$.
+Nonetheless we prefer the latter, as the minimum seed length gives us a direct estimate of the expected number of verifications produced by the filter.
 The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
 
 %Our read mapping method requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
@@ -470,8 +468,8 @@ The resulting filter is flexible, indeed by increasing $l$ filtration becomes mo
 %This method works only for reads of uniform read length, like Illumina reads.
 
 The optimal seed length $l$ depends on the reference genome as well as on read length and the absolute number of errors.
-When mapping current NGS datasets on short to medium length genomes, \eg bacterial genomes, exact seeds are still more efficient than approximate seeds.
-Conversely on larger genomes, \eg mammalian genomes, approximate seeds outperform exact seeds by an order of magnitude.
+When mapping current Illumina reads on short to medium length genomes, exact seeds are still more efficient than approximate seeds.
+Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperform exact seeds by an order of magnitude.
 
 %We find approximate seeds by backtracking the index of the reference genome.
 %Moreover, we speed up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
