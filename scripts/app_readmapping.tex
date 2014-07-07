@@ -472,41 +472,52 @@ We experimentally evaluated filtration with exact and approximate seeds (see sec
 When mapping current Illumina reads on short to medium length genomes, exact seeds are still more efficient than approximate seeds.
 Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperform exact seeds by an order of magnitude.
 
+\subsubsection{Best-mapping}
+
 \subsection{Indexing}
 \label{masai:engineering:index}
 
-The SeqAn library initially provided us with two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
-
-As extensively explained in chapter~\ref{chr:index}, we implemented a generic top-down traversal for various indices.
-Including the suffix array (SA) \citep{Manber1990}, the enhanced suffix array (ESA) \citep{Abouelhoda2004}, and the full-text minute index (FM-index) \citep{Ferragina2001}.
-Below we discuss tradeoffs of these indices and motivate the us
+Within the SeqAn library, we initially disposed of two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
+To improve the efficiency of our application, we implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various flavours of the full-text minute index (FM-index) \citep{Ferragina2001}.
+Below we discuss the performance of these indices in our specific application, while we refer the reader to chapter~\ref{chr:index} for their extensive explanation.
 
 \subsubsection{Indexing the reference genome}
 
-Before we had ESA and LST.
+We initially chose the ESA over LST because of construction times, as both our ESA and LST implementations require $13$ bytes per base pair and comparable query speed.
+Indeed, we dispose of a linear time construction algorithm for the ESA (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while our LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
+Thus, for the human reference genome (GRCh38), we had a suffix trie constructed in about 90~minutes and consuming 39~GB of memory (see figure~\ref{fig:index:construction}).
 
-We begun by adopting the ESA, which was the only index.
-Our ESA implementation requires $13n$ bytes for a reference genome consisting of $n$ base pairs; this makes 39~GB for H.sapiens.
+At this point, Masai required high-end hardware to process large reference genomes.
+Therefore, thinking of a space-time trade-off, we designed a generic suffix trie top-down traversal for the SA (see section~\ref{sec:index:sa});
+indeed, the SA consumes only $5$ bytes per base pair but is theoretically slower than the ESA, as it adds a logarithmic factor to query times.
+However, with surprise we found out that, within our application, the SA had equal or better performance than the ESA (see figure~\ref{?}).
+Ultimately, we brought down the memory footprint of the index from 39~GB to 15~GB but preserved query speed.
 
-The ESA preserves the asymptotic performances of the suffix trie.
+We tried to further improve query speed by removing the logarithmic factor introduced by the SA.
+Therefore, to cut the most expensive binary searches, we put a $q$-gram index on top of the SA and extended our generic suffix trie top-down traversal accordingly (see section~\ref{sec:index:qgram}).
+Yet, the $q$-gram index did not bring significant speedup to our application;
+indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with our multiple backtracking algorithm, performing a factorization of the top-down traversal.
 
-Nevertheless, the suffix array (SA), despite consuming $5n$ bytes and being theoretically slower, always showed better performance than the ESA (see figure~\ref{?}).
-The FM-index consumes about $1.5n$ bytes and provides constant time node traversal, while being slower than the other two data structures.
+Finally, we explored additional space-time trade-offs.
+We started implementing\footnote{Thanks to the master's thesis of Jochen Singer.} a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
+Our initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%, thus the memory footprint of the index went down to 4.5~GB, but Masai became significantly slower (less than twice as slow though).
 
-We prefer the SA because it provides a good compromise between speed and memory consumption, but nevertheless we leave the possibility to choose among the aforementioned data structures.
-
-We construct the generalized SA using an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences.
-For construction of the ESA we additionally use the algorithms proposed in \citep{Kasai2001,Abouelhoda2004} whereas for the wavelet tree based FM-index we use the from \citep{Grossi2003}.
+In definitive, we prefer the SA as it provides a good compromise between query speed and memory consumption.
+Nevertheless, we leave to the user the possibility to choose among any of the aforementioned data structures.
 
 \subsubsection{Indexing the reads}
 
-It goes without saying that the easiest way to implement a trie is by means of a suffix array.
-We implemented a , as a radix tree is a partial suffix tree only containing certain suffixes.
+In order to improve index query speed, we designed and implemented an algorithm to search simultaneously many exact or approximate seeds, achieving a speedup of 3--5 times (see figure~\ref{fig:index:multi}).
+As our multiple search algorithm requires a trie of the seeds, we also engineered an efficient trie implementation.
 
 We construct the radix tree in linear time by subsequent radix sort steps, as done by the \emph{wotd}-algorithm \citep{Giegerich1999}.
+
 The LST explicitly contains all trie nodes, as opposed to the SA.
 The memory footprint of the additional LST nodes is negligible in our setup.
 Quicksorting the SA is faster than constructing the LST but the latter pays off in query time.
+
+It goes without saying that the easiest way to implement a trie is by means of a suffix array.
+We implemented a , as a radix tree is a partial suffix tree only containing certain suffixes.
 
 However, when performing multiple backtracking with exact seeds, the radix tree construction time dominates the overall filtration time.
 Therefore in this case we resort to the \emph{$q$-gram index} to emulate the radix tree.
@@ -529,8 +540,6 @@ Given a seed occurring with $e$ errors, we first perform seed extension on the l
 Only if the seed extension on the left side succeeds, we perform a seed extension on the right side within the remaining error threshold.
 Moreover, we first compute the longest common prefix on each side of the seed and let the global alignment algorithm start from the first mismatching positions.
 We observed that this approach is up to two times faster than \citep{Razers3}.
-
-\subsection{Best-mapping}
 
 % -----------------------------------------------------------------------------
 
@@ -782,15 +791,14 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 
 \subsection{Filtration results}
 
-We assessed the contribution of approximate seeds and multiple backtracking on runtime results.
+Here we assess the contribution of approximate seeds and multiple backtracking on runtime results.
 To this intent we performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
-The optimal combination of seeding and backtracking that was used for runtime results is shown in bold.
-
 Table~\ref{tab:Filtration} shows the results.
 Filtration time consists of the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
 Candidates reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
+In bold we show the optimal combination of seeding and backtracking that we used to parameterize Masai.
 
-Since we concentrate on filtration, we did not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
+Since we concentrate on filtration, we do not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
 Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:Filtration} from respective Masai all-mappers times of table~\ref{tab:Runtime} and table~\ref{?}.
 
 On E.\,coli, D.\,melanogaster and C.\,elegans approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
