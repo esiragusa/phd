@@ -473,6 +473,14 @@ Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperfo
 
 \subsubsection{Best-mapping}
 
+Best-mapping asks to report only one of the optimal (any-best) or alternatively all the co-optimal (all-best) mapping locations of any read.
+Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
+Here we describe a \emph{greedy} mapping strategy for best-mapping that, in standard read mapping scenarios, is an order of magnitude faster than all-mapping.
+
+Certainly, best-mapping makes sense if the adopted measure is an effective scoring scheme at identifying original mapping locations.
+In section~\ref{masai:evaluation:rabema} we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
+
+
 \subsection{Indexing}
 \label{masai:engineering:index}
 
@@ -523,23 +531,24 @@ When performing multiple backtracking of exact seeds, the LST construction time 
 Therefore, we decided to resort to the \emph{$q$-gram index} to emulate a trie in this case:
 we build a partial $q$-gram index efficiently and in linear time by bucket sort, again considering only the first suffix of each seed in the collection.
 Such index represents a trie truncated at depth $q$ (which we fixed to 12 in our application).
-Truncation is only a minor concern: at depth $q$ we continue by applying single backtracking on each active node.
+Truncation is only a minor concern: at depth $q$ we continue by applying the single backtracking algorithm on each active node.
 %Given the sparseness of the seeds index, for exact search it pays off to adopt a trie based on a $q$-gram index rather than a LST-based trie.
 
 \subsection{Verification}
 \label{masai:engineering:extension}
 
-We use a banded version of Myers bit-vector algorithm \citep{Myers1999} already presented in \citep{Razers3}.
+To verify hits reported by the filtration algorithm, we use a banded version of Myers bit-vector algorithm \citep{Myers1999}.
 Myers' algorithm is an efficient DP alignment algorithm \citep{Needleman1970} for edit distance. 
 Instead of computing DP cells one after another, it encodes the whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
 We implemented a bit-parallel version that computes only a diagonal band of the DP matrix and is faster and more specific than the original algorithm by Myers.
 More details can be found in section~\ref{asm:filter:verification}.
 
-However differently from \citep{Razers3}, instead of performing a semi-global alignment to verify a parallelogram surrounding the seed, we perform a global alignment on both ends of a seed.
+We had already used Myers' algorithm in RazerS~3~\citep{RazerS3}.
+However, instead of performing a semi-global alignment to verify a parallelogram surrounding the seed, in Masai we perform a global alignment on both ends of a seed.
 Given a seed occurring with $e$ errors, we first perform seed extension on the left side within an error threshold of $k - e$ errors.
 Only if the seed extension on the left side succeeds, we perform a seed extension on the right side within the remaining error threshold.
 Moreover, we first compute the longest common prefix on each side of the seed and let the global alignment algorithm start from the first mismatching positions.
-We observed that this approach is up to two times faster than \citep{Razers3}.
+We observed that this approach is up to two times faster than RazerS~3.
 
 % -----------------------------------------------------------------------------
 
