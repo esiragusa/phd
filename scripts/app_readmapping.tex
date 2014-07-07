@@ -415,15 +415,14 @@ Finally, we discuss the limitations of Masai that led us to engineer Yara, yet a
 
 \section{Engineering}
 
-%We do not simply see what is , but we explain and motivate relevant engineering choices that led us to the final implementation.
-We start by giving an outline of our method to map reads to a reference genome.
-In the following of this section we give a detailed explanation of each mapping step.
+We start by giving an outline of the read mapping method of Masai.
+Later, we give a detailed explanation of each mapping step, explaining and motivating relevant engineering choices that led us to the final implementation.
 
-Our method requires an index capable of simulating a top-down traversal of the suffix trie of the reference genome.
+Masai requires an index capable of simulating a top-down traversal of the suffix trie of the reference genome.
 We give to the user the possibility to choose among various indices (see section~\ref{masai:engineering:index}).
 Similarly to all read mappers relying on an index of the reference genome, we index the reference genome only once, store it on disk and reuse it for all subsequent read mapping jobs.
 
-At mapping time, our method requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
+At mapping time, Masai requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
 Default parameters work well for actual Illumina reads, otherwise the user has to parametrize adequately the tool for optimal performance.
 Nonetheless, independently of the chosen parameterization, filtration is guaranteed to be quasi full-sensitive (see section~\ref{masai:engineering:seeding}).
 
@@ -478,14 +477,15 @@ Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperfo
 \label{masai:engineering:index}
 
 Within the SeqAn library, we initially disposed of two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
-To improve the efficiency of our application, we implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various flavours of the full-text minute index (FM-index) \citep{Ferragina2001}.
+To improve the efficiency of Masai, we implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various flavours of the full-text minute index (FM-index) \citep{Ferragina2001}.
 Below we discuss the performance of these indices in our specific application, while we refer the reader to chapter~\ref{chr:index} for their extensive explanation.
 
 \subsubsection{Indexing the reference genome}
 
-We initially chose the ESA over LST because of construction times, as both our ESA and LST implementations require $13$ bytes per base pair and comparable query speed.
+We initially chose the ESA over LST because of better construction times.
 Indeed, we dispose of a linear time construction algorithm for the ESA (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while our LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
-Thus, for the human reference genome (GRCh38), we had a suffix trie constructed in about 90~minutes and consuming 39~GB of memory (see figure~\ref{fig:index:construction}).
+Apart from that, both our ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
+Thus, for the human reference genome (GRCh38), we had a suffix trie constructed in about 1.5~hours and consuming 39~GB of memory (see figure~\ref{fig:index:construction}).
 
 At this point, Masai required high-end hardware to process large reference genomes.
 Therefore, thinking of a space-time trade-off, we designed a generic suffix trie top-down traversal for the SA (see section~\ref{sec:index:sa});
@@ -512,18 +512,19 @@ As our multiple search algorithm requires a trie of the seeds, we also engineere
 
 It was straightforward to reuse our suffix trie implementations to emulate tries.
 It goes without saying that the easiest way to implement a trie is by means of a partial SA:
-we index only the first suffix of any string in the collection and construct the SA-based trie in time $\Oh(n \log n)$ via quicksort; the top-down traversal based on binary search still works.
-We can reuse also the LST: it is sufficient to analogously fill the partial SA in the collection and then apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the trie in linear time.
-Quicksorting the SA turned out to be faster than radix sorting the LST but, in our application, the LST payed off in query time.
-Indeed, the LST explicitly contains all trie nodes, as opposed to the SA.
-The memory footprint of the additional LST nodes is negligible in our setup.
+we index only the first suffix of each seed in the collection and construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the number of seeds; then, our top-down traversal based on binary search still works.
+We adapted the LST in an analogous way: we fill the partial SA as above and then apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the trie in linear time.
 
-However, when performing multiple backtracking with exact seeds, the radix tree construction time dominates the overall filtration time.
-Therefore in this case we resort to the \emph{$q$-gram index} to emulate the radix tree.
-We build the $q$-gram index efficiently and in linear time by bucket sort.
-Below depth $q$ the properties of the radix tree are lost, however multiple backtracking is still applicable.
-%We observed that the $q$-Gram index is more convenient than the lazy suffix tree for exact search.
+Quicksorting the SA turned out to be faster than radix sorting the LST but, in our application, the more involved LST data structure payed off at query time (see section~\ref{sec:index:visit}).
+Indeed, the LST stores all trie nodes and thus provides node traversal in constant time, while the SA explicitly stores only the leaves and thus internal nodes have to be worked out via binary search.
+As the memory footprint of the trie is negligible within our application, we chose the LST to perform multiple backtracking of approximate seeds.
 
+When performing multiple backtracking of exact seeds, the LST construction time dominates the overall filtration time (see section~\ref{sec:index:multi}).
+Therefore, we decided to resort to the \emph{$q$-gram index} to emulate a trie in this case:
+we build a partial $q$-gram index efficiently and in linear time by bucket sort, again considering only the first suffix of each seed in the collection.
+Such index represents a trie truncated at depth $q$ (which we fixed to 12 in our application).
+Truncation is only a minor concern: at depth $q$ we continue by applying single backtracking on each active node.
+%Given the sparseness of the seeds index, for exact search it pays off to adopt a trie based on a $q$-gram index rather than a LST-based trie.
 
 \subsection{Verification}
 \label{masai:engineering:extension}
