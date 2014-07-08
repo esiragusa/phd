@@ -504,11 +504,12 @@ Ultimately, we brought down the memory footprint of the index from 39~GB to 15~G
 We tried to further improve query speed by removing the logarithmic factor introduced by the SA.
 Therefore, to cut the most expensive binary searches, we put a $q$-gram index on top of the SA and extended our generic suffix trie top-down traversal accordingly (see section~\ref{sec:index:qgram}).
 Yet, the $q$-gram index did not bring significant speedup to our application;
-indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with our multiple backtracking algorithm, performing a factorization of the top-down traversal.
+indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with our multiple backtracking algorithm as it performs a factorization of the top-down traversal.
 
 Finally, we explored additional space-time trade-offs.
 We started implementing\footnote{Thanks to the master's thesis of Jochen Singer.} a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
-Our initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%, thus the memory footprint of the index went down to 4.5~GB, but Masai became significantly slower (less than twice as slow though).
+Our initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%.
+Thus the memory footprint of the index went down to 4.5~GB, but Masai became significantly slower (less than twice as slow though).
 
 In definitive, we prefer the SA as it provides a good compromise between query speed and memory consumption.
 Nevertheless, we leave to the user the possibility to choose among the aforementioned data structures.
@@ -568,7 +569,7 @@ We compare Masai with the best-mappers Bowtie\,2, BWA and Soap\,2 as well as wit
 We remark that Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
 When relevant, we configured some read mappers with the appropriate absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or error rate (RazerS\,3).
 In the following, we give the exact parameterization for the read mappers considered in our evaluation.
-%\texttt{MIN} and \texttt{MAX} were placeholders for minimal and maximal insert size, \texttt{INS} is the mean insert size and \texttt{IERR} the allowed deviation (\texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}).
+%\texttt{MIN} and \texttt{MAX} were placeholders for minimal and maximal insert size, \texttt{INS} is the mean insert size and \texttt{ERR} the allowed deviation (\texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}).
 
 \paragraph{Masai}
 Version 0.5 was used.
@@ -600,7 +601,7 @@ Version 2.1 was used.
 Version 3.1 was used.
 We mapped with indels using the pigeonhole filter (default) and set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
 We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
-%In paired-end mode, the parameters used were \texttt{--library-length INS --library-error IERR}.
+%In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
 %The number of threads was set with the \texttt{-tc} parameter.
 
 \paragraph{Hobbes}
@@ -624,7 +625,7 @@ Version 2.2.2 was used.
 %The number of threads was selected with \texttt{--threads}.
 %In paired-end mode, the options used are \texttt{--pair-mode opp-in --isize MIN,MAX}.
 
-\subsection{Rabema benchmark}
+\subsection{Rabema benchmark on simulated data}
 
 We first consider the Rabema benchmark~\citep{Holtgrewe2011} (v1.1) for a thorough evaluation and comparison of read mapping sensitivity.
 The benchmark contains the categories \emph{all}, \emph{all-best}, \emph{any-best}, \emph{precision}, and \emph{recall}.
@@ -681,7 +682,7 @@ In general, RazerS\,3 should be used when full-sensitivity is required, \ie for 
   }
 \end{table*}
 
-\subsection{Variant detection}
+\subsection{Variant detection on simulated data}
 
 The second experiment analyzes the theoretical performance of Masai and other read mappers in genomic variation pipelines.
 Similarly to \citep{Shrimp2}, we consider simulated reads containing sequencing errors, SNPs and indels, such that each read has an edit distance of at most 5 to its genomic origin.
@@ -894,34 +895,149 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 %One best is not enough, all often is too much.
 %All-mapping is a niche, indeed almost all NGS analysis pipelines rely on a single mapping location.
 
-% -----------------------------------------------------------------------------
+Yara is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
+Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require abstruse ad-hoc parameterization and works on reads of variable length.
 
-\section{Mapping strategies}
-
-\subsection{Single-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Strata-mapping}
-
-\subsection{Paired-end mapping}
-\subsubsection{All-mapping}
-\subsubsection{Strata-mapping}
 
 % -----------------------------------------------------------------------------
 
-\section{Indexing}
+\section{Engineering}
+
+\subsection{Filtration}
+
+Flexible filtration: classify reads by hardness.
+
+\subsubsection{Mapping by strata}
+
+Greedy strategy: sort the seeds by number of hits.
+
+\subsection{Paired-end and mate-pair protocols}
+
+Yara maps both mates independently, as in the single-end protocol; in addition to that, it chooses the best pair among all mapping locations of both mates, accordingly to the parameters specified by the user.
+
+Advantages of this method: spot genomic variation \eg long indels and inversions, well defined best-mapping.
+
+Disadvantages of this method: report more results, slower all-mapping.
+
+\subsection{Mapping qualities}
+
+Yara computes mapping qualities using the number of mapping locations stratified by error rate.
+
+Mapping quality for the aired-end and mate-pair protocols.
+
+\subsection{Indexing}
+
+I engineered an efficient FM-index for the DNA alphabet.
+
 \subsection{Parallelization}
+
+I dropped multiple backtracking and implemented fine-grained parallelism.
+
+%fine-grained parallelism by read level down to seeds.
 
 % -----------------------------------------------------------------------------
 
 \section{Evaluation}
-\subsection{Rabema}
-\subsection{Accuracy}
-\subsection{Throughput}
-\subsection{Variant calling}
 
+\subsection{Read mappers parametrization}
+
+I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
+In the following, I give the exact parameterization of each read mapper considered in the evaluation section.
+When relevant, the tools were configured with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
+Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size: \texttt{INS} is the mean insert size and \texttt{ERR} the allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
+
+\paragraph{Yara}
+Version ??? was used.
+In order to use Yara as an all-mapper, we passed the argument \texttt{--all}, otherwise the argument \texttt{--any-best} is used by default.
+We set the error rate using the parameter \texttt{-e}.
+In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
+The number of threads was set with the parameter \texttt{-t}.
+
+\paragraph{GEM}
+Version 2.1 was used.
+%The number of threads was selected with \texttt{-p}.
+%In paired-end mode, the options used are \texttt{-m MIN -x MAX}.
+
+\paragraph{Bowtie\,2}
+Version 2.0.0-beta6 was used.
+We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
+For the Rabema experiment we used the parameter \texttt{-k 100}.
+In paired-end mode, we used the parameters \texttt{--minins MIN --maxins MAX}.
+The number of threads was selected using the parameter \texttt{-p}.
+
+\paragraph{BWA-backtrack}
+Version 0.6.1-r104 was used.
+For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
+The insert size was not passed to BWA, however we pass the insert size and allowed error from BWA's output to the other read mappers.
+We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step.
+The {\tt sampe} and {\tt samse} steps were performed using one thread since BWA does not offer a parallelization here.
+
+\paragraph{RazerS\,3}
+Version 3.1 was used.
+We mapped set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
+We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
+In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
+The number of threads was set with the \texttt{-tc} parameter.
+
+\paragraph{Hobbes\,2}
+Version 2.1 was used.
+We built the index using the recommended $q$-gram length 11.
+We enabled indels with \texttt{--indels} and set maximal edit distance using the parameter \texttt{-v}.
+In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
+Multi-threading was enabled using \texttt{-p}.
+
+\subsection{Accuracy on simulated data}
+
+This experiment assesses the accuracy of read mappers on simulated data.
+
+I simulated some reads according to the paired-end protocol.
+Mappers mapped in single-end and then paired-end end.
+
+\subsubsection{Single-end mapping}
+
+In best-mapping, Yara is always.
+
+All-mappers do not perform better.
+
+\subsubsection{Paired-end mapping}
+
+The accuracy improvement due to paired-end information.
+
+\subsection{Rabema benchmark on simulated and real data}
+
+The Rabema benchmark considers reads with multiple mapping locations.
+%The previous experiment doesnt.
+%This benchmark provides sensitivity evaluation.
+%It is only single-end.
+
+I benchmark the performance of read mappers both on simulated and real data.
+%This is to assess how realistic is the simulated data.
+
+\subsubsection{Simulated data}
+\subsubsection{Real data}
+
+
+\subsection{Throughput on real data}
+
+This experiment measures only read mappers' throughput on real data, thus complementing the sensitivity evaluation performed by the Rabema benchmark on real data.
+
+I measured running times on a desktop computer with 32\,GB RAM, a 2\,TB HDD @ 7200\,RPM, and one Intel Core i7-4770K CPU @ 3.50\,GHz running Linux~3.10.11.
+For maximum throughput, I ran all tools using eight threads.
+For an accurate running time comparison, I disabled Intel Turbo Boost.
+Therefore, real throughputs might be slightly higher than the measured ones.
+
+
+\subsubsection{Single-end mapping}
+\subsubsection{Paired-end mapping}
+
+\subsection{Variant calling on real data}
+
+This experiments assesses the performance of read mappers on variant calling using real data.
+
+I use the GCAT benchmark.
 
 % -----------------------------------------------------------------------------
 
 \section{Discussion}
 
-We do not consider local alignments and chimeric reads.
+Yara does not consider local alignments and chimeric reads.
