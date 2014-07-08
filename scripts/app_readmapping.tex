@@ -556,12 +556,12 @@ We observed that this approach is up to two times faster than RazerS~3.
 \section{Evaluation}
 
 In order to evaluate Masai, we propose three experiments: \begin{inparaenum}[(i)]
-\item the Rabema benchmark,
-\item variant detection, and
+\item the Rabema benchmark and
+\item variant detection on simulated data, and
 \item performance on real data.
 \end{inparaenum}
 
-It should be noted, that in this evaluation we are interested on the capability of the mapper to retrieve the location of a single read without the help of read pairs, which can of course disambiguate mapping locations of the partner.
+It should be noted that in this evaluation we are interested on the capability of the mapper to retrieve the location of a single read without the help of read pairs, which can of course disambiguate mapping locations of the partner.
 
 \subsection{Read mappers parametrization}
 
@@ -895,7 +895,7 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 %One best is not enough, all often is too much.
 %All-mapping is a niche, indeed almost all NGS analysis pipelines rely on a single mapping location.
 
-Yara is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
+\emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
 Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require abstruse ad-hoc parameterization and works on reads of variable length.
 
 
@@ -948,7 +948,7 @@ Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal in
 
 \paragraph{Yara}
 Version ??? was used.
-In order to use Yara as an all-mapper, we passed the argument \texttt{--all}, otherwise the argument \texttt{--any-best} is used by default.
+In order to use Yara as an all-mapper, we passed the argument \texttt{--all}, otherwise the tool runs as a best-mapper by default.
 We set the error rate using the parameter \texttt{-e}.
 In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
 The number of threads was set with the parameter \texttt{-t}.
