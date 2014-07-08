@@ -1003,6 +1003,25 @@ All-mappers do not perform better.
 
 The accuracy improvement due to paired-end information.
 
+\begin{table*}[t]
+  \caption[Yara accuracy results]
+  {
+  \label{tab:yara:accuracy}
+    Accuracy results on $1\,\text{M} \times 2 \times 100\,\text{bp}$ Illumina-like reads.
+%    We show precision and recall values scores in percent (average fraction of edit distance locations reported per read).
+%    Large numbers show total scores in each category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
+    }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.95\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_yara_accuracy}
+  }
+\end{table*}
+
+
 \subsection{Rabema benchmark on simulated and real data}
 
 The Rabema benchmark considers reads with multiple mapping locations.
@@ -1016,6 +1035,24 @@ I benchmark the performance of read mappers both on simulated and real data.
 \subsubsection{Simulated data}
 \subsubsection{Real data}
 
+\begin{table*}[t]
+  \caption[Yara Rabema benchmark results]
+  {
+  \label{tab:yara:rabema}
+    Rabema benchmark results on $1\,\text{M} \times 2 \times 100\,\text{bp}$ Illumina-like reads.
+    We show Rabema scores in percent (average fraction of edit distance locations reported per read).
+    Large numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
+    }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.95\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_yara_rabema}
+  }
+\end{table*}
+
 
 \subsection{Throughput on real data}
 
@@ -1026,9 +1063,24 @@ For maximum throughput, I ran all tools using eight threads.
 For an accurate running time comparison, I disabled Intel Turbo Boost.
 Therefore, real throughputs might be slightly higher than the measured ones.
 
-
 \subsubsection{Single-end mapping}
 \subsubsection{Paired-end mapping}
+
+\begin{table*}[t]
+  \caption[Throughput on real data]
+  {
+    \label{tab:yara:throughput}
+    Throughput on real data. %using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
+  }
+	\vspace{-3mm}
+	\center
+	\sffamily
+%	\resizebox{1.0\textwidth}{!}
+%	{
+		\renewcommand{\tabcolsep}{0.8ex}
+		\input{tables/table_yara_throughput}
+%	}
+\end{table*}
 
 \subsection{Variant calling on real data}
 
