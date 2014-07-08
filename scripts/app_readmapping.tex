@@ -649,9 +649,6 @@ Conversely, recall values of BWA and Bowtie\,2 drop significantly with increasin
 As expected, Soap\,2 turns out to be inadequate for mapping reads of length 100\,bp at this error rates.
 
 Precision values have less variance than recall values. Masai shows the best precision values with 97.8\,\%, followed by Soap\,2 with 97.7\,\%, and BWA with 97.5\,\%. Interestingly, Bowtie\,2 shows the worst precision values, loosing up to 5.6\,\% on edit distance 5.
-%Interestingly, Rabema any-best values provide a quite tight upper bound to recall values.
-%We deduce that edit distance is a pertinent and adequate scoring scheme for read mapping.
-%Vice versa, scoring schemes based on quality values as well as the heuristics on which other best-mappers rely lead to a generalized and substantial loss of mapping accuracy.
 
 \subsubsection{All-mappers}
 As expected, RazerS\,3 shows full-sensitivity and mrFAST looses only a minimal percentage of mapping locations.
@@ -705,7 +702,6 @@ In particular, Masai does not loose more than 3.2\,\% recall in class (4,0), whe
 Interestingly, we observe that recall values of Bowtie\,2, BWA and Soap\,2 are negatively correlated with the amount of genomic variation.
 For instance, in the Rabema benchmark, Bowtie\,2 looses respectively 7.2\,\% and 11.5\,\% of mapping locations at distance 4 and 5, but in class (4,0) of this experiment it looses 17.5\,\% recall.
 We observe a similar trend for BWA and Soap\,2.
-%These tools rely on quality values to guess the best mapping location for a read and tend to prefer alignments which can be explained by sequencing errors instead of true genomic variations.
 The low performance of Soap\,2 is also due to its limitation to at most 2 mismatches and no support for indels.
 
 \subsubsection{All-mappers}
@@ -760,9 +756,6 @@ On one end, Soap\,2 is not able to map a consistent fraction of reads because of
 On the other end, Bowtie\,2 reports more mapped reads than Masai but, taking any-best scores into account, it reports less mapping locations than Masai.
 In fact, Bowtie\,2 uses a scoring scheme based on quality values and does not impose a maximal error rate threshold.
 On the C.~elegans and H.~sapiens datasets, Bowtie\,2 misses respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5.
-
-%In the Rabema benchmark we pointed out that any-best scores are well correlated with recall.
-%Therefore, from any-best scores we estimated that Bowtie\,2 could wrongly map up to 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 in our C.~elegans and H.~sapiens datasets. An analogous estimation can be done for BWA and Soap\,2.
 
 \subsubsection{All-mappers}
 On the C.~elegans dataset Masai is 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
@@ -861,23 +854,45 @@ H.\,sapiens & ERR012100 & \textbf{approximate} & \textbf{multiple} & \textbf{52:
 
 \section{Discussion}
 
-\subsection{Achievements}
+Masai consists of three important algorithmic methods: \begin{inparaenum}[(i)]
+\item approximate seeds,
+\item multiple backtracking and
+\item greedy filtration.
+\end{inparaenum}
+Approximate seeds are of paramount importance to obtain very specific yet full-sensitive filtration; their adoption speeds up Masai by one order of magnitude.
+Multiple backtracking further speeds up the filtration phase by 3--5 times on a (enhanced) suffix array index; this technique makes Masai twice as fast.
+Greedy filtration prioritizes analysis of optimal mapping locations; because of this method, Masai in best-mapping is an order of magnitude faster than in all-mapping.
 
-We improved all-mapping speed by an order of magnitude.
-We highlighted the importance of approximate seeds.
-We adapted the algorithm to perform best-mapping.
-We shown that it is better to stick to edit distance and guarantee full-sensitivity rather than adopting an involved scoring scheme and being heuristic.
+Is the edit distance sufficient to perform best-mapping?
+Both Rabema benchmark and variant detection results show that Masai has constantly better accuracy than other best-mappers relying on more complex scoring schemes.
+In particular, the Rabema benchmark results show that Rabema any-best values are tightly bound to recall values.
+Hence, the edit distance is a pertinent and adequate scoring scheme for best-mapping.
+Vice versa, best-mappers using scoring schemes based on quality values show a generalized and substantial loss of mapping accuracy.
+This is likely due to the heuristics on which these tools rely.
+To sum up, it is better to stick to edit distance and guarantee full-sensitivity rather than to adopt an involved scoring scheme and explore the alignment space heuristically, hence partially.
 
-\subsection{Limitations}
+How many mapping locations do heuristic best-mappers miss?
+By looking at precision and recall values on simulated data, or at Rabema any-best values on real data, it can be deduced that Bowtie\,2, BWA and Soap\,2 miss up to 20\,\% of reads mappable at 5\,\% error rate.
+Yet, it is not evident how these results affects variant calling pipelines.
 
-We realized that one best is not enough, all often is too much.
+Summing up, Masai as an all-mapper is an order of magnitude faster and thus a valid alternative to tools like RazerS~3 and mrFast.
+Computational requirements of all-mapping now become close to those of best-mapping: Masai as an all-mapper is only 4 times slower than BWA, despite reporting two orders of magnitude more mapping locations.
+Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+The achieved speedup is huge when RazerS~3 has to be used as a best-mapper: in this scenario, Masai is roughly 200 times faster!
 
-We missed very important features: paired-end or mate-pairs, mapping qualities; auto parameterization, error-rate; parallelization, low memory footprint.
+Despite these achievements, Masai is not being widely used.
+This is mainly because it lacks some commonly requested features, including:
+parallelization via multi-threading, low memory footprint, direct support of paired-end or mate-pair protocols, computation of mapping qualities, automatic parameterization.
+Because of initial inexperience and unclear (or wrong) goals, I neglected these requirements while designing the tool.
+The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner, a tool fulfilling these requirements.
 
 
 % =============================================================================
 
 \chapter{Yara}
+
+%One best is not enough, all often is too much.
+%All-mapping is a niche, indeed almost all NGS analysis pipelines rely on a single mapping location.
 
 % -----------------------------------------------------------------------------
 
