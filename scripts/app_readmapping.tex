@@ -21,11 +21,13 @@ Illumina / Solexa.
 \subsection{Ion Torrent}
 Life Technologies / Ion Torrent.
 
-\subsection{454 Life Sciences}
+\subsection{Other technologies}
+
+\subsubsection{454 Life Sciences}
 Roche / 454 Life Sciences.
 
-%\subsection{SOLiD}
-%ABI / SOLiD.
+\subsubsection{SOLiD}
+ABI / SOLiD.
 
 \section{Sequencing protocols and applications}
 
@@ -140,7 +142,7 @@ Unique mappability rises to 83~\% by increasing the read length to 75~bp; howeve
 
 \begin{table}[h]
 \begin{center}
-\caption[Mappability]{Mappability of model genomes. Data extrapolated from \citep{Derrien2012}.}
+\caption[Mappability of model genomes]{Mappability of model genomes. Data extrapolated from \citep{Derrien2012}.}
 \sffamily
 \input{tables/table_mappability}
 \end{center}
@@ -229,7 +231,7 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 
 \begin{table}[h]
 \begin{center}
-\caption[Genome mappability score]{Human genome mappability score of various sequencing technologies. Data extrapolated from \citep{Lee2012}.}
+\caption[Human genome mappability score]{Human genome mappability score of various sequencing technologies. Data extrapolated from \citep{Lee2012}.}
 \sffamily
 \input{tables/table_gms}
 \end{center}
@@ -563,13 +565,14 @@ In order to evaluate Masai, we propose three experiments: \begin{inparaenum}[(i)
 
 It should be noted that in this evaluation we are interested on the capability of the mapper to retrieve the location of a single read without the help of read pairs, which can of course disambiguate mapping locations of the partner.
 
+As references, we use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh37.p2).
+
 \subsection{Read mappers parametrization}
 
 We compare Masai with the best-mappers Bowtie\,2, BWA and Soap\,2 as well as with the all-mappers RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
 We remark that Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
 When relevant, we configured some read mappers with the appropriate absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or error rate (RazerS\,3).
 In the following, we give the exact parameterization for the read mappers considered in our evaluation.
-%\texttt{MIN} and \texttt{MAX} were placeholders for minimal and maximal insert size, \texttt{INS} is the mean insert size and \texttt{ERR} the allowed deviation (\texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}).
 
 \paragraph{Masai}
 Version 0.5 was used.
@@ -582,48 +585,32 @@ We selected the SAM output format with \texttt{-os} and enabled CIGAR output wit
 Version 2.0.0-beta6 was used.
 We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
 For the Rabema experiment we used the parameter \texttt{-k 100}.
-%In paired-end mode, we used the parameters \texttt{--minins MIN --maxins MAX}.
-%The number of threads was selected using the parameter ({\tt -p}).
 
 \paragraph{BWA}
 Version 0.6.1-r104 was used.
 For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
-%The insert size was not passed to BWA, however we pass the insert size and allowed error from BWA's output to the other read mappers.
-%We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step.
-%The {\tt sampe} and {\tt samse} steps were performed using one thread since BWA does not offer a paralellization here.
 
 \paragraph{Soap\,2}
 Version 2.1 was used.
-%The number of threads was selected with \texttt{-p}.
-%In paired-end mode, the options used are \texttt{-m MIN -x MAX}.
 
 \paragraph{RazerS\,3}
 Version 3.1 was used.
 We mapped with indels using the pigeonhole filter (default) and set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
 We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
-%In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
-%The number of threads was set with the \texttt{-tc} parameter.
 
 \paragraph{Hobbes}
 Version 1.3 was used.
-We built the index using the recommended
-%\footnote{\url{http://hobbes.ics.uci.edu/manual.jsp}}
-$q$-gram length 11.
-Since we focus on edit distance, we used the 16\,bit bit-vector version.% as described in~\citep{Ahmadi2011}. 
+We built the index using the recommended $q$-gram length 11.
+Since we focus on edit distance, we used the 16\,bit bit-vector version.
 We enabled indels with \texttt{--indels} and set maximal edit distance using the parameter \texttt{-v}.
 For resource measurement we used the output without CIGAR, for analyzing the results we enabled CIGAR output using \texttt{--cigar}.
-%In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
-%Multi-threading was enabled using \texttt{-p}.
 
 \paragraph{mrFAST}
 Version 2.1.0.6 was used.
-%It was used as explained in the manual\footnote{\url{http://mrfast.sourceforge.net/manual.html}}.
 We set maximal edit distance using the parameter \texttt{-e}.
 
 \paragraph{SHRiMP\,2}
 Version 2.2.2 was used.
-%The number of threads was selected with \texttt{--threads}.
-%In paired-end mode, the options used are \texttt{--pair-mode opp-in --isize MIN,MAX}.
 
 \subsection{Rabema benchmark on simulated data}
 
@@ -665,7 +652,7 @@ We remark that Masai is not full-sensitive whenever approximate seeds are used, 
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie for read mappers benchmarking. However, our results show that Masai can replace RazerS\,3 or mrFAST as an all-mapper in practical setups.
 
 \begin{table*}[t]
-  \caption[Rabema benchmark results]
+  \caption[Masai results in the Rabema benchmark]
   {
   \label{tab:Rabema}
     Rabema benchmark results on $100\,\text{k}\times 100\,\text{bp}$ Illumina-like reads.
@@ -713,7 +700,7 @@ SHRiMP\,2 shows 100\,\% precision in all classes but looses between 0.3\,\% and 
 Hobbes has the lowest performance among all-mappers: it appears to have problems with indels, indeed it looses 9.5\,\% recall in class (0,3).
 
 \begin{table*}[tH!]
-  \caption[Variant detection results]
+  \caption[Masai variant detection results]
   {
   \label{tab:Variant}
     Variant detection results on $5\,\text{M}\times 100\,\text{bp}$ Illumina-like reads.
@@ -732,7 +719,6 @@ Hobbes has the lowest performance among all-mappers: it appears to have problems
 \subsection{Performance on real data}
 
 In the last experiment we focus on comparing read mappers performance on real data.
-As references, we use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh37.p2).
 We mapped the first $10\,\text{M}\times 100\,\text{bp}$ reads from an Illumina lane of E.~coli (ERR022075, Genome Analyzer IIx), D.~melanogaster (SRR497711, HiSeq 2000), C.~elegans (SRR065390, Genome Analyzer II), and H.~sapiens (ERR012100, Genome Analyzer II).
 Whenever possible we configured the tools to map the reads within edit distance 5.
 
@@ -772,7 +758,7 @@ This could be due to the use of a different scoring scheme where two mismatches 
 Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapping locations at distance 0.
 
 \begin{table*}[t]
-  \caption[Performance on real data]{
+  \caption[Masai performance on real data]{
     \label{tab:Runtime}
     Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
 	Rabema any-best: in large we show the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
@@ -792,7 +778,7 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 \end{table*}
 
 
-\subsection{Filtration results}
+\subsection{Filtration efficiency}
 
 Here we assess the contribution of approximate seeds and multiple backtracking on runtime results.
 To this intent we performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
@@ -816,9 +802,9 @@ The combination of the two methods makes Masai an order of magnitude faster than
 
 \begin{table*}[h]
   \center
-  \caption{
+  \caption[Masai filtration efficiency results]{
     \label{tab:Filtration}%
-    \textbf{Filtration results for all-mapping.}
+    Masai filtration efficiency results for all-mapping.
     Filtration time is given as [min:s] and includes seeds indexing time.
   }
   {
@@ -939,12 +925,20 @@ I dropped multiple backtracking and implemented fine-grained parallelism.
 
 \section{Evaluation}
 
-\subsection{Read mappers parametrization}
+We evaluate Yara through three experiments: \begin{inparaenum}[(i)]
+\item accuracy on simulated data,
+\item Rabema benchmark on simulated and real data, and
+\item throughput on real data.
+\end{inparaenum}
+
+\subsection{Experimental setup}
+
+\subsubsection{Read mappers parametrization}
 
 I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
-In the following, I give the exact parameterization of each read mapper considered in the evaluation section.
+In the following, I give the exact parameterization of each read mapper considered in the evaluation.
 When relevant, the tools were configured with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
-Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size: \texttt{INS} is the mean insert size and \texttt{ERR} the allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
+Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size; alternatively, \texttt{INS} is the mean insert size and \texttt{ERR} its allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
 
 \paragraph{Yara}
 Version ??? was used.
@@ -986,12 +980,43 @@ We enabled indels with \texttt{--indels} and set maximal edit distance using the
 In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
 Multi-threading was enabled using \texttt{-p}.
 
+\subsubsection{Infrastructure}
+
+I run all experiments on a desktop computer running Linux~3.10.11, equipped with one Intel Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
+For maximum throughput, I ran all tools using eight threads.
+For an accurate running time comparison, I disabled Intel Turbo Boost.
+Therefore, real throughputs might be slightly higher than the measured ones.
+
+\subsubsection{Datasets}
+
+As references, we use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh38).
+
+\subsubsection{Simulated data}
+Using Mason, we simulated $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ reads from the H.~sapiens reference genome.
+We used as mean insert size \texttt{INS = 175} and as deviation \texttt{ERR = 225}.
+
+\paragraph{Real data}
+We downloaded and unpacked an Illumina HiSeq 2000 dataset (SRA/ENA id ERR161544) provided by the Beijing Genome Institute, consisting of $2 \times 100\,\text{bp}$ Whole Genome Sequencing reads.
+The genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
+As reported by BWA, we used as mean insert size \texttt{INS = 178} and as deviation \texttt{ERR = 200}.
+
 \subsection{Accuracy on simulated data}
 
-This experiment assesses the accuracy of read mappers on simulated data.
+%Here we compare the accuracy of Yara with other tools on simulated data.
 
-I simulated some reads according to the paired-end protocol.
-Mappers mapped in single-end and then paired-end end.
+This experiment measures the ability of each tool to report the \emph{original} location of any simulated read.
+Each tool can output at most one mapping location per read.
+This experiment is suited at evaluating best-mappers.
+This experiment is independent of the scoring scheme used by any tool, \eg edit distance or quality based.
+
+It does not consider mapping qualities. Applying a mapping quality cutoff lowers recall and increases precision.
+
+Tools have to map all reads twice, first in single-end mode and then using additional paired-end information.
+
+The categories precision and recall require a 
+A read is mapped \emph{correctly} if the mapper reports its original location, 
+and it is mapped \emph{uniquely} if the mapper reports only one location.
+Rabema defines \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
 
 \subsubsection{Single-end mapping}
 
@@ -1024,19 +1049,26 @@ The accuracy improvement due to paired-end information.
 
 \subsection{Rabema benchmark on simulated and real data}
 
-The Rabema benchmark considers reads with multiple mapping locations.
+The Rabema benchmark~\citep{Holtgrewe2011} (v1.1) considers reads with multiple mapping locations.
 %The previous experiment doesnt.
 %This benchmark provides sensitivity evaluation.
 %It is only single-end.
 
+The benchmark consists of the categories \emph{all}, \emph{all-best}, \emph{any-best}.
+A read mapper has to find all, all of the best, or any of the best edit distance locations for each read.
+Mapping locations in each category are classified by their error rate.
+
 I benchmark the performance of read mappers both on simulated and real data.
 %This is to assess how realistic is the simulated data.
+
+We performed the benchmark for an error rate of 5\,\%.
+Therefore, we built a Rabema gold standard for each dataset by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
 
 \subsubsection{Simulated data}
 \subsubsection{Real data}
 
 \begin{table*}[t]
-  \caption[Yara Rabema benchmark results]
+  \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
     Rabema benchmark results on $1\,\text{M} \times 2 \times 100\,\text{bp}$ Illumina-like reads.
@@ -1058,16 +1090,11 @@ I benchmark the performance of read mappers both on simulated and real data.
 
 This experiment measures only read mappers' throughput on real data, thus complementing the sensitivity evaluation performed by the Rabema benchmark on real data.
 
-I measured running times on a desktop computer with 32\,GB RAM, a 2\,TB HDD @ 7200\,RPM, and one Intel Core i7-4770K CPU @ 3.50\,GHz running Linux~3.10.11.
-For maximum throughput, I ran all tools using eight threads.
-For an accurate running time comparison, I disabled Intel Turbo Boost.
-Therefore, real throughputs might be slightly higher than the measured ones.
-
 \subsubsection{Single-end mapping}
 \subsubsection{Paired-end mapping}
 
 \begin{table*}[t]
-  \caption[Throughput on real data]
+  \caption[Yara throughput on real data]
   {
     \label{tab:yara:throughput}
     Throughput on real data. %using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
