@@ -1,12 +1,10 @@
-\chapter{Related problems}
-
-\section{Dictionary search}
+\chapter{Dictionary search and join}
 
 Dictionary search is a restriction of string matching.
 Given a set of database strings $\Dc$ and a query string $q$, the approximate dictionary search problem is to find all strings in $\Dc$ within distance $k$ from $q$.
 Note that usually the query string $q$ has length similar to strings in $\Dc$, as $| |d| - |q| | \leq k$ is a necessary condition for $d_E(d,q) \leq k$.
 
-\subsection{Online methods}
+\section{Online methods}
 
 The problem can be solved by checking whether $d_E(d,q) \leq k$ for all $d \in \Dc$.
 Answering the question whether the distance $d_E(d,q) \leq k$ is an easier problem than computing the edit distance $d_E(d,q)$: a band of size $k+1$ is sufficient.
@@ -31,7 +29,7 @@ The assumption that the cell is right of the band can be falsified analogously.
 \end{center}
 \end{figure}
 
-\subsection{Indexed methods}
+\section{Indexed methods}
 
 Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query string $q$, in optimal time $\Oh(|q|)$ and independently of $||\Dc||$.
 
@@ -58,37 +56,25 @@ Using a radix tree $\Di$ we can find all strings in $\Dc$ equal to a query strin
 \end{center}
 \end{figure}
 
-\subsection{Filtering methods}
+\section{Filtering methods}
 
 Filtering methods of section~\ref{sec:intro:filtering} can be directly applied to solve the dictionary search problem. Database strings satisfying the filtering condition can be verified with algorithm~\ref{?}.
 
-
-
-\section{Local similarity search}
-
-Define score and scoring scheme.
-
-Define local similarity.
-
-\subsection{Online methods}
-Give dynamic programming solution.
-
-\subsection{Indexed methods}
-Backtracking over substring index. BWT-SW.
-
-\subsection{Filtering methods}
-SWIFT/Stellar is based on the $q$-gram lemma.
+%\chapter{Related problems}
+%
+%\section{Local similarity search}
+%Define score and scoring scheme.
+%Define local similarity.
+%\subsection{Online methods}
+%Give dynamic programming solution.
+%\subsection{Indexed methods}
+%Backtracking over substring index. BWT-SW.
+%\subsection{Filtering methods}
+%SWIFT/Stellar is based on the $q$-gram lemma.
 %Lastz resembles a suffix filter.
-
-
-\section{Overlaps computation}
-
-Define problem.
-
-\subsection{Online methods}
-
-DP solution.
-
-\subsection{Indexed methods}
-
-Indexed solution, exact and approximate.
+%
+%\section{Overlaps computation}
+%\subsection{Online methods}
+%DP solution.
+%\subsection{Indexed methods}
+%Indexed solution, exact and approximate.
