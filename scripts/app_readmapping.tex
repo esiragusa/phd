@@ -941,43 +941,45 @@ Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal in
 
 \paragraph{Yara}
 Version 1.0 was used.
-By default, the tool runs as a best-mapper; in order to perform all-mapping, we passed the argument \texttt{--all}.
+To perform all-mapping, we passed the argument \texttt{--all}; by default, the tool runs as a best-mapper.
 We set the error rate using the parameter \texttt{-e}.
 In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
 The number of threads was set with the parameter \texttt{-t}.
 
 \paragraph{GEM}
-Version 2.1 was used.
-%The number of threads was selected with \texttt{-p}.
-%In paired-end mode, the options used are \texttt{-m MIN -x MAX}.
+Version 1.376 was used.
+We set the error rate using the parameters \texttt{-m} and \texttt{-e}, then we disabled adaptive mapping using the parameter \texttt{--quality-format ignore}.
+In best-mapping, to analyze only the best stratum, we passed the argument \texttt{-s 0};
+in all-mapping, to analyze all strata, we passed \texttt{-d all -D all -s all --max-big-indel-length 0}.
+In single-end mode, we passed the parameter \texttt{--expect-single-end-reads}; in paired-end mode, we passed \texttt{--paired-end-alignment}, along with \texttt{--min-insert-size MIN --max-insert-size MAX}, and \texttt{--map-both-ends} to select the workflow mapping both reads independently.
+The number of threads was selected using the parameter \texttt{-t}.
 
 \paragraph{Bowtie\,2}
-Version 2.0.0-beta6 was used.
+Version 2.2.1 was used.
 We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
-For the Rabema experiment we used the parameter \texttt{-k 100}.
+%For the Rabema benchmark we used the parameter \texttt{-k 100}.
 In paired-end mode, we used the parameters \texttt{--minins MIN --maxins MAX}.
 The number of threads was selected using the parameter \texttt{-p}.
 
-\paragraph{BWA-backtrack}
-Version 0.6.1-r104 was used.
-For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
-The insert size was not passed to BWA, however we pass the insert size and allowed error from BWA's output to the other read mappers.
-We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step.
-The {\tt sampe} and {\tt samse} steps were performed using one thread since BWA does not offer a parallelization here.
-
-\paragraph{RazerS\,3}
-Version 3.1 was used.
-We mapped set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
-We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
-In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
-The number of threads was set with the \texttt{-tc} parameter.
+\paragraph{BWA}
+Version 0.7.7-r441 was used.
+%For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
+We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step;
+the \texttt{sampe} and \texttt{samse} steps were performed using one thread since BWA does not offer any parallelization here.
 
 \paragraph{Hobbes\,2}
 Version 2.1 was used.
 We built the index using the recommended $q$-gram length 11.
-We enabled indels with \texttt{--indels} and set maximal edit distance using the parameter \texttt{-v}.
+We enabled edit distance with \texttt{--indels} and set the distance threshold using the parameter \texttt{-v}.
 In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
 Multi-threading was enabled using \texttt{-p}.
+
+\paragraph{RazerS\,3}
+Version 3.2 was used.
+We set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
+We passed the option \texttt{-rr 100} to set the recognition rate to 100\,\% and \texttt{-m 1000000} to output all mapping locations per read.
+In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
+The number of threads was set with the \texttt{-tc} parameter.
 
 \subsubsection{Infrastructure}
 
@@ -1002,7 +1004,7 @@ BWA reports mean insert size \texttt{INS = 178} and deviation \texttt{ERR = 200}
 I introduce an \emph{accuracy benchmark} to measure read mappers accuracy of finding the \emph{original} location of simulated reads.
 This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{?} produced by each tool;
 this policy mimics the behavior of de-facto standard \emph{best-mapping analysis pipelines}, \eg the GATK \citep{DePristo2011}.
-This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the assigned mapping location corresponds to its original location,
+This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the found mapping location corresponds to its original location,
 it computes the \emph{recall} of each tool as the fraction of correctly mapped reads and the \emph{precision} as the fraction of mapped reads that are correct;
 for a thorough evaluation, it also classes all simulated reads by the \emph{error rate} of their original locations, then computes recall and precision within each error rate class.
 
