@@ -442,7 +442,7 @@ we extend both ends of each seed using a banded version of \emph{Myers bit-vecto
 %We now consider formally the read mapping problem.
 %Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
 
-Our original intent was to improve the speed of our all-mapper RazerS \citep{Weese2009}, while preserving full-sensitivity under the edit distance.
+Our original intent was to improve the speed of our all-mapper RazerS \citep{Weese2009} while preserving full-sensitivity under the edit distance.
 RazerS was based on a $q$-gram filter;
 we were aware that gapped $q$-grams could have brought a huge speedup, but we could not see any straightforward generalization of gapped $q$-grams to the edit distance.
 At the same time, we experienced that weaker but quicker filtration using exact seeds was more advantageous than filtration using $q$-grams (indeed, a typical Illumina read mapping setup requires only moderate error rates, in the range of 4--6~\%).
@@ -981,23 +981,21 @@ Multi-threading was enabled using \texttt{-p}.
 
 \subsubsection{Infrastructure}
 
-I run all experiments on a desktop computer running Linux~3.10.11, equipped with one Intel Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
-For maximum throughput, I ran all tools using eight threads.
-For an accurate running time comparison, I disabled Intel Turbo Boost.
-Therefore, real throughputs might be slightly higher than the measured ones.
+All tools run on a desktop computer running Linux~3.10.11, equipped with one Intel Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
+For maximum throughput, all tools run using eight threads.
+For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, real throughputs might be slightly lower than the measured ones.
 
 \subsubsection{Datasets}
 
-As references, we use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh38).
+The reference in all experiments is the human whole genome (GRCh38).
 
-\subsubsection{Simulated data}
-Using Mason, we simulated $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ reads from the H.~sapiens reference genome.
-We used as mean insert size \texttt{INS = 175} and as deviation \texttt{ERR = 225}.
+The simulated data consists of $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{SeqAnReadSimulator}.
+The mean insert size is \texttt{INS = 175} and the deviation \texttt{ERR = 225}.
 
-\paragraph{Real data}
-We downloaded and unpacked an Illumina HiSeq 2000 dataset (SRA/ENA id ERR161544) provided by the Beijing Genome Institute, consisting of $2 \times 100\,\text{bp}$ Whole Genome Sequencing reads.
-The genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
-As reported by BWA, we used as mean insert size \texttt{INS = 178} and as deviation \texttt{ERR = 200}.
+The real data is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
+the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
+This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads, produced by an Illumina HiSeq 2000 instrument.
+BWA reports mean insert size \texttt{INS = 178} and deviation \texttt{ERR = 200}.
 
 \subsection{Accuracy on simulated data}
 
@@ -1083,7 +1081,7 @@ Results are shown in table~\ref{tab:yara:rabema}.
 This experiment complements the sensitivity evaluation on real data provided by the Rabema benchmark.
 The goal of this experiment is to determine if read mappers are able to sustain sequencing throughput of the instrument or constitute a potential bottleneck in the data analysis pipeline.
 The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
-Here I measure read mapping throughput in \emph{giga base pairs per hour} (Gbp/h), thus the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+The experiment measures read mapping throughput in \emph{giga base pairs per hour} (Gbp/h); under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
 
 For an accurate throughput estimation, best-mappers processed $10\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ reads, while for all-mappers it was sufficient to process $1\,\text{M}$ reads.
 For a fair comparison, best-mappers produced a SAM file as expected by de-facto standard best-mapping pipelines, while all-mappers output a file in native format (SAM for Yara and Hobbes\,2, custom for Gem and RazerS\,3).
@@ -1096,7 +1094,7 @@ For a fair comparison, best-mappers produced a SAM file as expected by de-facto 
   {
     \label{tab:yara:throughput}
     Read mapping throughput on the human whole genome.
-    Tools used 8 threads on a desktop computer equipped with an Intel Core i7-4770K CPU @ 3.50\,GHz.
+    All tools run using 8 threads on a desktop computer equipped with an Intel Core i7-4770K CPU.
     The left panel shows the results of mapping $2 \times 100\,\text{bp}$ Illumina HiSeq\,2000 reads as single-end;
     the right panel shows the results of mapping the same reads as paired-end.
     The maximum throughput of an Illumina HiSeq\,2500 is $5.56$ Gbp/h.
@@ -1117,6 +1115,6 @@ For a fair comparison, best-mappers produced a SAM file as expected by de-facto 
 
 % -----------------------------------------------------------------------------
 
-\section{Discussion}
+%\section{Discussion}
 
-Yara does not consider local alignments and chimeric reads.
+%Yara does not consider local alignments and chimeric reads.
