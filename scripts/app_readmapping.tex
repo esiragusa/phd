@@ -396,7 +396,7 @@ In this chapter we present our first attempt to engineer an efficient all-mapper
 When we started this project, in October 2011, the fastest all-mappers (mrFast and RazerS~3) were two order of magnitude slower than prominent best-mappers (Bowtie and BWA).
 On one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration strategy would had been beneficial.
 On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
-After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking.
+After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking, that we published in \citep{Siragusa2013}.
 
 In the engineering section, we see how our filtration method works, which data structures we adopt for indexing, and how we perform seed extension.
 In particular, our filtration method is based on exact or approximate seeds: by employing approximate seeds instead of exact seeds, we obtain a stronger filter for long reference genomes, which is still non-heuristic and quasi full-sensitive.
@@ -410,7 +410,6 @@ Masai is part of the SeqAn library, it is distributed under the BSD license and 
 In the evaluation section, we extensively compare Masai with popular read mappers, both on simulated and real datasets.
 Compared to all-mappers mrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
 In addition, Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
-
 Finally, we discuss the limitations of Masai that led us to engineer Yara, yet another read aligner.
 
 % -----------------------------------------------------------------------------
@@ -867,7 +866,7 @@ Computational requirements of all-mapping now become close to those of best-mapp
 Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
 The achieved speedup is huge when RazerS~3 has to be used as a best-mapper: in this scenario, Masai is roughly 200 times faster!
 
-Despite these achievements, Masai is not being widely used.
+Despite the good results, Masai is not being widely used.
 This is mainly because it lacks some commonly requested features, including:
 parallelization via multi-threading, low memory footprint, direct support of paired-end or mate-pair protocols, computation of mapping qualities, automatic parameterization.
 Because of initial inexperience and unclear (or wrong) goals, I neglected these requirements while designing the tool.
@@ -883,7 +882,6 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
 Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require abstruse ad-hoc parameterization and works on reads of variable length.
-
 
 % -----------------------------------------------------------------------------
 
@@ -925,24 +923,25 @@ I dropped multiple backtracking and implemented fine-grained parallelism.
 
 \section{Evaluation}
 
-We evaluate Yara through three experiments: \begin{inparaenum}[(i)]
+The evaluation consists of three experiments: \begin{inparaenum}[(i)]
 \item accuracy on simulated data,
 \item Rabema benchmark on simulated and real data, and
 \item throughput on real data.
 \end{inparaenum}
+In each experiment, I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
 
 \subsection{Experimental setup}
 
 \subsubsection{Read mappers parametrization}
 
-I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
 In the following, I give the exact parameterization of each read mapper considered in the evaluation.
-When relevant, the tools were configured with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
-Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size; alternatively, \texttt{INS} is the mean insert size and \texttt{ERR} its allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
+Whenever possible, I configured the tools with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
+When processing paired-end reads, I provided the tools with appropriate insert size information.
+Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size, while \texttt{INS} is the mean insert size and \texttt{ERR} its allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
 
 \paragraph{Yara}
-Version ??? was used.
-In order to use Yara as an all-mapper, we passed the argument \texttt{--all}, otherwise the tool runs as a best-mapper by default.
+Version 1.0 was used.
+By default, the tool runs as a best-mapper; in order to perform all-mapping, we passed the argument \texttt{--all}.
 We set the error rate using the parameter \texttt{-e}.
 In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
 The number of threads was set with the parameter \texttt{-t}.
@@ -1002,39 +1001,31 @@ As reported by BWA, we used as mean insert size \texttt{INS = 178} and as deviat
 
 \subsection{Accuracy on simulated data}
 
-%Here we compare the accuracy of Yara with other tools on simulated data.
+I introduce an \emph{accuracy benchmark} to measure read mappers accuracy of finding the \emph{original} location of simulated reads.
+This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{?} produced by each tool;
+this policy mimics the behavior of de-facto standard \emph{best-mapping analysis pipelines}, \eg the GATK \citep{DePristo2011}.
+This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the assigned mapping location corresponds to its original location,
+it computes the \emph{recall} of each tool as the fraction of correctly mapped reads and the \emph{precision} as the fraction of mapped reads that are correct;
+for a thorough evaluation, it also classes all simulated reads by the \emph{error rate} of their original locations, then computes recall and precision within each error rate class.
 
-This experiment measures the ability of each tool to report the \emph{original} location of any simulated read.
-Each tool can output at most one mapping location per read.
-This experiment is suited at evaluating best-mappers.
-This experiment is independent of the scoring scheme used by any tool, \eg edit distance or quality based.
+I repeated this experiment twice: first providing the simulated reads as unpaired, then as paired-end with additional insert size information.
+Results are shown in table~\ref{tab:yara:accuracy}.
 
-It does not consider mapping qualities. Applying a mapping quality cutoff lowers recall and increases precision.
+%This experiment is independent of the scoring scheme used by any tool, \eg edit distance or quality based.
+%It does not consider mapping qualities; a mapping quality cutoff tends to lower recall and increase precision of all tools.
 
-Tools have to map all reads twice, first in single-end mode and then using additional paired-end information.
-
-The categories precision and recall require a 
-A read is mapped \emph{correctly} if the mapper reports its original location, 
-and it is mapped \emph{uniquely} if the mapper reports only one location.
-Rabema defines \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
-
-\subsubsection{Single-end mapping}
-
-In best-mapping, Yara is always.
-
-All-mappers do not perform better.
-
-\subsubsection{Paired-end mapping}
-
-The accuracy improvement due to paired-end information.
+%\subsubsection{Single-end mapping}
+%Comment best and all-mappers. All-mappers do not perform better than best-mappers as we consider only one primary mapping location.
+%\subsubsection{Paired-end mapping}
+%Comment the accuracy improvement due to paired-end information.
 
 \begin{table*}[t]
   \caption[Yara accuracy results]
   {
   \label{tab:yara:accuracy}
-    Accuracy results on $1\,\text{M} \times 2 \times 100\,\text{bp}$ Illumina-like reads.
-%    We show precision and recall values scores in percent (average fraction of edit distance locations reported per read).
-%    Large numbers show total scores in each category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
+    Accuracy results on the human whole genome.
+    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ reads as unpaired; the right panel shows the results of mapping the same reads as paired-end, providing additional insert size information.
+    Big numbers show total scores, while small numbers show marginal scores for the reads at $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
   \vspace{-3mm}
   \center
@@ -1049,31 +1040,32 @@ The accuracy improvement due to paired-end information.
 
 \subsection{Rabema benchmark on simulated and real data}
 
-The Rabema benchmark~\citep{Holtgrewe2011} (v1.1) considers reads with multiple mapping locations.
-%The previous experiment doesnt.
-%This benchmark provides sensitivity evaluation.
-%It is only single-end.
+The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.1) measures read mappers sensitivity of finding \emph{relevant} mapping locations of simulated or real reads.
+This experiment considers the Rabema benchmark category \emph{all} for all-mappers and \emph{all-best} for best-mappers.
+In the category all, Rabema counts as relevant, for each read, all mapping locations within a maximal error rate; in the category all-best it considers just co-optimal mapping locations.
+Rabema computes the \emph{sensitivity} of each tool as the fraction of relevant mapping locations found per read.
+Analogously to the accuracy benchmark, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
+The benchmark reports percentual scores normalized by the number of reads.
 
-The benchmark consists of the categories \emph{all}, \emph{all-best}, \emph{any-best}.
-A read mapper has to find all, all of the best, or any of the best edit distance locations for each read.
-Mapping locations in each category are classified by their error rate.
+I applied the Rabema benchmark both on simulated and real data, within an error rate of 5\,\%.
+Therefore, I built a Rabema gold standard for each dataset by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
+I provided unpaired reads to each tool as the Rabema benchmark by definition does not consider paired-end reads.
+Results are shown in table~\ref{tab:yara:rabema}.
 
-I benchmark the performance of read mappers both on simulated and real data.
-%This is to assess how realistic is the simulated data.
+%Contrarily to the accuracy experiment of section~\label{sec:yara:evaluation:accuracy}, this experiment considers multiple mapping locations per read.
 
-We performed the benchmark for an error rate of 5\,\%.
-Therefore, we built a Rabema gold standard for each dataset by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
-
-\subsubsection{Simulated data}
-\subsubsection{Real data}
+%\subsubsection{Simulated data}
+%\subsubsection{Real data}
 
 \begin{table*}[t]
   \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
-    Rabema benchmark results on $1\,\text{M} \times 2 \times 100\,\text{bp}$ Illumina-like reads.
-    We show Rabema scores in percent (average fraction of edit distance locations reported per read).
-    Large numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
+    Rabema benchmark results on the human whole genome.
+    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ simulated reads; the right panel shows the results of mapping $1\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ real reads.
+%    Big numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with
+    Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
+    $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
   \vspace{-3mm}
   \center
@@ -1088,16 +1080,26 @@ Therefore, we built a Rabema gold standard for each dataset by running RazerS\,3
 
 \subsection{Throughput on real data}
 
-This experiment measures only read mappers' throughput on real data, thus complementing the sensitivity evaluation performed by the Rabema benchmark on real data.
+This experiment complements the sensitivity evaluation on real data provided by the Rabema benchmark.
+The goal of this experiment is to determine if read mappers are able to sustain sequencing throughput of the instrument or constitute a potential bottleneck in the data analysis pipeline.
+The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
+Here I measure read mapping throughput in \emph{giga base pairs per hour} (Gbp/h), thus the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
 
-\subsubsection{Single-end mapping}
-\subsubsection{Paired-end mapping}
+For an accurate throughput estimation, best-mappers processed $10\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ reads, while for all-mappers it was sufficient to process $1\,\text{M}$ reads.
+For a fair comparison, best-mappers produced a SAM file as expected by de-facto standard best-mapping pipelines, while all-mappers output a file in native format (SAM for Yara and Hobbes\,2, custom for Gem and RazerS\,3).
+
+%\subsubsection{Single-end mapping}
+%\subsubsection{Paired-end mapping}
 
 \begin{table*}[t]
   \caption[Yara throughput on real data]
   {
     \label{tab:yara:throughput}
-    Throughput on real data. %using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
+    Read mapping throughput on the human whole genome.
+    Tools used 8 threads on a desktop computer equipped with an Intel Core i7-4770K CPU @ 3.50\,GHz.
+    The left panel shows the results of mapping $2 \times 100\,\text{bp}$ Illumina HiSeq\,2000 reads as single-end;
+    the right panel shows the results of mapping the same reads as paired-end.
+    The maximum throughput of an Illumina HiSeq\,2500 is $5.56$ Gbp/h.
   }
 	\vspace{-3mm}
 	\center
@@ -1109,11 +1111,9 @@ This experiment measures only read mappers' throughput on real data, thus comple
 %	}
 \end{table*}
 
-\subsection{Variant calling on real data}
-
-This experiments assesses the performance of read mappers on variant calling using real data.
-
-I use the GCAT benchmark.
+%\subsection{Variant calling on real data}
+%This experiments assesses the performance of read mappers on variant calling using real data.
+%I use the GCAT benchmark.
 
 % -----------------------------------------------------------------------------
 
