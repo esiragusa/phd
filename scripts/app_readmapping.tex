@@ -889,7 +889,26 @@ Yara offers parallelization via multi-threading, has a low memory footprint by u
 
 \subsection{Filtration}
 
-Flexible filtration: classify reads by hardness.
+Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
+Read mappers like RazerS\,3 and mrFast are based on na\"ive filtration with exact seeds, which is always extremely fast but weak.
+Masai circumvents this problem by enforcing a minimum seed length and resorting to approximate seeds;
+the seed length must be tuned on the reference genome and applies to all reads.
+A better alternative is provided by custom seed length per read.
+
+Yara applies an ad-hoc filtration strategy per read.
+This technique aims at optimizing the ratio between filtration speed and specificity.
+Under a fixed seed length, some reads produce very few verifications.
+%Exome sequencing reads are very easy to map.
+The filter parameterization is automatic and user-free.
+
+The method classifies each read depending on the number of verifications produced.
+Yara initially applies filtration with exact seeds to all reads.
+It counts how many verifications are produced, then eventually applies a stronger filtration to hard reads.
+In this way, filtration is flexible: it stays quick on easy reads while becoming more specific only when required.
+
+%The advantages of this filtration method are manyfold.
+%The filter parameterization is automatic 
+%Independent of the reference genome, kind of sequencing, read length or specified error rate.
 
 \subsubsection{Mapping by strata}
 
