@@ -283,7 +283,7 @@ Each mapping location is verified using a striped vectorial dynamic programming 
 
 Bowtie~2 can be configured to report end-to-end or local alignments, scored using a tunable affine scoring scheme.
 For this reason, it is believed to be good at reporting alignments containing indels.
-However, its completely heuristic filtration strategy, independent of the scoring scheme, makes it hard to believe what it promises.
+However, its completely heuristic filtration method, independent of the scoring scheme, makes it hard to believe what it promises.
 
 % -----------------------------------------------------------------------------
 
@@ -348,7 +348,7 @@ Moreover, the program exhibit an high memory footprint as it must remember the m
 \subsection{mr(s)Fast}
 
 The tools mrFast \citep{Ahmadi2011} and mrsFast \citep{Hach2010} are designed to report all mapping locations within a fixed absolute number errors, respectively under the hamming and edit distance, given Illumina/Solexa reads of length ranging from 50~bp to 125~bp.
-Similarly to RazerS~3, they are based on a full-sensitive filtration strategy using exact seeds, which turns out to be very weak on mammal genomes.
+Similarly to RazerS~3, they are based on a full-sensitive filtration method using exact seeds, which turns out to be very weak on mammal genomes.
 
 The peculiarity of their underlying method is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
 In addition, mrsFast computes the edit distance between one read and one mapping location in the reference genome with an antidiagonal-wise vectorial dynamic programming algorithm, implemented using SIMD instructions.
@@ -365,7 +365,7 @@ The GEM mapper \citep{Gem} is a flexible read aligner for Illumina/Solexa, ABI/S
 It is full-sensitive and can be configured either as an all-mapper, as a best/unique-mapper, or to search by strata.
 
 GEM uses a combination of state of the art approximate string matching methods, \eg approximate seeds and suffix filters.
-The program indexes the reference genome with an FM-index, tries to find an optimal filtration strategy per read, and verifies candidate locations using Myers algorithm.
+The program indexes the reference genome with an FM-index, tries to find an optimal filtration scheme per read, and verifies candidate locations using Myers algorithm.
 Paired-reads are either mapped independently and then combined, or left/right are mapped and their mates verified using an online strategy.
 
 Unfortunately the tool lacks direct SAM output, it is not open source, and provides many obscure parameters.
@@ -394,7 +394,7 @@ Unfortunately the tool lacks direct SAM output, it is not open source, and provi
 
 In this chapter we present our first attempt to engineer an efficient all-mapper.
 When we started this project, in October 2011, the fastest all-mappers (mrFast and RazerS~3) were two order of magnitude slower than prominent best-mappers (Bowtie and BWA).
-On one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration strategy would had been beneficial.
+On one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration method would had been beneficial.
 On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
 After a thorough literature review, we came out with a novel read mapping method combining seed-based filtering with backtracking, that we published in \citep{Siragusa2013}.
 
@@ -890,25 +890,31 @@ Yara offers parallelization via multi-threading, has a low memory footprint by u
 \subsection{Filtration}
 
 Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
-Read mappers like RazerS\,3 and mrFast are based on na\"ive filtration with exact seeds, which is always extremely fast but weak.
-Masai circumvents this problem by enforcing a minimum seed length and resorting to approximate seeds;
-the seed length must be tuned on the reference genome and applies to all reads.
-A better alternative is provided by custom seed length per read.
+Read mappers like RazerS\,3 \citep{RazerS3} and mrFast \citep{Ahmadi2011} are designed around na\"ive filtration with exact seeds.
+This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
+Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
+whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
+This filtration method speeds up Masai by an order of magnitude but is still rough:
+it needs external parametrization, lacks flexibility and is suboptimal in practice.
 
-Yara applies an ad-hoc filtration strategy per read.
-This technique aims at optimizing the ratio between filtration speed and specificity.
-Under a fixed seed length, some reads produce very few verifications.
-%Exome sequencing reads are very easy to map.
-The filter parameterization is automatic and user-free.
+Yara applies an ad-hoc filtration scheme \emph{per read}.
+Under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical mapping, most reads produce very few verifications and are easily mappable, while a few others are problematic and often not even confidently mappable to one single location.
+Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
+An ad-hoc filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
+The tool thus chooses automatically an ad-hoc filtration scheme per read and does not require manual parameterization by the user.
 
-The method classifies each read depending on the number of verifications produced.
+Ad-hoc filtration works as follows.
 Yara initially applies filtration with exact seeds to all reads.
-It counts how many verifications are produced, then eventually applies a stronger filtration to hard reads.
-In this way, filtration is flexible: it stays quick on easy reads while becoming more specific only when required.
+The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
+This decision depends on fine-tuned internal verification thresholds.
+Under standard mapping setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
+Thus, Yara starts with the quickest filtration scheme and becomes more specific when suitable.
 
-%The advantages of this filtration method are manyfold.
-%The filter parameterization is automatic 
-%Independent of the reference genome, kind of sequencing, read length or specified error rate.
+%For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
+%under these terms, a single read produces an average of 15000 verifications, and the verification phase takes 99\,\% of the runtime.
+%On the same mapping setup, this method produces 3 $1$--approximate seeds of length 33\,bp; thus a single read produces 1400 verifications on average.
+%Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
+%The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
 
 \subsubsection{Mapping by strata}
 
