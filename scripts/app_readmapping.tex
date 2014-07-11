@@ -877,11 +877,18 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 
 \chapter{Yara}
 
-%One best is not enough, all often is too much.
-%All-mapping is a niche, indeed almost all NGS analysis pipelines rely on a single mapping location.
+%The vast majority of NGS analysis pipelines consider one single mapping location \citep{Survey on pipelines?}, simply because it is straightforward to think in these terms.
+%Such pipelines expect a confidence level, \ie a mapping quality, along with one mapping location per read.
+%Reads not mapping confidently to one single location are discarded.
+%Despite being now de-facto standard, this method prevents the analysis of low mappability regions \citep{Lee2011}.
+%Despite these limitations, the so called best-mapping is the most asked type of read mapping.
+
+%Some pipelines accept or require multiple mapping locations per read \citep{Survey on all-mapping pipelines?}.
+%This workflow improves small variant calling \citep{Sniper?}, and is required for the detection of structural variants \eg CNVs.
+%This use case requires an exhaustive mapping, called all-mapping.
 
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
-Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require abstruse ad-hoc parameterization and works on reads of variable length.
+Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require ad-hoc parameterization and works on Illumina or Ion Torrent reads.
 
 % -----------------------------------------------------------------------------
 
@@ -908,7 +915,7 @@ Yara initially applies filtration with exact seeds to all reads.
 The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
 This decision depends on fine-tuned internal verification thresholds.
 Under standard mapping setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
-Thus, Yara starts with the quickest filtration scheme and becomes more specific when suitable.
+Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.
 
 %For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
 %under these terms, a single read produces an average of 15000 verifications, and the verification phase takes 99\,\% of the runtime.
@@ -918,15 +925,41 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 
 \subsubsection{Mapping by strata}
 
+%Why?
+In best-mapping the goal is to report one best mapping location along with its confidence.
+
+On the other hand, one co-optimal location is not enough.
+All co-optimal.
+
+Yara analyzes and reports mapping locations full strata
+(i) to compute precise mapping qualities
+(ii) to 
+
+%What?
+Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
+The above filtration method, coupled with an efficient verification method, finds all mapping locations within a fixed error rate.
+%We stratify mapping locations by error rate.
+
+%How?
+%One na\"ive solution consists into applying filters from 0\,\% error rate to the 
 Greedy strategy: sort the seeds by number of hits.
 
 \subsection{Paired-end and mate-pair protocols}
 
-Yara maps both mates independently, as in the single-end protocol; in addition to that, it chooses the best pair among all mapping locations of both mates, accordingly to the parameters specified by the user.
+%Why?
+Illumina instruments sequence reads with the paired-end or mate-pair protocol.
+Apart from easily doubling sequencing throughput, the knowledge of an insert size allows to map a pair more confidently.
+The lack of proper pairing potentially signals structural variation.
+Therefore, reporting unpaired reads is important to spot genomic variation \eg long indels and inversions.
 
-Advantages of this method: spot genomic variation \eg long indels and inversions, well defined best-mapping.
+%What?
+Given a specific insert size and error, Yara.
+Yara maps both mates independently, as in the single-end protocol; in addition to that, it chooses the best pair among mapping locations of both mates, accordingly to the parameters specified by the user.
 
-Disadvantages of this method: report more results, slower all-mapping.
+%How?
+
+
+Describe greedy paired-end filtering for all-mapping.
 
 \subsection{Mapping qualities}
 
