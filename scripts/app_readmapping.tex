@@ -964,7 +964,7 @@ In best-mapping the goal is to report one best mapping location along with its c
 Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
 Reads are sequenced in pairs from both ends of the same insert.
 Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
-The lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversions.
+The lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
 Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
 Nonetheless, a read mapper should report equally important unpaired mapping locations.
 
@@ -973,13 +973,10 @@ However, in addition to the single-end workflow, Yara implements a finer strateg
 For any reads pair, among all pairs of co-optimal mapping locations, the tool selects the one with minimal deviation from the expected insert size.
 Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
 
-%Describe greedy paired-end filtering for all-mapping.
-
 \subsection{Mapping qualities}
 
 Yara computes mapping qualities using the number of mapping locations stratified by error rate.
-
-Mapping quality for the aired-end and mate-pair protocols.
+%Mapping quality for the paired-end and mate-pair protocols.
 
 \subsection{Indexing}
 
