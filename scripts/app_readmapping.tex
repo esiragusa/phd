@@ -261,6 +261,18 @@ From the former problem, we conclude that considering only one optimal mapping l
 The latter problem tells us to be careful about relying on strict optimality.
 Therefore, in general a read mapper should return a comprehensive set of relevant mapping locations along with the likelihood that they correspond to the original location.
 
+Popular read mappers can be broadly classified as \emph{best-mappers} or \emph{all-mappers}.
+Tools in the first class aim at finding the best mapping location for a read according to a scoring scheme eventually taking base quality values into account, while those in the second class aim at enumerating a comprehensive set of locations.
+Most prominent best-mappers are based on backtracking algorithms for approximate string matching.
+Substrings of the reference genome within an absolute number of errors from a read are recursively enumerated using a suffix or prefix tree of the reference genome.
+Since the time complexity of backtracking grows exponentially with the absolute number of errors considered, this method alone is impractical when mapping reads whole reads with moderate error rates. 
+Hence popular best-mappers apply heuristics to reduce and prioritize enumeration and are optimized to return one or a few best mapping locations.
+
+Conversely, most prominent all-mappers are based on filtering algorithms for approximate string matching.
+Seeds are sampled from given reads and used as anchors to quickly determine, with the help of an index, locations of the reference genome candidate to contain approximate occurrences. Each candidate location is subsequently verified with an online method.
+Increasing the error rate in filtering algorithms leads to a decrease of the seed length which in turn deteriorates filtration efficiency.
+Popular all-mappers are usually slower than best-mappers but conversely they are able to report all asked mapping locations in reasonable time.
+
 % -----------------------------------------------------------------------------
 
 \subsection{Bowtie}
@@ -474,12 +486,12 @@ Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperfo
 
 \subsubsection{Best-mapping}
 
-Best-mapping asks to report only one of the optimal (any-best) or alternatively all the co-optimal (all-best) mapping locations of any read.
-Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
-Here we describe a \emph{greedy} mapping strategy for best-mapping that, in standard read mapping scenarios, is an order of magnitude faster than all-mapping.
+%Best-mapping asks to report only one of the optimal (any-best) or alternatively all the co-optimal (all-best) mapping locations of any read.
+%Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
+%Here we describe a \emph{greedy} mapping strategy for best-mapping that, in standard read mapping scenarios, is an order of magnitude faster than all-mapping.
 
-Certainly, best-mapping makes sense if the adopted measure is an effective scoring scheme at identifying original mapping locations.
-In section~\ref{masai:evaluation:rabema} we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
+%Certainly, best-mapping makes sense if the adopted measure is an effective scoring scheme at identifying original mapping locations.
+%In section~\ref{masai:evaluation:rabema} we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
 
 
 \subsection{Indexing}
@@ -894,7 +906,7 @@ Yara offers parallelization via multi-threading, has a low memory footprint by u
 
 \section{Engineering}
 
-\subsection{Filtration}
+\subsection{Ad-hoc filtration}
 
 Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
 Read mappers like RazerS\,3 \citep{RazerS3} and mrFast \citep{Ahmadi2011} are designed around na\"ive filtration with exact seeds.
@@ -923,7 +935,7 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 %Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
 %The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
 
-\subsubsection{Mapping by strata}
+\subsection{Strata filtration}
 
 %Why?
 In best-mapping the goal is to report one best mapping location along with its confidence.
