@@ -263,7 +263,8 @@ Therefore, in general a read mapper should return a comprehensive set of relevan
 
 Popular read mappers can be broadly classified as \emph{best-mappers} or \emph{all-mappers}.
 Tools in the first class aim at finding the best mapping location for a read according to a scoring scheme eventually taking base quality values into account, while those in the second class aim at enumerating a comprehensive set of locations.
-Most prominent best-mappers are based on backtracking algorithms for approximate string matching.
+
+Most prominent best-mappers are based on backtracking algorithms for approximate string matching.
 Substrings of the reference genome within an absolute number of errors from a read are recursively enumerated using a suffix or prefix tree of the reference genome.
 Since the time complexity of backtracking grows exponentially with the absolute number of errors considered, this method alone is impractical when mapping reads whole reads with moderate error rates. 
 Hence popular best-mappers apply heuristics to reduce and prioritize enumeration and are optimized to return one or a few best mapping locations.
@@ -940,38 +941,39 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 %Why?
 In best-mapping the goal is to report one best mapping location along with its confidence.
 
-On the other hand, one co-optimal location is not enough.
-All co-optimal.
+%On the other hand, one co-optimal location is not enough.
+%All co-optimal.
 
-Yara analyzes and reports mapping locations full strata
-(i) to compute precise mapping qualities
-(ii) to 
+%Yara analyzes and reports mapping locations full strata
+%(i) to compute precise mapping qualities
+%(ii) to 
 
 %What?
-Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
-The above filtration method, coupled with an efficient verification method, finds all mapping locations within a fixed error rate.
+%Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
+%The above filtration method, coupled with an efficient verification method, finds all mapping locations within a fixed error rate.
 %We stratify mapping locations by error rate.
 
 %How?
 %One na\"ive solution consists into applying filters from 0\,\% error rate to the 
-Greedy strategy: sort the seeds by number of hits.
+%Greedy strategy: sort the seeds by number of hits.
+
+%Yara randomly chooses the primary mapping location of a read among its co-optimal mapping location.
 
 \subsection{Paired-end and mate-pair protocols}
 
-%Why?
-Illumina instruments sequence reads with the paired-end or mate-pair protocol.
-Apart from easily doubling sequencing throughput, the knowledge of an insert size allows to map a pair more confidently.
-The lack of proper pairing potentially signals structural variation.
-Therefore, reporting unpaired reads is important to spot genomic variation \eg long indels and inversions.
+Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
+Reads are sequenced in pairs from both ends of the same insert.
+Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
+The lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversions.
+Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
+Nonetheless, a read mapper should report equally important unpaired mapping locations.
 
-%What?
-Given a specific insert size and error, Yara.
-Yara maps both mates independently, as in the single-end protocol; in addition to that, it chooses the best pair among mapping locations of both mates, accordingly to the parameters specified by the user.
+In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and reports all relevant mapping locations per read.
+However, in addition to the single-end workflow, Yara implements a finer strategy to choose primary mapping locations.
+For any reads pair, among all pairs of co-optimal mapping locations, the tool selects the one with minimal deviation from the expected insert size.
+Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
 
-%How?
-
-
-Describe greedy paired-end filtering for all-mapping.
+%Describe greedy paired-end filtering for all-mapping.
 
 \subsection{Mapping qualities}
 
