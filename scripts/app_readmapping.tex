@@ -504,12 +504,16 @@ Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperfo
 
 \subsubsection{Best-mapping}
 
-%Best-mapping asks to report only one of the optimal (any-best) or alternatively all the co-optimal (all-best) mapping locations of any read.
-%Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
-%Here we describe a \emph{greedy} mapping strategy for best-mapping that, in standard read mapping scenarios, is an order of magnitude faster than all-mapping.
+In best-mapping, Masai reports the first encountered co-optimal mapping location per read.
+Obviously, best-mapping makes sense if the scoring scheme adopted by the mapper is effective at identifying original mapping locations.
+In section~\ref{masai:evaluation:rabema}, we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
 
-%Certainly, best-mapping makes sense if the adopted measure is an effective scoring scheme at identifying original mapping locations.
-%In section~\ref{masai:evaluation:rabema} we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
+%Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
+%Here we describe a method for best-mapping that, in standard scenarios, is an order of magnitude faster than all-mapping.
+
+%I did not design Masai originally to perform best-mapping, only quickly adapted it to do the job.
+%Masai does not produce mapping quality.
+%In the next chapter, Yara.
 
 
 \subsection{Indexing}
@@ -907,16 +911,6 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 
 \chapter{Yara}
 
-%The vast majority of NGS analysis pipelines consider one single mapping location \citep{Survey on pipelines?}, simply because it is straightforward to think in these terms.
-%Such pipelines expect a confidence level, \ie a mapping quality, along with one mapping location per read.
-%Reads not mapping confidently to one single location are discarded.
-%Despite being now de-facto standard, this method prevents the analysis of low mappability regions \citep{Lee2011}.
-%Despite these limitations, the so called best-mapping is the most asked type of read mapping.
-
-%Some pipelines accept or require multiple mapping locations per read \citep{Survey on all-mapping pipelines?}.
-%This workflow improves small variant calling \citep{Sniper?}, and is required for the detection of structural variants \eg CNVs.
-%This use case requires an exhaustive mapping, called all-mapping.
-
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
 Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require ad-hoc parameterization and works on Illumina or Ion Torrent reads.
 
@@ -956,6 +950,7 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 \subsection{Stratified filtration}
 
 %Why?
+Stratified filtration is useful both in best and all-mapping.
 In best-mapping the goal is to report one best mapping location along with its confidence.
 
 %On the other hand, one co-optimal location is not enough.
