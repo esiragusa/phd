@@ -242,37 +242,54 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 
 \section{Popular read mappers}
 
-Critic the surveys classifying hundreds of mappers \citep{Li2010}, \citep{Fonseca2012}.
+Following the boom of NGS technologies, recent bioinformatics research has produced dozens of tools to perform read mapping.
+Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians to extricate themselves from the jungle of read mapping.
+The survey by \citeauthor{Li2010} first classifies read mapping algorithms by data structure: those based on hash tables and those based on suffix/prefix trees.
+However, the adopted data structure is often an implementation detail, indeed most algorithms covered in the survey fit into both classes.
+The survey primarily considers the application of SNP calling; in the considered setup, mappers enumerating a comprehensive set of locations always lag behind mappers designed to report only one location per read.
+The survey by \citeauthor{Fonseca2012} catalogs read mappers by the features exposed to the user.
+It considers supported input--output formats, rate of errors and variation, number and type (\ie local or semi-global read alignments) of mapping locations reported.
+After this exhaustive catalog, the survey concludes that the choice of a read mapper 
+\emph{involves application-specific requirements such as how well it work in conjunction with downstream analysis tools (\ie variant callers)}.
 
-Critic the benchmarks \citep{Hatem2013} \citep{Holtgrewe2011}.
+Read mapping and variant calling are indeed tightly coupled steps of secondary analysis within reference-based NGS pipelines.
+Secondary analysis methods are based on one of the two following paradigms: best-mapping and all-mapping.
+The best-mapping paradigm considers a single mapping location per read, while the all-mapping paradigm considers a comprehensive set of mapping locations per read.
+In the light of the above consideration, the most important feature of a read mapper is the number of mapping locations reported, followed by their type, while the other features are mostly of technical relevance.
+Most read mappers are specifically designed to fit one paradigm, while others are versatile enough to work well in both cases.
 
-The task of a read mapper is to guess where a read originates.
-Fixed a similarity scoring scheme that confidently models this problem, the optimal alignment under this scoring scheme correspond to the most likely explanation and induces a locus being the origin of the read.
-The simplest scoring scheme is the edit distance; more involved scoring schemes take into account base quality values, score gaps using affine cost functions, or allow to trim for free a prefix or a suffix of the read.
+As said, best-mapping methods rely on one single mapping location per read.
+In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticate heuristics to speed up the search.
+Best-mappers should always complement any mapping location with its mapping quality (see section~\ref{sec:mapping:quality}, denoting the probability of the mapping location being correct, \ie the probability that it corresponds to the read's original location.
+Subsequently, in order to maximize precision, variant calling tools decide wether to consider or discard reads not mapping confidently to any location.
+The GATK~\citep{gatk} and Samtools~\citep{samtools} are popular best-mapping tools to call small variants.
+Clearly, these methods are limited to the analysis of high mappability regions, as they systematically discard reads sequenced from low mappability regions (see section~\ref{sec:mapping:mappability}).
 
-The above definition does not consider two problems: what if there are many co-optimal candidates, and what if the correct solution corresponds to a sub-optimal candidate.
-The former problem is exacerbated by genome mappability.
-One would expect such situations to arise very rarely, but instead it is a relevant problem.
-The latter problem arises whenever our model is not adequate to explain the difference between a read and its genomic origin.
-For instance, an evolutionary event producing an indel of length $l$ might be considered as a unit, whether edit distance would consider it as $l$ independent events.
-Under the edit distance, an alignment with less than $l$ independent point mutations would be considered more likely than an alignment containing only one indel of length $l$.
+All-mapping analysis methods consider a comprehensive set of locations per read.
+Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
+Variant callers in this category implement calling algorithms able to detect a wider spectrum of genomic variation, like CNVs~\citep{mrCaNaVaR}, long indels~\citep{SPLITREAD}, transpositions~\citep{VariationHunter}, as well as SNVs in low-mappability regions~\citep{Sniper}.
 
-From the former problem, we conclude that considering only one optimal mapping location is not sufficient, no matter how good our scoring scheme can be.
-The latter problem tells us to be careful about relying on strict optimality.
-Therefore, in general a read mapper should return a comprehensive set of relevant mapping locations along with the likelihood that they correspond to the original location.
+The rest of this section presents most popular read mapping tools.
+Among them, BWA~\citep{bwa,bwa-sw}, Bowtie~\citep{bowtie,bowtie2} and Soap~\citep{soap} are prominent tools designed for best-mapping, while mr(s)Fast~\citep{mrfast,mrsfast}, RazerS~\citep{razers,razers3}, SHRiMP~\citep{razers,razers3} are designed for best-mapping.
+Grosso modo, most prominent best-mappers recursively enumerate substrings on a suffix/prefix tree of the reference genome via backtracking algorithms.
+Backtracking alone is impractical as its time complexity grows exponentially with the number of errors considered, hence best-mappers apply heuristics to reduce and prioritize enumeration.
+Conversely, all-mappers are based on filtering algorithms for approximate string matching.
+They quickly determine, often with the help of an index, locations of the reference genome candidate to contain approximate occurrences, then verify them with conventional methods.
+Their efficiency is bound to filtration specificity and thus deteriorates with increasing error rates and genome lengths.
+Finally, the most recent tools GEM~\citep{gem}, Masai~\citep{Siragusa2013}, and Yara, fit both best and all-mapping paradigms.
+They speed up best-mapping by stratifying mapping locations by edit distance and prioritizing filtration accordingly.
+In addition to that, they also speed up all-mapping by means of more specific filters based on backtracking.
 
-Popular read mappers can be broadly classified as \emph{best-mappers} or \emph{all-mappers}.
-Tools in the first class aim at finding the best mapping location for a read according to a scoring scheme eventually taking base quality values into account, while those in the second class aim at enumerating a comprehensive set of locations.
+%In best-mapping, the task of a read mapper is to guess original mapping locations of reads.
+%Fixed a similarity scoring scheme that confidently models this problem, the optimal alignment under this scoring scheme correspond to the most likely explanation and induces a locus being the origin of the read.
+%The simplest scoring scheme is the edit distance; more involved scoring schemes take into account base quality values, score gaps using affine cost functions, or allow to trim for free a prefix or a suffix of the read.
 
-Most prominent best-mappers are based on backtracking algorithms for approximate string matching.
-Substrings of the reference genome within an absolute number of errors from a read are recursively enumerated using a suffix or prefix tree of the reference genome.
-Since the time complexity of backtracking grows exponentially with the absolute number of errors considered, this method alone is impractical when mapping reads whole reads with moderate error rates. 
-Hence popular best-mappers apply heuristics to reduce and prioritize enumeration and are optimized to return one or a few best mapping locations.
-
-Conversely, most prominent all-mappers are based on filtering algorithms for approximate string matching.
-Seeds are sampled from given reads and used as anchors to quickly determine, with the help of an index, locations of the reference genome candidate to contain approximate occurrences. Each candidate location is subsequently verified with an online method.
-Increasing the error rate in filtering algorithms leads to a decrease of the seed length which in turn deteriorates filtration efficiency.
-Popular all-mappers are usually slower than best-mappers but conversely they are able to report all asked mapping locations in reasonable time.
+%The above definition does not consider two problems: what if there are many co-optimal candidates, and what if the correct solution corresponds to a sub-optimal candidate.
+%The former problem is exacerbated by genome mappability.
+%One would expect such situations to arise very rarely, but instead it is a relevant problem.
+%The latter problem arises whenever our model is not adequate to explain the difference between a read and its genomic origin.
+%For instance, an evolutionary event producing an indel of length $l$ might be considered as a unit, whether edit distance would consider it as $l$ independent events.
+%Under the edit distance, an alignment with less than $l$ independent point mutations would be considered more likely than an alignment containing only one indel of length $l$.
 
 % -----------------------------------------------------------------------------
 
