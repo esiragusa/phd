@@ -243,14 +243,14 @@ and thus, fixed a genomic sequence $g$, we define the genome mappability score $
 \section{Popular read mappers}
 
 Following the boom of NGS technologies, recent bioinformatics research has produced dozens of tools to perform read mapping.
-Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians to extricate themselves from the jungle of read mapping.
+Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians to extricate themselves from the jungle of read mapping tools.
 The survey by \citeauthor{Li2010} first classifies read mapping algorithms by data structure: those based on hash tables and those based on suffix/prefix trees.
 However, the adopted data structure is often an implementation detail, indeed most algorithms covered in the survey fit into both classes.
-The survey primarily considers the application of SNP calling; in the considered setup, mappers enumerating a comprehensive set of locations always lag behind mappers designed to report only one location per read.
+The survey primarily considers the application of SNP calling; in the considered setup, tools enumerating a comprehensive set of locations always lag behind those designed to report only one location per read.
 The survey by \citeauthor{Fonseca2012} catalogs read mappers by the features exposed to the user.
 It considers supported input--output formats, rate of errors and variation, number and type (\ie local or semi-global read alignments) of mapping locations reported.
 After this exhaustive catalog, the survey concludes that the choice of a read mapper 
-\emph{involves application-specific requirements such as how well it work in conjunction with downstream analysis tools (\ie variant callers)}.
+\emph{involves application-specific requirements such as how well it works in conjunction with downstream analysis tools (\ie variant callers)}.
 
 Read mapping and variant calling are indeed tightly coupled steps of secondary analysis within reference-based NGS pipelines.
 Secondary analysis methods are based on one of the two following paradigms: best-mapping and all-mapping.
@@ -260,14 +260,14 @@ Most read mappers are specifically designed to fit one paradigm, while others ar
 
 As said, best-mapping methods rely on one single mapping location per read.
 In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticate heuristics to speed up the search.
-Best-mappers should always complement any mapping location with its mapping quality (see section~\ref{sec:mapping:quality}, denoting the probability of the mapping location being correct, \ie the probability that it corresponds to the read's original location.
+Best-mappers should always complement any mapping location with its mapping quality (see section~\ref{sec:mapping:quality}), denoting the probability of the mapping location being correct, \ie the probability that it corresponds to the read's original location.
 Subsequently, in order to maximize precision, variant calling tools decide wether to consider or discard reads not mapping confidently to any location.
 The GATK~\citep{gatk} and Samtools~\citep{samtools} are popular best-mapping tools to call small variants.
 Clearly, these methods are limited to the analysis of high mappability regions, as they systematically discard reads sequenced from low mappability regions (see section~\ref{sec:mapping:mappability}).
 
 All-mapping analysis methods consider a comprehensive set of locations per read.
 Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
-Variant callers in this category implement calling algorithms able to detect a wider spectrum of genomic variation, like CNVs~\citep{mrCaNaVaR}, long indels~\citep{SPLITREAD}, transpositions~\citep{VariationHunter}, as well as SNVs in low-mappability regions~\citep{Sniper}.
+Variant callers in this category implement calling algorithms able to detect a wider spectrum of genomic variation, like CNVs~\citep{mrCaNaVaR}, as well as long indels~\citep{SPLITREAD}, transpositions~\citep{VariationHunter}, and SNVs in low-mappability regions~\citep{Sniper}.
 
 The rest of this section presents most popular read mapping tools.
 Among them, BWA~\citep{bwa,bwa-sw}, Bowtie~\citep{bowtie,bowtie2} and Soap~\citep{soap} are prominent tools designed for best-mapping, while mr(s)Fast~\citep{mrfast,mrsfast}, RazerS~\citep{razers,razers3}, SHRiMP~\citep{razers,razers3} are designed for best-mapping.
@@ -932,13 +932,13 @@ Yara applies an ad-hoc filtration scheme \emph{per read}.
 Under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical mapping, most reads produce very few verifications and are easily mappable, while a few others are problematic and often not even confidently mappable to one single location.
 Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
 An ad-hoc filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
-The tool thus chooses automatically an ad-hoc filtration scheme per read and does not require manual parameterization by the user.
+Yara thus automatically chooses an ad-hoc filtration scheme per read, without requiring manual parameterization by the user.
 
 Ad-hoc filtration works as follows.
 Yara initially applies filtration with exact seeds to all reads.
 The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
 This decision depends on fine-tuned internal verification thresholds.
-Under standard mapping setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
+Under standard Illumina setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
 Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.
 
 %For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
