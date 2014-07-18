@@ -949,27 +949,56 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 
 \subsection{Stratified filtration}
 
-%Why?
-Stratified filtration is useful both in best and all-mapping.
-In best-mapping the goal is to report one best mapping location along with its confidence.
+All-mapping methods consider a set of relevant mapping locations per read.
+Yet, this definition leaves open what relevant means.
+In all-mapping under the edit distance, the user defines relevant mapping locations by imposing a distance threshold.
+Despite being sound, this definition does not work well in practice.
+On the one hand a very low threshold leaves a consistent fraction of the reads unmapped, on the other hand a moderate threshold produces a deluge of mapping locations for some reads.
+In practice, at 5\,\%, error rate, Illumina reads map to hundreds of mapping locations on the human genome.
+It is questionable whether all these locations are relevant for the downstream analysis.
+Thus, a finer definition of all-mapping relevance is necessary in practice.
 
-%On the other hand, one co-optimal location is not enough.
-%All co-optimal.
+Stratification of mapping locations yields an equally sound yet practical definition of all-mapping under the edit distance.
+The $e$-stratum
+\begin{eqnarray}
+S(r,e) = \{ (i,j,e) : d_E(g_{i,j},r) = e\}
+\end{eqnarray}
+denotes the set of all mapping locations of a read $r$ at edit distance $e$ from the reference genome $g$.
+According to the above definition, conventional all-mapping under the edit distance defines the set
+\begin{eqnarray}
+S(r,0) \cup S(r,1) \cup \dots \cup S(r,k)
+\end{eqnarray}
+as relevant mapping locations within error threshold $k$.
+Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or sub-optimal up to a certain degree.
+Formally, if the distance of any optimal mapping location for read $r$ is
+\begin{eqnarray}
+e^* = \min_{b \in [0,k]}{S(r,b) \neq \emptyset}
+\end{eqnarray}
+stratified all-mapping considers mapping locations
+\begin{eqnarray}
+S(r,e^*) \cup \dots \cup S(r,\min{e^*+s, k})
+\end{eqnarray}
+within a fixed sub-optimality threshold $s$ to be relevant.
 
-%Yara analyzes and reports mapping locations full strata
-%(i) to compute precise mapping qualities
-%(ii) to 
+Stratified all-mapping could be implemented as a simple post-processing of the mapping locations found by conventional all-mapping.
+For instance, RazerS\,3 implements this method.
+Still, seed-based filtration can be generalized to consider only relevant strata, in order to reduce the search space analyzed, depending on the specified sub-optimality threshold.
+One na\"ive solution consists into applying conventional all-mapping from 0\,\% error rate to the maximum error rate.
+Yet, if a read maps at maximum distance, the work done to map it is much higher.
+Stratified filtration instead guarantees not to perform more work than conventional filtration.
 
-%What?
-%Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
-%The above filtration method, coupled with an efficient verification method, finds all mapping locations within a fixed error rate.
-%We stratify mapping locations by error rate.
 
-%How?
-%One na\"ive solution consists into applying filters from 0\,\% error rate to the 
 %Greedy strategy: sort the seeds by number of hits.
+%Minimizes the number of verifications to perform in order to find the set of relevant mapping locations.
 
-%Yara randomly chooses the primary mapping location of a read among its co-optimal mapping location.
+
+Stratified filtration is useful also in best-mapping.
+In best-mapping the goal is to report one best mapping location along with its confidence.
+Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
+% Yara uses the best strata
+%(i) to compute precise mapping qualities
+%(ii) to perform paired-end mapping.
+
 
 \subsection{Paired-end and mate-pair protocols}
 
