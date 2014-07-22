@@ -1021,13 +1021,23 @@ Yara computes mapping qualities using the number of mapping locations stratified
 
 \subsection{Indexing}
 
-I engineered an efficient FM-index for the DNA alphabet.
+Yara uses an efficient FM-index specialization for the DNA alphabet, based on interleaved rank dictionaries (see section~\ref{sec:index:fmi}).
+This interleaved FM-index exhibit a fourfold speedup over the first FM-index implementation bundled with Masai.
+Surprisingly, the interleaved FM-index is also faster than any other index, both in exact and approximate search (see figure~\ref{fig:index:fmi}).
+Moreover, this index consumes only 1.23 bytes per base pair with a SA sampled at 10\,\%, thus its memory footprint is 3.7~GB for the human genome.
+Under these terms, the there is no indexing space-time trade-off: the FM-index always provides the most convenient suffix trie implementation.
 
-\subsection{Parallelization}
+Yara does not use multiple search algorithms of section~\ref{sec:index:multi} to search seeds on the FM-index.
+These algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
+Using forward search, navigation in a suffix trie becomes less expensive as it proceeds towards bottom nodes.
+Indeed, navigation towards a child node involves the computation a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, that have good chances to be in the cache.
+Conversely, using backward search, navigation becomes more expensive as it proceeds deeper in the trie; navigation downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
+Multiple backtracking factorizes navigation of top nodes, thus it pays off with forward search rather than with backward search.
+Hence, on the FM-index, it is always faster to search exact queries in a na\"ive way and approximate queries simply sorted in lexicographical order (see figure~\ref{fig:index:fmi}).
 
-I dropped multiple backtracking and implemented fine-grained parallelism.
-
-%fine-grained parallelism by read level down to seeds.
+%Yara implements fine-grained parallelism.
+%It would be possible to stream over reads to parallelize computation per read.
+%However, the tool processes batches of reads.
 
 % -----------------------------------------------------------------------------
 
