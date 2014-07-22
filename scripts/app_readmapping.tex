@@ -504,17 +504,13 @@ Conversely, on larger genomes (\eg mammalian genomes) approximate seeds outperfo
 
 \subsubsection{Best-mapping}
 
-In best-mapping, Masai reports the first encountered co-optimal mapping location per read.
-Obviously, best-mapping makes sense if the scoring scheme adopted by the mapper is effective at identifying original mapping locations.
-In section~\ref{masai:evaluation:rabema}, we see that best-mapping using edit distance is competitive with tools using more complex scoring schemes.
-
-%Of course, we can perform all-mapping and then filter out any sub-optimal mapping location.
-%Here we describe a method for best-mapping that, in standard scenarios, is an order of magnitude faster than all-mapping.
-
-%I did not design Masai originally to perform best-mapping, only quickly adapted it to do the job.
-%Masai does not produce mapping quality.
-%In the next chapter, Yara.
-
+Masai is a tool designed primarily to perform all-mapping rather than best-mapping.
+In best-mapping, Masai simply reports the first optimal mapping location encountered per read.
+Clearly, this policy makes sense if the edit distance is effective at identifying original mapping locations.
+Section~\ref{masai:evaluation:rabema} shows that Masai is competitive in best-mapping with tools using more complex scoring schemes.
+Nonetheless, Masai's best-mapping method is ad-hoc and limited.
+In best-mapping, Masai does not produce mapping qualities, it does not even support paired-end and mate-pair protocols.
+The reader is thus referred to the next chapter (section~\ref{sec:yara:engineering}) for the complete description of an efficient best-mapping method that, in standard scenarios, is an order of magnitude faster than all-mapping.
 
 \subsection{Indexing}
 \label{masai:engineering:index}
