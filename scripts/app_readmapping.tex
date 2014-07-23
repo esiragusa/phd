@@ -510,7 +510,7 @@ Clearly, this policy makes sense if the edit distance is effective at identifyin
 Section~\ref{masai:evaluation:rabema} shows that Masai is competitive in best-mapping with tools using more complex scoring schemes.
 Nonetheless, Masai's best-mapping method is ad-hoc and limited.
 In best-mapping, Masai does not produce mapping qualities, it does not even support paired-end and mate-pair protocols.
-The reader is thus referred to the next chapter (section~\ref{sec:yara:engineering}) for the complete description of an efficient best-mapping method that, in standard scenarios, is an order of magnitude faster than all-mapping.
+The reader is thus referred to the next chapter (section~\ref{sec:yara:eng}) for the complete description of an efficient best-mapping method that, in standard scenarios, is an order of magnitude faster than all-mapping.
 
 \subsection{Indexing}
 \label{masai:engineering:index}
@@ -906,6 +906,7 @@ The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \
 % =============================================================================
 
 \chapter{Yara}
+\label{sec:yara}
 
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
 Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require ad-hoc parameterization and works on Illumina or Ion Torrent reads.
@@ -913,8 +914,10 @@ Yara offers parallelization via multi-threading, has a low memory footprint by u
 % -----------------------------------------------------------------------------
 
 \section{Engineering}
+\label{sec:yara:eng}
 
 \subsection{Ad-hoc filtration}
+\label{sec:yara:eng:adhoc}
 
 Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
 Read mappers like RazerS\,3 \citep{RazerS3} and mrFast \citep{Ahmadi2011} are designed around na\"ive filtration with exact seeds.
@@ -944,6 +947,7 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 %The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
 
 \subsection{Stratified filtration}
+\label{sec:yara:eng:strata}
 
 All-mapping methods consider a set of relevant mapping locations per read.
 Yet, this definition leaves open what relevant means.
@@ -1007,7 +1011,7 @@ Then it processes all candidate locations, from the least to the most frequent s
 Yara performs best-mapping by means of stratified filtration.
 Best-mapping requires one primary mapping location along with its confidence.
 Under the edit distance, without any further assumptions, any co-optimal location is equally likely to be correct.
-Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates mapping quality using all found mapping locations.
+Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates its mapping quality using all found mapping locations (see section~\ref{sec:yara:eng:qualities}).
 Because of this method, Yara in best-mapping is an order of magnitude faster than in conventional all-mapping.
 
 % Yara uses the best strata
@@ -1016,7 +1020,7 @@ Because of this method, Yara in best-mapping is an order of magnitude faster tha
 
 
 \subsection{Paired-end and mate-pair protocols}
-
+\label{sec:yara:eng:pairs}
 Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
 Reads are sequenced in pairs from both ends of the same insert.
 Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
@@ -1030,12 +1034,12 @@ For any reads pair, among all pairs of co-optimal mapping locations, the tool se
 Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
 
 \subsection{Mapping qualities}
-
+\label{sec:yara:eng:qualities}
 Yara computes mapping qualities using the number of mapping locations stratified by error rate.
 %Mapping quality for the paired-end and mate-pair protocols.
 
 \subsection{Indexing}
-
+\label{sec:yara:eng:indexing}
 Yara uses an efficient FM-index specialization for the DNA alphabet, based on interleaved rank dictionaries (see section~\ref{sec:index:fmi}).
 This interleaved FM-index exhibit a fourfold speedup over the first FM-index implementation bundled with Masai.
 Surprisingly, the interleaved FM-index is also faster than any other index, both in exact and approximate search (see figure~\ref{fig:index:fmi}).
@@ -1057,6 +1061,7 @@ Hence, on the FM-index, it is always faster to search exact queries in a na\"ive
 % -----------------------------------------------------------------------------
 
 \section{Evaluation}
+\label{sec:yara:eval}
 
 The evaluation consists of three experiments: \begin{inparaenum}[(i)]
 \item accuracy on simulated data,
