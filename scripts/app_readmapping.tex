@@ -1026,9 +1026,9 @@ Under these terms, the there is no indexing space-time trade-off: the FM-index a
 Yara does not use multiple search algorithms of section~\ref{sec:index:multi} to search seeds on the FM-index.
 These algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
 Using forward search, navigation in a suffix trie becomes less expensive as it proceeds towards bottom nodes.
-Indeed, navigation towards a child node involves the computation a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, that have good chances to be in the cache.
+Indeed, navigation towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, that have good chances to be in the cache.
 Conversely, using backward search, navigation becomes more expensive as it proceeds deeper in the trie; navigation downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
-Multiple backtracking factorizes navigation of top nodes, thus it pays off with forward search rather than with backward search.
+As multiple backtracking factorizes the navigation of top nodes, it pays off with forward search rather than with backward search.
 Hence, on the FM-index, it is always faster to search exact queries in a na\"ive way and approximate queries simply sorted in lexicographical order (see figure~\ref{fig:index:fmi}).
 
 %Yara implements fine-grained parallelism.
