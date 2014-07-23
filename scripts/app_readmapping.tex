@@ -972,25 +972,44 @@ e^* = \min \,\{ e \in [0,k] : S(r,e) \neq \emptyset \}
 \end{eqnarray}
 stratified all-mapping considers mapping locations
 \begin{eqnarray}
-S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+s, k\})
+S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+l, k\})
 \end{eqnarray}
-within a \emph{relative} error threshold $s$ to be relevant.
+within a \emph{relative} error threshold $l$ to be relevant.
+%Note that $l \ll k$.
 
-Stratified all-mapping could be implemented as a simple post-processing of the mapping locations found by conventional all-mapping.
-For instance, RazerS\,3 implements this method.
-Still, seed-based filtration can be generalized to consider only relevant strata, in order to reduce the search space analyzed, depending on the specified sub-optimality threshold.
-One na\"ive solution consists into applying conventional all-mapping from 0\,\% error rate to the maximum error rate.
-Yet, if a read maps at maximum distance, the work done to map it is much higher.
-Stratified filtration instead guarantees not to perform more work than conventional filtration.
+Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping.
+Obviously, the most straightforward way to achieve stratified all-mapping consists into performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
+For instance, RazerS\,3 implements this method and gets no speedup.
+Another na\"ive method consists into applying up to $k$ rounds of conventional all-mapping, with filtration schemes for thresholds going from $0$ to $\min \,\{ e^*+l, k\}$.
+It is easy to see that also this method performs redundant computation: the total work for any read mapping at distance greater or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
 
-I present a generalization of the pigeonhole lemma to strata...
+The following stratified all-mapping method, adopted by Yara, guarantees not to perform more work than conventional all-mapping.
+Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $\min \,\{ e^*+l, k\}$.
+Given any filtration scheme full-sensitive within distance $k$, with $s$ seeds having thresholds $\mathbb{k}=(k_1,\dots,k_s)$, any subset consisting of $s^* < s$ seeds with thresholds $\mathbb{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
+\begin{eqnarray}
+s^* + \sum \mathbb{k^*} > \min \,\{ e^*+l, k\}.
+\end{eqnarray}
+The proof is analogous to that one given in section~\ref{sec:filtering:apx}.
+%Verification of all candidate locations produced by one seed or by one threshold accounts for one stratum $S(r,i)$.
 
-I propose a greedy strategy: sort the seeds by number of verifications to perform.
-Minimizes the number of verifications to perform in order to find the set of relevant mapping locations.
+\begin{example}
+Let $k=5$ be the absolute threshold, and $l=0$ be the relative threshold, restricting relevant locations to co-optimal ones.
+A read $r$ maps at distance 1, \ie $|S(r,0)| = 0$, $|S(r,1)| > 0$ thus $e^* = 1$.
+Given the filtration scheme $\mathbb{k}=(1,1,1)$, any subset full-sensitive up to distance $\min \,\{ e^*+l, k\} = 1$ finds all relevant mapping locations, \ie all subsets of $\mathbb{k}$ are: $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$ are full-sensitive.
+Thus, verification of all candidates, produced by \emph{any} two exact seeds or one 1-approximate seed, yields all mapping locations in the $1$-stratum of $r$.
+\end{example}
 
-Stratified filtration is useful also in best-mapping.
-In best-mapping the goal is to report one primary mapping location along with its confidence.
-Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
+In addition, Yara implements a simple greedy strategy to minimize the number of verifications to find all relevant stratified mapping locations.
+As candidate locations can be verified in any order, Yara chooses the ordering of seeds producing the minimum number of verifications.
+The tool first finds all seeds and ranks them by number of candidate locations produced.
+Then it processes all candidate locations, from the least to the most frequent seed, until it explores $l$ strata from the first non-empty one, or until it attains the absolute distance threshold $k$.
+
+Yara performs best-mapping by means of stratified filtration.
+Best-mapping requires one primary mapping location along with its confidence.
+Under the edit distance, without any further assumptions, any co-optimal location is equally likely to be correct.
+Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates mapping quality using all found mapping locations.
+Because of this method, Yara in best-mapping is an order of magnitude faster than in conventional all-mapping.
+
 % Yara uses the best strata
 %(i) to compute precise mapping qualities
 %(ii) to perform paired-end mapping.
