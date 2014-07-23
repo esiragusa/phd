@@ -957,24 +957,24 @@ Thus, a finer definition of all-mapping relevance is necessary in practice.
 Stratification of mapping locations yields an equally sound yet practical definition of all-mapping under the edit distance.
 The $e$-stratum
 \begin{eqnarray}
-S(r,e) = \{ (i,j,e) : d_E(g_{i,j},r) = e\}
+S(r,e) = \{ (i,j,e) : d_E(g_{i \dots j},r) = e\}
 \end{eqnarray}
 denotes the set of all mapping locations of a read $r$ at edit distance $e$ from the reference genome $g$.
 According to the above definition, conventional all-mapping under the edit distance defines the set
 \begin{eqnarray}
 S(r,0) \cup S(r,1) \cup \dots \cup S(r,k)
 \end{eqnarray}
-as relevant mapping locations within error threshold $k$.
+as relevant mapping locations within an \emph{absolute} error threshold $k$.
 Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or sub-optimal up to a certain degree.
 Formally, if the distance of any optimal mapping location for read $r$ is
 \begin{eqnarray}
-e^* = \min_{b \in [0,k]}{S(r,b) \neq \emptyset}
+e^* = \min \,\{ e \in [0,k] : S(r,e) \neq \emptyset \}
 \end{eqnarray}
 stratified all-mapping considers mapping locations
 \begin{eqnarray}
-S(r,e^*) \cup \dots \cup S(r,\min{e^*+s, k})
+S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+s, k\})
 \end{eqnarray}
-within a fixed sub-optimality threshold $s$ to be relevant.
+within a \emph{relative} error threshold $s$ to be relevant.
 
 Stratified all-mapping could be implemented as a simple post-processing of the mapping locations found by conventional all-mapping.
 For instance, RazerS\,3 implements this method.
@@ -989,7 +989,7 @@ I propose a greedy strategy: sort the seeds by number of verifications to perfor
 Minimizes the number of verifications to perform in order to find the set of relevant mapping locations.
 
 Stratified filtration is useful also in best-mapping.
-In best-mapping the goal is to report one best mapping location along with its confidence.
+In best-mapping the goal is to report one primary mapping location along with its confidence.
 Yara reports as primary one random co-optimal mapping location under the edit distance, along with its mapping quality.
 % Yara uses the best strata
 %(i) to compute precise mapping qualities
