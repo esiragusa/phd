@@ -2,16 +2,22 @@
 
 \chapter{Background}
 
-Next generation sequencing is a terrific technology.
+High-throughput sequencing (HTS) is a fundamental technology.
 A wealth of applications have been developed on top of it.
 Data analysis pipelines for variant calling and structural variation discovery from DNA-seq, mRNA transcripts abundance estimation and novel non-coding RNA discovery from RNA-seq, transcription factor binding-sites prediction from ChIP-seq.
 All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
 
-Read mapping is a critical step in all NGS data analysis pipelines.
+Read mapping is a critical step in all HTS data analysis pipelines.
 NGS reads produced by all current technologies contain sequencing errors, in form of single miscalled bases or stretches of oligonucleotides.
 Moreover, the donor genome from which reads have been sequenced contains small genomic variations (SNVs, Indels) in addition to CNV, inversions and translocations.
 After all, spotting genomic variation is one reason for which we resequence genomes.
 Thus, when mapping a read to a reference genome, it is not sufficient to consider the loci where the reads map exactly; it is necessary to consider any loci of relevant sequence similarity, being possible origins of the sequenced reads.
+
+First I present sequencing technologies from the standpoint of the bioinformatician who has to perform secondary analysis of the data.
+Then I discuss what makes secondary analysis hard.
+Finally I divide reference-mapping secondary analysis methods in two paradigms: best-mapping and all-mapping.
+I present popular read mapping tools.
+
 
 \section{Sequencing technologies}
 
@@ -29,21 +35,15 @@ Roche / 454 Life Sciences.
 \subsubsection{SOLiD}
 ABI / SOLiD.
 
-\section{Sequencing protocols and applications}
-
-\subsection{DNA-seq}
-\subsection{RNA-seq}
-\subsection{ChIP-seq}
-
 \section{Sequencing quality}
 
-%\subsection{Phred base quality values}
+%\subsection{Phred base quality scores}
 
-Phred base quality values have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
+Phred base quality scores have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
 Instead of directly discarding low-quality regions present in capillary reads, Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
 As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
 
-To formally define Phred base quality values, let us fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
+To formally define Phred base quality scores, let us fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
 We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
 Therefore, we define the Phred base quality $Q_i$ at position $i$ as:
 \begin{eqnarray}
