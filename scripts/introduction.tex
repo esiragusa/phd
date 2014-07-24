@@ -1,25 +1,41 @@
 \chapter{Introduction}
 
-The sequencing of the whole human genome has been one of the majors scientific achievements of the last decades.
+The sequencing of the whole human genome, consisting of three billion base pairs of DNA, has been one of the major scientific achievements of the last decades.
+Very surprisingly, this milestone has been achieved twice, by two independent groups.
+The three billion dollars publicly funded \emph{Human Genome Project} published \citep{hgp} in February 2001 the first draft covering more than 96\~\% of the euchromatic part of the human genome, and finally the full sequence in April 2003.
+The privately funded company \emph{Celera Genomics} concurrently published \citep{celerahuman} a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome.
+These two groups also contributed to characterize the entire genomes of other model organisms, such as mice~\citep{mouse}, fruit flies~\citep{celerafly}, nematode worms and yeasts.
 
-%The Human Genome Project (HGP) published the first working draft in February 2001.
-%was declared complete in April 2003.
-%The International Human Genome Sequencing Consortium published the first draft of the human genome in the journal Nature in February 2001 with the sequence of the entire genome's three billion base pairs some 90 percent complete. A startling finding of this first draft was that the number of human genes appeared to be significantly fewer than previous estimates, which ranged from 50,000 genes to as many as 140,000.The full sequence was completed and published in April 2003.
+The knowledge of the complete genomes of model organisms opened the door to a myriad of new scientific studies and discoveries.
+The first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been estimated, and a remarkably low quantity if compared to the nineteen thousand genes of C.elegans~\citep{Hodgkin2001}.
+Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank~\citep{genbank} and can be consulted interactively \eg via the UCSC genome browser~\citep{ucscgb}.
 
-%The tools created through the HGP also continue to inform efforts to characterize the entire genomes of several other organisms used extensively in biological research, such as mice, fruit flies and flatworms.
-%Also mouse, drosophila, etc.
-
-%Nowadays \# reference model genomes are available in genbank.
-
+%This has been a huge computational effort.
 %I was fifteen years old by that time. I begun to be passionate about computers and. I wondered what would be the contributions of computers behind that project. I did not imagine working in this field ten years later.
 
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
 
-The recent advances of sequencing technologies motivate this work.
+The success of these huge sequencing projects did not mark the end of the sequencing era, but its beginning.
+The early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
+This sequencing technology reads DNA with high fidelity but at low speed: it produces \emph{reads} of an average length of 700~bp at a throughput of about 150~Kbp/h.
+At this throughput, the sequencing of the human genome took years and many million dollars.
+Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS), or \emph{next-generation sequencing} (NGS).
 
-High-throughput sequencing (HTS), also called next-generation sequencing (NGS).
+In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of 20--30~Mbp/h.
+High-throughput sequencing was born.
+In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
+The instrument produced reads as short as 30~bp, at lower accuracy than Sanger sequencing, but at very high-throughput: it allowed \emph{resequencing} a human genome in three months for about \$100,000.
+Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
+At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing the sequencing of many human whole-genomes at \$1,000 each, in less than three days.
+
+Over the last decade, numerous other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
+I will return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
+In the following, I introduce most relevant \emph{applications} of high-throughput sequencing.
+Why should we resequence an individual, after all?
+
+%At the same time, \emph{Applied Biosystems} entered the market with its \emph{SOLiD} system, based on parallel sequencing by \emph{stepwise ligation}, reading two bases at a time with a florescent label in order to improve sequencing accuracy.
 
 %Next-generation sequencing has been the second revolution.
 %NGS produces billions of reads for 1000\$ dollars.
@@ -94,6 +110,8 @@ Read mapping methods work on a previously assembled reference genome.
 % -----------------------------------------------------------------------------
 
 \section{Outline}
+
+The recent advances of sequencing technologies motivate this work.
 
 %In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
 I develop methods for the mapping of DNA and ChIP-seq reads.
