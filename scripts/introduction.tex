@@ -4,11 +4,11 @@ The sequencing of the whole human genome, consisting of three billion base pairs
 Very surprisingly, this milestone has been achieved twice, by two independent groups.
 The three billion dollars publicly funded \emph{Human Genome Project} published \citep{hgp} in February 2001 the first draft covering more than 96\~\% of the euchromatic part of the human genome, and finally the full sequence in April 2003.
 The privately funded company \emph{Celera Genomics} concurrently published \citep{celerahuman} a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome.
-These two groups also contributed to characterize the entire genomes of other model organisms, such as mice~\citep{mouse}, fruit flies~\citep{celerafly}, nematode worms and yeasts.
+These two groups also contributed to characterize the entire genomes of other model organisms, such as mice \citep{mouse}, fruit flies \citep{celerafly}, nematode worms and yeasts.
 
 The knowledge of the complete genomes of model organisms opened the door to a myriad of new scientific studies and discoveries.
-The first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been estimated, and a remarkably low quantity if compared to the nineteen thousand genes of C.elegans~\citep{Hodgkin2001}.
-Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank~\citep{genbank} and can be consulted interactively \eg via the UCSC genome browser~\citep{ucscgb}.
+The first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been estimated, and a remarkably low quantity if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
+Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 
 %This has been a huge computational effort.
 %I was fifteen years old by that time. I begun to be passionate about computers and. I wondered what would be the contributions of computers behind that project. I did not imagine working in this field ten years later.
@@ -35,15 +35,10 @@ I will return to sequencing technologies in chapter~\ref{sec:background:sequenci
 In the following, I introduce most relevant \emph{applications} of high-throughput sequencing.
 Why should we resequence an individual, after all?
 
-%At the same time, \emph{Applied Biosystems} entered the market with its \emph{SOLiD} system, based on parallel sequencing by \emph{stepwise ligation}, reading two bases at a time with a florescent label in order to improve sequencing accuracy.
-
-%Next-generation sequencing has been the second revolution.
-%NGS produces billions of reads for 1000\$ dollars.
-%Why should one re-sequence a known genome?
-%Resequencing applications include...
-%NGS impacts biomedicine.
-
 \subsection{Sequencing protocols and applications}
+
+%HTS impact ranges from biology to medicine.
+%Resequencing applications include...
 
 \subsubsection{DNA-seq}
 
@@ -54,14 +49,26 @@ Whole exome sequencing.
 Targeted sequencing.
 
 \subsubsection{RNA-seq}
-%RNA sequencing (RNA-seq) is a method of investigating the transcriptome of an organism using deep-sequencing techniques. The RNA content of a sample is directly sequenced after appropriate library construction, providing a rich data set for analysis. The high level of sensitivity and resolution provided by this technique makes it a valuable tool for investigating the entire transcriptional landscape. The quantitative nature of the data and the high dynamic range of the sequencing technology enables gene expression analysis with a high sensitivity. The single-base resolution of the data provides information on single nucleotide polymorphisms (SNPs), alternative splicing, exon/intron boundaries, untranslated regions, and other elements. Additionally, prior knowledge of the reference sequence is not required to perform RNA-seq, allowing for de novo transcriptome analysis and detection of novel variants and mutations. RNA-seq is an extremely powerful and revolutionary way to investigate transcriptomes, but requires care in order to achieve the highest quality of data.
+%RNA sequencing (RNA-seq) is a method of investigating the transcriptome of an organism using deep-sequencing techniques.
+%The RNA content of a sample is directly sequenced after appropriate library construction, providing a rich data set for analysis.
+%The high level of sensitivity and resolution provided by this technique makes it a valuable tool for investigating the entire transcriptional landscape.
+%The quantitative nature of the data and the high dynamic range of the sequencing technology enables gene expression analysis with a high sensitivity.
+%The single-base resolution of the data provides information on single nucleotide polymorphisms (SNPs), alternative splicing, exon/intron boundaries, untranslated regions, and other elements.
+%Additionally, prior knowledge of the reference sequence is not required to perform RNA-seq, allowing for de novo transcriptome analysis and detection of novel variants and mutations.
+%RNA-seq is an extremely powerful and revolutionary way to investigate transcriptomes, but requires care in order to achieve the highest quality of data.
 
 \subsubsection{ChIP-seq}
-%Chromatin immunoprecipitation (ChIP) is a powerful and versatile method for understanding the mechanisms of gene regulation by transcription factors and modified histones. It is used to identify chromatin regions which are bound by transcription factors, co-regulators, modified histones, chromatin remodeling proteins, or other nuclear factors from live cells.
+%Chromatin immunoprecipitation (ChIP) is a powerful and versatile method for understanding the mechanisms of gene regulation by transcription factors and modified histones.
+%It is used to identify chromatin regions which are bound by transcription factors, co-regulators, modified histones, chromatin remodeling proteins, or other nuclear factors from live cells.
+%For example, ChIP-seq can be used to analyze protein-DNA interactions, and to determine global methylation pattern in a genome.
 
-%Next-generation sequencing has also proved to be a powerful tool for studies of gene regulation networks. For example, ChIP-seq (or chromatin immunoprecipitation sequencing), can be used to analyze protein-DNA interactions. NGS can also be used to determine global methylation pattern in a genome.
-
-%The procedure is time-consuming and involves many steps and variables, each of which must be optimized by the investigator in their model system. After cross-linking cells with formaldehyde, chromatin containing covalent complexes between genomic DNA and all nuclear factors is isolated and sheared by sonication into manageable sizes. Immunoprecipitation with an antibody specific for the target nuclear protein of interest also pulls down any specifical genomic DNA sequences bound by this factor. Reversal of the chemical cross-linking and nucleic acid purification prepare the DNA for detection by sequencing, hybridization-based microarrays, or PCR. ChIP with subsequent next-generation sequencing (ChIP-Seq) is used to study the genome-wide distribution of loci bound by a protein of interest. Compared to microarray analysis (ChIP-Chip) ChIP-Seq offers higher spatial resolution, dynamic range, and genome coverage. This results in a superior sensitivity and specificity for the detection of DNA binding sites. Furthermore, ChIP-Seq generally requires less input material and is more flexible, since no hybridization probes are required and therefore, any species can be studied with sequenced genomes.
+%The procedure is time-consuming and involves many steps and variables, each of which must be optimized by the investigator in their model system.
+%After cross-linking cells with formaldehyde, chromatin containing covalent complexes between genomic DNA and all nuclear factors is isolated and sheared by sonication into manageable sizes. Immunoprecipitation with an antibody specific for the target nuclear protein of interest also pulls down any specifical genomic DNA sequences bound by this factor.
+%Reversal of the chemical cross-linking and nucleic acid purification prepare the DNA for detection by sequencing, hybridization-based microarrays, or PCR.
+%ChIP with subsequent next-generation sequencing (ChIP-Seq) is used to study the genome-wide distribution of loci bound by a protein of interest.
+%Compared to microarray analysis (ChIP-Chip) ChIP-Seq offers higher spatial resolution, dynamic range, and genome coverage.
+%This results in a superior sensitivity and specificity for the detection of DNA binding sites.
+%Furthermore, ChIP-Seq generally requires less input material and is more flexible, since no hybridization probes are required and therefore, any species can be studied with sequenced genomes.
 
 \subsection{Analysis stages}
 
