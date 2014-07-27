@@ -2,33 +2,31 @@
 
 The sequencing of the whole human genome, consisting of three billion base pairs of DNA, has been one of the major scientific achievements of the last decades.
 Very surprisingly, this milestone has been achieved twice, by two independent groups.
-The three billion dollars publicly funded \emph{Human Genome Project} (HGP) published \citep{hgp} in February 2001 the first draft covering more than 96\~\% of the euchromatic part of the human genome, and finally the full sequence in April 2003.
-The privately funded company \emph{Celera Genomics} concurrently published \citep{celerahuman} a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome.
+The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft covering more than 96\~\% of the euchromatic part of the human genome \citep{hgp}, and finally the full sequence in April 2003.
+The privately funded company \emph{Celera Genomics} concurrently published a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome \citep{celerahuman}.
 These two groups also contributed to characterize the entire genomes of other model organisms, such as mice \citep{mouse}, fruit flies \citep{celerafly}, nematode worms and yeasts.
 
-This has been not only an achievement of molecular biology but a huge computational effort.
-Sequencing technologies are based on the \emph{shotgun} approach that chops DNA fragments up into smaller segments and then generates \emph{reads} of these short nucleotide sequences.
-It’s left up to bioinformatics to reassemble these reads and produce a holistic representation of the donor genome.
-In order to produce an assembly of high fidelity, DNA must be sequenced multiple times and  produce a manyfold coverage.
-The HGP used the \emph{hierarchical shotgun}.
-In this approach, genomic DNA is cut into fragments of about 150 Mb, whose order is determined (the so called Golden Tiling Path); then each fragment is independently sequenced by shotgun.
-Celera Genomics instead adopted \emph{whole genome shotgun}, a technique which had been used only for small prokaryotic organisms.
-This sequencing method is even more computationally involved, but much cheaper.
+These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
+Indeed, both groups used sequencing technologies based on the \emph{shotgun} approach.
+Shotgun sequencing consists in chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
+Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 
-The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
-For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
-Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
+%The HGP used the \emph{hierarchical shotgun}.
+%In this approach, genomic DNA is cut into fragments of about 150 Mb, whose order is determined (the so called Golden Tiling Path); then each fragment is independently sequenced by shotgun.
+%Celera Genomics instead adopted \emph{whole genome shotgun}, a technique which had been used only for small prokaryotic organisms.
+%This sequencing method requires a more computationally involved, but it is much quicker and cheaper.
+
+Those early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
+This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces \emph{reads} of an average length of 700~bp at a throughput of about 150~Kbp/h.
+Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
+At this pace, the sequencing of the human genome took years and many million dollars.
+Nonetheless, the success of those huge sequencing projects did not mark the end of the sequencing era, but its beginning.
 
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
 
-The success of these huge sequencing projects did not mark the end of the sequencing era, but its beginning.
-The early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
-This sequencing technology reads DNA with high fidelity but at low speed: it produces \emph{reads} of an average length of 700~bp at a throughput of about 150~Kbp/h.
-At this throughput, the sequencing of the human genome took years and many million dollars.
 Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS), or \emph{next-generation sequencing} (NGS).
-
 In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of 20--30~Mbp/h.
 High-throughput sequencing was born.
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
@@ -42,6 +40,10 @@ In the following, I introduce most relevant \emph{applications} of high-throughp
 Why should we resequence an individual, after all?
 
 \subsection{Sequencing protocols and applications}
+
+%The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
+%For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
+%Nowadays, model genomes along with extensive annotations are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 
 %HTS impact ranges from biology to medicine.
 %Resequencing applications include...
@@ -81,8 +83,8 @@ Targeted sequencing.
 The analysis of high-throughput sequencing data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
 It is conventional wisdom to subdivide such data analysis pipelines in three stages: primary, secondary, and tertiary analysis.
 The primary stage of analysis consists of instrument specific processes for generation, collection, and processing of raw sequencing data.
-The secondary stage mixes instrument and application specific sequence analysis methods to reconstruct the complete genome of the donor.
-The tertiary stage aggregates multiple donor samples and performs data mining to provide interpretations specific to a biomedical application.
+The secondary stage mixes instrument and application specific sequence analysis methods to reconstruct the original sequence of the donor genome and characterize its variations.
+The tertiary stage aggregates multiple samples and performs data mining to provide interpretations specific to some biomedical application.
 
 \subsubsection{Primary analysis}
 
