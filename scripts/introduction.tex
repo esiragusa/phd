@@ -17,7 +17,7 @@ Then, it is left up to \emph{bioinformatics} to reassemble these reads and produ
 %This sequencing method requires a more computationally involved, but it is much quicker and cheaper.
 
 Those early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
-This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces \emph{reads} of an average length of 700~bp at a throughput of about 150~Kbp/h.
+This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces reads of an average length of 700~bp at a throughput of about 150~Kbp/h.
 Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
 At this pace, the sequencing of the human genome took years and many million dollars.
 Nonetheless, the success of those huge sequencing projects did not mark the end of the sequencing era, but its beginning.
@@ -36,14 +36,15 @@ At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing th
 
 Over the last decade, numerous other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
 I will return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
-In the following, I introduce most relevant \emph{applications} of high-throughput sequencing.
+In the following, I introduce most relevant \emph{applications} of HTS.
+Afterwards, I give an overview of state of the art HTS analysis pipelines.
+
+\subsection{Protocols and applications}
+
+The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
+For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
+Nowadays, model genomes along with extensive annotations are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 Why should we resequence an individual, after all?
-
-\subsection{Sequencing protocols and applications}
-
-%The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
-%For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
-%Nowadays, model genomes along with extensive annotations are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 
 %HTS impact ranges from biology to medicine.
 %Resequencing applications include...
@@ -80,8 +81,8 @@ Targeted sequencing.
 
 \subsection{Analysis pipelines}
 
-The analysis of high-throughput sequencing data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
-It is conventional wisdom to subdivide such data analysis pipelines in three stages: primary, secondary, and tertiary analysis.
+The analysis of HTS data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
+It is conventional wisdom to subdivide such data analysis pipelines in three stages of \emph{primary}, \emph{secondary}, and \emph{tertiary} analysis.
 The primary stage of analysis consists of instrument specific processes for generation, collection, and processing of raw sequencing data.
 The secondary stage mixes instrument and application specific sequence analysis methods to reconstruct the original sequence of the donor genome and characterize its variations.
 The tertiary stage aggregates multiple samples and performs data mining to provide interpretations specific to some biomedical application.
@@ -123,29 +124,34 @@ According to plan B, the secondary analysis step consists of three tasks: \emph{
 Q/C ranges from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{fiona}.
 
 \emph{Read mapping} takes care of aligning the reads to the reference genome.
+%using state-of-the-art \emph{approximate string matching} methods.
 Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
 higher depth implies more confidence in the consensus sequence of the donor and thus higher genotyping accuracy.
 
 Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
 These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
-The result of \emph{variant calling}, and hence of the secondary analysis phase, is usually a VFC file annotating the features of the donor genome.
+The result of \emph{variant calling}, and hence of the secondary analysis stage, is usually a VFC file annotating the features of the donor genome.
+%ChIP-seq: calling peaks.
+%RNA-seq: transcript abundance or alternative splicing.
 
 \subsubsection{Tertiary analysis}
 
-Tertiary analysis diverges into a spectrum of various application specific downstream investigations.
+Tertiary analysis diverges into a range of various application specific downstream analysis.
 The secondary analysis step of variant calling, provides a set of differences between the donor and the reference.
 Still, these variations lack a meaning.
 %GWAS.
+%Tertiary analysis is still in its infancy 
 
+%In RNA-Seq, the process of determining relative gene expression means that sequence data from multiple samples must go through the entire process of primary, secondary, and tertiary analysis. 
 
-%\subsection{Read mapping and approximate string matching}
+%Population cataloging efforts such as HapMap and the 1000 Genomes Project allow for studies to be able to determine the relative frequencies of variants in their samples compared to common populations. Once variants have been filtered and ranked, new methods are gaining momentum to handle the analysis of rare variant burden as a model of disease association, as well as other methods specific to the filtering and studying of sequence data.
 
 % -----------------------------------------------------------------------------
 
 \section{Outline}
 
-The recent advances of sequencing technologies motivate this work.
+The recent advances of HTS technologies motivate this work.
 
 %In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
 I develop methods for the mapping of DNA and ChIP-seq reads.
