@@ -78,7 +78,7 @@ Targeted sequencing.
 %This results in a superior sensitivity and specificity for the detection of DNA binding sites.
 %Furthermore, ChIP-Seq generally requires less input material and is more flexible, since no hybridization probes are required and therefore, any species can be studied with sequenced genomes.
 
-\subsection{Analysis stages}
+\subsection{Analysis pipelines}
 
 The analysis of high-throughput sequencing data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
 It is conventional wisdom to subdivide such data analysis pipelines in three stages: primary, secondary, and tertiary analysis.
@@ -86,69 +86,60 @@ The primary stage of analysis consists of instrument specific processes for gene
 The secondary stage mixes instrument and application specific sequence analysis methods to reconstruct the original sequence of the donor genome and characterize its variations.
 The tertiary stage aggregates multiple samples and performs data mining to provide interpretations specific to some biomedical application.
 
-\subsubsection{Primary analysis}
-
-Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
-The base caller processes instrumental signals, then assigns a base to each peak, \ie A, C, G, T, or N.
-The software assigns a quality value to each called base, estimating the probability of a base calling error.
-On early generation instruments, users could provide their own base calling tool.
-Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instruments.
-The result of primary analysis is a standard FASTQ file containing DNA read sequences and their associated quality scores in Phred format (see \ref{sec:background:phred}).
-
-\subsubsection{Secondary analysis}
-
-Quality assessment, assembly, and genotyping.
-
-Correction, mapping reads to a reference and variant calling.
-Correction, de novo assembly.
-
-Correction.
-
-%Before further processing, the raw reads from the machine are often assessed and filtered for quality to produce the best results.
-%Reassembly differs if the sequencing was done on an organism with a polished reference genome or if the genome is to be assembled from scratch, also referred to as de novo assembly.
-
-Three plans of assembly.
-%With a reference genome available, the process is much simpler, as the reads simply need to be aligned to the reference, often with some tolerance for a few base-pair errors in the sequences of the reference itself.
-
-
-%The next step in the sequence analysis process is detection of variants.
-%While more customizable, and sometimes considered part of tertiary analysis, variant calling lends itself to being pipelined in the same manner as secondary analysis.
-%Variant calling is the process of accurately determining the variations (or differences) between a sample and the reference genome.
-%These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
-The result of secondary analysis is a VFC file containing variant calls.
-
-%In both the case of de novo assembly or reference sequence alignment, you will be shooting for a desired average depth and coverage of sequence reads over the entire genome or targeted regions of interest.
-%Depth is a measure of how many reads cover a given locus of the genome.
-%If you were to pile up the reads to where they were assembled or mapped (pictured above), the depth would be the height of this pileup at each locus.
-%For de novo assembly, a higher average depth is usually needed, so that large contigs can be formed that are then the building blocks for a draft genome.
-%In the case of sequence alignment, higher average depth means more certainty in the “consensus” sequence of the sample and more accuracy in detecting variants from the reference.
-
-\subsubsection{Tertiary analysis}
-
-%Tertiary analysis diverges into a spectrum of various study specific downstream investigations.
-%Though the research or building of draft genomes for novel variants will have its own specialized tertiary analysis after de novo assembly, I will focus on the more mainstream practice of “resequencing” studies where sequence alignment to a reference genome was used.
-%Out of the secondary analysis step of variant calling, you now have a more manageable set of differences between the sequenced samples and the reference, but there is still an enormous amount of data to make sense of.
-%This is the realm of tertiary analysis.
-
 %The typical SNPs analysis pipeline~\ref{fig:ngs-pipeline} consists of...
 %\begin{figure}[h]
 %\caption{NGS pipeline.}
 %\label{fig:ngs-pipeline}
 %\end{figure}
 
-\subsection{Secondary analysis plans}
+\subsubsection{Primary analysis}
 
-Given a set of reads, two approaches are possible: assembly and mapping.
-Assembly methods are based on overlaps, de brujin graphs, or...
-Read mapping methods work on a previously assembled reference genome.
+Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
+The base caller processes instrumental signals and assigns a base to each peak, \ie A, C, G, T, or N.
+The software assigns a quality value to each called base, estimating the probability of a base calling error.
+On early generation instruments, users could provide their own base calling tool.
+Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instrument.
+The result of primary analysis is a standard \emph{FASTQ} file containing DNA read sequences and their associated quality scores in \emph{Phred} format (see section \ref{sec:background:phred}).
 
-%\begin{itemize}
-%\item Plan A: de-novo assembly
-%\item Plan B: reference mapping
-%\item Plan C: reference guided de-novo assembly
-%\end{itemize}
+\subsubsection{Secondary analysis}
 
-\subsection{Read mapping}
+Secondary analysis aims at reconstructing the original sequence of the donor genome and then characterizing its variations.
+There are two main \emph{plans} to reassemble the original genome: \begin{inparaenum}[(A)]
+\item \emph{de novo} assembly, and
+\item \emph{reference-guided} assembly (commonly called \emph{read mapping}).
+\end{inparaenum}
+\emph{De novo} methods essentially scaffold the reads by performing \emph{overlap alignments} \citep{?} or equivalently by constructing \emph{de Bruijn graphs} \citep{?}.
+Computational methods in plan A are very involved, as they require finding a \emph{shortest common superstring}, which is a NP-complete problem \citep{?}.
+The knowledge of a \emph{reference genome}, highly similar to the donor, simplifies the problem and opens the door to plan B.
+The reads are simply aligned to the reference, tolerating a few base pair errors.
+It is worth mentioning that some combinations of plans A and B have been proposed in \citep{fermi,?}.
+
+Plan B is always preferred in resequencing projects, as it is more computationally viable than plan A and directly provides a way to assess genetic variation \wrt a reference genome.
+In this manuscript, I follow only plan B and present methods that work within this specific plan.
+Nonetheless, many of the algorithmic components that I expose in the first part of this manuscript are ubiquitous in bioinformatics, thus applicable, if not already applied, to plan A.
+According to plan B, the secondary analysis step consists of three tasks: \emph{quality control}, \emph{read mapping}, and \emph{genotyping}.
+
+\emph{Quality control} (Q/C) performs specific computations to remove artefacts introduced by the sequencer that could potentially bias final results.
+Q/C ranges from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{fiona}.
+
+\emph{Read mapping} takes care of aligning the reads to the reference genome.
+Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
+The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
+higher depth implies more confidence in the consensus sequence of the donor and thus higher genotyping accuracy.
+
+Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
+These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
+The result of \emph{variant calling}, and hence of the secondary analysis phase, is usually a VFC file annotating the features of the donor genome.
+
+\subsubsection{Tertiary analysis}
+
+Tertiary analysis diverges into a spectrum of various application specific downstream investigations.
+The secondary analysis step of variant calling, provides a set of differences between the donor and the reference.
+Still, these variations lack a meaning.
+%GWAS.
+
+
+%\subsection{Read mapping and approximate string matching}
 
 % -----------------------------------------------------------------------------
 
