@@ -2,16 +2,22 @@
 
 The sequencing of the whole human genome, consisting of three billion base pairs of DNA, has been one of the major scientific achievements of the last decades.
 Very surprisingly, this milestone has been achieved twice, by two independent groups.
-The three billion dollars publicly funded \emph{Human Genome Project} published \citep{hgp} in February 2001 the first draft covering more than 96\~\% of the euchromatic part of the human genome, and finally the full sequence in April 2003.
+The three billion dollars publicly funded \emph{Human Genome Project} (HGP) published \citep{hgp} in February 2001 the first draft covering more than 96\~\% of the euchromatic part of the human genome, and finally the full sequence in April 2003.
 The privately funded company \emph{Celera Genomics} concurrently published \citep{celerahuman} a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome.
 These two groups also contributed to characterize the entire genomes of other model organisms, such as mice \citep{mouse}, fruit flies \citep{celerafly}, nematode worms and yeasts.
 
-The knowledge of the complete genomes of model organisms opened the door to a myriad of new scientific studies and discoveries.
-The first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been estimated, and a remarkably low quantity if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
-Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
+This has been not only an achievement of molecular biology but a huge computational effort.
+Sequencing technologies are based on the \emph{shotgun} approach that chops DNA fragments up into smaller segments and then generates \emph{reads} of these short nucleotide sequences.
+It’s left up to bioinformatics to reassemble these reads and produce a holistic representation of the donor genome.
+In order to produce an assembly of high fidelity, DNA must be sequenced multiple times and  produce a manyfold coverage.
+The HGP used the \emph{hierarchical shotgun}.
+In this approach, genomic DNA is cut into fragments of about 150 Mb, whose order is determined (the so called Golden Tiling Path); then each fragment is independently sequenced by shotgun.
+Celera Genomics instead adopted \emph{whole genome shotgun}, a technique which had been used only for small prokaryotic organisms.
+This sequencing method is even more computationally involved, but much cheaper.
 
-%This has been a huge computational effort.
-%I was fifteen years old by that time. I begun to be passionate about computers and. I wondered what would be the contributions of computers behind that project. I did not imagine working in this field ten years later.
+The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
+For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
+Nowadays, annotated collections of model genomes are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 
 % -----------------------------------------------------------------------------
 
@@ -72,27 +78,55 @@ Targeted sequencing.
 
 \subsection{Analysis stages}
 
-The analysis of high-throughput sequencing data proceeds in three stages.
-
-%Data analysis may be segmented into primary, secondary, and tertiary analysis. Primary analysis includes universal processes for data generation, collection, and raw processing. Both secondary and tertiary analyses are application-specific. Secondary analysis processes application-specific data at the sequence level, while tertiary analysis generates biological interpretation specific to an application.
-
-%The bioinformatics of sequence analysis ranges from instrument specific processing of data to the final aggregation of multiple samples into data mining and analysis tools. The software of sequence analysis can be categorized into the three stages of the data’s lifecycle: primary, secondary, and tertiary analysis.
+The analysis of high-throughput sequencing data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
+It is conventional wisdom to subdivide such data analysis pipelines in three stages: primary, secondary, and tertiary analysis.
+The primary stage of analysis consists of instrument specific processes for generation, collection, and processing of raw sequencing data.
+The secondary stage mixes instrument and application specific sequence analysis methods to reconstruct the complete genome of the donor.
+The tertiary stage aggregates multiple donor samples and performs data mining to provide interpretations specific to a biomedical application.
 
 \subsubsection{Primary analysis}
 
-%can be defined as the machine specific steps needed to call base pairs and compute quality scores for those calls. This often results in a FASTQ file, which is just a combination of the sequence data as a string of A, C, G and T characters and an associated Phred quality score for each of those bases. This is the absolute bare minimum “raw” format you would ever expect to see for sequence data. While the first generation of high throughput sequencing machines, such as the Illumina G1, allowed for users to provide their own alternatives to the standard primary analysis solution, called “the Illumina pipeline”, current generation machines often do this work on bundled computational hardware. The effective output of the machine is the result of the primary analysis. This output is ready for processing in a secondary analysis pipeline.
+Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
+The base caller processes instrumental signals, then assigns a base to each peak, \ie A, C, G, T, or N.
+The software assigns a quality value to each called base, estimating the probability of a base calling error.
+On early generation instruments, users could provide their own base calling tool.
+Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instruments.
+The result of primary analysis is a standard FASTQ file containing DNA read sequences and their associated quality scores in Phred format (see \ref{sec:background:phred}).
 
 \subsubsection{Secondary analysis}
 
-%Because current sequencing technologies are generally based on the “shotgun” approach of chopping all the DNA up into smaller molecules and then generating what are referred to as “reads” of these small nucleotide sequences, it’s left up to secondary analysis to reassemble these reads to get a representation of the underlying biology. Before this reassembly, the “raw” reads from the machine are often assessed and filtered for quality to produce the best results. Reassembly differs if the sequencing was done on an organism with a polished reference genome or if the genome is to be assembled from scratch, also referred to as de novo assembly. With a reference genome available, the process is much simpler, as the reads simply need to be aligned to the reference, often with some tolerance for a few base-pair errors in the sequences of the reference itself.
+Quality assessment, assembly, and genotyping.
 
-%In both the case of de novo assembly or reference sequence alignment, you will be shooting for a desired average depth and coverage of sequence reads over the entire genome or targeted regions of interest. Depth is a measure of how many reads cover a given locus of the genome. If you were to pile up the reads to where they were assembled or mapped (pictured above), the depth would be the height of this pileup at each locus. For de novo assembly, a higher average depth is usually needed, so that large contigs can be formed that are then the building blocks for a draft genome. In the case of sequence alignment, higher average depth means more certainty in the “consensus” sequence of the sample and more accuracy in detecting variants from the reference.
+Correction, mapping reads to a reference and variant calling.
+Correction, de novo assembly.
 
-%The next step in the sequence analysis process is detection of variants. While more customizable, and sometimes considered part of tertiary analysis, variant calling lends itself to being pipelined in the same manner as secondary analysis. Variant calling is the process of accurately determining the variations (or differences) between a sample and the reference genome. These may be in the form of single nucleotide variants, smaller insertions or deletions (called indels), or larger structural variants of categorizations such as transversions, trans-locations, and copy number variants.
+Correction.
+
+%Before further processing, the raw reads from the machine are often assessed and filtered for quality to produce the best results.
+%Reassembly differs if the sequencing was done on an organism with a polished reference genome or if the genome is to be assembled from scratch, also referred to as de novo assembly.
+
+Three plans of assembly.
+%With a reference genome available, the process is much simpler, as the reads simply need to be aligned to the reference, often with some tolerance for a few base-pair errors in the sequences of the reference itself.
+
+
+%The next step in the sequence analysis process is detection of variants.
+%While more customizable, and sometimes considered part of tertiary analysis, variant calling lends itself to being pipelined in the same manner as secondary analysis.
+%Variant calling is the process of accurately determining the variations (or differences) between a sample and the reference genome.
+%These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
+The result of secondary analysis is a VFC file containing variant calls.
+
+%In both the case of de novo assembly or reference sequence alignment, you will be shooting for a desired average depth and coverage of sequence reads over the entire genome or targeted regions of interest.
+%Depth is a measure of how many reads cover a given locus of the genome.
+%If you were to pile up the reads to where they were assembled or mapped (pictured above), the depth would be the height of this pileup at each locus.
+%For de novo assembly, a higher average depth is usually needed, so that large contigs can be formed that are then the building blocks for a draft genome.
+%In the case of sequence alignment, higher average depth means more certainty in the “consensus” sequence of the sample and more accuracy in detecting variants from the reference.
 
 \subsubsection{Tertiary analysis}
 
-%Tertiary analysis diverges into a spectrum of various study specific downstream investigations. Though the research or building of draft genomes for novel variants will have its own specialized tertiary analysis after de novo assembly, I will focus on the more mainstream practice of “resequencing” studies where sequence alignment to a reference genome was used. Out of the secondary analysis step of variant calling, you now have a more manageable set of differences between the sequenced samples and the reference, but there is still an enormous amount of data to make sense of. This is the realm of tertiary analysis.
+%Tertiary analysis diverges into a spectrum of various study specific downstream investigations.
+%Though the research or building of draft genomes for novel variants will have its own specialized tertiary analysis after de novo assembly, I will focus on the more mainstream practice of “resequencing” studies where sequence alignment to a reference genome was used.
+%Out of the secondary analysis step of variant calling, you now have a more manageable set of differences between the sequenced samples and the reference, but there is still an enormous amount of data to make sense of.
+%This is the realm of tertiary analysis.
 
 %The typical SNPs analysis pipeline~\ref{fig:ngs-pipeline} consists of...
 %\begin{figure}[h]
