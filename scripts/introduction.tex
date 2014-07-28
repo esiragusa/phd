@@ -116,7 +116,7 @@ Nonetheless, sometimes Q/C is simply omitted.
 Read mappers adopt state of the art \emph{approximate string matching} methods to efficiently analyze the deluge of data produced by HTS instruments.
 Approximate matching accounts for two kinds of errors:
 residual sequencing artefacts not removed by Q/C, and small genetic variations in the donor genome to which reads belong.
-Thus, the read mapper must take into accounts errors when mapping reads.
+Thus, the read mapper must take into account errors when mapping reads.
 
 Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
@@ -140,10 +140,26 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 
 \section{Outline}
 
-In this work I present efficient methods for the mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
+In this work, I present efficient methods for the mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
+Read mapping is an ubiquitous and non-trivial task in all resequencing applications.
+As actual HTS instruments attain a throughput of 5~Gbp/h.
+Efficient read mapping methods are still needed.
 
-%The recent advances of HTS technologies motivate this work.
-%All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
+%Presented read mapping methods work at least for reads coming from WGS, WES, and ChIP-seq protocols.
 
-%In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
-I develop methods for the mapping of DNA and ChIP-seq reads.
+
+Part I is about approximate string matching, part II about read mapping.
+The initial ingenuity turns out to be beneficial in the design of an accurate method for read mapping.
+
+In chapter 2, I introduce basic stringology concepts. 
+
+In chapter 3, I expose indexed methods for approximate string matching.
+
+In chapter 4, I expose filtering methods for approximate string matching.
+
+In chapter 5, I return to read mapping. I give a solid background.
+
+In chapter 6, I present my first attempt at engineering a read mapping tool.
+
+In chapter 7, I present Yara, a state of the art read mapping tool.
+
