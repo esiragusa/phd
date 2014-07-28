@@ -2,22 +2,15 @@
 
 \chapter{Background}
 
-High-throughput sequencing (HTS) is a fundamental technology.
-A wealth of applications have been developed on top of it.
-Data analysis pipelines for variant calling and structural variation discovery from DNA-seq, mRNA transcripts abundance estimation and novel non-coding RNA discovery from RNA-seq, transcription factor binding-sites prediction from ChIP-seq.
-All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
+%Read mapping is a critical step in all HTS data analysis pipelines.
 
-Read mapping is a critical step in all HTS data analysis pipelines.
-NGS reads produced by all current technologies contain sequencing errors, in form of single miscalled bases or stretches of oligonucleotides.
-Moreover, the donor genome from which reads have been sequenced contains small genomic variations (SNVs, Indels) in addition to CNV, inversions and translocations.
-After all, spotting genomic variation is one reason for which we resequence genomes.
-Thus, when mapping a read to a reference genome, it is not sufficient to consider the loci where the reads map exactly; it is necessary to consider any loci of relevant sequence similarity, being possible origins of the sequenced reads.
-
-First I present sequencing technologies from the standpoint of the bioinformatician who has to perform secondary analysis of the data.
-Then I discuss what makes secondary analysis hard.
-Finally I divide reference-mapping secondary analysis methods in two paradigms: best-mapping and all-mapping.
-I present popular read mapping tools.
-
+In this chapter, I first introduce HTS technologies from the standpoint of the bioinformatician who performs secondary analysis.
+I consider most popular sequencing instruments and mention aspects of the sequencing data that influence secondary analysis, \eg the paired-end and mate-pairs protocols, sequencing artefacts, and base qualities.
+Afterwards, I give insights on some properties of genomic sequences that make secondary analysis particularly difficult.
+I discuss how mappability helps to pinpoint genomic regions for which reference-guided assembly is hard.
+I present two paradigms for reference-guided assembly methods: best-mapping and all-mapping.
+Subsequently, I give an overview of most popular read mapping tools.
+I give key algorithmic ideas and relevant engineering solutions adopted by the various tools.
 
 \section{Sequencing technologies}
 \label{sec:background:sequencing}

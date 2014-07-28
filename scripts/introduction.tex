@@ -42,9 +42,6 @@ For instance, the first unexpected finding was that the human genome contains ab
 Nowadays, model genomes along with extensive annotations are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
 Why should we resequence an individual, after all?
 
-%HTS impact ranges from biology to medicine.
-%Resequencing applications include...
-
 \subsubsection{DNA-reseq}
 
 \emph{Whole genome sequencing} (DNA-reseq).
@@ -110,12 +107,16 @@ In this manuscript, I follow only plan B and present methods that work within th
 Nonetheless, many of the algorithmic components that I expose in the first part of this manuscript are ubiquitous in bioinformatics, thus applicable, if not already applied, to plan A.
 According to plan B, the secondary analysis step consists of three tasks: \emph{quality control}, \emph{read mapping}, and \emph{pile up}.
 
-\emph{Quality control} (Q/C) performs specific computations to remove artifacts introduced by the sequencer that could potentially bias final results.
-Q/C ranges from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{fiona}.
+\emph{Quality control} (Q/C) checks the quality of raw reads.
+Reads produced by current HTS technologies contain sequencing artefacts, in form of single miscalled bases or stretches of oligonucleotides.
+In order to circumvent this problem, various techniques have been developed, ranging from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{fiona}.
+Nonetheless, sometimes Q/C is simply omitted.
 
 \emph{Read mapping} takes care of aligning the reads to the reference genome.
-This has been the most compute intensive task.
-Tools using state-of-the-art \emph{approximate string matching} methods.
+Read mappers adopt state of the art \emph{approximate string matching} methods to efficiently analyze the deluge of data produced by HTS instruments.
+Approximate matching accounts for two kinds of errors:
+residual sequencing artefacts not removed by Q/C, and small genetic variations in the donor genome to which reads belong.
+Thus, the read mapper must take into accounts errors when mapping reads.
 
 Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
@@ -140,7 +141,10 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 
 \section{Outline}
 
-The recent advances of HTS technologies motivate this work.
+%The recent advances of HTS technologies motivate this work.
+%HTS is nowadays a fundamental technology opening for wealth of applications.
+%Data analysis pipelines for variant calling and structural variation discovery from DNA-seq, mRNA transcripts abundance estimation and novel non-coding RNA discovery from RNA-seq, transcription factor binding-sites prediction from ChIP-seq.
+%All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
 
 %In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
 I develop methods for the mapping of DNA and ChIP-seq reads.
