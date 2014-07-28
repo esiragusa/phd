@@ -125,10 +125,10 @@ higher depth implies more confidence in the consensus sequence of the donor geno
 \subsubsection{Tertiary analysis}
 
 Tertiary analysis aims at interpreting the deluge of information provided by secondary analysis.
-This stage groups a wide range of analyses specific to the sequencing application.
+This pipeline stage groups a wide range of analyses specific to the sequencing application.
 In many pipelines, downstream analysis performs data mining over aggregated data coming from multiple samples.
 
-Within DNA-reseq, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
+Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
 The result of \emph{variant calling} is usually a VFC file annotating the variations of the donor genome.
 Subsequently, \emph{genome-wide association studies} (GWAS) associate genetic variants with phenotypic traits by examining \emph{single-nucleotide polymorphisms} (SNPs), variants relatively common among individuals of the same population.
 
@@ -140,16 +140,15 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 
 \section{Outline}
 
-In this work, I present efficient methods for the mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
+In this work, I present novel methods for the efficient and accurate mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
 Read mapping is an ubiquitous and non-trivial task in all resequencing applications.
-As actual HTS instruments attain a throughput of 5~Gbp/h.
-Efficient read mapping methods are still needed.
+Efficiency is required to keep the pace of HTS technologies constantly increasing their throughput.
+Accuracy is required to provide data analysis with single-base resolution.
 
-%Presented read mapping methods work at least for reads coming from WGS, WES, and ChIP-seq protocols.
+%The read mapping methods here presented work at least for reads coming from WGS, WES, and ChIP-seq protocols.
 
-
-Part I is about approximate string matching, part II about read mapping.
-The initial ingenuity turns out to be beneficial in the design of an accurate method for read mapping.
+I decided to subdivide this work in two parts: part I is about approximate string matching, while part II is about read mapping.
+The initial ingenuity of approximate string matching methods turns out to be beneficial in the design of an accurate method for read mapping.
 
 In chapter 2, I introduce basic stringology concepts. 
 
