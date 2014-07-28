@@ -11,7 +11,7 @@ Indeed, both groups used sequencing technologies based on the \emph{shotgun} app
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 
-Those early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
+These early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
 This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces reads of an average length of 700~bp at a throughput of about 150~Kbp/h.
 Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
 At this pace, the sequencing of the human genome took years and many million dollars.
@@ -30,9 +30,12 @@ The instrument produced reads as short as 30~bp, at lower accuracy than Sanger s
 Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
 At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing the sequencing of many human whole-genomes at \$1,000 each, in less than three days.
 
-Over the last decade, numerous other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
-I will return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
-In the following, I introduce most relevant \emph{applications} of HTS and then give an overview of HTS \emph{analysis pipelines}.
+Over the last decade, other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
+I return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
+
+In the following of this section, I continue to provide the context of this work.
+I first introduce most relevant \emph{applications} of HTS and then explain how HTS \emph{analysis pipelines} proceed.
+Then, I outline the structure of this work and state my contributions to this field.
 
 \subsection{Protocols and applications}
 
@@ -43,20 +46,17 @@ assessments of gene expression and alternative splicing events, analysis of micr
 prediction of transcription factor binding-sites, analysis of methylation patterns (using ChIP-seq).
 Some HTS applications are already oriented towards clinical settings, \eg in the context of mendelian disorders and cancer diagnostic.
 
-\subsubsection{DNA-seq}
+\subsubsection{Whole genome and exome-seq}
 
-\emph{Whole genome sequencing} (WGS, DNA-reseq).
-
+\emph{Whole genome sequencing} (WGS, DNA-reseq) allows discovery of genetic variations across the whole genome.
+These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
 \emph{Whole exome sequencing} (WES, exome-seq) is a cost-effective yet powerful alternative to WGS.
-This protocol consists in the targeted sequencing of the \emph{exome}, \ie the subset of the human genome that is protein coding.
-%WES allows dissecting the genetic basis of diseases and traits that have proved to be intractable to conventional gene-discovery strategies.
-
-%Targeted sequencing?
+This protocol consists in the targeted sequencing of the \emph{exome}, \ie the protein coding subset of the human genome.
 
 \subsubsection{RNA-seq}
 \emph{RNA sequencing} (RNA-seq) is a protocol to sequence the \emph{transcriptome}, \ie the set of RNA molecules of an organism, including mRNAs, rRNAs, tRNAs, and other non-coding RNAs.
 Actual HTS technologies perform deep-sequencing of RNA molecules after they have been reverse-transcribed into cDNA.
-RNA-seq provides a myriad of information on gene expression, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and genetic variation, all with single-base accuracy.
+RNA-seq provides a myriad of information on gene expression, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and genetic variation with single-base accuracy.
 
 \subsubsection{ChIP-seq}
 \emph{Chromatin immunoprecipitation} with next-generation sequencing (ChIP-seq) is a protocol that allows the selective sequencing of genomic DNA bound by a specific protein.
@@ -129,7 +129,6 @@ This stage groups a wide range of analyses specific to the sequencing applicatio
 In many pipelines, downstream analysis performs data mining over aggregated data coming from multiple samples.
 
 Within DNA-reseq, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
-These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
 The result of \emph{variant calling} is usually a VFC file annotating the variations of the donor genome.
 Subsequently, \emph{genome-wide association studies} (GWAS) associate genetic variants with phenotypic traits by examining \emph{single-nucleotide polymorphisms} (SNPs), variants relatively common among individuals of the same population.
 
@@ -140,6 +139,8 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 % -----------------------------------------------------------------------------
 
 \section{Outline}
+
+In this work I present efficient methods for the mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
 
 %The recent advances of HTS technologies motivate this work.
 %All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
