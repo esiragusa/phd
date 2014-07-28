@@ -8,7 +8,7 @@ These two groups also contributed to characterize the entire genomes of other mo
 
 These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
 Indeed, both groups used sequencing technologies based on the \emph{shotgun} approach.
-Shotgun sequencing consists in chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
+Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 
 Those early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
@@ -32,26 +32,29 @@ At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing th
 
 Over the last decade, numerous other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
 I will return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
-In the following, I introduce most relevant \emph{applications} of HTS.
-Afterwards, I give an overview of state of the art HTS analysis pipelines.
+In the following, I introduce most relevant \emph{applications} of HTS and then give an overview of HTS \emph{analysis pipelines}.
 
 \subsection{Protocols and applications}
 
-The knowledge of the complete genomes of model organisms opened the door to a myriad of new computational studies and scientific discoveries.
-For instance, the first unexpected finding was that the human genome contains about twenty-four thousand protein-coding genes, which is significantly fewer than what had been previously estimated and a remarkably small number if compared to the nineteen thousand genes of C.~elegans \citep{Hodgkin2001}.
-Nowadays, model genomes along with extensive annotations are hosted by public databases such as GenBank \citep{genbank} and can be consulted interactively \eg via the UCSC genome browser \citep{ucscgb}.
-Why should we resequence an individual, after all?
+In the last years, HTS has become an invaluable method of investigation for molecular biologists.
+Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at unpreceded single-base resolution.
+For instance, applications of HTS include genotyping and discovery of structural variation (from DNA-seq);
+assessments of gene expression and alternative splicing events, analysis of microRNAs, discovery of novel non-coding RNAs (through RNA-seq);
+prediction of transcription factor binding-sites, analysis of methylation patterns (using ChIP-seq).
+Some HTS applications are already oriented towards clinical settings, \eg in the context of mendelian disorders and cancer diagnostic.
 
-\subsubsection{DNA-reseq}
+\subsubsection{DNA-seq}
 
-\emph{Whole genome sequencing} (DNA-reseq).
+\emph{Whole genome sequencing} (WGS, DNA-reseq).
 
-Alternatively, \emph{whole exome sequencing} (Exome-seq).
+Alternatively, \emph{whole exome sequencing} (WES, exome-seq) is the targeted sequencing of the subset of the human genome that is protein coding.
+It is a powerful and cost-effective tool for dissecting the genetic basis of diseases and traits that have proved to be intractable to conventional gene-discovery strategies.
 
 %Targeted sequencing?
 
 \subsubsection{RNA-seq}
 \emph{RNA sequencing} (RNA-seq) is a method of investigating the \emph{transcriptome} of an organism using deep-sequencing techniques.
+sequencing populations of RNA molecules after they have been reverse-transcribed into cDNA.
 The RNA content of a sample is directly sequenced after appropriate library construction, providing a rich data set for gene expression analysis.
 RNA-seq provides information on genetic variation, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and other transcription elements.
 
@@ -120,7 +123,7 @@ Thus, the read mapper must take into accounts errors when mapping reads.
 
 Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
-higher depth implies more confidence in the consensus sequence of the donor and thus higher genotyping accuracy.
+higher depth implies more confidence in the consensus sequence of the donor genome and thus more accuracy in tertiary analysis.
 
 \subsubsection{Tertiary analysis}
 
@@ -142,8 +145,6 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 \section{Outline}
 
 %The recent advances of HTS technologies motivate this work.
-%HTS is nowadays a fundamental technology opening for wealth of applications.
-%Data analysis pipelines for variant calling and structural variation discovery from DNA-seq, mRNA transcripts abundance estimation and novel non-coding RNA discovery from RNA-seq, transcription factor binding-sites prediction from ChIP-seq.
 %All these applications rely on a common prerequisite step: mapping NGS reads to a known reference genome.
 
 %In this work we focus on read mapping, although many core algorithms considered are also applicable to assembly, as well as to later pipeline stages.
