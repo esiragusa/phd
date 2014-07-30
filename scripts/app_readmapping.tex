@@ -64,45 +64,55 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 
 % =============================================================================
 
-\section{Paradigms of read mapping}
-\label{sec:mappability}
+\section{Data analysis paradigms}
+\label{sec:paradigms}
 
-The goal of secondary analysis is to build a consensus alignment 
-This requires confidently mapping reads.
+The goal of secondary analysis is to reconstruct the original sequence of the donor genome.
+The \emph{reference-guided} assembly plan assumes a prior knowledge of a reference genome similar to the donor.
+Reads are thus mapped (\ie aligned) to the reference genome \wrt a given scoring scheme and threshold.
+The scoring scheme should account for eventual genomic variation, as well as for any sequencing artefacts.
+An alignment of optimal score for a read implies its \emph{original location} on the reference genome.
+Conversely, no alignment within the score threshold implies too many sequencing errors, too much genetic variation, or sample contamination.
+%A pile-up of the reads aligned at their mapping locations thus provides a consensus alignment of the donor genome.
+A problem arises in presence of co-optimal or close sub-optimal alignments: the read cannot be mapped confidently.
 
-
-
-The difficulty of confidently mapping a significant fraction of HTS reads comes from the non-random nature of genomes.
+The problem of confidently mapping high-throughput sequencing reads comes from the non-random nature of genomic sequences.
 Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?}, transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{?}.
-As a result of these events, about 50~\% of the human genome is composed of repeats.
+As a result of these events, for instance, about 50~\% of the human genome is composed of repeats.
 
 Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Treangen2011}.
-%In the case of HTS read mapping tools, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
-But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
+Due to repetitive elements, a non-ignorable fraction of high-throughput sequencing reads cannot be mapped confidently.
+In general, the shorter the reads, the higher the challenges due to repeats.
+I quantify this phenomenon more precisely in section \ref{sec:mappability}.
+Here I focus on analysis strategies to deal with \emph{multi-reads}, \ie reads that cannot be mapped confidently as they align equally well to multiple locations.
 
-According to \citeauthor{Treangen2011}, common strategies to deal with \emph{multi-reads} are
+It is not evident how to treat \emph{multi-reads}.
+According to \citeauthor{Treangen2011}, common strategies to deal with multi-reads are
 \begin{inparaenum}[(i)]
 \item to discard them all,
 \item to randomly pick one best mapping location,
 \item to consider all or up to $k$ best mapping locations within a given distance threshold.
 \end{inparaenum}
+It goes without saying that read mapper and downstream analysis tools must agree on a common strategy.
 
-% We divide them in all and best-mapping.
+A \emph{de facto} standard strategy emerged over the last years, combining strategies i and ii.
+The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:mapping:quality}).
+Subsequently, downstream analysis tools apply a mapping quality score cutoff to discard reads not mapping confidently to any location.
+The other popular strategy adopted by analysis tools is to consider all mapping locations within an edit distance threshold.
+In this case, it is not clear whether downstream analysis tools consider equally all mapping locations regardless of their distance.
 
-\subsection{All-mapping}
-All-mapping analysis methods consider a comprehensive set of locations per read.
-Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
-Variant callers in this category implement calling algorithms able to detect a wider spectrum of genomic variation, like CNVs~\citep{mrCaNaVaR}, as well as long indels~\citep{SPLITREAD}, transpositions~\citep{VariationHunter}, and SNVs in low-mappability regions~\citep{Sniper}.
-
-A practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
+In the light of these facts, I define two broad paradigms for the secondary and tertiary analysis of HTS data: \emph{best-mapping} and \emph{all-mapping}.
+The best-mapping paradigm considers a single mapping location per read along with its confidence, while the all-mapping paradigm considers a comprehensive set of mapping locations per read.
+These paradigms are valid not only for read mappers but also for any downstream analysis tool, \eg variant callers.
+Read mapping and variant calling are indeed tightly coupled steps within reference-based HTS pipelines.
 
 \subsection{Best-mapping}
 As said, best-mapping methods rely on one single mapping location per read.
 In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticate heuristics to speed up the search.
-Best-mappers should always complement any mapping location with its mapping quality (see section~\ref{sec:mapping:quality}), denoting the probability of the mapping location being correct, \ie the probability that it corresponds to the read's original location.
-Subsequently, in order to maximize precision, variant calling tools decide wether to consider or discard reads not mapping confidently to any location.
+Best-mappers should always complement any mapping location with its mapping quality.
+Subsequently, in order to maximize precision, variant calling tools decide whether to consider or discard reads not mapping confidently to any location.
 The GATK~\citep{gatk} and Samtools~\citep{samtools} are popular best-mapping tools to call small variants.
-Clearly, these methods are limited to the analysis of high mappability regions, as they systematically discard reads sequenced from low mappability regions (see section~\ref{sec:mapping:mappability}).
+In section~\ref{sec:mapping:mappability}, I show how these methods are limited to the analysis of high mappability regions, as they systematically discard reads belonging to low mappability regions.
 
 \subsubsection{Mapping quality score}
 \label{sub:mapqual}
@@ -112,8 +122,9 @@ The study considers short reads of length ranging from 30~bp to 40~bp, produced 
 Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
 
 The key point is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
-The authors claim\footnote{\citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.} that:
-\begin{quote}It is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.\end{quote}
+\citeauthor{Li2008} claim that: \emph{it is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.}
+However, they do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.
+
 Since base callers output base call probabilities in Phred-scale along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called mapping quality, giving the probability that a given read has been aligned correctly at a given mapping location in the reference genome.
 
 By applying Bayes' theorem, we can derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
@@ -138,7 +149,7 @@ On the other hand, the contribution of discarded locations to the sum in equatio
 Therefore, equation~\ref{eq:mapprob} is approximated using only relevant mapping locations found by the read mapper.
 
 Mapping quality has been initially used in \citep{Li2008} and \citep{Li2009} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
-This measure has been widely accepted: nowadays it is computed by most popular read mappers and used by almost all variant calling pipelines \eg the Genome Analysis ToolKit (GATK) \citep{DePristo2011}.
+This measure has been widely accepted: nowadays it is computed by most popular read mappers and used by almost all variant calling tools \eg the Genome Analysis ToolKit (GATK) \citep{DePristo2011}.
 
 Nonetheless, some important objections can be moved against mapping quality.
 First, the mapping quality score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
@@ -146,7 +157,18 @@ In other words, mapping quality considers only errors due to base miscalls and d
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the mapping probability in equation~\ref{eq:mapprob} is diluted in presence of a large number of co-optimal mapping locations.
 Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates in a shallow measure of uniqueness.
 
+\subsection{All-mapping}
+All-mapping analysis methods consider a comprehensive set of locations per read.
+Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
 
+Compared to best-mapping, all-mapping algorithms can potentially detect a wider spectrum of genomic variation events.
+For instance, CNVs are detectable under the all-mapping paradigm \citep{mrCaNaVaR}.
+An all-mapping variant caller detects SNVs in homologous regions \citep{Sniper}.
+ % transpositions~\citep{VariationHunter} ?
+
+A practical challenge of all-mapping is represented by reporting and handling the resulting datasets of mapping locations.
+ which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
+Sometimes all is too much.
 
 % -----------------------------------------------------------------------------
 
@@ -267,9 +289,8 @@ It considers supported input--output formats, rate of errors and variation, numb
 After this exhaustive catalog, the survey concludes that the choice of a read mapper 
 \emph{involves application-specific requirements such as how well it works in conjunction with downstream analysis tools (\ie variant callers)}.
 
-Read mapping and variant calling are indeed tightly coupled steps of secondary analysis within reference-based NGS pipelines.
-Secondary analysis methods are based on one of the two following paradigms: best-mapping and all-mapping.
-The best-mapping paradigm considers a single mapping location per read, while the all-mapping paradigm considers a comprehensive set of mapping locations per read.
+Read mapping and variant calling are indeed tightly coupled steps within reference-based HTS analysis pipelines.
+Secondary and tertiary analysis methods are based on one of the two following paradigms: best-mapping and all-mapping.
 In the light of the above consideration, the most important feature of a read mapper is the number of mapping locations reported, followed by their type, while the other features are mostly of technical relevance.
 Most read mappers are specifically designed to fit one paradigm, while others are versatile enough to work well in both cases.
 
