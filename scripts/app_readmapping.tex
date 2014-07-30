@@ -14,6 +14,11 @@
 \section{High-throughput sequencing data}
 \label{sec:background:sequencing}
 
+%HTS technologies produce reads shorter than Sanger sequencing.
+%Even worse, reads contain sequencing artefacts.
+%Base qualities annotate single base accuracy.
+%These properties of HTS data have to be taken into account for read mapping.
+
 \subsection{Read sequences}
 
 \subsubsection{Illumina}
@@ -62,31 +67,27 @@ p(r | g, l) = \prod_{i=1}^{|r|}{p(r_i | g_{l+i-1})}
 \section{Paradigms of read mapping}
 \label{sec:mappability}
 
-Genome resequencing is a non-trivial task.
+The goal of secondary analysis is to build a consensus alignment 
+This requires confidently mapping reads.
 
-The difficulty of unambiguously finding the correct mapping location of next-generation sequencing reads comes from the non-random nature of genomes.
-Genomes evolved through multiple types of duplication events, including
-\begin{inparaenum}[(i)]
-\item whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?},
-\item transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?},
-\item proliferation of repetitive structural elements such as telomeres and centromeres \citep{?}.
-\end{inparaenum}
+
+
+The difficulty of confidently mapping a significant fraction of HTS reads comes from the non-random nature of genomes.
+Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?}, transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{?}.
 As a result of these events, about 50~\% of the human genome is composed of repeats.
 
-%An analysis of the $k$-mer spectra of the genomes of some model organisms shows how genomes are statistically different from texts randomly generated according to uniform bernoulli models.
-
-Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Lee2012}.
-In the case of short reads mapping, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
+Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Treangen2011}.
+%In the case of HTS read mapping tools, the first evident effect of the heavy tail in the $k$-mer distribution of reference genomes is the dramatic loss of specificity in certain regions, which increases the computational cost of programs based on filtration methods.
 But the most subtle challenge lies in the interpretation of these results: it is not evident how to consider reads mapping to multiple locations.
 
-Common strategies to deal with multi-reads are
+According to \citeauthor{Treangen2011}, common strategies to deal with \emph{multi-reads} are
 \begin{inparaenum}[(i)]
 \item to discard them all,
 \item to randomly pick one best mapping location,
-\item to consider all or up to $k$ best mapping locations within a given distance threshold
+\item to consider all or up to $k$ best mapping locations within a given distance threshold.
 \end{inparaenum}
-\citep{Treangen2011}.
 
+% We divide them in all and best-mapping.
 
 \subsection{All-mapping}
 All-mapping analysis methods consider a comprehensive set of locations per read.
@@ -95,10 +96,6 @@ Variant callers in this category implement calling algorithms able to detect a w
 
 A practical challenge is represented by reporting and handling the resulting datasets of mapping locations, which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
 
-Genome mappability can bias NGS analysis more than we might think at a first glance.
-Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
-
-
 \subsection{Best-mapping}
 As said, best-mapping methods rely on one single mapping location per read.
 In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticate heuristics to speed up the search.
@@ -106,7 +103,6 @@ Best-mappers should always complement any mapping location with its mapping qual
 Subsequently, in order to maximize precision, variant calling tools decide wether to consider or discard reads not mapping confidently to any location.
 The GATK~\citep{gatk} and Samtools~\citep{samtools} are popular best-mapping tools to call small variants.
 Clearly, these methods are limited to the analysis of high mappability regions, as they systematically discard reads sequenced from low mappability regions (see section~\ref{sec:mapping:mappability}).
-
 
 \subsubsection{Mapping quality score}
 \label{sub:mapqual}
@@ -155,6 +151,19 @@ Third, mapping quality tends to become less relevant as base calls improve, due 
 % -----------------------------------------------------------------------------
 
 \section{Limits of read mapping}
+\label{sec:mappability}
+
+%Reassembling a genome from HTS reads is a non-trivial task, not only in \emph{de novo} assembly but also in \emph{reference-guided} plans.
+%The difficulty of this task is caused by two aspects of the sequencing data: the shortness of the reads and the artefacts they contain.
+%Sequencing artefacts can be spotted by looking at consensus alignments obtained from piled-up reads, and eventually at their base quality scores.
+%It goes without saying that this method of error correction is prerogative of confident consensus alignments.
+
+%As the confidence of consensus alignments increases with higher coverage, in general, deeper sequencing helps to recover from sequencing errors.
+%Still, alignment confidence is strictly related to read length, in conjunction with a third aspect strictly inherent to the donor genome: its repeats content.
+%Some reads cannot be confidently assigned to one single mapping locations.
+
+Genome mappability can bias NGS analysis more than we might think at a first glance.
+Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
 
 \subsection{Genome alignability}
 
