@@ -166,7 +166,7 @@ A practical challenge of all-mapping is represented by reporting and handling hu
 
 % -----------------------------------------------------------------------------
 
-\section{Limits of read mapping}
+\section{Limits of high-throughput sequencing}
 \label{sec:mappability}
 
 Due to repetitive elements, a non-ignorable fraction of high-throughput sequencing reads cannot be mapped confidently.
@@ -183,30 +183,14 @@ The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
 The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-%Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
-%Let consider the simple case of exact $(q,0)$-mappability.
-%By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
-%It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
-%Thus, for $E[F^q_0] \leq 1$ it must hold:
-%\begin{eqnarray}
-%2n \leq 4^q\\
-%\log{2n} \leq \log{4^q}\\
-%q \geq log_{4}{2n}
-%\end{eqnarray}
-%Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
-%Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
+Unique mappability determines which fraction of a genome can be analyzed according to strategy i (\ie discarding non-unique reads, see section \ref{sec:paradigms}).
+\citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole human, mouse, fly, and worm genomes.
+Mimicking typical Illumina read mapping setups, they consider $q$-grams of length 36, 50 and 75~bp, and Hamming distance 2.
+They find out that about 30~\% of the whole human genome is not unique \wrt $(36,2)$-mappability.
+At $(75,2)$-mappability, 17~\% of the human genome is not yet unique.
+This last result is quite optimistic, as typical mapping setups call for 3--4 edit distance errors in order to map a significant fraction of the reads.
+Table \label{tab:mappability} shows some results extrapolated from \citep{Derrien2012}.
 
-%However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
-%In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
-%This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
-%Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
-%However, reads have to be mapped approximately to the reference genome.
-%The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
-%Thus the above estimate is a lower bound.
-
-\citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole genomes for human, mouse, fly, and worm.
-Concerning human, at $(36,2)$-mapping, about 30~\% of the whole genome is not uniquely mappable.
-Unique mappability rises to 83~\% by increasing the read length to 75~bp, however to map a significant fraction of the reads, we should consider 3--4 edit distance errors.
 %The uniqueome plays an important role in ChIP-seq experiments.
 %It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
 %Not only a significant fraction of the sequencing data is thrown out.
@@ -220,19 +204,23 @@ Unique mappability rises to 83~\% by increasing the read length to 75~bp, howeve
 \sffamily
 \input{tables/table_mappability}
 \end{center}
+\label{tab:mappability}
 \end{table}
 
-To estimate resequencing accuracy at a single locus, \citeauthor{Derrien2012} consider the mappability of all possible $q$-grams spanning it.
+To estimate resequencing accuracy at a single location, \citeauthor{Derrien2012} consider the mappability of all possible $q$-grams spanning it.
 They define \emph{pileup mappability} $P^q_k$ at position $i$ as the average mappability of all $q$-grams spanning position $i$, \ie:
 \begin{eqnarray}
 P^q_k(i) = 1/q \sum_{j=i}^{i+1}{M^q_k(j)}
 \end{eqnarray}
+\citeauthor{Derrien2012} find out in their own resequencing studies that \emph{low pileup-mappability regions are more prone to show a high value of heterozygosity than those with high mappability} \citep{Derrien2012}.
+Variant callers ideally call a locus heterozygous whenever its consensus alignment column, consisting of piled up reads, contains two distinct bases.
+This situation tends to arise whenever the consensus alignment contains reads originating from similar yet distinct regions.
 
 \subsection{Genome mappability score}
 
-Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy.
+Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy for a specific sequencing technology.
 Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see subsection~\ref{sub:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
-Subsequently, they derive average mapping probability of any read spanning a location $l$ of a reference genome $g$ as\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider to equation~\ref{eq:gms}.}:
+Subsequently, they derive average mapping probability of any read spanning a location $l$ of a reference genome $g$ as\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider equation~\ref{eq:gms} instead.}:
 \begin{eqnarray}
 \label{eq:gms}
 p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}
@@ -241,15 +229,17 @@ which in Phread-scale becomes:
 \begin{eqnarray}
 Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}
 \end{eqnarray}
-Thus, fixed a genomic sequence $g$, they define the genome mappability score $\text{GMS}(l)$ as its percentual value:
+Thus, fixed a genomic sequence $g$, they define the genome mappability score $\text{GMS}(l)$ in percentual value:
 \begin{eqnarray}
 \text{GMS}(l) = 100 \, Q(l|g)
 \end{eqnarray}
 
-\citeauthor{Lee2012} use GMS to estimate which fractions a genome are hard to resequence.
-%First, they simulate reads having length and error profiles similar to those issue by actual sequencing technologies.
-%Then, they map them with BWA (see section \ref{sec:background:mappers:bwa}).
-They define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \leq 10$, and measure the percentage of such locations in the human genome.
+\citeauthor{Lee2012} proceed as follow to compute GMS.
+They first simulate reads from all genomic locations, having length and error profiles similar to those issue by actual sequencing technologies.
+Subsequently, they compute mapping quality scores by mapping all simulated reads with BWA (see section \ref{sec:background:mappers:bwa}).
+Then, as just explained, they compute GMS at any location by averaging the quality scores.
+Finally, they define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \leq 10$, and \emph{high GMS} otherwise.
+Table \ref{tab:gms} shows performance of various sequencing technologies on the whole human genome (data extrapolated from \citep{Lee2012}).
 
 \begin{table}[h]
 \begin{center}
@@ -257,7 +247,14 @@ They define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \
 \sffamily
 \input{tables/table_gms}
 \end{center}
+\label{tab:gms}
 \end{table}
+
+\citeauthor{Lee2012} simulate an Illumina-like resequencing study.
+They measure variant calling accuracy by GMS for the popular combination of best-mapping tools BWA and SAMtools \citep{samtools}.
+They find out that at $30\,\times$ sequencing coverage accuracy tends to 100~\% in high GMS regions, while it levels off to 25~\% in low GMS regions.
+Their analysis \emph{shows that most SNP detection errors are false negatives, and most of the missing variations are in regions with low GMS scores} \citep{Lee2012}.
+These are the limits of \emph{de facto} standard tools for the analysis of high-throughput sequencing data.
 
 % =============================================================================
 
