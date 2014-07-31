@@ -93,8 +93,6 @@ According to \citeauthor{Treangen2011}, common strategies to deal with multi-rea
 \item to randomly pick one best mapping location,
 \item to consider all or up to $k$ best mapping locations within a given distance threshold.
 \end{inparaenum}
-It goes without saying that read mapper and downstream analysis tools must agree on a common strategy.
-
 A \emph{de facto} standard strategy emerged over the last years, combining strategies i and ii.
 The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:mapping:quality}).
 Subsequently, downstream analysis tools apply a mapping quality score cutoff to discard reads not mapping confidently to any location.
@@ -103,7 +101,8 @@ In this case, it is not clear whether downstream analysis tools consider equally
 
 In the light of these facts, I define two broad paradigms for the secondary and tertiary analysis of HTS data: \emph{best-mapping} and \emph{all-mapping}.
 The best-mapping paradigm considers a single mapping location per read along with its confidence, while the all-mapping paradigm considers a comprehensive set of mapping locations per read.
-These paradigms are valid not only for read mappers but also for any downstream analysis tool, \eg variant callers.
+It goes without saying that read mapper and downstream analysis tools must agree on a common paradigm.
+Thus these paradigms are valid not only for read mappers but also for any downstream analysis tool, \eg variant callers.
 Read mapping and variant calling are indeed tightly coupled steps within reference-based HTS pipelines.
 
 \subsection{Best-mapping}
@@ -160,20 +159,21 @@ Third, mapping quality tends to become less relevant as base calls improve, due 
 \subsection{All-mapping}
 All-mapping analysis methods consider a comprehensive set of locations per read.
 Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
-
-Compared to best-mapping, all-mapping algorithms can potentially detect a wider spectrum of genomic variation events.
-For instance, CNVs are detectable under the all-mapping paradigm \citep{mrCaNaVaR}.
-An all-mapping variant caller detects SNVs in homologous regions \citep{Sniper}.
+Variant calling algorithms in all-mapping have the potential to detect a wider spectrum of genomic variation events than in best-mapping.
+For instance, variant callers based on the all-mapping paradigm detect CNVs \citep{mrCaNaVaR}, and SNVs in homologous regions \citep{Sniper}.
  % transpositions~\citep{VariationHunter} ?
-
-A practical challenge of all-mapping is represented by reporting and handling the resulting datasets of mapping locations.
- which can have a size up to two orders of magnitude bigger compared to the corresponding input read sets.
-Sometimes all is too much.
+A practical challenge of all-mapping is represented by reporting and handling huge sets of mapping locations.
 
 % -----------------------------------------------------------------------------
 
 \section{Limits of read mapping}
 \label{sec:mappability}
+
+What is the limit of secondary analysis pipelines?
+What bias is produced by repetitive elements?
+
+Genome mappability can bias NGS analysis more than we might think at a first glance.
+Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
 
 %Reassembling a genome from HTS reads is a non-trivial task, not only in \emph{de novo} assembly but also in \emph{reference-guided} plans.
 %The difficulty of this task is caused by two aspects of the sequencing data: the shortness of the reads and the artefacts they contain.
@@ -184,9 +184,6 @@ Sometimes all is too much.
 %Still, alignment confidence is strictly related to read length, in conjunction with a third aspect strictly inherent to the donor genome: its repeats content.
 %Some reads cannot be confidently assigned to one single mapping locations.
 
-Genome mappability can bias NGS analysis more than we might think at a first glance.
-Two recent studies \citep{Derrien2012, Lee2012} show which is the bias of mappability.
-
 \subsection{Genome alignability}
 
 We now give a definition of genome alignability analogous to \citep{Derrien2012}.
@@ -196,26 +193,26 @@ We define the $(q,k)$-mappability $M^q_k(l)$ as the inverse $(q,k)$-frequency, \
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
 The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
-Let consider the simple case of exact $(q,0)$-mappability.
-By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
-It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
-Thus, for $E[F^q_0] \leq 1$ it must hold:
-\begin{eqnarray}
-2n \leq 4^q\\
-\log{2n} \leq \log{4^q}\\
-q \geq log_{4}{2n}
-\end{eqnarray}
-Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
-Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
-However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
-In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
-This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
+%Which is the minimum $q$-gram length from which we expect $(q,k)$-mappability to be $1$ for the genomes of model organisms?
+%Let consider the simple case of exact $(q,0)$-mappability.
+%By assuming a genomic sequence of length $n$ as being randomly generated under the uniform bernoulli model, the emission probability of any nucleotide is $p=\frac{1}{4}$ and, under \iid assumptions, the emission probability of any $q$-gram is $p_q=\frac{1}{4^q}$.
+%It follows that the expected value of $(q,0)$-frequency is $E[F^q_0] \simeq \frac{2n}{4^q}$.
+%Thus, for $E[F^q_0] \leq 1$ it must hold:
+%\begin{eqnarray}
+%2n \leq 4^q\\
+%\log{2n} \leq \log{4^q}\\
+%q \geq log_{4}{2n}
+%\end{eqnarray}
+%Thus, we would expect any $q$-gram of length $\log_{4}2n$ to occur about once in a genomic sequence of length $n$.
+%Sticking to these assumption, in the human genome ($n \approx 3\cdot10^9$) almost all 17-mers would be unique, on fly ($n \approx 1.2\cdot10^8$) all 15-mers, on worm ($n \approx 4.2\cdot10^7$) all 13-mers.
+%However, the $q$-gram distribution of model genomes does not fit the uniform bernoulli distribution.
+%In \citep{?} the $k$-mers distribution can be approximated by a double Pareto log-normal distribution, \ie a distribution with a heavy tail.
+%This is a result of the evolution of genomes being driven by gene duplications, retrotransposons \citep{?}.
 
-Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
-However, reads have to be mapped approximately to the reference genome.
-The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
-Thus the above estimate is a lower bound.
+%Consequently, we would expect 36~bp reads produced by early Illumina sequencers to induce an almost perfect mappability.
+%However, reads have to be mapped approximately to the reference genome.
+%The expected number of approximate occurrences of a $k$-mer is higher than the exact one.
+%Thus the above estimate is a lower bound.
 
 \citeauthor{Derrien2012} quantified the whole genome unique mappability for human, mouse, fly, and worm.
 At a $(36,2)$ mapping, about 30~\% of the human genome is not uniquely mappable.
@@ -229,22 +226,20 @@ Unique mappability rises to 83~\% by increasing the read length to 75~bp; howeve
 \end{center}
 \end{table}
 
-The uniqueome plays an important role in ChIP-seq experiments.
-It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
-Not only a significant fraction of the sequencing data is thrown out.
-Worse than that, we end up with holes in 30~\% of the genome.
-A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
-
-Cite regions of clinical relevance, \eg HLA-A.
-Cite regions of biological relevance, \eg 5S rRNA.
+%The uniqueome plays an important role in ChIP-seq experiments.
+%It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
+%Not only a significant fraction of the sequencing data is thrown out.
+%Worse than that, we end up with holes in 30~\% of the genome.
+%A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
+%Cite regions of of biological relevance \eg 5S rRNA, and clinical relevance \eg HLA-A.
 
 %\subsubsection{Pileup mappability}
 
 If we focus our attention to the resequencing accuracy at a single locus, we have to consider the mappability of all the possible reads spanning that given locus.
 Pileup mappability \citep{Derrien2012} at position $i$ is the average mappability of all reads spanning position $i$.
-
-$M_p(i) = 1/q \sum_{j=i}^{i+1}{M(j)}$
-
+\begin{eqnarray}
+P^q_k(i) = 1/q \sum_{j=i}^{i+1}{M^q_k(j)}
+\end{eqnarray}
 
 \subsection{Genome mappability score}
 
@@ -305,16 +300,6 @@ Finally, the most recent tools GEM~\citep{gem}, Masai~\citep{Siragusa2013}, and 
 They speed up best-mapping by stratifying mapping locations by edit distance and prioritizing filtration accordingly.
 In addition to that, they also speed up all-mapping by means of more specific filters based on backtracking.
 
-%In best-mapping, the task of a read mapper is to guess original mapping locations of reads.
-%Fixed a similarity scoring scheme that confidently models this problem, the optimal alignment under this scoring scheme correspond to the most likely explanation and induces a locus being the origin of the read.
-%The simplest scoring scheme is the edit distance; more involved scoring schemes take into account base quality values, score gaps using affine cost functions, or allow to trim for free a prefix or a suffix of the read.
-
-%The above definition does not consider two problems: what if there are many co-optimal candidates, and what if the correct solution corresponds to a sub-optimal candidate.
-%The former problem is exacerbated by genome mappability.
-%One would expect such situations to arise very rarely, but instead it is a relevant problem.
-%The latter problem arises whenever our model is not adequate to explain the difference between a read and its genomic origin.
-%For instance, an evolutionary event producing an indel of length $l$ might be considered as a unit, whether edit distance would consider it as $l$ independent events.
-%Under the edit distance, an alignment with less than $l$ independent point mutations would be considered more likely than an alignment containing only one indel of length $l$.
 
 % -----------------------------------------------------------------------------
 
