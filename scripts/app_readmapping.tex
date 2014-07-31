@@ -621,50 +621,10 @@ It should be noted that in this evaluation we are interested on the capability o
 
 As references, we use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh37.p2).
 
-\subsection{Read mappers parametrization}
-
 We compare Masai with the best-mappers Bowtie\,2, BWA and Soap\,2 as well as with the all-mappers RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
 We remark that Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
 When relevant, we configured some read mappers with the appropriate absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or error rate (RazerS\,3).
-In the following, we give the exact parameterization for the read mappers considered in our evaluation.
-
-\paragraph{Masai}
-Version 0.5 was used.
-In order to use Masai as an all-mapper, we passed the argument \texttt{--all}, otherwise the argument \texttt{--any-best} is used by default.
-We set the maximal edit distance using the parameter \texttt{-e}.
-We configured the seed length with the parameter \texttt{--seed-length}; on E.~coli, D.~melanogaster and C.~elegans we chose a seed length of $16$, while on H.~sapiens we chose a seed length of $33$.
-We selected the SAM output format with \texttt{-os} and enabled CIGAR output with \texttt{-oc}.
-
-\paragraph{Bowtie\,2}
-Version 2.0.0-beta6 was used.
-We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
-For the Rabema experiment we used the parameter \texttt{-k 100}.
-
-\paragraph{BWA}
-Version 0.6.1-r104 was used.
-For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
-
-\paragraph{Soap\,2}
-Version 2.1 was used.
-
-\paragraph{RazerS\,3}
-Version 3.1 was used.
-We mapped with indels using the pigeonhole filter (default) and set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
-We selected the native or SAM output format with \texttt{-of 0} or \texttt{-of 4}.
-
-\paragraph{Hobbes}
-Version 1.3 was used.
-We built the index using the recommended $q$-gram length 11.
-Since we focus on edit distance, we used the 16\,bit bit-vector version.
-We enabled indels with \texttt{--indels} and set maximal edit distance using the parameter \texttt{-v}.
-For resource measurement we used the output without CIGAR, for analyzing the results we enabled CIGAR output using \texttt{--cigar}.
-
-\paragraph{mrFAST}
-Version 2.1.0.6 was used.
-We set maximal edit distance using the parameter \texttt{-e}.
-
-\paragraph{SHRiMP\,2}
-Version 2.2.2 was used.
+In section \label{sup:masai:param}, we give the exact parameterization for the read mappers considered in our evaluation.
 
 \subsection{Rabema benchmark on simulated data}
 
@@ -1099,52 +1059,9 @@ In each experiment, I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, 
 
 \subsubsection{Read mappers parametrization}
 
-In the following, I give the exact parameterization of each read mapper considered in the evaluation.
+In appendix \ref{sup:yara:param}, I give the exact parametrization of each read mapper considered in the evaluation.
 Whenever possible, I configured the tools with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
 When processing paired-end reads, I provided the tools with appropriate insert size information.
-Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size, while \texttt{INS} is the mean insert size and \texttt{ERR} its allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
-
-\paragraph{Yara}
-Version 1.0 was used.
-To perform all-mapping, we passed the argument \texttt{--all}; by default, the tool runs as a best-mapper.
-We set the error rate using the parameter \texttt{-e}.
-In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
-The number of threads was set with the parameter \texttt{-t}.
-
-\paragraph{GEM}
-Version 1.376 was used.
-We set the error rate using the parameters \texttt{-m} and \texttt{-e}, then we disabled adaptive mapping using the parameter \texttt{--quality-format ignore}.
-In best-mapping, to analyze only the best stratum, we passed the argument \texttt{-s 0};
-in all-mapping, to analyze all strata, we passed \texttt{-d all -D all -s all --max-big-indel-length 0}.
-In single-end mode, we passed the parameter \texttt{--expect-single-end-reads}; in paired-end mode, we passed \texttt{--paired-end-alignment}, along with \texttt{--min-insert-size MIN --max-insert-size MAX}, and \texttt{--map-both-ends} to select the workflow mapping both reads independently.
-The number of threads was selected using the parameter \texttt{-t}.
-
-\paragraph{Bowtie\,2}
-Version 2.2.1 was used.
-We used the parameter \texttt{--end-to-end} to enforce semi-global read alignments.
-%For the Rabema benchmark we used the parameter \texttt{-k 100}.
-In paired-end mode, we used the parameters \texttt{--minins MIN --maxins MAX}.
-The number of threads was selected using the parameter \texttt{-p}.
-
-\paragraph{BWA}
-Version 0.7.7-r441 was used.
-%For the Rabema experiment we passed the parameter \texttt{-N} to \texttt{aln} and \texttt{-n 100} to \texttt{samse}.
-We used the parameter \texttt{-t} to select the number of threads in the \texttt{aln} step;
-the \texttt{sampe} and \texttt{samse} steps were performed using one thread since BWA does not offer any parallelization here.
-
-\paragraph{Hobbes\,2}
-Version 2.1 was used.
-We built the index using the recommended $q$-gram length 11.
-We enabled edit distance with \texttt{--indels} and set the distance threshold using the parameter \texttt{-v}.
-In paired-end mode, we used the parameters \texttt{--pe --min MIN --max MAX}.
-Multi-threading was enabled using \texttt{-p}.
-
-\paragraph{RazerS\,3}
-Version 3.2 was used.
-We set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
-We passed the option \texttt{-rr 100} to set the recognition rate to 100\,\% and \texttt{-m 1000000} to output all mapping locations per read.
-In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
-The number of threads was set with the \texttt{-tc} parameter.
 
 \subsubsection{Infrastructure}
 
