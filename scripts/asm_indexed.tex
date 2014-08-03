@@ -449,7 +449,7 @@ We can devise an hybrid algorithm that uses the directory $D$ to conduct the sea
 This hybrid index cuts the most expensive binary searches and increases memory locality.
 Furthermore, this hybrid index becomes useful whenever the suffix array is too big to fit in main memory and has to reside in external memory.
 
-\section{FM-indices}
+\section{Succinct full-text indices}
 
 The Burrows-Wheeler transform (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 The transformed string exposes two important properties: reversibility and compressibility.
@@ -751,7 +751,7 @@ $i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
 %\subsubsection{Wavelet tree}
 %For large alphabets.
 
-\subsection{Top-down traversal}
+\subsection{FM-index}
 \label{sub:fmtrie}
 
 We now turn to the problem of implementing a full-text index relying on the permutation $LF$.
@@ -879,6 +879,47 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 \end{figure}
 
 \subsection{Exact pattern matching}
+
+Using the above generic top-down traversal operations we are able to formulate generic string matching algorithms.
+Here we formulate the simple algorithm for exact string matching on a suffix trie.
+In chapter~\ref{chr:index}, we give analogous algorithms solving $k$-mismatches and $k$-differences by means of a backtracking top-down traversal \citep{Ukkonen1993, Baeza1999}.
+
+We assume the text $t$ to be indexed by its suffix trie $\Ti$.
+Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
+If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
+%Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
+If we implement \textsc{goDown} in constant time and \textsc{occurrences} in linear time, we find all occurrences of $p$ into $t$ in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
+
+%Exact string matching on a suffix trie.
+\begin{center}
+\begin{minipage}[t]{.7\textwidth}
+\begin{algorithm}[H]
+\Algorithm{ExactSearch}{$t,p$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to a suffix trie node\\
+				& $p$ : pointer to a pattern\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {\Call{atEnd}{$p$}}
+	\State \Report \Call{occurrences}{$t$}
+\ElsIf {\Call{goDown}{$t,\Call{value}{p}$}}
+		\State {\Call{goNext}{$p$}}
+		\State \Call{ExactSearch}{$t,p$}
+\EndIf
+\end{algorithmic}
+\label{alg:st-exact}
+\end{algorithm}
+\end{minipage}
+\end{center}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Exact string matching on a suffix tree]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS\$.}
+\label{fig:st-exact}
+\input{figures/strie_exact.tikz}
+\end{center}
+\end{figure}
 
 We now benchmark algorithm~\ref{alg:st-exact}.
 
