@@ -1,15 +1,18 @@
 \chapter{Filtering methods}
 
-We now concentrate on designing stronger filters for approximate string matching.
-Whenever the total time of our filtering algorithm is dominated by verification time, we can think of adopting a stronger filter yielding a lower number of candidate locations to verify.
-The idea is to improve the total time by means of a significant reduction of verification time, at the expense of a moderate increase in filtration time.
+This chapter presents filtering methods for approximate string matching.
+I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
+Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
+%Both classes of filters provide full-sensitive filtration schemes, solving the approximate string matching problem exactly.
 
-We have already seen in section~\ref{sec:intro:filtering} an example of such trade-off between filtration speed and strength: non-overlapping seeds versus $q$-gram filters.
+These filters provide a trade-off between filtration speed and specificity.
+Whenever the total time is dominated by verification time, a stronger filter yielding a lower number of candidate locations becomes appealing.
+The total time improves, despite a moderate increase in filtration time, because of a significant reduction in verification time.
 The former filters minimize filtration time but yield weak filtration, the latter provide a more involved but stronger filtration.
-In practice, we know that seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
+In practice, seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
 Thus we would adopt one or the other filtration method depending on the requested error rate.
 
-The simple analysis of section~\ref{sec:intro:filtering} show us that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
+The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
 Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
 To this intent, the following techniques have been proposed in literature:
 \begin{inparaenum}[(i)]
@@ -18,6 +21,21 @@ To this intent, the following techniques have been proposed in literature:
 \item approximate seeds generalizing exact seeds,
 %\item suffix filters further extending approximate seeds.
 \end{inparaenum}
+
+The idea of approximate seeds is that, to increase seed length, the pattern is factorized in less than $k+1$ non-overlapping seeds.
+The pigeonhole lemma~\ref{lemma:exact-seeds} however tells that, by doing so, no seed will be guaranteed to be error-free.
+Therefore, seeds must be searched approximately, but within a distance threshold smaller than the original threshold $k$.
+We can search approximate seeds with backtracking techniques of section~\ref{sec:backtracking}.
+%In a nutshell, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
+
+Problems of exact and approximate seeds filters are that
+\begin{inparaenum}[(i)]
+\item it is not evident which factorization yields optimal filtration, and
+\item they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
+\end{inparaenum}
+Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less redundant, and more adaptive filtration using more efficiently the index.
+The drawback is that the effort to implement them is slightly higher.
+
 
 The idea of gapped $q$-grams is to lower the correlation between consecutive $q$-grams.
 We have seen in the $q$-gram lemma~\ref{lemma:qgrams} that one error covers $q$ consecutive $q$-grams.
@@ -32,33 +50,22 @@ As less $q$-grams are now covered by mismatches, we can
 in either cases preserving full-sensitivity.
 Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
 
-TODO families.
+%TODO families.
 
-The idea of approximate seeds is that, to increase seed length, we can factorize the pattern in less than $k+1$ non-overlapping seeds.
-The pigeonhole lemma~\ref{lemma:exact-seeds} however tells us that, by doing so, no seed will be guaranteed to be error-free.
-Therefore, we are obliged to search the seeds approximately, but within a distance threshold smaller than the original threshold $k$.
-We can search approximate seeds with backtracking techniques of section~\ref{sec:backtracking}.
-In a nutshell, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
 
-Problems of exact and approximate seeds filters are that
-\begin{inparaenum}[(i)]
-\item it is not evident which factorization yields optimal filtration, and
-\item they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
-\end{inparaenum}
-Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less redundant, and more adaptive filtration using more efficiently the index.
-The drawback is that the effort to implement them is slightly higher.
-
-In the following of this chapter we first present (multiple) gapped $q$-grams and problems associated with their design.
-Then we move to more practical approximate seeds, which we will adopt later in chapter~\ref{chap:map-eng}.
+%In the following of this chapter we first present (multiple) gapped $q$-grams and problems associated with their design.
+%Then we move to more practical approximate seeds, which we will adopt later in chapter~\ref{chap:map-eng}.
 %Finally we discuss suffix filters and their practicality.
-Overall, through this chapter:
-\begin{itemize}
-\item we present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
-\item we provide generic parallel implementations of filters based on exact and approximate seeds;
-\item we evaluate these filtration schemes in practice.
-\end{itemize}
+
+%Overall, through this chapter:
+%\begin{itemize}
+%\item we present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
+%\item we provide generic parallel implementations of filters based on exact and approximate seeds;
+%\item we evaluate these filtration schemes in practice.
+%\end{itemize}
 
 \section{Exact seeds}
+\ref{sec:filtering:exact}
 
 We start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
 %If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
@@ -243,7 +250,7 @@ Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ an
 
 \begin{figure}[h]
 \begin{center}
-\caption{Filtration with $q$-grams.}
+\caption[Filtration with contiguous $q$-grams] {Filtration with contiguous $q$-grams.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
