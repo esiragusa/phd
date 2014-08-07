@@ -10,7 +10,7 @@ Whenever the total time is dominated by verification time, a stronger filter yie
 The total time improves, despite a moderate increase in filtration time, because of a significant reduction in verification time.
 The former filters minimize filtration time but yield weak filtration, the latter provide a more involved but stronger filtration.
 In practice, seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
-Thus we would adopt one or the other filtration method depending on the requested error rate.
+Thus one would adopt one or the other filtration method depending on the requested error rate.
 
 The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
 Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
@@ -25,8 +25,8 @@ To this intent, the following techniques have been proposed in literature:
 The idea of approximate seeds is that, to increase seed length, the pattern is factorized in less than $k+1$ non-overlapping seeds.
 The pigeonhole lemma~\ref{lemma:exact-seeds} however tells that, by doing so, no seed will be guaranteed to be error-free.
 Therefore, seeds must be searched approximately, but within a distance threshold smaller than the original threshold $k$.
-We can search approximate seeds with backtracking techniques of section~\ref{sec:backtracking}.
-%In a nutshell, instead of reducing an approximate search into smaller exact searches, we reduce it into smaller approximate searches.
+Approximate seeds can be searched with backtracking techniques of section~\ref{sec:backtracking}.
+%In a nutshell, instead of reducing an approximate search into smaller exact searches, I reduce it into smaller approximate searches.
 
 Problems of exact and approximate seeds filters are that
 \begin{inparaenum}[(i)]
@@ -37,12 +37,12 @@ Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less re
 The drawback is that the effort to implement them is slightly higher.
 
 
-The idea of gapped $q$-grams is to lower the correlation between consecutive $q$-grams.
-We have seen in the $q$-gram lemma~\ref{lemma:qgrams} that one error covers $q$ consecutive $q$-grams.
+The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
+The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
 Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
-Therefore, we introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
+Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
 By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
-As less $q$-grams are now covered by mismatches, we can
+As less $q$-grams are now covered by mismatches, I can
 \begin{inparaenum}[(i)]
 \item increase the filtering threshold or
 \item increase the number $q$ of considered characters,
@@ -53,42 +53,42 @@ Note that however, this concept poorly extends to edit distance, and the design 
 %TODO families.
 
 
-%In the following of this chapter we first present (multiple) gapped $q$-grams and problems associated with their design.
-%Then we move to more practical approximate seeds, which we will adopt later in chapter~\ref{chap:map-eng}.
-%Finally we discuss suffix filters and their practicality.
+%In the following of this chapter I first present (multiple) gapped $q$-grams and problems associated with their design.
+%Then I move to more practical approximate seeds, which I will adopt later in chapter~\ref{chap:map-eng}.
+%Finally I discuss suffix filters and their practicality.
 
 %Overall, through this chapter:
 %\begin{itemize}
-%\item we present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
-%\item we provide generic parallel implementations of filters based on exact and approximate seeds;
-%\item we evaluate these filtration schemes in practice.
+%\item I present a framework for the design of (multiple) gapped $q$-grams consisting of efficient exact and approximate solutions;
+%\item I provide generic parallel implementations of filters based on exact and approximate seeds;
+%\item I evaluate these filtration schemes in practice.
 %\end{itemize}
 
 \section{Exact seeds}
 \ref{sec:filtering:exact}
 
-We start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
-%If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+I start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
+%If I partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
 \citep{Baeza1999b}
 Let $x,y$ be two strings \st $d_E(x,y) = k$.
 %If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
-If we partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \end{lemma}
 %\begin{proof}
-%We proceed by induction on $k$.
+%I proceed by induction on $k$.
 %For $k=0$, the string $y$ is partitioned into one factor, $y$ itself.
 %The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
-%We suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
-%We consider the case $k=j$. The $j$-th error can be in
+%I suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
+%I consider the case $k=j$. The $j$-th error can be in
 %\begin{inparaenum}[(i)]
 %\item\label{lemma:exact-seeds:prefix} $y^1\dots y^{i-1}$,
 %\item\label{lemma:exact-seeds:infix} $y^i$, or
 %\item\label{lemma:exact-seeds:suffix} $y^{i+1}\dots y^{j}$.
 %\end{inparaenum}
 %In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
-%In case~\ref{lemma:exact-seeds:infix}, if we partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
+%In case~\ref{lemma:exact-seeds:infix}, if I partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
 %\end{proof}
 It is immediate to see that any edit distance error can cover at most one seed, therefore at least one seed of $y$ will not be covered by any seed and occur as a factor of $x$.
 Figure~\ref{fig:seeds-ext} shows an example.
@@ -101,10 +101,10 @@ Figure~\ref{fig:seeds-ext} shows an example.
 \end{center}
 \end{figure}
 
-Thus, we solve $k$-differences by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
-As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, we must verify whether any candidate location induced by an occurrence of some seed corresponds to an approximate occurrence of the pattern in the text.
-Thus, we verify any substring $s$ of the text of length $|s| \in [m - k, m + k]$ containing one seed of $p$.
-Note how we are reducing one approximate search into many smaller exact searches.
+Thus, $k$-differences is solved by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
+As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to whether corresponds to an approximate occurrence of the pattern in the text.
+Thus, I verify any substring $s$ of the text of length $|s| \in [m - k, m + k]$ containing one seed of $p$.
+Note how this method reduces one approximate search into many smaller exact searches.
 
 How many verifications a seed produces?
 Let us assume the text to be generated according to the uniform Bernoulli model.
@@ -119,7 +119,7 @@ E[H] = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \f
 
 Note how lemma~\ref{lemma:exact-seeds} requires us to partition the pattern into $k+1$ seeds but leaves us free to choose their length.
 This leads to the question of which is an optimal pattern partitioning, \ie a partitioning that minimizes the expected number of verifications.
-We fix\footnote{We ignore for simplicity that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
+I fix\footnote{I ignore for simplicity that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
 \begin{eqnarray}
 \label{eq:seed-len}
 q=\left \lfloor \frac{m}{k+1} \right \rfloor
@@ -130,19 +130,19 @@ Under these conditions, the expected number of verifications produced by our see
 E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
 
-We now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
-For which error rate we expect the resulting algorithm to have sublinear runtime?
+I now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
+For which error rate the resulting algorithm is expected to have sublinear runtime?
 %\citeauthor{Gusfield1997} gives a rough estimate to this question.
-If we use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sub:introonline} to verify candidate locations, the expected runtime must be
+If I use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sub:introonline} to verify candidate locations, the expected runtime must be
 \begin{eqnarray}
 E[V] \cdot m^2 < cn
 \end{eqnarray}
 for some constant $c$.
-By substituting $E[V]$ and solving for $q$, we obtain
+By substituting $E[V]$ and solving for $q$, I obtain
 \begin{eqnarray}
 q > \log_{\sigma}{\frac{m^3}{c}}
 \end{eqnarray}
-and since we chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len}, it follows that
+and since I chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len}, it follows that
 \begin{eqnarray}
 \epsilon = \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
 \end{eqnarray}
@@ -150,8 +150,8 @@ is the error rate for which this $k$-differences algorithm has expected sublinea
 
 Nonetheless, texts of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
 On those texts uniform seed length can lead to suboptimal filtration.
-In section~\ref{sec:seeds-apx} we analyze the statistical properties of these texts and the effects of pattern partitioning.
-Later, in order to obtain more robust filters, we generalize filtration with seeds to consider approximate seeds.
+In section~\ref{sec:seeds-apx} I analyze the statistical properties of these texts and the effects of pattern partitioning.
+Later, in order to obtain more robust filters, I generalize filtration with seeds to consider approximate seeds.
 
 
 \section{Approximate seeds}
@@ -160,25 +160,25 @@ Later, in order to obtain more robust filters, we generalize filtration with see
 Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for $k$-mismatches and $k$-difference.
 The key idea of approximate seeds is to reduce an approximate search into \emph{smaller} approximate searches, as opposed to exact seeds reducing an approximate search into smaller exact searches.
 
-Again, we start by considering two arbitrary strings $x,y$ within edit distance $k$.
+Again, I start by considering two arbitrary strings $x,y$ within edit distance $k$.
 \begin{lemma}
 \label{lemma:apx-seeds}
 \citep{Myers1994,Navarro2000}
 Let $x,y$ be two strings \st $d_E(x,y) = k$.
-If we partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance $\lfloor k/s \rfloor$.
+If I partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance $\lfloor k/s \rfloor$.
 \end{lemma}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
 
-In order to solve $k$-mismatches, we partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$. According to lemma~\ref{lemma:apx-seeds}, full-sensitivity is guaranteed if we search all seeds $p^i$ within a distance threshold of $\lfloor k/s \rfloor$.
-Note that we are not obliged to assign the same distance threshold to all seeds.
-Indeed, we can assign any arbitrary distance threshold $k_i$ to each seed $p^i$, as long as we satisfy the following inequality
+In order to solve $k$-mismatches, I partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$. According to lemma~\ref{lemma:apx-seeds}, full-sensitivity is guaranteed if I search all seeds $p^i$ within a distance threshold of $\lfloor k/s \rfloor$.
+Note that I am not obliged to assign the same distance threshold to all seeds.
+Indeed, I can assign any arbitrary distance threshold $k_i$ to each seed $p^i$, as long as I satisfy the following inequality
 \begin{equation}
 s + \sum_{i=1}^{s}{k_i} > k.
 \end{equation}
-We usually tend to distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
-Therefore, we assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
-Also note how we obtain lemma~\ref{lemma:exact-seeds} for exact seeds by posing $s=k+1$ and all $k_i = 0$.
+I usually tend to distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
+Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
+Also note how lemma~\ref{lemma:exact-seeds} for exact seeds is obtained by posing $s=k+1$ and all $k_i = 0$.
 
 \begin{figure}[h]
 \begin{center}
@@ -191,9 +191,9 @@ Also note how we obtain lemma~\ref{lemma:exact-seeds} for exact seeds by posing 
 
 \subsection{Parameterization}
 
-With approximate seeds we are free to choose the number of seeds $s$ which gives us $q =\lfloor m/s \rfloor$, or vice versa, if we fix the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
+With approximate seeds, I am free to choose the number of seeds $s$ which gives us $q =\lfloor m/s \rfloor$, or vice versa, if I fix the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
 The resulting filter is flexible, indeed by increasing $q$ filtration becomes more specific at the expense of a higher filtration time.
-For $s=1$ we obtain the most specific filtration \ie we perform only backtracking and we do not even need to verify the reported locations, while for $s=k+1$ we obtain the fastest but weakest filtration.
+For $s=1$ I obtain the most specific filtration \ie I perform only backtracking and I do not even need to verify the reported locations, while for $s=k+1$ I obtain the fastest but weakest filtration.
 
 In practice, it is not easy to find which filter parameterization yields an optimal filtration.
 Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
@@ -213,24 +213,24 @@ Another practical problem of seeds is redundant filtration.
 Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds} or \ref{lemma:apx-seeds}, more than one seed reports the same candidate location.
 Consider the case of exact seeds: If two errors fall in some seed, then at least two seeds will occur exactly.
 
-In practice, we can choose to avoid redundancy before or after verifying candidate locations.
-After collecting all candidate locations for a pattern, we have to consider only the induced diagonal positions in the implicit DP matrix.
+In practice, I can choose to avoid redundancy before or after verifying candidate locations.
+After collecting all candidate locations for a pattern, I have to consider only the induced diagonal positions in the implicit DP matrix.
 This requires locating and sorting all candidate locations for a pattern.
-Alternatively, we can prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
-Nonetheless, to avoid reporting duplicate occurrences, we have to consider redundant all occurrences either beginning or ending at the same position in the text.
+Alternatively, I prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
+Nonetheless, to avoid reporting duplicate occurrences, I have to consider redundant all occurrences either beginning or ending at the same position in the text.
 This requires memorizing and sorting all occurrences of a pattern.
 
-How many redundant error configurations\footnote{Here we consider the fraction of redundant error combinations and not the fraction of redundant candidate locations reported by the filter.} are produced by seeds filters?
-For simplicity we consider exact seeds and combinations of exactly $k$ errors.
-We have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
-However, for a fixed seed, we cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
+How many redundant error configurations\footnote{Here I consider the fraction of redundant error combinations and not the fraction of redundant candidate locations reported by the filter.} are produced by seeds filters?
+For simplicity I consider exact seeds and combinations of exactly $k$ errors.
+I have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
+However, for a fixed seed, I cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
 Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
 \begin{equation}
 \frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
 \end{equation}
 For instance, filtration with exact seeds covers three times more combinations than required when $k=5$.
-With approximate seeds we partition the pattern in less seeds and thus we indirectly reduce filter redundancy.
-%In the next section we see how suffix filters consider only minimal error combinations.
+With approximate seeds I partition the pattern in less seeds and thus I indirectly reduce filter redundancy.
+%In the next section I see how suffix filters consider only minimal error combinations.
 
 %\section{Suffix filters}
 
@@ -261,30 +261,30 @@ Indeed, it considers the edit distance between two arbitrary strings, while in a
 More precisely, if the pattern approximately matches any substring $s$ of $t$, then in the case of $k$-mismatches $s$ must have length $m$; in the case of $k$-difference, the length of $s$ must be within $m - k$ and $m + k$.
 The dot plot representation helps us to visualize this concept: $k$-mismatches occurrences cover one single diagonal of the dot plot, while $k$-difference occurrences are enclosed inside a parallelogram of side $2k+1$.
 
-%How do we use lemma~\ref{lemma:qgrams} to solve approximate string matching?
-Therefore, we can design an online filtration algorithm scanning the text and counting how many $q$-grams of the pattern fall into each parallelograms.
+%How do I use lemma~\ref{lemma:qgrams} to solve approximate string matching?
+Therefore, I can design an online filtration algorithm scanning the text and counting how many $q$-grams of the pattern fall into each parallelograms.
 Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
-Alternatively, to speed up the filtration phase, we can count the $q$-grams with the help of a substring index.
+Alternatively, to speed up the filtration phase, I can count the $q$-grams with the help of a substring index.
 %Overlapping parallelograms?
 
 Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau$, we obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
 
 
 \section{Gapped $q$-grams}
 
-In section~\ref{sec:intro:filtering} we introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
-We now generalize this similarity measure to consider the number of common subsequences\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
+In section~\ref{sec:intro:filtering} I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
+I now generalize this similarity measure to consider the number of common subsequences\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
 %and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
 
 \begin{definition}
-We call $Q$-gram a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
-We denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $Q$.
+I call $Q$-gram a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
+I denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $Q$.
 \end{definition}
 
 In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
-We adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
+I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
 Figure~\ref{fig:qgram-shape} shows an example of $Q$-gram.
 
 \begin{figure}[h]
@@ -295,7 +295,7 @@ Figure~\ref{fig:qgram-shape} shows an example of $Q$-gram.
 \end{center}
 \end{figure}
 
-The first thing we remark is that, compared to contiguous $q$-grams, we obtain a higher threshold, as mismatches do not cover don't care positions.
+The first thing I remark is that, compared to contiguous $q$-grams, I obtain a higher threshold, as mismatches do not cover don't care positions.
 The $q$-gram lemma (\ref{lemma:exact-qgrams}) does not provide us anymore with a tight threshold, but only with a lower bound.
 Note that, as in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
 Indeed, the pattern of covered $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the position of the mismatches in the pattern.
@@ -311,14 +311,14 @@ If the answer to question~\ref{enum:qgram-nd} is negative and the filter is loss
 \item \label{enum:qgram-fn} how many false negatives our filter discards?
 Considering filtration efficiency,
 \item \label{enum:qgram-fp} how many false positives our filter produces?
-If we take the weight as a simplified criterion predicting filtration efficiency, 
+If I take the weight as a simplified criterion predicting filtration efficiency, 
 \item \label{enum:qgram-weight} which is the maximum weight lossless shape?
 \end{inparaenum}
 
 Question~\ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005},
-the more general questions~\ref{enum:qgram-non-detection} and \ref{enum:qgram-weight} have been introduced in \citep{Nicolas2005}, while we consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
-With the aim of elucidating these questions, we first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
-Afterwards, we recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-weight} and give new exact and approximate solutions.
+the more general questions~\ref{enum:qgram-non-detection} and \ref{enum:qgram-weight} have been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
+With the aim of elucidating these questions, I first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
+Afterwards, I recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-weight} and give new exact and approximate solutions.
 
 \subsection{Characteristic functions}
 
@@ -333,14 +333,14 @@ Fixed a $Q$-gram threshold $t$, the $Q$-gram detects $\sigma$ iff it occurs at l
 \subsubsection{Boolean functions}
 
 Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a similarity $\sigma$ of length $m$.
-We define such boolean function as the disjunction
+I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
 T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all similarities of length $m$.
-We define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
+I define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
 \begin{equation}
 \label{eq:family-bool}
 T_{F}^{m}(\sigma) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\sigma)
@@ -353,7 +353,7 @@ In general, $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses
 \subsubsection{Pseudo-boolean functions}
 
 Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
-We defined such \emph{pseudo-boolean function} as
+I defined such \emph{pseudo-boolean function} as
 \begin{equation}
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
@@ -364,7 +364,7 @@ It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting ho
 \label{eq:qgram-pseudoneg}
 \bar{t}_{Q}^{m}(\sigma) = m - s(Q) + 1 - t_{Q}^{m}(\sigma)
 \end{equation}
-Analogously, we define a pseudo-boolean function for a $Q$-gram family $F$
+Analogously, I define a pseudo-boolean function for a $Q$-gram family $F$
 \begin{equation}
 \label{eq:family-pseudo}
 t_{F}^{m}(\sigma) = \sum_{Q_i \in F} t_{Q_i}^{m}(\sigma)
@@ -420,7 +420,7 @@ This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \
 \end{tabular}
 \\
 
-Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, we can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \min & t_{Q}^{m} (\sigma)			\\
@@ -440,7 +440,7 @@ Clause $Q_2$ is considered next...
 
 \subsubsection{Our exact ILP solution}
 
-We reduce this problem to \emph{maximum coverage} \citep{NemhauserWolsey99} and solve it with the following ILP
+I reduce this problem to \emph{maximum coverage} \citep{NemhauserWolsey99} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \max & |c|_1					\\
@@ -450,11 +450,11 @@ w.r.t.							\\
 & \sigma_i \geq c_j				\\
 \end{array}
 \end{equation}
-where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$. Given the ILP solution $c^*$, we obtain the optimal threshold $t^* = |c^*|_1$.
+where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$. Given the ILP solution $c^*$, I obtain the optimal threshold $t^* = |c^*|_1$.
 
 \subsubsection{Our APX solution}
 
-We reduce the complementary optimal threshold problem to the maximization of a submodular function subject to linear constraints
+I reduce the complementary optimal threshold problem to the maximization of a submodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \max & \bar{t}_{Q}^{m}(\sigma)		\\
@@ -464,7 +464,7 @@ w.r.t.								\\
 \end{equation}
 where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
 
-We compute an approximate solution via deepest descent.
+I compute an approximate solution via deepest descent.
 Our greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{NemhauserWolseyFisher78}.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
@@ -481,7 +481,7 @@ Which is the maximum error $k^*$ for which full-sensitivity is guaranteed?
 \end{tabular}
 \\
 
-Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, we define our problem as the minimization of a linear function subject to submodular constraints
+Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define our problem as the minimization of a linear function subject to submodular constraints
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1			\\
@@ -493,7 +493,7 @@ w.r.t.								\\
 
 \subsubsection{Our ILP solution}
 
-We reduce our problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
+I reduce our problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1	\\
@@ -523,7 +523,7 @@ Hence the optimal solution of the relaxed LP is also the optimal solution of the
 
 \subsubsection{Our APX solution}
 
-Again, we compute an approximate solution via deepest descent.
+Again, I compute an approximate solution via deepest descent.
 APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
 
 
@@ -541,14 +541,14 @@ How many false positives our filter produces?
 \\
 
 False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q^t}^{m}$.
-Hence we define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
+Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
 \begin{equation}
 \text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} T_{Q,t}^{m}(\sigma)
 \end{equation}
 
 \subsubsection{Our FPRAS solution}
 
-We reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
+I reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
 The latter problem can be approximated via importance sampling.
 \citeauthor{Vazirani01} introduces a \emph{RPTAS} approximating the number of true points of a DNF.
 % Karp & Luby ??
