@@ -20,6 +20,19 @@ Burkhardt, S. and Karkkainen, J. (2001).
 Burrows, M. and Wheeler, D.~J. (1994).
 \newblock A block-sorting lossless data compression algorithm.
 
+\bibitem[Chinwalla \ea(2002)Chinwalla, Cook, Delehaunty, Fewell, Fulton,
+  Fulton, Graves, Hillier, Mardis, McPherson, \ea]{Chinwalla2002}
+Chinwalla, A.~T., Cook, L.~L., Delehaunty, K.~D., Fewell, G.~A., Fulton, L.~A.,
+  Fulton, R.~S., Graves, T.~A., Hillier, L.~W., Mardis, E.~R., McPherson,
+  J.~D., \ea (2002).
+\newblock Initial sequencing and comparative analysis of the mouse genome.
+\newblock {\em Nature\/}, {\bf 420}(6915), pages 520--562.
+
+\bibitem[Consortium(2001)Consortium]{Consortium2001}
+Consortium, I. H. G.~S. (2001).
+\newblock Initial sequencing and analysis of the human genome.
+\newblock {\em Nature\/}, {\bf 409}(6822), pages 860--921.
+
 \bibitem[Crochemore \ea(2013)Crochemore, Grossi, K{\"a}rkk{\"a}inen, and
   Landau]{Crochemore2013}
 Crochemore, M., Grossi, R., K{\"a}rkk{\"a}inen, J., and Landau, G.~M. (2013).
@@ -166,6 +179,12 @@ Lee, H. and Schatz, M.~C. (2012).
   illustrated by the genome mappability score.
 \newblock {\em Bioinformatics\/}, {\bf 28}(16), pages 2097--2105.
 
+\bibitem[Li(2012)Li]{Li2012}
+Li, H. (2012).
+\newblock Exploring single-sample snp and indel calling with whole-genome de
+  novo assembly.
+\newblock {\em Bioinformatics\/}, {\bf 28}(14), pages 1838--1844.
+
 \bibitem[Li and Durbin(2009)Li and Durbin]{Li2009}
 Li, H. and Durbin, R. (2009).
 \newblock Fast and accurate short read alignment with burrows-wheeler
@@ -195,10 +214,24 @@ Morrison, D.~R. (1968).
   alphanumeric.
 \newblock {\em J. ACM\/}, {\bf 15}(4), pages 514--534.
 
+\bibitem[Mortazavi \ea(2008)Mortazavi, Williams, McCue, Schaeffer, and
+  Wold]{Mortazavi2008}
+Mortazavi, A., Williams, B., McCue, K., Schaeffer, L., and Wold, B. (2008).
+\newblock Mapping and quantifying mammalian transcriptomes by {RNA-seq}.
+\newblock {\em Nat. Methods\/}, {\bf 5}(7), pages 621--628.
+
 \bibitem[Myers(1994)Myers]{Myers1994}
 Myers, E.~W. (1994).
 \newblock A sublinear algorithm for approximate keyword searching.
 \newblock {\em Algorithmica\/}, {\bf 12}(4-5), pages 345--374.
+
+\bibitem[Myers \ea(2000)Myers, Sutton, Delcher, Dew, Fasulo, Flanigan, Kravitz,
+  Mobarry, Reinert, Remington, \ea]{Myers2000c}
+Myers, E.~W., Sutton, G.~G., Delcher, A.~L., Dew, I.~M., Fasulo, D.~P.,
+  Flanigan, M.~J., Kravitz, S.~A., Mobarry, C.~M., Reinert, K.~H., Remington,
+  K.~A., \ea (2000).
+\newblock A whole-genome assembly of drosophila.
+\newblock {\em Science\/}, {\bf 287}(5461), pages 2196--2204.
 
 \bibitem[Myers(1999)Myers]{Myers1999}
 Myers, G. (1999).
@@ -228,6 +261,17 @@ Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
 
+\bibitem[Pevzner \ea(2001)Pevzner, Tang, and Waterman]{Pevzner2001}
+Pevzner, P.~A., Tang, H., and Waterman, M.~S. (2001).
+\newblock An eulerian path approach to dna fragment assembly.
+\newblock {\em Proceedings of the National Academy of Sciences\/}, {\bf
+  98}(17), pages 9748--9753.
+
+\bibitem[Sanger \ea(1977)Sanger, Nicklen, and Coulson]{Sanger1977}
+Sanger, F., Nicklen, S., and Coulson, A.~R. (1977).
+\newblock {DNA} sequencing with chain-terminating inhibitors.
+\newblock {\em PNAS\/}, {\bf 74}(12), pages 5463--5467.
+
 \bibitem[Seward(1996)Seward]{Seward1996}
 Seward, J. (1996).
 \newblock bzip2 and libbzip2.
@@ -250,6 +294,86 @@ Ukkonen, E. (1993).
 \newblock Approximate string-matching over suffix trees.
 \newblock In {\em CPM\/}, pages 228--242.
 
+\bibitem[Venter \ea(2001)Venter, Adams, Myers, Li, Mural, Sutton, Smith,
+  Yandell, Evans, Holt, Gocayne, Amanatides, Ballew, Huson, Wortman, Zhang,
+  Kodira, Zheng, Chen, Skupski, Subramanian, Thomas, Zhang, Gabor~Miklos,
+  Nelson, Broder, Clark, Nadeau, McKusick, Zinder, Levine, Roberts, Simon,
+  Slayman, Hunkapiller, Bolanos, Delcher, Dew, Fasulo, Flanigan, Florea,
+  Halpern, Hannenhalli, Kravitz, Levy, Mobarry, Reinert, Remington,
+  Abu-Threideh, Beasley, Biddick, Bonazzi, Brandon, Cargill,
+  Chandramouliswaran, Charlab, Chaturvedi, Deng, Di~Francesco, Dunn, Eilbeck,
+  Evangelista, Gabrielian, Gan, Ge, Gong, Gu, Guan, Heiman, Higgins, Ji, Ke,
+  Ketchum, Lai, Lei, Li, Li, Liang, Lin, Lu, Merkulov, Milshina, Moore, Naik,
+  Narayan, Neelam, Nusskern, Rusch, Salzberg, Shao, Shue, Sun, Wang, Wang,
+  Wang, Wang, Wei, Wides, Xiao, Yan, Yao, Ye, Zhan, Zhang, Zhang, Zhao, Zheng,
+  Zhong, Zhong, Zhu, Zhao, Gilbert, Baumhueter, Spier, Carter, Cravchik,
+  Woodage, Ali, An, Awe, Baldwin, Baden, Barnstead, Barrow, Beeson, Busam,
+  Carver, Center, Cheng, Curry, Danaher, Davenport, Desilets, Dietz, Dodson,
+  Doup, Ferriera, Garg, Gluecksmann, Hart, Haynes, Haynes, Heiner, Hladun,
+  Hostin, Houck, Howland, Ibegwam, Johnson, Kalush, Kline, Koduru, Love, Mann,
+  May, McCawley, McIntosh, McMullen, Moy, Moy, Murphy, Nelson, Pfannkoch,
+  Pratts, Puri, Qureshi, Reardon, Rodriguez, Rogers, Romblad, Ruhfel, Scott,
+  Sitter, Smallwood, Stewart, Strong, Suh, Thomas, Tint, Tse, Vech, Wang,
+  Wetter, Williams, Williams, Windsor, Winn-Deen, Wolfe, Zaveri, Zaveri, Abril,
+  Guig\'o, Campbell, Sjolander, Karlak, Kejariwal, Mi, Lazareva, Hatton,
+  Narechania, Diemer, Muruganujan, Guo, Sato, Bafna, Istrail, Lippert,
+  Schwartz, Walenz, Yooseph, Allen, Basu, Baxendale, Blick, Caminha,
+  Carnes-Stine, Caulk, Chiang, Coyne, Dahlke, Mays, Dombroski, Donnelly, Ely,
+  Esparham, Fosler, Gire, Glanowski, Glasser, Glodek, Gorokhov, Graham,
+  Gropman, Harris, Heil, Henderson, Hoover, Jennings, Jordan, Jordan, Kasha,
+  Kagan, Kraft, Levitsky, Lewis, Liu, Lopez, Ma, Majoros, McDaniel, Murphy,
+  Newman, Nguyen, Nguyen, Nodell, Pan, Peck, Peterson, Rowe, Sanders, Scott,
+  Simpson, Smith, Sprague, Stockwell, Turner, Venter, Wang, Wen, Wu, Wu, Xia,
+  Zandieh, and Zhu]{Venter2001}
+Venter, J.~C., Adams, M.~D., Myers, E.~W., Li, P.~W., Mural, R.~J., Sutton,
+  G.~G., Smith, H.~O., Yandell, M., Evans, C.~A., Holt, R.~A., Gocayne, J.~D.,
+  Amanatides, P., Ballew, R.~M., Huson, D.~H., Wortman, J.~R., Zhang, Q.,
+  Kodira, C.~D., Zheng, X.~H., Chen, L., Skupski, M., Subramanian, G., Thomas,
+  P.~D., Zhang, J., Gabor~Miklos, G.~L., Nelson, C., Broder, S., Clark, A.~G.,
+  Nadeau, J., McKusick, V.~A., Zinder, N., Levine, A.~J., Roberts, R.~J.,
+  Simon, M., Slayman, C., Hunkapiller, M., Bolanos, R., Delcher, A., Dew, I.,
+  Fasulo, D., Flanigan, M., Florea, L., Halpern, A., Hannenhalli, S., Kravitz,
+  S., Levy, S., Mobarry, C., Reinert, K., Remington, K., Abu-Threideh, J.,
+  Beasley, E., Biddick, K., Bonazzi, V., Brandon, R., Cargill, M.,
+  Chandramouliswaran, I., Charlab, R., Chaturvedi, K., Deng, Z., Di~Francesco,
+  V., Dunn, P., Eilbeck, K., Evangelista, C., Gabrielian, A.~E., Gan, W., Ge,
+  W., Gong, F., Gu, Z., Guan, P., Heiman, T.~J., Higgins, M.~E., Ji, R.~R., Ke,
+  Z., Ketchum, K.~A., Lai, Z., Lei, Y., Li, Z., Li, J., Liang, Y., Lin, X., Lu,
+  F., Merkulov, G.~V., Milshina, N., Moore, H.~M., Naik, A.~K., Narayan, V.~A.,
+  Neelam, B., Nusskern, D., Rusch, D.~B., Salzberg, S., Shao, W., Shue, B.,
+  Sun, J., Wang, Z., Wang, A., Wang, X., Wang, J., Wei, M., Wides, R., Xiao,
+  C., Yan, C., Yao, A., Ye, J., Zhan, M., Zhang, W., Zhang, H., Zhao, Q.,
+  Zheng, L., Zhong, F., Zhong, W., Zhu, S., Zhao, S., Gilbert, D., Baumhueter,
+  S., Spier, G., Carter, C., Cravchik, A., Woodage, T., Ali, F., An, H., Awe,
+  A., Baldwin, D., Baden, H., Barnstead, M., Barrow, I., Beeson, K., Busam, D.,
+  Carver, A., Center, A., Cheng, M.~L., Curry, L., Danaher, S., Davenport, L.,
+  Desilets, R., Dietz, S., Dodson, K., Doup, L., Ferriera, S., Garg, N.,
+  Gluecksmann, A., Hart, B., Haynes, J., Haynes, C., Heiner, C., Hladun, S.,
+  Hostin, D., Houck, J., Howland, T., Ibegwam, C., Johnson, J., Kalush, F.,
+  Kline, L., Koduru, S., Love, A., Mann, F., May, D., McCawley, S., McIntosh,
+  T., McMullen, I., Moy, M., Moy, L., Murphy, B., Nelson, K., Pfannkoch, C.,
+  Pratts, E., Puri, V., Qureshi, H., Reardon, M., Rodriguez, R., Rogers, Y.~H.,
+  Romblad, D., Ruhfel, B., Scott, R., Sitter, C., Smallwood, M., Stewart, E.,
+  Strong, R., Suh, E., Thomas, R., Tint, N.~N., Tse, S., Vech, C., Wang, G.,
+  Wetter, J., Williams, S., Williams, M., Windsor, S., Winn-Deen, E., Wolfe,
+  K., Zaveri, J., Zaveri, K., Abril, J.~F., Guig\'o, R., Campbell, M.~J.,
+  Sjolander, K.~V., Karlak, B., Kejariwal, A., Mi, H., Lazareva, B., Hatton,
+  T., Narechania, A., Diemer, K., Muruganujan, A., Guo, N., Sato, S., Bafna,
+  V., Istrail, S., Lippert, R., Schwartz, R., Walenz, B., Yooseph, S., Allen,
+  D., Basu, A., Baxendale, J., Blick, L., Caminha, M., Carnes-Stine, J., Caulk,
+  P., Chiang, Y.~H., Coyne, M., Dahlke, C., Mays, A., Dombroski, M., Donnelly,
+  M., Ely, D., Esparham, S., Fosler, C., Gire, H., Glanowski, S., Glasser, K.,
+  Glodek, A., Gorokhov, M., Graham, K., Gropman, B., Harris, M., Heil, J.,
+  Henderson, S., Hoover, J., Jennings, D., Jordan, C., Jordan, J., Kasha, J.,
+  Kagan, L., Kraft, C., Levitsky, A., Lewis, M., Liu, X., Lopez, J., Ma, D.,
+  Majoros, W., McDaniel, J., Murphy, S., Newman, M., Nguyen, T., Nguyen, N.,
+  Nodell, M., Pan, S., Peck, J., Peterson, M., Rowe, W., Sanders, R., Scott,
+  J., Simpson, M., Smith, T., Sprague, A., Stockwell, T., Turner, R., Venter,
+  E., Wang, M., Wen, M., Wu, D., Wu, M., Xia, A., Zandieh, A., and Zhu, X.
+  (2001).
+\newblock The sequence of the human genome.
+\newblock {\em Science\/}, {\bf 291}, pages 1304--1351.
+
 \bibitem[Weese(2013)Weese]{Weese2013}
 Weese, D. (2013).
 \newblock {\em Indices and Applications in High-Throughput Sequencing\/}.
@@ -260,6 +384,11 @@ Weese, D. (2013).
 Weese, D., Emde, A.-K., Rausch, T., D\"{o}ring, A., and Reinert, K. (2009).
 \newblock {RazerS}--fast read mapping with sensitivity control.
 \newblock {\em Genome Res.}, {\bf 19}(9), pages 1646--1654.
+
+\bibitem[Weese \ea(2013)Weese, Schulz, Holtgrewe, and Richard]{Weese2013a}
+Weese, D., Schulz, M.~H., Holtgrewe, M., and Richard, H. (2013).
+\newblock Fiona: a versatile and automatic strategy for read error correction.
+\newblock {\em to appear\/}.
 
 \bibitem[Weiner(1973)Weiner]{Weiner1973}
 Weiner, P. (1973).
