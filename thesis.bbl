@@ -1,19 +1,9 @@
 \begin{thebibliography}{}
 
-\bibitem[Ahmadi \ea(2012)Ahmadi, Behm, Honnalli, Li, Weng, and Xie]{Ahmadi2011}
-Ahmadi, A., Behm, A., Honnalli, N., Li, C., Weng, L., and Xie, X. (2012).
-\newblock Hobbes: optimized gram-based methods for efficient read alignment.
-\newblock {\em Nucleic Acids Res.}, {\bf 40}(6), page e41.
-
-\bibitem[Baeza-Yates and Gonnet(1999)Baeza-Yates and Gonnet]{Baeza1999}
-Baeza-Yates, R.~A. and Gonnet, G.~H. (1999).
-\newblock A fast algorithm on average for all-against-all sequence matching.
-\newblock In {\em SPIRE/CRIWG\/}, pages 16--23. IEEE.
-
-\bibitem[Baeza-Yates and Navarro(1999)Baeza-Yates and Navarro]{Baeza1999b}
-Baeza-Yates, R.~A. and Navarro, G. (1999).
-\newblock Faster approximate string matching.
-\newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
+\bibitem[Abouelhoda \ea(2004)Abouelhoda, Kurtz, and Ohlebusch]{Abouelhoda2004}
+Abouelhoda, M., Kurtz, S., and Ohlebusch, E. (2004).
+\newblock Replacing suffix trees with enhanced suffix arrays.
+\newblock {\em Journal of Discrete Algorithms\/}, {\bf 2}(1), pages 53--86.
 
 \bibitem[Bauer \ea(2013)Bauer, Cox, and Rosone]{Bauer2013}
 Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
@@ -37,6 +27,12 @@ Crochemore, M., Grossi, R., K{\"a}rkk{\"a}inen, J., and Landau, G.~M. (2013).
   burrows--wheeler transform.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 74--82. Springer.
 
+\bibitem[Dementiev \ea(2008)Dementiev, K\"{a}rkk\"{a}inen, Mehnert, and
+  Sanders]{Dementiev2008}
+Dementiev, R., K\"{a}rkk\"{a}inen, J., Mehnert, J., and Sanders, P. (2008).
+\newblock Better external memory suffix array construction.
+\newblock {\em J. Exp. Algorithmics\/}, {\bf 12}, pages 3.4:1--3.4:24.
+
 \bibitem[DePristo \ea(2011)DePristo, Banks, Poplin, Garimella, Maguire, Hartl,
   Philippakis, del Angel, Rivas, Hanna, \ea]{DePristo2011}
 DePristo, M.~A., Banks, E., Poplin, R., Garimella, K.~V., Maguire, J.~R.,
@@ -58,12 +54,6 @@ Elias, P. (1975).
 \newblock Universal codeword sets and representations of the integers.
 \newblock {\em Information Theory, IEEE Transactions on\/}, {\bf 21}(2), pages
   194--203.
-
-\bibitem[Ewing and Green(1998)Ewing and Green]{Ewing1998b}
-Ewing, B. and Green, P. (1998).
-\newblock Base-calling of automated sequencer traces using phred. ii. error
-  probabilities.
-\newblock {\em Genome research\/}, {\bf 8}(3), pages 186--194.
 
 \bibitem[Ewing \ea(1998)Ewing, Hillier, Wendl, and Green]{Ewing1998}
 Ewing, B., Hillier, L., Wendl, M.~C., and Green, P. (1998).
@@ -99,6 +89,18 @@ Fonseca, N.~A., Rung, J., Brazma, A., and Marioni, J.~C. (2012).
 \newblock Tools for mapping high-throughput sequencing data.
 \newblock {\em Bioinformatics\/}, {\bf 28}(24), pages 3169--3177.
 
+\bibitem[Giegerich \ea(1999)Giegerich, Kurtz, and Stoye]{Giegerich1999}
+Giegerich, R., Kurtz, S., and Stoye, J. (1999).
+\newblock Efficient implementation of lazy suffix trees.
+\newblock In {\em Algorithm Engineering\/}, pages 30--42. Springer.
+
+\bibitem[Grossi \ea(2003)Grossi, Gupta, and Vitter]{Grossi2003}
+Grossi, R., Gupta, A., and Vitter, J.~S. (2003).
+\newblock High-order entropy-compressed text indexes.
+\newblock In {\em Proc. of the 14th annual ACM-SIAM symposium on Discrete
+  algorithms\/}, SODA~'03, pages 841--850, Philadelphia, PA, USA. Society for
+  Industrial and Applied Mathematics.
+
 \bibitem[Gusfield(1997)Gusfield]{Gusfield1997}
 Gusfield, D. (1997).
 \newblock {\em Algorithms on strings, trees, and sequences: {C}omputer science
@@ -111,13 +113,6 @@ Hach, F., Hormozdiari, F., Alkan, C., Hormozdiari, F., Birol, I., Eichler,
   E.~E., and Sahinalp, S.~C. (2010).
 \newblock {mrsFAST}: a cache-oblivious algorithm for short-read mapping.
 \newblock {\em Nat. Methods\/}, {\bf 7}(8), pages 576--577.
-
-\bibitem[Hatem \ea(2013)Hatem, Bozda, Toland, and
-  {\c{C}}ataly{\"u}rek]{Hatem2013}
-Hatem, A., Bozda, D., Toland, A.~E., and {\c{C}}ataly{\"u}rek, {\"U}.~V.
-  (2013).
-\newblock Benchmarking short sequence mapping tools.
-\newblock {\em BMC bioinformatics\/}, {\bf 14}(1), page 184.
 
 \bibitem[Holtgrewe \ea(2011)Holtgrewe, Emde, Weese, and Reinert]{Holtgrewe2011}
 Holtgrewe, M., Emde, A.-K., Weese, D., and Reinert, K. (2011).
@@ -143,11 +138,11 @@ Jokinen, P. and Ukkonen, E. (1991).
 \newblock In {\em Mathematical Foundations of Computer Science 1991\/}, pages
   240--248. Springer.
 
-\bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
-  Sanders]{Karkkainen2003}
-K{\"a}rkk{\"a}inen, J. and Sanders, P. (2003).
-\newblock Simple linear work suffix array construction.
-\newblock {\em ICALP\/}, pages 943--955.
+\bibitem[Kasai \ea(2001)Kasai, Lee, Arimura, Arikawa, and Park]{Kasai2001}
+Kasai, T., Lee, G., Arimura, H., Arikawa, S., and Park, K. (2001).
+\newblock Linear-time longest-common-prefix computation in suffix arrays and
+  its applications.
+\newblock In {\em CPM\/}, pages 181--192.
 
 \bibitem[Knuth(1973)Knuth]{Knuth1973}
 Knuth, D. (1973).
@@ -165,33 +160,17 @@ Kurtz, S. (1999).
 \newblock {\em Software-Practice and Experience\/}, {\bf 29}(13), pages
   1149--71.
 
-\bibitem[Langmead and Salzberg(2012)Langmead and Salzberg]{Bowtie2}
-Langmead, B. and Salzberg, S.~L. (2012).
-\newblock {Fast gapped-read alignment with Bowtie 2}.
-\newblock {\em Nat. Methods\/}, {\bf 9}(4), pages 357--359.
-
-\bibitem[Langmead \ea(2009)Langmead, Trapnell, Pop, and Salzberg]{Bowtie}
-Langmead, B., Trapnell, C., Pop, M., and Salzberg, S.~L. (2009).
-\newblock {Ultrafast and memory-efficient alignment of short DNA sequences to
-  the human genome}.
-\newblock {\em Genome Biol.}, {\bf 10}(3), page R25.
-
 \bibitem[Lee and Schatz(2012)Lee and Schatz]{Lee2012}
 Lee, H. and Schatz, M.~C. (2012).
 \newblock Genomic dark matter: the reliability of short read mapping
   illustrated by the genome mappability score.
 \newblock {\em Bioinformatics\/}, {\bf 28}(16), pages 2097--2105.
 
-\bibitem[Li and Durbin(2009)Li and Durbin]{BWA}
+\bibitem[Li and Durbin(2009)Li and Durbin]{Li2009}
 Li, H. and Durbin, R. (2009).
 \newblock Fast and accurate short read alignment with burrows-wheeler
   transform.
 \newblock {\em Bioinformatics\/}, {\bf 25}(14), pages 1754--1760.
-
-\bibitem[Li and Durbin(2010)Li and Durbin]{BWA-SW}
-Li, H. and Durbin, R. (2010).
-\newblock Fast and accurate long-read alignment with burrows-wheeler transform.
-\newblock {\em Bioinformatics\/}, {\bf 26}(5), pages 589--595.
 
 \bibitem[Li and Homer(2010)Li and Homer]{Li2010}
 Li, H. and Homer, N. (2010).
@@ -205,36 +184,10 @@ Li, H., Ruan, J., and Durbin, R. (2008).
   quality scores.
 \newblock {\em Genome research\/}, {\bf 18}(11), pages 1851--1858.
 
-\bibitem[Li \ea(2009a)Li, Handsaker, Wysoker, Fennell, Ruan, Homer, Marth,
-  Abecasis, Durbin, and {1000 Genome Project Data Processing Subgroup}]{Li2009}
-Li, H., Handsaker, B., Wysoker, A., Fennell, T., Ruan, J., Homer, N., Marth,
-  G., Abecasis, G., Durbin, R., and {1000 Genome Project Data Processing
-  Subgroup} (2009a).
-\newblock The sequence alignment/map format and {SAMtools}.
-\newblock {\em Bioinformatics\/}, {\bf 25}(16), pages 2078--2079.
-
-\bibitem[Li \ea(2009b)Li, Yu, Li, Lam, Yiu, Kristiansen, and Wang]{Soap2}
-Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
-  (2009b).
-\newblock {SOAP2}: an improved ultrafast tool for short read alignment.
-\newblock {\em Bioinformatics\/}, {\bf 25}(15), pages 1966--1967.
-
-\bibitem[Liu \ea(2012)Liu, Wong, Wu, Luo, Yiu, Li, Wang, Yu, Chu, Zhao,
-  \ea]{Soap3}
-Liu, C.-M., Wong, T., Wu, E., Luo, R., Yiu, S.-M., Li, Y., Wang, B., Yu, C.,
-  Chu, X., Zhao, K., \ea (2012).
-\newblock Soap3: ultra-fast gpu-based parallel alignment tool for short reads.
-\newblock {\em Bioinformatics\/}, {\bf 28}(6), pages 878--879.
-
 \bibitem[Manber and Myers(1990)Manber and Myers]{Manber1990}
 Manber, U. and Myers, G. (1990).
 \newblock Suffix arrays: a new method for on-line string searches.
 \newblock In {\em SODA\/}, pages 319--327.
-
-\bibitem[Marco-Sola \ea(2012)Marco-Sola, Sammeth, Guig{\'o}, and Ribeca]{Gem}
-Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
-\newblock The gem mapper: fast, accurate and versatile alignment by filtration.
-\newblock {\em Nature methods\/}, {\bf 9}(12), pages 1185--1188.
 
 \bibitem[Morrison(1968)Morrison]{Morrison1968}
 Morrison, D.~R. (1968).
@@ -247,10 +200,11 @@ Myers, E.~W. (1994).
 \newblock A sublinear algorithm for approximate keyword searching.
 \newblock {\em Algorithmica\/}, {\bf 12}(4-5), pages 345--374.
 
-\bibitem[Navarro(2001)Navarro]{Navarro2001b}
-Navarro, G. (2001).
-\newblock A guided tour to approximate string matching.
-\newblock {\em ACM Comput. Surv.}, {\bf 33}(1), pages 31--88.
+\bibitem[Myers(1999)Myers]{Myers1999}
+Myers, G. (1999).
+\newblock {A fast bit-vector algorithm for approximate string matching based on
+  dynamic programming}.
+\newblock {\em J. ACM\/}, {\bf 46}(3), pages 395--415.
 
 \bibitem[Navarro and Baeza-Yates(2000)Navarro and Baeza-Yates]{Navarro2000}
 Navarro, G. and Baeza-Yates, R.~A. (2000).
@@ -263,16 +217,16 @@ Navarro, G., Baeza-Yates, R.~A., Sutinen, E., and Tarhio, J. (2001).
 \newblock Indexing methods for approximate string matching.
 \newblock {\em IEEE Data Eng. Bull.}, {\bf 24}(4), pages 19--27.
 
+\bibitem[Needleman and Wunsch(1970)Needleman and Wunsch]{Needleman1970}
+Needleman, S.~B. and Wunsch, C.~D. (1970).
+\newblock A general method applicable to the search for similarities in the
+  amino acid sequence of two proteins.
+\newblock {\em J. Mol. Biol.}, {\bf 48}, pages 443--453.
+
 \bibitem[Nicolas and Rivals(2005)Nicolas and Rivals]{Nicolas2005}
 Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
-
-\bibitem[Sch{\"u}rmann and Stoye(2007)Sch{\"u}rmann and Stoye]{Schurmann2007}
-Sch{\"u}rmann, K.-B. and Stoye, J. (2007).
-\newblock An incomplex algorithm for fast suffix array construction.
-\newblock {\em Software: Practice and Experience\/}, {\bf 37}(3), pages
-  309--329.
 
 \bibitem[Seward(1996)Seward]{Seward1996}
 Seward, J. (1996).
@@ -307,11 +261,10 @@ Weese, D., Emde, A.-K., Rausch, T., D\"{o}ring, A., and Reinert, K. (2009).
 \newblock {RazerS}--fast read mapping with sensitivity control.
 \newblock {\em Genome Res.}, {\bf 19}(9), pages 1646--1654.
 
-\bibitem[Weese \ea(2012)Weese, Holtgrewe, and Reinert]{RazerS3}
-Weese, D., Holtgrewe, M., and Reinert, K. (2012).
-\newblock {RazerS\,3}: Faster, fully sensitive read mapping.
-\newblock {\em Bioinformatics\/}.
-\newblock 10.1093/bioinformatics/bts505.
+\bibitem[Weiner(1973)Weiner]{Weiner1973}
+Weiner, P. (1973).
+\newblock Linear pattern matching algorithms.
+\newblock In {\em SWAT (FOCS)\/}, pages 1--11. IEEE.
 
 \bibitem[Wilkes(1995)Wilkes]{Wilkes1995}
 Wilkes, M.~V. (1995).
