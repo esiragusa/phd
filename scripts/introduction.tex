@@ -2,16 +2,16 @@
 
 The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
 Very surprisingly, this milestone has been achieved twice, by two independent groups.
-The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft covering more than 96\~\% of the euchromatic part of the human genome \citep{hgp}.
-The privately funded company \emph{Celera Genomics} concurrently published a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome \citep{celerahuman}.
-These two groups also contributed to characterize the entire genomes of other model organisms, such as mice \citep{mouse}, fruit flies \citep{celerafly}, nematode worms and yeasts.
+The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft \emph{covering more than 96\~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
+The privately funded company \emph{Celera Genomics} concurrently published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
+These two groups also contributed to characterize the entire genomes of other model organisms, such as mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000c}, nematode worms and yeasts.
 
 These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
 Indeed, both groups used sequencing technologies based on the \emph{shotgun} approach.
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 
-These early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\ref{sanger}.
+These early sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\citep{Sanger1977}.
 This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces reads of an average length of 700~bp at a throughput of about 150~Kbp/h.
 Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
 At this pace, the sequencing of the human genome took years and many million dollars.
@@ -96,11 +96,11 @@ There are two main \emph{plans} to reassemble the original genome: \begin{inpara
 \item \emph{de novo} assembly, and
 \item \emph{reference-guided} assembly (commonly called \emph{read mapping}).
 \end{inparaenum}
-\emph{De novo} methods essentially scaffold the reads by performing \emph{overlap alignments} \citep{?} or equivalently by constructing \emph{de Bruijn graphs} \citep{?}.
+\emph{De novo} methods essentially scaffold the reads by performing \emph{overlap alignments} or equivalently by constructing \emph{de Bruijn graphs} \citep{Pevzner2001}.
 Computational methods in plan A are very involved, as they require finding a \emph{shortest common superstring}, which is a NP-complete problem \citep{?}.
 The knowledge of a \emph{reference genome}, highly similar to the donor, simplifies the problem and opens the door to plan B.
 The reads are simply aligned to the reference, tolerating a few base pair errors.
-It is worth mentioning that some combinations of plans A and B have been proposed in \citep{fermi,?}.
+It is worth mentioning that some combinations of plans A and B have been proposed \citep{Li2012}.
 
 Plan B is always preferred in resequencing projects, as it is more computationally viable than plan A and directly provides a way to assess genetic variation \wrt a reference genome.
 In this manuscript, I follow only plan B and present methods that work within this specific plan.
@@ -109,7 +109,7 @@ According to plan B, the secondary analysis step consists of three tasks: \emph{
 
 \emph{Quality control} (Q/C) checks the quality of raw reads.
 Reads produced by current HTS technologies contain sequencing artefacts, in form of single miscalled bases or stretches of oligonucleotides.
-In order to circumvent this problem, various techniques have been developed, ranging from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{fiona}.
+In order to circumvent this problem, various techniques have been developed, ranging from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{Weese2013a}.
 Nonetheless, sometimes Q/C is simply omitted.
 
 \emph{Read mapping} takes care of aligning the reads to the reference genome.
@@ -132,7 +132,7 @@ Within DNA resequencing, \emph{genotyping} consists of determining the variation
 The result of \emph{variant calling} is usually a VFC file annotating the variations of the donor genome.
 Subsequently, \emph{genome-wide association studies} (GWAS) associate genetic variants with phenotypic traits by examining \emph{single-nucleotide polymorphisms} (SNPs), variants relatively common among individuals of the same population.
 
-In RNA-seq, tertiary analysis consists of computing transcripts abundance by measuring \emph{reads per kilobase per million mapped reads} (RPKM) \citep{rnaseq}.
+In RNA-seq, tertiary analysis consists of computing transcripts abundance by measuring \emph{reads per kilobase per million mapped reads} (RPKM) \citep{Mortazavi2008}.
 Subsequently, relative gene expression is determined by comparing multiple RNA samples.
 In ChIP-seq, this stage consists of calling peaks in correspondence of mapped reads, determining which peaks identify feasible transcription factor binding sites, then interesting sites affecting gene regulation.
 
