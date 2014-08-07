@@ -1,23 +1,27 @@
 
 \chapter{Stringology preliminaries}
 
-We now introduce fundamental definitions and problems of stringology, in order to keep the manuscript self-contained.
-We provide a summary of notations at the end of this manuscript.
+In this chapter I introduce fundamental definitions and problems of stringology.
+%At the end of the manuscript I provide a summary of notations.
 The reader familiar with basic stringology can skip this chapter and proceed to chapter~\ref{chr:online}.
 
 \section{Definitions}
 
-Let us start by introducing primitive objects of stringology: alphabets and strings.
-An \emph{alphabet} is a finite ordered set of symbols (or characters); a \emph{string} (or word) over an alphabet is a finite sequence of symbols from that alphabet.
-We denote the length of a string $s$ by $|s|$, and by $\epsilon$ the empty string \st $|\epsilon|=0$.
+I start by introducing primitive objects of stringology: alphabets and strings.
 
 \begin{definition}
-Given an alphabet $\Sigma$, we define $\Sigma^0=\{ \epsilon \}$ as the set containing the empty string, $\Sigma^n$ as the set of all strings over $\Sigma$ of length $n$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ as the set of all strings over $\Sigma$.
-Finally, we call any subset of $\Sigma^*$ a language over $\Sigma$.
+\label{def:alphastr}
+An \emph{alphabet} is a finite ordered set of symbols (or characters); a \emph{string} (or word) over an alphabet is a finite sequence of symbols from that alphabet.
+I denote the length of a string $s$ by $|s|$, and by $\epsilon$ the empty string \st $|\epsilon|=0$.
 \end{definition}
 
 \begin{definition}
-We define the concatenation operator of two strings as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
+Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains the empty string, $\Sigma^n$ contains all strings of length $n$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
+%Finally, any subset of $\Sigma^*$ is called a language over $\Sigma$.
+\end{definition}
+
+\begin{definition}
+The concatenation operator of two strings is defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
 Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (simply denoted $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
 \end{definition}
 
@@ -26,41 +30,41 @@ Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^
 A string $x$ is a \emph{prefix} of $y$ iff there is some string $z$ \st $y=x\cdot z$;
 analogously, $x$ is a \emph{suffix} of $y$ iff there is some string $z$ \st $y=z\cdot x$;
 moreover, $x$ is a \emph{substring} of $y$ iff there is some string $w,z$ \st $y=w\cdot x \cdot z$.
-We denote by $y_{1 \dots i}$ the prefix of $y$ ending at position $i \in \N$, by $y_{i \dots n}$ (or simply $y_{i \dots}$) the suffix of $y$ beginning at position $i \in \N$, and by $y_{i \dots j}$ the substring of $y$ within positions $i \leq j \in \N$.
+I denote by $y_{1 \dots i}$ the prefix of $y$ ending at position $i \in \N$, by $y_{i \dots n}$ (or simply $y_{i \dots}$) the suffix of $y$ beginning at position $i \in \N$, and by $y_{i \dots j}$ the substring of $y$ within positions $i \leq j \in \N$.
 \end{definition}
 % and then we say that $x$ occurs within $y$ at position $|w|$.
 
 \begin{definition}
 \label{def:rho}
-Given an alphabet $\Sigma$ of size $\sigma$, we define the function $\rho : \Sigma \rightarrow [1 \dots \sigma]$ denoting the \emph{lexicographic rank} of any alphabet symbol, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
+Given an alphabet $\Sigma$ of size $\sigma$, I denote by the function $\rho : \Sigma \rightarrow [1 \dots \sigma]$ the \emph{lexicographic rank} of any alphabet symbol, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
 \end{definition}
 
 \begin{definition}
 \label{def:lex}
-We define the \emph{lexicographical order} $<_{lex}$ between two non-empty strings $x,y$ as $x <_{lex} y \iff x_1 < y_1, \text{ or } x_1 = y_1 \text{ and } x_{2 \dots} <_{lex} y_{2 \dots}$
+The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $x,y$ is defined as $x <_{lex} y \iff x_1 < y_1, \text{ or } x_1 = y_1 \text{ and } x_{2 \dots} <_{lex} y_{2 \dots}$
 \end{definition}
 
-%Often in this manuscript we use the notion of string collection.
+%Often in this manuscript I use the notion of string collection.
 \begin{definition}
 \label{def:colt}
-We define a \emph{string collection} as an ordered multiset $\Sc = \{ s^1, s^2, \dots, s^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
-We denote by $\norm{\Sc}=\sum_{i=1}^{c}{|s^i|}$ the total length of the string collection.
-We also extend the notation of prefix, suffix and substring to multisets, \eg $\Sc_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
+A \emph{string collection} is an ordered multiset $\Sc = \{ s^1, s^2, \dots, s^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+I denote by $\norm{\Sc}=\sum_{i=1}^{c}{|s^i|}$ the total length of the string collection.
+I extend the notation of prefix, suffix and substring also to multisets, \eg $\Sc_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
 \end{definition}
 
 \begin{definition}
 \label{def:dollar}
-We call \emph{terminator symbol} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
+I call \emph{terminator symbol} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
 \end{definition}
 
 \begin{definition}
 \label{def:strd}
-Given a string $s$ over $\Sigma$, we call \emph{padded string} the concatenation of $s$ with a terminator symbol \$.
+Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation of $s$ with a terminator symbol \$.
 \end{definition}
 
 \begin{definition}
 \label{def:coltd}
-Given a string collection $\Sc$ over $\Sigma$, we call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
+Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
 %\begin{example}
@@ -77,8 +81,12 @@ Given a string collection $\Sc$ over $\Sigma$, we call \emph{padded string colle
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
 Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
 If the given strings have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
-Therefore, given any two strings $x,y$, we define as edit transcript for $x,y$ any finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
-See Figure~\ref{fig:edit-transcript} for an example.
+
+\begin{definition}
+\label{def:alignment}
+An edit transcript for any two given strings $x,y$ is a finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+\end{definition}
+%See Figure~\ref{fig:edit-transcript} for an example.
 
 \begin{figure}[h]
 \begin{center}
@@ -90,8 +98,12 @@ See Figure~\ref{fig:edit-transcript} for an example.
 
 An alignment is an alternative yet equivalent way of visualizing a transformation between strings.
 While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment relates pairs of corresponding symbols between two strings.
-Because some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed, we first need to introduce a gap symbol $-$, which is not part of the string alphabet $\Sigma$.
-Subsequently, we can define the alignment of two strings of length $m,n$ over $\Sigma$ to be a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
+Because some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed, a gap symbol $-$, not being part of the string alphabet $\Sigma$, has to be introduced first.
+
+\begin{definition}
+\label{def:alignment}
+An alignment of two strings of length $m,n$ over $\Sigma$ is a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
+\end{definition}
 
 \begin{example}
 \label{ex:alignment}
@@ -101,7 +113,7 @@ $z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text
 
 A dotplot is a way to visualize any alignment between two strings and highlight their similarities.
 Given two string $x,y$ of length $m,n$, a dotplot is a $m \times n$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
-We define a dotplot trace to be a monotonical path in the matrix connecting non-decreasing positions of the matrix.
+A dotplot trace is a monotonical path in the matrix connecting non-decreasing positions of the matrix.
 A dotplot trace corresponds to an alignment and vice versa.
 In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
 See Figure~\ref{fig:dotplot}.
@@ -116,7 +128,7 @@ See Figure~\ref{fig:dotplot}.
 
 \section{Distance functions}
 
-We can assign a cost to any alignment and to its associated edit transformation by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
+A cost is assigned to any alignment, and to its associated edit transformation, by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
 \begin{itemize}
 \item $\omega(\alpha,\beta)$ for all $(\alpha,\beta) \in \Sigma \times \Sigma$ defines the cost of substituting $\alpha$ with $\beta$,
 \item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
@@ -126,15 +138,22 @@ and by defining the total cost $C(z)$ of an alignment $z$ between two strings as
 \begin{eqnarray}
 C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
 \end{eqnarray}
-Consequently, we can define the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ by taking the minimum cost over all possible alignments of $x,y$:
+Consequently, the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ is defined to take the minimum cost over all possible alignments of $x,y$:
 \begin{eqnarray}
 d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
 \end{eqnarray}
 
-In particular, the edit or \emph{Levenshtein distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
-It is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1.
+\begin{definition}
+\label{def:hamming}
 The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$ counting the number of substitutions necessary to transform $x$ into $y$.
-We obtain it by defining $\omega(\alpha,\beta)$ as in the edit distance, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
+It is obtained by defining $\omega(\alpha,\beta)$ as in the edit distance, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
+\end{definition}
+
+\begin{definition}
+\label{def:edit}
+The \emph{Levenshtein} or \emph{edit distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
+It is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1.
+\end{definition}
 
 \begin{example}
 TODO: example of edit and hamming distance.
@@ -144,9 +163,9 @@ TODO: example of edit and hamming distance.
 
 The problem of finding an optimal alignment between two strings is equivalent to the problem of finding their minimum distance \citep{Gusfield1997}.
 A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
-Below we describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
+Below I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$ of length $m,n$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$ we define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Given two strings $x,y$ of length $m,n$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$ I define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d(\epsilon,\epsilon)&=&0\\
@@ -164,10 +183,10 @@ d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \right.\label{eq:dp-min}
 \end{eqnarray}
 
-We can compute the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
-The sole distance without any alignment can be computed in space $\Oh(\min\{ n, m \})$, as we only need column $D[:j-1]$ to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$) and we can fill the table $D$ either column-wise or row-wise\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
-An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
-We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
+The above recurrence relation is computed in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
+The sole distance without any alignment is computed in space $\Oh(\min\{ n, m \})$, as only column $D[:j-1]$ is needed to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$), and the table $D$ can be filled either column-wise or row-wise. %\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
+An optimal alignment is computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
+the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
 \begin{figure}[h]
 \begin{center}
@@ -184,7 +203,7 @@ We start in the cell $D[m,n]$ and go backwards (either left, up-left, or up) to 
 
 %\subsection{Problem definition}
 
-We now define \emph{exact string matching}, one of the most fundamental problem in stringology.
+I now define \emph{exact string matching}, one of the most fundamental problem in stringology.
 \begin{definition}
 \citep{Gusfield1997}
 Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of length $n$, called the \emph{text}, the exact string matching problem is to find all occurrences of pattern $p$ into text $t$.
@@ -197,9 +216,9 @@ Nonetheless, the definition of distance functions between strings let us general
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
 \end{definition}
 The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
-For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern occurs at any position in the text if we substitute all its $m$ characters.
+For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern occurs at any position in the text if all its $m$ characters are substituted.
 \begin{definition}
-Under the edit or Hamming distance, we define the \emph{error rate} as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
+Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
 
 String matching problems are subdivided in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
@@ -247,11 +266,11 @@ Since an occurrence of the pattern can start and end anywhere in the text, $k$-d
 The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
 Consider equation~\ref{eq:dp-min} and pose $x=p$ and $y=t$.
-Since an occurrence of the pattern can start anywhere in the text, we change the initialization of the top row $D[0:]$ of the DP matrix according to the condition:
+Since an occurrence of the pattern can start anywhere in the text, the initialization of the top row $D[0:]$ of the DP matrix is changed to:
 \begin{eqnarray}
 d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
-and since an occurrence of the pattern can end anywhere in the text, we check all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ for the condition $D[m,j] \leq k$.
+and since an occurrence of the pattern can end anywhere in the text, all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ have to be checked for the condition $D[m,j] \leq k$.
 
 \begin{figure}[h]
 \begin{center}
@@ -287,23 +306,23 @@ Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its 
 
 \subsubsection{Suffix trie}
 
-We define the suffix trie as the trie of all suffixes of a string.
+The suffix trie is the trie of all suffixes of a string.
 \begin{definition}
 Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves where leaf $\Ln_i$ points to suffix $s_{i..n}$.
 \end{definition}
-We generalize the suffix trie to index string collections.
+The suffix trie generalizes to index string collections.
 \begin{definition}
 Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
 Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
-Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet we only consider the suffix trie as an idealized data structure to expose our algorithms.
+Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose our algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
 However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see Figure~\ref{fig:stree}).
 This latter property slightly complicates the exposition of our string matching algorithms but it does not affect their runtime complexity nor their result.
-For this reason, in the following of this manuscript we always consider \wlogs suffix tries instead of suffix trees.
-%We remark that all given algorithms can be generalized to work on trees.
+For this reason, in the following of this manuscript I always consider \wlogs suffix tries instead of suffix trees.
+%I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
 \caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree for the string ANANAS\$.}
@@ -330,8 +349,8 @@ For this reason, in the following of this manuscript we always consider \wlogs s
 
 \subsubsection{Top-down traversal}
 
-We now give a set of generic operations to traverse tries in a top-down fashion.
-Given a trie $\Ti$, we define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
+I now give a set of generic operations to traverse tries in a top-down fashion.
+Given a trie $\Ti$, I define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
 \begin{itemize}
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
 \item \textsc{isLeaf}($\Tn$) returns true iff all outgoing edges are labeled by terminator symbols;
@@ -349,7 +368,7 @@ and the following operations moving from pointed node $\Tn$, and returning true 
 Time complexities of the above operations depend on the data structure implementing the trie.
 Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $n$, \textsc{occurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity to stack all parent nodes.
 Note that is always possible to implement \textsc{goDown} and \textsc{goRight} by relying on \textsc{goDown} a symbol and \textsc{goUp}, but their complexity becomes $\Oh(\sigma)$.
-In chapter~\ref{chr:index}, we consider various data structures to implement suffix tries, we show how to implement these operations and give their complexities.
+In chapter~\ref{chr:index}, I consider various data structures to implement suffix tries, I show how to implement these operations and give their complexities.
 
 \begin{figure*}
 \begin{minipage}[t]{.5\textwidth}
