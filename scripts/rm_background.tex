@@ -41,8 +41,8 @@ Instead of directly discarding low-quality regions present in capillary reads, t
 As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
 
 To formally define Phred base quality scores, let us fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$, and consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
-We define the base calling error $\epsilon_i$ at position $i$ in the read $r$, as the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
-Therefore, we define the Phred base quality $Q_i$ at position $i$ as:
+The base calling error $\epsilon_i$, at position $i$ in the read $r$, is defined as the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
+Therefore, the Phred base quality $Q_i$ at position $i$ is:
 \begin{eqnarray}
 Q_i = -10 \log_{10} \epsilon_i.
 \end{eqnarray}
@@ -126,7 +126,7 @@ However, they do not show in their study what is the effect of relying on mappin
 
 Since base callers output base call probabilities in Phred-scale along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called mapping quality, giving the probability that a given read has been aligned correctly at a given mapping location in the reference genome.
 
-By applying Bayes' theorem, we can derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
+The posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$, is derived by applying Bayes' theorem.
 Assuming uniform coverage, each location $l \in [1, |g| - |r| + 1]$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $p(l)$ is simply:
 \begin{eqnarray}
 p(l) = \frac{1}{|g| - |r| + 1}
@@ -194,7 +194,7 @@ Table \label{tab:mappability} shows some results extrapolated from \citep{Derrie
 %The uniqueome plays an important role in ChIP-seq experiments.
 %It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
 %Not only a significant fraction of the sequencing data is thrown out.
-%Worse than that, we end up with holes in 30~\% of the genome.
+%Worse than that, one ends up with holes in 30~\% of the genome.
 %A ChIP-seq peak caller considering multi-reads calls up to 30~\% more peaks.
 %Cite regions of of biological relevance \eg 5S rRNA, and clinical relevance \eg HLA-A.
 
