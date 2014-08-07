@@ -1,0 +1,312 @@
+\chapter{Yara}
+\label{sec:yara}
+
+\emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
+Yara offers parallelization via multi-threading, has a low memory footprint by using the FM-index, directly supports paired-end or mate-pair protocols, computes accurate mapping qualities, does not require ad-hoc parameterization and works on Illumina or Ion Torrent reads.
+
+% -----------------------------------------------------------------------------
+
+\section{Engineering}
+\label{sec:yara:eng}
+
+\subsection{Ad-hoc filtration}
+\label{sec:yara:eng:adhoc}
+
+Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
+Read mappers like RazerS\,3 \citep{RazerS3} and mrFast \citep{Ahmadi2011} are designed around na\"ive filtration with exact seeds.
+This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
+Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
+whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
+This filtration method speeds up Masai by an order of magnitude but is still rough:
+it needs external parametrization, lacks flexibility and is suboptimal in practice.
+
+Yara applies an ad-hoc filtration scheme \emph{per read}.
+Under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical mapping, most reads produce very few verifications and are easily mappable, while a few others are problematic and often not even confidently mappable to one single location.
+Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
+An ad-hoc filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
+Yara thus automatically chooses an ad-hoc filtration scheme per read, without requiring manual parameterization by the user.
+
+Ad-hoc filtration works as follows.
+Yara initially applies filtration with exact seeds to all reads.
+The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
+This decision depends on fine-tuned internal verification thresholds.
+Under standard Illumina setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
+Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.
+
+%For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
+%under these terms, a single read produces an average of 15000 verifications, and the verification phase takes 99\,\% of the runtime.
+%On the same mapping setup, this method produces 3 $1$--approximate seeds of length 33\,bp; thus a single read produces 1400 verifications on average.
+%Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
+%The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
+
+\subsection{Stratified filtration}
+\label{sec:yara:eng:strata}
+
+All-mapping methods consider a set of relevant mapping locations per read.
+Yet, this definition leaves open what relevant means.
+In all-mapping under the edit distance, the user defines relevant mapping locations by imposing a distance threshold.
+Despite being sound, this definition does not work well in practice.
+On the one hand a very low threshold leaves a consistent fraction of the reads unmapped, on the other hand a moderate threshold produces a deluge of mapping locations for some reads.
+In practice, at 5\,\%, error rate, Illumina reads map to hundreds of mapping locations on the human genome.
+It is questionable whether all these locations are relevant for the downstream analysis.
+Thus, a finer definition of all-mapping relevance is necessary in practice.
+
+Stratification of mapping locations yields an equally sound yet practical definition of all-mapping under the edit distance.
+The $e$-stratum
+\begin{eqnarray}
+S(r,e) = \{ (i,j,e) : d_E(g_{i \dots j},r) = e\}
+\end{eqnarray}
+denotes the set of all mapping locations of a read $r$ at edit distance $e$ from the reference genome $g$.
+According to the above definition, conventional all-mapping under the edit distance defines the set
+\begin{eqnarray}
+S(r,0) \cup S(r,1) \cup \dots \cup S(r,k)
+\end{eqnarray}
+as relevant mapping locations within an \emph{absolute} error threshold $k$.
+Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or sub-optimal up to a certain degree.
+Formally, if the distance of any optimal mapping location for read $r$ is
+\begin{eqnarray}
+e^* = \min \,\{ e \in [0,k] : S(r,e) \neq \emptyset \}
+\end{eqnarray}
+stratified all-mapping considers mapping locations
+\begin{eqnarray}
+S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+l, k\})
+\end{eqnarray}
+within a \emph{relative} error threshold $l$ to be relevant.
+%Note that $l \ll k$.
+
+Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping.
+Obviously, the most straightforward way to achieve stratified all-mapping consists into performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
+For instance, RazerS\,3 implements this method and gets no speedup.
+Another na\"ive method consists into applying up to $k$ rounds of conventional all-mapping, with filtration schemes for thresholds going from $0$ to $\min \,\{ e^*+l, k\}$.
+It is easy to see that also this method performs redundant computation: the total work for any read mapping at distance greater or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
+
+The following stratified all-mapping method, adopted by Yara, guarantees not to perform more work than conventional all-mapping.
+Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $\min \,\{ e^*+l, k\}$.
+Given any filtration scheme full-sensitive within distance $k$, with $s$ seeds having thresholds $\mathbb{k}=(k_1,\dots,k_s)$, any subset consisting of $s^* < s$ seeds with thresholds $\mathbb{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
+\begin{eqnarray}
+s^* + \sum \mathbb{k^*} > \min \,\{ e^*+l, k\}.
+\end{eqnarray}
+The proof is analogous to that one given in section~\ref{sec:filtering:apx}.
+%Verification of all candidate locations produced by one seed or by one threshold accounts for one stratum $S(r,i)$.
+
+\begin{example}
+Let $k=5$ be the absolute threshold, and $l=0$ be the relative threshold, restricting relevant locations to co-optimal ones.
+A read $r$ maps at distance 1, \ie $|S(r,0)| = 0$, $|S(r,1)| > 0$ thus $e^* = 1$.
+Given the filtration scheme $\mathbb{k}=(1,1,1)$, any subset full-sensitive up to distance $\min \,\{ e^*+l, k\} = 1$ finds all relevant mapping locations, \ie all subsets of $\mathbb{k}$ are: $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$ are full-sensitive.
+Thus, verification of all candidates, produced by \emph{any} two exact seeds or one 1-approximate seed, yields all mapping locations in the $1$-stratum of $r$.
+\end{example}
+
+In addition, Yara implements a simple greedy strategy to minimize the number of verifications to find all relevant stratified mapping locations.
+As candidate locations can be verified in any order, Yara chooses the ordering of seeds producing the minimum number of verifications.
+The tool first finds all seeds and ranks them by number of candidate locations produced.
+Then it processes all candidate locations, from the least to the most frequent seed, until it explores $l$ strata from the first non-empty one, or until it attains the absolute distance threshold $k$.
+
+Yara performs best-mapping by means of stratified filtration.
+Best-mapping requires one primary mapping location along with its confidence.
+Under the edit distance, without any further assumptions, any co-optimal location is equally likely to be correct.
+Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates its mapping quality using all found mapping locations (see section~\ref{sec:yara:eng:qualities}).
+Because of this method, Yara in best-mapping is an order of magnitude faster than in conventional all-mapping.
+
+% Yara uses the best strata
+%(i) to compute precise mapping qualities
+%(ii) to perform paired-end mapping.
+
+
+\subsection{Paired-end and mate-pair protocols}
+\label{sec:yara:eng:pairs}
+Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
+Reads are sequenced in pairs from both ends of the same insert.
+Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
+The lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
+Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
+Nonetheless, a read mapper should report equally important unpaired mapping locations.
+
+In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and reports all relevant mapping locations per read.
+However, in addition to the single-end workflow, Yara implements a finer strategy to choose primary mapping locations.
+For any reads pair, among all pairs of co-optimal mapping locations, the tool selects the one with minimal deviation from the expected insert size.
+Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
+
+\subsection{Mapping qualities}
+\label{sec:yara:eng:qualities}
+Yara computes mapping qualities using the number of mapping locations stratified by error rate.
+%Mapping quality for the paired-end and mate-pair protocols.
+
+\subsection{Indexing}
+\label{sec:yara:eng:indexing}
+Yara uses an efficient FM-index specialization for the DNA alphabet, based on interleaved rank dictionaries (see section~\ref{sec:index:fmi}).
+This interleaved FM-index exhibit a fourfold speedup over the first FM-index implementation bundled with Masai.
+Surprisingly, the interleaved FM-index is also faster than any other index, both in exact and approximate search (see figure~\ref{fig:index:fmi}).
+Moreover, this index consumes only 1.23 bytes per base pair with a SA sampled at 10\,\%, thus its memory footprint is 3.7~GB for the human genome.
+Under these terms, the there is no indexing space-time trade-off: the FM-index always provides the most convenient suffix trie implementation.
+
+Yara does not use multiple search algorithms of section~\ref{sec:index:multi} to search seeds on the FM-index.
+These algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
+Using forward search, navigation in a suffix trie becomes less expensive as it proceeds towards bottom nodes.
+Indeed, navigation towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, that have good chances to be in the cache.
+Conversely, using backward search, navigation becomes more expensive as it proceeds deeper in the trie; navigation downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
+As multiple backtracking factorizes the navigation of top nodes, it pays off with forward search rather than with backward search.
+Hence, on the FM-index, it is always faster to search exact queries in a na\"ive way and approximate queries simply sorted in lexicographical order (see figure~\ref{fig:index:fmi}).
+
+%Yara implements fine-grained parallelism.
+%It would be possible to stream over reads to parallelize computation per read.
+%However, the tool processes batches of reads.
+
+% -----------------------------------------------------------------------------
+
+\section{Evaluation}
+\label{sec:yara:eval}
+
+The evaluation consists of three experiments: \begin{inparaenum}[(i)]
+\item accuracy on simulated data,
+\item Rabema benchmark on simulated and real data, and
+\item throughput on real data.
+\end{inparaenum}
+In each experiment, I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
+
+\subsection{Experimental setup}
+
+\subsubsection{Read mappers parametrization}
+
+In appendix \ref{sup:yara:param}, I give the exact parametrization of each read mapper considered in the evaluation.
+Whenever possible, I configured the tools with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
+When processing paired-end reads, I provided the tools with appropriate insert size information.
+
+\subsubsection{Infrastructure}
+
+All tools run on a desktop computer running Linux~3.10.11, equipped with one Intel Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
+For maximum throughput, all tools run using eight threads.
+For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, real throughputs might be slightly lower than the measured ones.
+
+\subsubsection{Datasets}
+
+The reference in all experiments is the human whole genome (GRCh38).
+
+The simulated data consists of $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{SeqAnReadSimulator}.
+The mean insert size is \texttt{INS = 175} and the deviation \texttt{ERR = 225}.
+
+The real data is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
+the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
+This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads, produced by an Illumina HiSeq 2000 instrument.
+BWA reports mean insert size \texttt{INS = 178} and deviation \texttt{ERR = 200}.
+
+\subsection{Accuracy on simulated data}
+
+I introduce an \emph{accuracy benchmark} to measure read mappers accuracy of finding the \emph{original} location of simulated reads.
+This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{?} produced by each tool;
+this policy mimics the behavior of de-facto standard \emph{best-mapping analysis pipelines}, \eg the GATK \citep{DePristo2011}.
+This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the found mapping location corresponds to its original location,
+it computes the \emph{recall} of each tool as the fraction of correctly mapped reads and the \emph{precision} as the fraction of mapped reads that are correct;
+for a thorough evaluation, it also classes all simulated reads by the \emph{error rate} of their original locations, then computes recall and precision within each error rate class.
+
+I repeated this experiment twice: first providing the simulated reads as unpaired, then as paired-end with additional insert size information.
+Results are shown in table~\ref{tab:yara:accuracy}.
+
+%This experiment is independent of the scoring scheme used by any tool, \eg edit distance or quality based.
+%It does not consider mapping qualities; a mapping quality cutoff tends to lower recall and increase precision of all tools.
+
+%\subsubsection{Single-end mapping}
+%Comment best and all-mappers. All-mappers do not perform better than best-mappers as we consider only one primary mapping location.
+%\subsubsection{Paired-end mapping}
+%Comment the accuracy improvement due to paired-end information.
+
+\begin{table*}[t]
+  \caption[Yara accuracy results]
+  {
+  \label{tab:yara:accuracy}
+    Accuracy results on the human whole genome.
+    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ reads as unpaired; the right panel shows the results of mapping the same reads as paired-end, providing additional insert size information.
+    Big numbers show total scores, while small numbers show marginal scores for the reads at $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
+    }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.95\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_yara_accuracy}
+  }
+\end{table*}
+
+
+\subsection{Rabema benchmark on simulated and real data}
+
+The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.1) measures read mappers sensitivity of finding \emph{relevant} mapping locations of simulated or real reads.
+This experiment considers the Rabema benchmark category \emph{all} for all-mappers and \emph{all-best} for best-mappers.
+In the category all, Rabema counts as relevant, for each read, all mapping locations within a maximal error rate; in the category all-best it considers just co-optimal mapping locations.
+Rabema computes the \emph{sensitivity} of each tool as the fraction of relevant mapping locations found per read.
+Analogously to the accuracy benchmark, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
+The benchmark reports percentual scores normalized by the number of reads.
+
+I applied the Rabema benchmark both on simulated and real data, within an error rate of 5\,\%.
+Therefore, I built a Rabema gold standard for each dataset by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
+I provided unpaired reads to each tool as the Rabema benchmark by definition does not consider paired-end reads.
+Results are shown in table~\ref{tab:yara:rabema}.
+
+%Contrarily to the accuracy experiment of section~\label{sec:yara:evaluation:accuracy}, this experiment considers multiple mapping locations per read.
+
+%\subsubsection{Simulated data}
+%\subsubsection{Real data}
+
+\begin{table*}[t]
+  \caption[Yara results in the Rabema benchmark]
+  {
+  \label{tab:yara:rabema}
+    Rabema benchmark results on the human whole genome.
+    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ simulated reads; the right panel shows the results of mapping $1\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ real reads.
+%    Big numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with
+    Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
+    $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
+    }
+  \vspace{-3mm}
+  \center
+  \sffamily
+  \resizebox{0.95\textwidth}{!}
+  {
+	\renewcommand{\tabcolsep}{0.8ex}
+	\input{tables/table_yara_rabema}
+  }
+\end{table*}
+
+
+\subsection{Throughput on real data}
+
+This experiment complements the sensitivity evaluation on real data provided by the Rabema benchmark.
+The goal of this experiment is to determine if read mappers are able to sustain sequencing throughput of the instrument or constitute a potential bottleneck in the data analysis pipeline.
+The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
+The experiment measures read mapping throughput in \emph{giga base pairs per hour} (Gbp/h); under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+
+For an accurate throughput estimation, best-mappers processed $10\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ reads, while for all-mappers it was sufficient to process $1\,\text{M}$ reads.
+For a fair comparison, best-mappers produced a SAM file as expected by de-facto standard best-mapping pipelines, while all-mappers output a file in native format (SAM for Yara and Hobbes\,2, custom for Gem and RazerS\,3).
+
+%\subsubsection{Single-end mapping}
+%\subsubsection{Paired-end mapping}
+
+\begin{table*}[t]
+  \caption[Yara throughput on real data]
+  {
+    \label{tab:yara:throughput}
+    Read mapping throughput on the human whole genome.
+    All tools run using 8 threads on a desktop computer equipped with an Intel Core i7-4770K CPU.
+    The left panel shows the results of mapping $2 \times 100\,\text{bp}$ Illumina HiSeq\,2000 reads as single-end;
+    the right panel shows the results of mapping the same reads as paired-end.
+    The maximum throughput of an Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+  }
+	\vspace{-3mm}
+	\center
+	\sffamily
+%	\resizebox{1.0\textwidth}{!}
+%	{
+		\renewcommand{\tabcolsep}{0.8ex}
+		\input{tables/table_yara_throughput}
+%	}
+\end{table*}
+
+%\subsection{Variant calling on real data}
+%This experiments assesses the performance of read mappers on variant calling using real data.
+%I use the GCAT benchmark.
+
+% -----------------------------------------------------------------------------
+
+%\section{Discussion}
+
+%Yara does not consider local alignments and chimeric reads.

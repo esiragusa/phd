@@ -215,7 +215,13 @@ Gutachter:\\
 \ifthenelse{\boolean{noskeleton}}{}{\part{Read mapping}}
 \label{part:rm}
 
-\include{scripts/app_readmapping}
+\include{scripts/rm_background}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+\include{scripts/rm_masai}
+\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+
+\include{scripts/rm_yara}
 \ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
 
 
