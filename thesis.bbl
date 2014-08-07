@@ -5,6 +5,11 @@ Abouelhoda, M., Kurtz, S., and Ohlebusch, E. (2004).
 \newblock Replacing suffix trees with enhanced suffix arrays.
 \newblock {\em Journal of Discrete Algorithms\/}, {\bf 2}(1), pages 53--86.
 
+\bibitem[Apostolico(1985)Apostolico]{Apostolico1985}
+Apostolico, A. (1985).
+\newblock The myriad virtues of subword trees.
+\newblock In {\em Combinatorial algorithms on words\/}, pages 85--96. Springer.
+
 \bibitem[Bauer \ea(2013)Bauer, Cox, and Rosone]{Bauer2013}
 Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
 \newblock Lightweight algorithms for constructing and inverting the bwt of
@@ -238,6 +243,11 @@ Myers, G. (1999).
 \newblock {A fast bit-vector algorithm for approximate string matching based on
   dynamic programming}.
 \newblock {\em J. ACM\/}, {\bf 46}(3), pages 395--415.
+
+\bibitem[Navarro(2001)Navarro]{Navarro2001a}
+Navarro, G. (2001).
+\newblock A guided tour to approximate string matching.
+\newblock {\em ACM Comput. Surv.}, {\bf 33}(1), pages 31--88.
 
 \bibitem[Navarro and Baeza-Yates(2000)Navarro and Baeza-Yates]{Navarro2000}
 Navarro, G. and Baeza-Yates, R.~A. (2000).

@@ -230,7 +230,7 @@ In practice, if the text is long, static and searched frequently, provided the n
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
 Very often, such \emph{full-text index} is the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
-Among its virtues \citep{Apostolico?}, the suffix tree natively provides exact string matching in optimal time and also approximate string matching via backtracking \citep{Ukkonen?}.
+Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and also approximate string matching via backtracking \citep{Ukkonen1993}.
 Often the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
 Filtering methods first discard uninteresting portions of the text and subsequently use a conventional method to verify only narrow areas.
@@ -244,7 +244,7 @@ Nonetheless, filtering methods are just opportunistic combinations of native onl
 
 In the following of this section, I give a quick overview of the fundamental algorithms and data structures adopted in string matching methods.
 This overview serves as an introduction to the indexed and filtering methods presented in the next chapters.
-For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001b} and indexed \citep{Navarro2001} approximate string matching methods.
+For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001a} and indexed \citep{Navarro2001} approximate string matching methods.
 
 % --- Online methods ---
 
