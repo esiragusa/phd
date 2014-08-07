@@ -17,7 +17,7 @@ Masai is part of the SeqAn library, it is distributed under the BSD license and 
 
 In the evaluation section, I extensively compare Masai with popular read mappers, both on simulated and real datasets.
 Compared to all-mappers mrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
-In addition, Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+In addition, Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Langmead2012} and BWA \citep{Li2009}.
 Finally, I discuss the limitations of Masai that led us to engineer Yara, yet another read aligner.
 
 % -----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ My original intent was to improve the speed of the all-mapper RazerS \citep{Wees
 RazerS was based on a $q$-gram filter;
 I as aware that gapped $q$-grams could have brought a huge speedup, but I could not see any straightforward generalization of gapped $q$-grams to the edit distance.
 At the same time, I experienced that weaker but quicker filtration using exact seeds was more advantageous than filtration using $q$-grams (indeed, a typical Illumina read mapping setup requires only moderate error rates, in the range of 4--6~\%).
-Thus RazerS~3 \citep{RazerS3} went back to filtration with exact seeds (similarly to mrFast).
+Thus RazerS~3 \citep{Weese2012} went back to filtration with exact seeds (similarly to mrFast).
 Nonetheless, I wanted to improve again filtration specificity, as the runtime of RazerS~3 on mammal genomes became dominated by verifications, and I knew that to improve filtration specificity I had to increase the seed length, as these two things are strongly correlated.
 
 While reviewing past literature in the field of approximate string matching, I rediscovered the works of \citeauthor{Myers1994}, \citeauthor{Navarro2000} on approximate seeds, providing stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
@@ -149,7 +149,7 @@ Instead of computing DP cells one after another, this algorithm encodes the whol
 Within SeqAn, I disposed of a bit-parallel version that computes only a diagonal band of the DP matrix, faster and more specific than the original algorithm by Myers.
 More details can be found in section~\ref{asm:filter:verification}.
 
-RazerS~3~\citep{RazerS3} already used Myers' algorithm.
+RazerS~3~\citep{Weese2012} already used Myers' algorithm.
 However, instead of performing a semi-global alignment to verify a parallelogram surrounding the seed, Masai performs a global alignment on both ends of a seed.
 Given a seed occurring with $e$ errors, Masai first performs seed extension on the left side within an error threshold of $k - e$ errors.
 Only if the seed extension on the left side succeeds, the tool performs a seed extension on the right side within the remaining error threshold.
@@ -185,7 +185,7 @@ A read is mapped \emph{correctly} if the mapper reports its original location,
 and it is mapped \emph{uniquely} if the mapper reports only one location.
 Rabema defines \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
 
-Similarly to \citep{Bowtie2}, I used the read simulator Mason \citep{SeqAnReadSimulator} with default profile settings to simulate from each whole genome 100\,k reads of length 100\,bp having sequencing errors distributed like in a typical Illumina run.
+Similarly to \\citep{Langmead2012}, I used the read simulator Mason \citep{Holtgrewe2010} with default profile settings to simulate from each whole genome 100\,k reads of length 100\,bp having sequencing errors distributed like in a typical Illumina run.
 I performed the benchmark for an error rate of 5\,\%, which corresponds to edit distance 5 for reads of length 100\,bp. Therefore, I built a Rabema gold standard for each dataset by running RazerS~3 in full-sensitive mode up to edit distance 5. I further classified mapping locations in each category by their edit distance.
 
 For a more fair and thorough comparison, I also consider BWA and Bowtie\,2 as all-mappers (Soap\,2 cannot be configured accordingly).
@@ -235,7 +235,7 @@ In general, RazerS\,3 should be used when full-sensitivity is required, \ie for 
 \subsection{Variant detection on simulated data}
 
 The second experiment analyzes the theoretical performance of Masai and other read mappers in genomic variation pipelines.
-Similarly to \citep{Shrimp2}, this experiment considers simulated reads containing sequencing errors, SNPs and indels, such that each read has an edit distance of at most 5 to its genomic origin.
+Similarly to \citep{David2011}, this experiment considers simulated reads containing sequencing errors, SNPs and indels, such that each read has an edit distance of at most 5 to its genomic origin.
 Reads are grouped according to the number of contained SNPs and indels, where class $(s,i)$ consists of all reads with $s$ SNPs and $i$ indels.
 The experiment considers a read to be mapped \emph{correctly} if a mapping location is reported within 10\,bp of its genomic origin;
 it considers a read to map \emph{uniquely} if only one location is reported by the mapper.
@@ -427,7 +427,7 @@ Yet, it is not evident how these results affects variant calling pipelines.
 
 Summing up, Masai as an all-mapper is an order of magnitude faster and thus a valid alternative to tools like RazerS~3 and mrFast.
 Computational requirements of all-mapping now become close to those of best-mapping: Masai as an all-mapper is only 4 times slower than BWA, despite reporting two orders of magnitude more mapping locations.
-Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \citep{Bowtie2} and BWA \citep{BWA}.
+Masai as a best-mapper is 2--4 times faster and more accurate than Bowtie\,2 \\citep{Langmead2012} and BWA \citep{Li2009}.
 The achieved speedup is huge when RazerS~3 has to be used as a best-mapper: in this scenario, Masai is roughly 200 times faster!
 
 Despite the good results, Masai is not being widely used.

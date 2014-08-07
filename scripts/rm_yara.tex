@@ -13,7 +13,7 @@ Yara offers parallelization via multi-threading, has a low memory footprint by u
 \label{sec:yara:eng:adhoc}
 
 Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
-Read mappers like RazerS\,3 \citep{RazerS3} and mrFast \citep{Ahmadi2011} are designed around na\"ive filtration with exact seeds.
+Read mappers like RazerS\,3 \citep{Weese2012} and mrFast \citep{Ahmadi2012} are designed around na\"ive filtration with exact seeds.
 This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
 Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
 whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
@@ -181,7 +181,7 @@ For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, 
 
 The reference in all experiments is the human whole genome (GRCh38).
 
-The simulated data consists of $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{SeqAnReadSimulator}.
+The simulated data consists of $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{Holtgrewe2010}.
 The mean insert size is \texttt{INS = 175} and the deviation \texttt{ERR = 225}.
 
 The real data is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
