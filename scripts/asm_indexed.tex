@@ -92,7 +92,7 @@ Consequently, the space consumption of suffix arrays for texts shorter than 4~GB
 The space consumption of the generalized suffix array is $n \log{cn^*}$ bits, where $n^* = \max{\,n_i}$.
 For instance, the human genome GRCh38 is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
 Hence, to represent the generalized suffix array of GRCh38 I use pairs of $1+4$~bytes.
-Our suffix array of GRCh38 fits in 15~GB of memory and is constructed in about one hour on a modern computer \citep{Weese2013}.
+The suffix array of GRCh38 fits in 15~GB of memory and is constructed in about one hour on a modern computer \citep{Weese2013}.
 
 \subsubsection{Top-down traversal}
 
@@ -461,7 +461,7 @@ They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact 
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular Bioinformatics tools \eg Bowtie \citep{Bowtie} and BWA \citep{BWA}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the next subsections I give the fundamental ideas behind the BWT and the FM-index.
-Subsequently, I discuss our succinct FM-index implementations covering strings and string collections.
+Subsequently, I discuss my succinct FM-index implementations covering strings and string collections.
 
 \subsection{Burrows-Wheeler transform}
 
@@ -603,7 +603,7 @@ In the next subsection I address the problem of representing function $Occ$ effi
 
 The question ``how many times a given character $c$ occurs in the prefix $l_{1 \dots i}$?'', has to be answered efficiently, ideally in constant time and linear space.
 The general problem on arbitrary strings has been tackled by several studies on the succinct representation of data structures \citep{Jacobson1989}.
-Our specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary}.
+This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary}.
 
 \begin{definition}
 Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\rank_c(s, i)$ returns the number of occurrences of $c$ in the prefix $s_{1 \dots i}$.
@@ -690,7 +690,7 @@ $i$	& $s_i$	& $R[\frac{i}{b}]$ & $R^2[\frac{i}{b^2}]$\\
 \end{center}
 \end{figure}
 
-To squeeze our rank dictionary to consume only $n+o(n)$ bits of space, I add another array $R^2$ summarizing the ranks on $b^2$ bits boundaries and let our initial array $R$ store only local positions within the corresponding blocks defined by $R^2$.
+To squeeze this rank dictionary to consume only $n+o(n)$ bits of space, I add another array $R^2$ summarizing the ranks on $b^2$ bits boundaries and let the initial array $R$ store only local positions within the corresponding blocks defined by $R^2$.
 I rewrite $\rank_1(s,i)$ accordingly:
 \begin{eqnarray}
 \rank_1(s,i) = R^2[\frac{i}{b^2}] + R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, i \mod{b})

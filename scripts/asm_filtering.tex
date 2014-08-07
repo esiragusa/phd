@@ -125,7 +125,7 @@ I fix\footnote{I ignore for simplicity that some seed could have length $\left \
 q=\left \lfloor \frac{m}{k+1} \right \rfloor
 \end{eqnarray}
 to minimize the expected number of occurrences of any seed.
-Under these conditions, the expected number of verifications produced by our seed filter is
+Under these conditions, the expected number of verifications produced by the seed filter is
 \begin{eqnarray}
 E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
@@ -198,7 +198,7 @@ For $s=1$ I obtain the most specific filtration \ie I perform only backtracking 
 In practice, it is not easy to find which filter parameterization yields an optimal filtration.
 Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
-However, these results did not help us in our experiments.
+However, these results did not help us in practice.
 The optimal partitioning depends on
 \begin{inparaenum}[(i)]
 \item the full-text index,
@@ -308,9 +308,9 @@ Gapped $q$-grams raise hard combinatorial questions. Given a gapped $q$-gram,
 \item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? or 
 \item \label{enum:qgram-error} which is the maximum error $k$ for which full-sensitivity is guaranteed?
 If the answer to question~\ref{enum:qgram-nd} is negative and the filter is lossy,
-\item \label{enum:qgram-fn} how many false negatives our filter discards?
+\item \label{enum:qgram-fn} how many false negatives the filter discards?
 Considering filtration efficiency,
-\item \label{enum:qgram-fp} how many false positives our filter produces?
+\item \label{enum:qgram-fp} how many false positives the filter produces?
 If I take the weight as a simplified criterion predicting filtration efficiency, 
 \item \label{enum:qgram-weight} which is the maximum weight lossless shape?
 \end{inparaenum}
@@ -399,7 +399,7 @@ Since super and submodular functions are closed under non-negative linear combin
 \citeauthor{Nicolas2005} introduce an intermediate problem, called \textsc{Soapy Set Cover}. They reduce \textsc{Exact Cover by 3-Sets} to \textsc{Soapy Set Cover} and \textsc{Soapy Set Cover} to \textsc{Non Detection}.
 Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
 
-\subsubsection{Our FPRAS solution}
+\subsubsection{FPRAS solution}
 
 %Recalling $Q$-gram pseudo-boolean functions \eqref{sec:seed_pbf}.
 
@@ -438,7 +438,7 @@ Optimal threshold is fixed-parameter tractable (FPT) in the span of the $q$-gram
 All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
 Clause $Q_2$ is considered next...
 
-\subsubsection{Our exact ILP solution}
+\subsubsection{Exact ILP solution}
 
 I reduce this problem to \emph{maximum coverage} \citep{NemhauserWolsey99} and solve it with the following ILP
 \begin{equation}
@@ -452,7 +452,7 @@ w.r.t.							\\
 \end{equation}
 where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$. Given the ILP solution $c^*$, I obtain the optimal threshold $t^* = |c^*|_1$.
 
-\subsubsection{Our APX solution}
+\subsubsection{APX solution}
 
 I reduce the complementary optimal threshold problem to the maximization of a submodular function subject to linear constraints
 \begin{equation}
@@ -465,7 +465,7 @@ w.r.t.								\\
 where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
 
 I compute an approximate solution via deepest descent.
-Our greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{NemhauserWolseyFisher78}.
+My greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{NemhauserWolseyFisher78}.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
 \subsection{Maximum error}
@@ -481,7 +481,7 @@ Which is the maximum error $k^*$ for which full-sensitivity is guaranteed?
 \end{tabular}
 \\
 
-Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define our problem as the minimization of a linear function subject to submodular constraints
+Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define this problem as the minimization of a linear function subject to submodular constraints
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1			\\
@@ -491,9 +491,9 @@ w.r.t.								\\
 \end{array}
 \end{equation}
 
-\subsubsection{Our ILP solution}
+\subsubsection{ILP solution}
 
-I reduce our problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
+I reduce the problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1	\\
@@ -521,7 +521,7 @@ The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{
 Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
 
 
-\subsubsection{Our APX solution}
+\subsubsection{APX solution}
 
 Again, I compute an approximate solution via deepest descent.
 APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
@@ -529,7 +529,7 @@ APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
 
 \subsection{Specificity}
 
-How many false positives our filter produces?
+How many false positives the filter produces?
 
 \subsubsection{Problem definition}
 
@@ -546,7 +546,7 @@ Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false po
 \text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} T_{Q,t}^{m}(\sigma)
 \end{equation}
 
-\subsubsection{Our FPRAS solution}
+\subsubsection{FPRAS solution}
 
 I reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
 The latter problem can be approximated via importance sampling.

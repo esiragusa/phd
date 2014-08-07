@@ -317,10 +317,10 @@ Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \do
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
-Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose our algorithms.
+Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose generic algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
 However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see Figure~\ref{fig:stree}).
-This latter property slightly complicates the exposition of our string matching algorithms but it does not affect their runtime complexity nor their result.
+This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
 For this reason, in the following of this manuscript I always consider \wlogs suffix tries instead of suffix trees.
 %I remark that all given algorithms can be generalized to work on trees.
 

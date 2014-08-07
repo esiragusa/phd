@@ -12,7 +12,7 @@ Masai find approximate seeds by backtracking the index of the reference genome.
 Moreover, the tool speeds up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
 Lastly, Masai implements a method to perform best-mapping in a more efficient way.
 
-Our method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
+My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
 Masai is part of the SeqAn library, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
 
 In the evaluation section, I extensively compare Masai with popular read mappers, both on simulated and real datasets.
@@ -46,7 +46,7 @@ it extends both ends of each seed using a banded version of \emph{Myers bit-vect
 %I now consider formally the read mapping problem.
 %Given a reference genome $g$, a set of reads $\mathcal{R}$ and an absolute number of errors $k$ consisting of indels and mismatches, for each read $r \in \mathcal{R}$ find all mapping locations where $r$ approximately occurs in $g$ within $k$ errors.
 
-Our original intent was to improve the speed of our all-mapper RazerS \citep{Weese2009} while preserving full-sensitivity under the edit distance.
+My original intent was to improve the speed of the all-mapper RazerS \citep{Weese2009} while preserving full-sensitivity under the edit distance.
 RazerS was based on a $q$-gram filter;
 I as aware that gapped $q$-grams could have brought a huge speedup, but I could not see any straightforward generalization of gapped $q$-grams to the edit distance.
 At the same time, I experienced that weaker but quicker filtration using exact seeds was more advantageous than filtration using $q$-grams (indeed, a typical Illumina read mapping setup requires only moderate error rates, in the range of 4--6~\%).
@@ -66,7 +66,7 @@ I search $(k \bmod{s}) + 1$ seeds within distance $\lfloor k/s \rfloor$ and the 
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be at least $s \cdot \lfloor k/s \rfloor + (k \bmod s) + 1 = k + 1$.
 Hence all approximate occurrences will be found.
 
-Finally, I chose to parameterize our filter by the seed length rather than by the number of seeds.
+Finally, I chose to parameterize Masai's filter by the seed length rather than by the number of seeds.
 Clearly, these two parameterization are dual: if I choose the number of seeds to be $s$, the minimum seed length $l$ has to be $\lfloor |r|/s \rfloor$; vice versa, if I fix the minimum seed length to $l$, the number of seeds $s$ has to be $\lfloor |r|/l \rfloor$.
 Nonetheless I prefer the latter, as the minimum seed length gives us a direct estimate of the expected number of verifications produced by the filter.
 The resulting filter is flexible, indeed by increasing $l$ filtration becomes more specific at the expense of a higher filtration time.
@@ -91,29 +91,29 @@ The reader is thus referred to the next chapter (section~\ref{sec:yara:eng}) for
 
 Within the SeqAn library, I initially disposed of two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
 To improve the efficiency of Masai, I implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various flavours of the full-text minute index (FM-index) \citep{Ferragina2001}.
-Below I discuss the performance of these indices in our specific application, while I refer the reader to chapter~\ref{chr:index} for their extensive explanation.
+Below I discuss the performance of these indices within Masai, while I refer the reader to chapter~\ref{chr:index} for their extensive explanation.
 
 \subsubsection{Indexing the reference genome}
 
 I initially chose the ESA over LST because of better construction times.
-Indeed, I dispose of a linear time construction algorithm for the ESA (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while our LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
-Apart from that, both our ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
+Indeed, I dispose of a linear time construction algorithm for the ESA (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while the LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
+Apart from that, both ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
 Thus, for the human reference genome (GRCh38), I had a suffix trie constructed in about 1.5~hours and consuming 39~GB of memory (see figure~\ref{fig:index:construction}).
 
 At this point, Masai required high-end hardware to process large reference genomes.
 Therefore, thinking of a space-time trade-off, I designed a generic suffix trie top-down traversal for the SA (see section~\ref{sec:index:sa});
 indeed, the SA consumes only $5$ bytes per base pair but is theoretically slower than the ESA, as it adds a logarithmic factor to query times.
-However, with surprise I found out that, within our application, the SA had equal or better performance than the ESA (see figure~\ref{?}).
+However, with surprise I found out that, within Masai, the SA had equal or better performance than the ESA (see figure~\ref{?}).
 Ultimately, I brought down the memory footprint of the index from 39~GB to 15~GB but preserved query speed.
 
 I tried to further improve query speed by removing the logarithmic factor introduced by the SA.
-Therefore, to cut the most expensive binary searches, I put a $q$-gram index on top of the SA and extended our generic suffix trie top-down traversal accordingly (see section~\ref{sec:index:qgram}).
-Yet, the $q$-gram index did not bring significant speedup to our application;
-indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with our multiple backtracking algorithm as it performs a factorization of the top-down traversal.
+Therefore, to cut the most expensive binary searches, I put a $q$-gram index on top of the SA and extended my generic suffix trie top-down traversal accordingly (see section~\ref{sec:index:qgram}).
+Yet, the $q$-gram index did not bring significant speedup to the application;
+indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with the multiple backtracking algorithm as it performs a factorization of the top-down traversal.
 
 Finally, I explored additional space-time trade-offs.
 I started implementing\footnote{Thanks to the master's thesis of Jochen Singer.} a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
-Our initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%.
+This initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%.
 Thus the memory footprint of the index went down to 4.5~GB, but Masai became significantly slower (less than twice as slow though).
 
 In definitive, I prefer the SA as it provides a good compromise between query speed and memory consumption.
@@ -122,16 +122,16 @@ Nevertheless, Masai leaves to the user the possibility to choose among the afore
 \subsubsection{Indexing the reads}
 
 In order to improve index query speed, I designed and implemented an algorithm to search simultaneously many exact or approximate seeds, achieving a speedup of 3--5 times (see section~\ref{sec:index:multi}).
-As our multiple search algorithm requires a trie of the seeds, I also engineered an efficient trie implementation.
+As the multiple search algorithm requires a trie of the seeds, I also engineered an efficient trie implementation.
 
-It was straightforward to reuse our suffix trie implementations to emulate tries.
+It was straightforward to reuse SeqAn's suffix trie implementations to emulate tries.
 It goes without saying that the easiest way to implement a trie is by means of a partial SA:
-I index only the first suffix of each seed in the collection and construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the number of seeds; then, our top-down traversal based on binary search still works.
+I index only the first suffix of each seed in the collection and construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the number of seeds; then, the top-down traversal based on binary search still works.
 I adapted the LST in an analogous way: I fill the partial SA as above and then apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the trie in linear time.
 
-Quicksorting the SA turned out to be faster than radix sorting the LST but, in our application, the more involved LST data structure payed off at query time (see section~\ref{sec:index:visit}).
+Quicksorting the SA turned out to be faster than radix sorting the LST but, within Masai, the more involved LST data structure payed off at query time (see section~\ref{sec:index:visit}).
 Indeed, the LST stores all trie nodes and thus provides node traversal in constant time, while the SA explicitly stores only the leaves and thus internal nodes have to be worked out via binary search.
-As the memory footprint of the trie is negligible within our application, I chose the LST to perform multiple backtracking of approximate seeds.
+As the memory footprint of the trie is negligible within this application, I chose the LST to perform multiple backtracking of approximate seeds.
 
 When performing multiple backtracking of exact seeds, the LST construction time dominates the overall filtration time (see section~\ref{sec:index:multi}).
 Therefore, I decided to resort to the \emph{$q$-gram index} to emulate a trie in this case:
@@ -173,7 +173,7 @@ As references, I use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (W
 I compare Masai with the best-mappers Bowtie\,2, BWA and Soap\,2 as well as with the all-mappers RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
 I remark that Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
 When relevant, I configured some read mappers with the appropriate absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or error rate (RazerS\,3).
-In section \label{sup:masai:param}, I give the exact parameterization for the read mappers considered in our evaluation.
+In section \label{sup:masai:param}, I give the exact parameterization for the read mappers considered in the evaluation.
 
 \subsection{Rabema benchmark on simulated data}
 
@@ -212,7 +212,7 @@ Again, Hobbes has the worst performance.
 
 I remark that Masai is not full-sensitive whenever approximate seeds are used, \eg on H.~sapiens. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
 %Conversely, it attains full-sensitivity whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~melanogaster (Supplementary Data).
-In general, RazerS\,3 should be used when full-sensitivity is required, \ie for read mappers benchmarking. However, our results show that Masai can replace RazerS\,3 or mrFAST as an all-mapper in practical setups.
+In general, RazerS\,3 should be used when full-sensitivity is required, \ie for read mappers benchmarking. However, these results show that Masai can replace RazerS\,3 or mrFAST as an all-mapper in practical setups.
 
 \begin{table*}[t]
   \caption[Masai results in the Rabema benchmark]
