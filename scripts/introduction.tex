@@ -4,7 +4,7 @@ The sequencing of the whole human genome has been one of the major scientific ac
 Very surprisingly, this milestone has been achieved twice, by two independent groups.
 The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft \emph{covering more than 96\~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
 The privately funded company \emph{Celera Genomics} concurrently published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
-Celera Genomics and international sequencing consortiums contributed to characterize the entire genomes of other model organisms, such as mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000c}, nematode worms \citep{Sulston1992} and yeasts.
+Celera Genomics and international sequencing consortiums contributed to characterize the entire genomes of other model organisms, such as mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
 
 These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
 Indeed, both groups used sequencing technologies based on the \emph{shotgun} approach.
@@ -96,8 +96,8 @@ There are two main \emph{plans} to reassemble the original genome: \begin{inpara
 \item \emph{de novo} assembly, and
 \item \emph{reference-guided} assembly (commonly called \emph{read mapping}).
 \end{inparaenum}
-\emph{De novo} methods essentially scaffold the reads by performing \emph{overlap alignments} or equivalently by constructing \emph{de Bruijn graphs} \citep{Pevzner2001}.
-Computational methods in plan A are very involved, as they require finding a \emph{shortest common superstring}, which is a NP-complete problem \citep{?}.
+\emph{De novo} assembly is very involved as it essentially requires finding a \emph{shortest common superstring} (SCS) of the reads, which is a NP-complete problem \citep{Maier1977,Gallant1980,Turner1989}.
+Computational methods in plan A first scaffold the reads by performing \emph{overlap alignments} \citep{Myers2005} or equivalently by constructing \emph{de Bruijn graphs} \citep{Pevzner2001}.
 The knowledge of a \emph{reference genome}, highly similar to the donor, simplifies the problem and opens the door to plan B.
 The reads are simply aligned to the reference, tolerating a few base pair errors.
 It is worth mentioning that some combinations of plans A and B have been proposed \citep{Li2012}.

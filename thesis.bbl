@@ -155,6 +155,12 @@ Fonseca, N.~A., Rung, J., Brazma, A., and Marioni, J.~C. (2012).
 \newblock Tools for mapping high-throughput sequencing data.
 \newblock {\em Bioinformatics\/}, {\bf 28}(24), pages 3169--3177.
 
+\bibitem[Gallant \ea(1980)Gallant, Maier, and Astorer]{Gallant1980}
+Gallant, J., Maier, D., and Astorer, J. (1980).
+\newblock On finding minimal length superstrings.
+\newblock {\em Journal of Computer and System Sciences\/}, {\bf 20}(1), pages
+  50--58.
+
 \bibitem[Giegerich \ea(1999)Giegerich, Kurtz, and Stoye]{Giegerich1999}
 Giegerich, R., Kurtz, S., and Stoye, J. (1999).
 \newblock Efficient implementation of lazy suffix trees.
@@ -311,6 +317,11 @@ Liu, C.-M., Wong, T., Wu, E., Luo, R., Yiu, S.-M., Li, Y., Wang, B., Yu, C.,
 \newblock Soap3: ultra-fast gpu-based parallel alignment tool for short reads.
 \newblock {\em Bioinformatics\/}, {\bf 28}(6), pages 878--879.
 
+\bibitem[Maier and Storer(1977)Maier and Storer]{Maier1977}
+Maier, D. and Storer, J.~A. (1977).
+\newblock A note on the complexity of the superstring problem.
+\newblock {\em Computer Science Laboratory, Report\/}, (233).
+
 \bibitem[Manber and Myers(1990)Manber and Myers]{Manber1990}
 Manber, U. and Myers, G. (1990).
 \newblock Suffix arrays: a new method for on-line string searches.
@@ -347,13 +358,23 @@ Myers, E.~W. (1994).
 \newblock A sublinear algorithm for approximate keyword searching.
 \newblock {\em Algorithmica\/}, {\bf 12}(4-5), pages 345--374.
 
+\bibitem[Myers(2005)Myers]{Myers2005}
+Myers, E.~W. (2005).
+\newblock The fragment assembly string graph.
+\newblock {\em Bioinformatics\/}, {\bf 21}(suppl 2), pages ii79--ii85.
+
 \bibitem[Myers \ea(2000)Myers, Sutton, Delcher, Dew, Fasulo, Flanigan, Kravitz,
-  Mobarry, Reinert, Remington, \ea]{Myers2000c}
+  Mobarry, Reinert, Remington, Anson, Bolanos, Chou, Jordan, Halpern, Lonardi,
+  Beasley, Brandon, Chen, Dunn, Lai, Liang, Nusskern, Zhan, Zhang, Zheng,
+  Rubin, Adams, and Venter]{Myers2000}
 Myers, E.~W., Sutton, G.~G., Delcher, A.~L., Dew, I.~M., Fasulo, D.~P.,
   Flanigan, M.~J., Kravitz, S.~A., Mobarry, C.~M., Reinert, K.~H., Remington,
-  K.~A., \ea (2000).
-\newblock A whole-genome assembly of drosophila.
-\newblock {\em Science\/}, {\bf 287}(5461), pages 2196--2204.
+  K.~A., Anson, E.~L., Bolanos, R.~A., Chou, H.~H., Jordan, C.~M., Halpern,
+  A.~L., Lonardi, S., Beasley, E.~M., Brandon, R.~C., Chen, L., Dunn, P.~J.,
+  Lai, Z., Liang, Y., Nusskern, D.~R., Zhan, M., Zhang, Q., Zheng, X., Rubin,
+  G.~M., Adams, M.~D., and Venter, J.~C. (2000).
+\newblock A whole-genome assembly of {D}rosophila.
+\newblock {\em Science\/}, {\bf 287}, pages 2196--2204.
 
 \bibitem[Myers(1999)Myers]{Myers1999}
 Myers, G. (1999).
@@ -452,6 +473,11 @@ Treangen, T.~J. and Salzberg, S.~L. (2011).
 \newblock Repetitive dna and next-generation sequencing: computational
   challenges and solutions.
 \newblock {\em Nature Reviews Genetics\/}, {\bf 13}(1), pages 36--46.
+
+\bibitem[Turner(1989)Turner]{Turner1989}
+Turner, J.~S. (1989).
+\newblock Approximation algorithms for the shortest common superstring problem.
+\newblock {\em Information and computation\/}, {\bf 83}(1), pages 1--20.
 
 \bibitem[Ukkonen(1993)Ukkonen]{Ukkonen1993}
 Ukkonen, E. (1993).
