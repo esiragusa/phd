@@ -192,7 +192,7 @@ BWA reports mean insert size \texttt{INS = 178} and deviation \texttt{ERR = 200}
 \subsection{Accuracy on simulated data}
 
 I introduce an \emph{accuracy benchmark} to measure read mappers accuracy of finding the \emph{original} location of simulated reads.
-This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{?} produced by each tool;
+This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{Li2009a} produced by each tool;
 this policy mimics the behavior of de-facto standard \emph{best-mapping analysis pipelines}, \eg the GATK \citep{DePristo2011}.
 This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the found mapping location corresponds to its original location,
 it computes the \emph{recall} of each tool as the fraction of correctly mapped reads and the \emph{precision} as the fraction of mapped reads that are correct;

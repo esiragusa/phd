@@ -440,7 +440,7 @@ Clause $Q_2$ is considered next...
 
 \subsubsection{Exact ILP solution}
 
-I reduce this problem to \emph{maximum coverage} \citep{NemhauserWolsey99} and solve it with the following ILP
+I reduce this problem to \emph{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \max & |c|_1					\\
@@ -465,7 +465,7 @@ w.r.t.								\\
 where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
 
 I compute an approximate solution via deepest descent.
-My greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{NemhauserWolseyFisher78}.
+My greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
 \subsection{Maximum error}
@@ -493,7 +493,7 @@ w.r.t.								\\
 
 \subsubsection{ILP solution}
 
-I reduce the problem to \textsc{Minimum Set Cover} \citep{NemhauserWolsey99}, solve it with the following ILP
+I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001}, solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \min & |\sigma|_1	\\
@@ -524,7 +524,7 @@ Hence the optimal solution of the relaxed LP is also the optimal solution of the
 \subsubsection{APX solution}
 
 Again, I compute an approximate solution via deepest descent.
-APX-ratio of $H_{w(Q)}$ \citep{NemhauserWolsey99}.
+APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
 
 
 \subsection{Specificity}
@@ -549,9 +549,8 @@ Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false po
 \subsubsection{FPRAS solution}
 
 I reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
-The latter problem can be approximated via importance sampling.
-\citeauthor{Vazirani01} introduces a \emph{RPTAS} approximating the number of true points of a DNF.
-% Karp & Luby ??
+The latter problem can be approximated via importance sampling \citep{Vazirani2001}.
+\citeauthor{Karp1989} introduce a \emph{RPTAS} approximating the number of true points of a DNF.
 
 %\subsection{Sensitivity and specificity}
 %and \ref{enum:qgram-fn}.

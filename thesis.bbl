@@ -35,6 +35,13 @@ Baeza-Yates, R.~A. and Navarro, G. (1999).
 \newblock Faster approximate string matching.
 \newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
 
+\bibitem[Bailey \ea(2001)Bailey, Yavor, Massa, Trask, and Eichler]{Bailey2001}
+Bailey, J.~A., Yavor, A.~M., Massa, H.~F., Trask, B.~J., and Eichler, E.~E.
+  (2001).
+\newblock Segmental duplications: organization and impact within the current
+  human genome project assembly.
+\newblock {\em Genome research\/}, {\bf 11}(6), pages 1005--1017.
+
 \bibitem[Bauer \ea(2013)Bauer, Cox, and Rosone]{Bauer2013}
 Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
 \newblock Lightweight algorithms for constructing and inverting the bwt of
@@ -75,6 +82,11 @@ David, M., Dzamba, M., Lister, D., Ilie, L., and Brudno, M. (2011).
 \newblock {SHRiMP2}: sensitive yet practical short read mapping.
 \newblock {\em Bioinformatics\/}, {\bf 27}(7), pages 1011--1012.
 
+\bibitem[Dehal and Boore(2005)Dehal and Boore]{Dehal2005}
+Dehal, P. and Boore, J.~L. (2005).
+\newblock Two rounds of whole genome duplication in the ancestral vertebrate.
+\newblock {\em PLoS biology\/}, {\bf 3}(10), page e314.
+
 \bibitem[Dementiev \ea(2008)Dementiev, K\"{a}rkk\"{a}inen, Mehnert, and
   Sanders]{Dementiev2008}
 Dementiev, R., K\"{a}rkk\"{a}inen, J., Mehnert, J., and Sanders, P. (2008).
@@ -102,6 +114,12 @@ Elias, P. (1975).
 \newblock Universal codeword sets and representations of the integers.
 \newblock {\em Information Theory, IEEE Transactions on\/}, {\bf 21}(2), pages
   194--203.
+
+\bibitem[Ewing and Green(1998)Ewing and Green]{Ewing1998a}
+Ewing, B. and Green, P. (1998).
+\newblock Base-calling of automated sequencer traces using phred. ii. error
+  probabilities.
+\newblock {\em Genome research\/}, {\bf 8}(3), pages 186--194.
 
 \bibitem[Ewing \ea(1998)Ewing, Hillier, Wendl, and Green]{Ewing1998}
 Ewing, B., Hillier, L., Wendl, M.~C., and Green, P. (1998).
@@ -197,6 +215,11 @@ Jokinen, P. and Ukkonen, E. (1991).
 K{\"a}rkk{\"a}inen, J. and Sanders, P. (2003).
 \newblock Simple linear work suffix array construction.
 \newblock {\em ICALP\/}, pages 943--955.
+
+\bibitem[Karp \ea(1989)Karp, Luby, and Madras]{Karp1989}
+Karp, R.~M., Luby, M., and Madras, N. (1989).
+\newblock Monte-carlo approximation algorithms for enumeration problems.
+\newblock {\em Journal of algorithms\/}, {\bf 10}(3), pages 429--448.
 
 \bibitem[Kasai \ea(2001)Kasai, Lee, Arimura, Arikawa, and Park]{Kasai2001}
 Kasai, T., Lee, G., Arimura, H., Arikawa, S., and Park, K. (2001).
@@ -370,6 +393,11 @@ Rumble, S.~M., Lacroute, P., Dalca, A.~V., Fiume, M., Sidow, A., and Brudno, M.
 \newblock {SHRiMP}: Accurate mapping of short color-space reads.
 \newblock {\em PLoS Comput. Biol.}, {\bf 5}(5), page e1000386.
 
+\bibitem[Samonte and Eichler(2002)Samonte and Eichler]{Samonte2002}
+Samonte, R.~V. and Eichler, E.~E. (2002).
+\newblock Segmental duplications and the evolution of the primate genome.
+\newblock {\em Nature Reviews Genetics\/}, {\bf 3}(1), pages 65--72.
+
 \bibitem[Sanger \ea(1977)Sanger, Nicklen, and Coulson]{Sanger1977}
 Sanger, F., Nicklen, S., and Coulson, A.~R. (1977).
 \newblock {DNA} sequencing with chain-terminating inhibitors.
@@ -386,11 +414,30 @@ Seward, J. (1996).
 \newblock bzip2 and libbzip2.
 \newblock {\em avaliable at http://www. bzip. org\/}.
 
+\bibitem[Simola and Kim(2011)Simola and Kim]{Simola2011}
+Simola, D.~F. and Kim, J. (2011).
+\newblock Sniper: improved snp discovery by multiply mapping deep sequenced
+  reads.
+\newblock {\em Genome Biol\/}, {\bf 12}(6), page R55.
+
 \bibitem[Siragusa \ea(2013)Siragusa, Weese, and Reinert]{Siragusa2013}
 Siragusa, E., Weese, D., and Reinert, K. (2013).
 \newblock Fast and accurate read mapping with approximate seeds and multiple
   backtracking.
 \newblock {\em Nucleic Acids Res.}
+
+\bibitem[Smit(1996)Smit]{Smit1996}
+Smit, A.~F. (1996).
+\newblock The origin of interspersed repeats in the human genome.
+\newblock {\em Current opinion in genetics \& development\/}, {\bf 6}(6), pages
+  743--748.
+
+\bibitem[Sulston \ea(1992)Sulston, Du, Thomas, Wilson, Hillier, Staden,
+  Halloran, Green, Thierry-Mieg, Qiu, \ea]{Sulston1992}
+Sulston, J., Du, Z., Thomas, K., Wilson, R., Hillier, L., Staden, R., Halloran,
+  N., Green, P., Thierry-Mieg, J., Qiu, L., \ea (1992).
+\newblock The c. elegans genome sequencing project: a beginning.
+\newblock {\em Nature\/}, {\bf 356}(6364), pages 37--41.
 
 \bibitem[Treangen and Salzberg(2011)Treangen and Salzberg]{Treangen2011}
 Treangen, T.~J. and Salzberg, S.~L. (2011).
@@ -402,6 +449,11 @@ Treangen, T.~J. and Salzberg, S.~L. (2011).
 Ukkonen, E. (1993).
 \newblock Approximate string-matching over suffix trees.
 \newblock In {\em CPM\/}, pages 228--242.
+
+\bibitem[Vazirani(2001)Vazirani]{Vazirani2001}
+Vazirani, V.~V. (2001).
+\newblock {\em Approximation algorithms\/}.
+\newblock springer.
 
 \bibitem[Venter \ea(2001)Venter, Adams, Myers, Li, Mural, Sutton, Smith,
   Yandell, Evans, Holt, Gocayne, Amanatides, Ballew, Huson, Wortman, Zhang,
@@ -483,6 +535,11 @@ Venter, J.~C., Adams, M.~D., Myers, E.~W., Li, P.~W., Mural, R.~J., Sutton,
 \newblock The sequence of the human genome.
 \newblock {\em Science\/}, {\bf 291}, pages 1304--1351.
 
+\bibitem[Wang \ea(1994)Wang, Weber, Zhong, and Tanksley]{Wang1994a}
+Wang, Z., Weber, J.~L., Zhong, G., and Tanksley, S. (1994).
+\newblock Survey of plant short tandem dna repeats.
+\newblock {\em Theoretical and applied genetics\/}, {\bf 88}(1), pages 1--6.
+
 \bibitem[Weese(2013)Weese]{Weese2013}
 Weese, D. (2013).
 \newblock {\em Indices and Applications in High-Throughput Sequencing\/}.
@@ -515,5 +572,20 @@ Wilkes, M.~V. (1995).
 \newblock The memory wall and the cmos end-point.
 \newblock {\em ACM SIGARCH Computer Architecture News\/}, {\bf 23}(4), pages
   4--6.
+
+\bibitem[Wolfe and Shields(1997)Wolfe and Shields]{Wolfe1997}
+Wolfe, K.~H. and Shields, D.~C. (1997).
+\newblock Molecular evidence for an ancient duplication of the entire yeast
+  genome.
+\newblock {\em Nature\/}, {\bf 387}(6634), pages 708--712.
+
+\bibitem[Wooster \ea(1994)Wooster, Cleton-Jansen, Collins, Mangion, Cornelis,
+  Cooper, Gusterson, Ponder, Von~Deimling, Wiestler, \ea]{Wooster1994}
+Wooster, R., Cleton-Jansen, A.-M., Collins, N., Mangion, J., Cornelis, R.,
+  Cooper, C., Gusterson, B., Ponder, B., Von~Deimling, A., Wiestler, O., \ea
+  (1994).
+\newblock Instability of short tandem repeats (microsatellites) in human
+  cancers.
+\newblock {\em Nature genetics\/}, {\bf 6}(2), pages 152--156.
 
 \end{thebibliography}

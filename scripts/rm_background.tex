@@ -36,7 +36,7 @@ SOLiD
 
 \subsection{Phred base quality scores}
 
-Phred base quality scores have been introduced in \citep{Ewing1998, Ewing1998b} to assess the quality of sequencing single bases in capillary reads.
+Phred base quality scores have been introduced in \citep{Ewing1998, Ewing1998a} to assess the quality of sequencing single bases in capillary reads.
 Instead of directly discarding low-quality regions present in capillary reads, the tool Phred calls each base and annotates it with a quality score encoding the probability that it has been wrongly called.
 As this method has been widely accepted, base callers annotate reads issue of all sequencing technologies with Phred base quality scores.
 
@@ -77,7 +77,7 @@ Conversely, no alignment within the score threshold implies too many sequencing 
 A problem arises in presence of co-optimal or close sub-optimal alignments: the read cannot be mapped confidently.
 
 The problem of confidently mapping high-throughput sequencing reads comes from the non-random nature of genomic sequences.
-Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{?} or large-scale segmental duplications in chromosomes \citep{?}, transposition of repetitive elements as short tandem repeats (microsatellites) and interspersed nuclear elements (LINE, SINE) \citep{?}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{?}.
+Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{Wolfe1997,Dehal2005} or large-scale segmental duplications in chromosomes \citep{Bailey2001,Samonte2002}, transposition of repetitive elements as short tandem repeats (microsatellites) \citep{Wang1994a,Wooster1994} and interspersed nuclear elements (LINE, SINE) \citep{Smit1996}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{Meyne1990}.
 As a result of these events, for instance, about 50~\% of the human genome is composed of repeats.
 
 Repeats present in general technical challenges for all \emph{de novo} assembly and sequence alignment programs \citep{Treangen2011}.
@@ -160,7 +160,7 @@ Third, mapping quality tends to become less relevant as base calls improve, due 
 All-mapping analysis methods consider a comprehensive set of locations per read.
 Almost all read mappers in this category adopt edit distance, the simplest scoring scheme, and report all mapping locations within an error threshold, absolute or relative \wrt to the length of the reads.
 Variant calling algorithms based on all-mapping have the potential to detect a wider spectrum of genomic variation events than in best-mapping.
-For instance, variant callers based on the all-mapping paradigm detect CNVs \citep{mrCaNaVaR}, and SNVs in homologous regions \citep{Sniper}.
+For instance, variant callers based on the all-mapping paradigm detect CNVs \citep{Alkan2009}, and SNVs in homologous regions \citep{Simola2011}.
  % transpositions~\citep{VariationHunter} ?
 A practical challenge of all-mapping is represented by reporting and handling huge sets of mapping locations.
 
