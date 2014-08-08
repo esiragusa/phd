@@ -322,6 +322,14 @@ Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
 \newblock The gem mapper: fast, accurate and versatile alignment by filtration.
 \newblock {\em Nature methods\/}, {\bf 9}(12), pages 1185--1188.
 
+\bibitem[Meyne \ea(1990)Meyne, Baker, Hobart, Hsu, Ryder, Ward, Wiley,
+  Wurster-Hill, Yates, and Moyzis]{Meyne1990}
+Meyne, J., Baker, R.~J., Hobart, H.~H., Hsu, T., Ryder, O.~A., Ward, O.~G.,
+  Wiley, J.~E., Wurster-Hill, D.~H., Yates, T.~L., and Moyzis, R.~K. (1990).
+\newblock Distribution of non-telomeric sites of the (ttaggg) n telomeric
+  sequence in vertebrate chromosomes.
+\newblock {\em Chromosoma\/}, {\bf 99}(1), pages 3--10.
+
 \bibitem[Morrison(1968)Morrison]{Morrison1968}
 Morrison, D.~R. (1968).
 \newblock Patricia-Ñpractical algorithm to retrieve information coded in
