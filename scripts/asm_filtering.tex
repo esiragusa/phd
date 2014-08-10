@@ -3,48 +3,29 @@
 In this chapter, I present various filtering methods for approximate string matching.
 I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters of the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-%Each class of filters contains various methods.
-%Both classes of filters provide full-sensitive filtration schemes, solving the approximate string matching problem exactly.
+Both classes consist of various filtering methods.
 
-%The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
-%Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
-
-The following seed filtering methods have been proposed in literature:
+I consider the following seed filtering methods:
 \begin{inparaenum}[(i)]
-\item exact seeds,
-\item approximate seeds,
-\item suffix filters.
+\item exact seeds \citep{Baeza1992},
+\item approximate seeds \citep{Myers1994,Navarro2000},
+\item suffix filters \citep{Kaerkkaeinen2007}.
 \end{inparaenum}
 Exact seeds partition the pattern in $k+1$ non-overlapping seeds to be searched exactly.
-To increase seed length, approximate seeds factorize the pattern in less than $k+1$ non-overlapping seeds to be searched approximately within a distance threshold smaller than $k$.
-Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less redundant, and more adaptive filtration using more efficiently the index.
+Approximate seeds increase specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds to be searched within a smaller distance threshold.
+Suffix filters further generalize exact and approximate seeds and yield stronger index based filtration.
 %Problems of exact and approximate seeds filters are that: it is not evident which factorization yields optimal filtration, and they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
 %The drawback is that the effort to implement them is slightly higher.
 
-The following $q$-grams methods have been proposed in literature:
+I consider the following $q$-gram filtering methods:
 \begin{inparaenum}[(i)]
-\item contiguous $q$-grams,
-\item gapped $q$-grams,
-\item multiple gapped $q$-grams.
+\item contiguous $q$-grams \citep{Jokinen1991},
+\item gapped $q$-grams \citep{Burkhardt2001},
+\item multiple gapped $q$-grams \citep{Kucherov2005}.
 \end{inparaenum}
-Contiguous $q$-grams use a counting argument to filter out text regions containing less $q$-gram occurrences than a given threshold.
+Contiguous $q$-grams rely on a counting argument to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
-Multiple gapped $q$-grams use different patterns of don't care positions in conjunction to further increase specificity.
-
-
-%The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
-%The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
-%Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
-%Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
-%By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
-%As less $q$-grams are now covered by mismatches, I can
-%\begin{inparaenum}[(i)]
-%\item increase the filtering threshold or
-%\item increase the number $q$ of considered characters,
-%\end{inparaenum}
-%in either cases preserving full-sensitivity.
-%Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
-
+Multiple gapped $q$-grams apply multiple patterns of don't care positions in conjunction to further increase specificity.
 
 %In the following of this chapter I first present (multiple) gapped $q$-grams and problems associated with their design.
 %Then I move to more practical approximate seeds, which I will adopt later in chapter~\ref{chap:map-eng}.
@@ -60,14 +41,16 @@ Multiple gapped $q$-grams use different patterns of don't care positions in conj
 \section{Exact seeds}
 \label{sec:filtering:exact}
 
+%\subsection{Principle}
+
 I start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
 %If I partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
-\citep{Baeza1999b}
+\citep{Baeza1992}
 Let $x,y$ be two strings \st $d_E(x,y) = k$.
 %If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
-If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
+If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one seed occurs as a factor of $x$.
 \end{lemma}
 %\begin{proof}
 %I proceed by induction on $k$.
@@ -154,6 +137,9 @@ Later, in order to obtain more robust filters, I generalize filtration with seed
 \section{Approximate seeds}
 \label{sec:seeds-apx}
 
+%The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to seed length.
+%Therefore the crux of designing stronger filters lies into increasing the seed length while guaranteeing full-sensitivity.
+
 Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for $k$-mismatches and $k$-difference.
 The key idea of approximate seeds is to reduce an approximate search into \emph{smaller} approximate searches, as opposed to exact seeds reducing an approximate search into smaller exact searches.
 
@@ -162,7 +148,7 @@ Again, I start by considering two arbitrary strings $x,y$ within edit distance $
 \label{lemma:apx-seeds}
 \citep{Myers1994,Navarro2000}
 Let $x,y$ be two strings \st $d_E(x,y) = k$.
-If I partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed will occur as a factor of $x$ within distance $\lfloor k/s \rfloor$.
+If I partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed occurs as a factor of $x$ within distance $\lfloor k/s \rfloor$.
 \end{lemma}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
@@ -275,6 +261,19 @@ Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \righ
 
 
 \section{Gapped $q$-grams}
+
+%The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
+%The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
+%Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
+%Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
+%By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
+%As less $q$-grams are now covered by mismatches, I can
+%\begin{inparaenum}[(i)]
+%\item increase the filtering threshold or
+%\item increase the number $q$ of considered characters,
+%\end{inparaenum}
+%in either cases preserving full-sensitivity.
+%Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
 
 In section~\ref{sec:intro:filtering} I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
 I now generalize this similarity measure to consider the number of common subsequences\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.

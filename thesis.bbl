@@ -30,10 +30,10 @@ Baeza-Yates, R.~A. and Gonnet, G.~H. (1999).
 \newblock A fast algorithm on average for all-against-all sequence matching.
 \newblock In {\em SPIRE/CRIWG\/}, pages 16--23. IEEE.
 
-\bibitem[Baeza-Yates and Navarro(1999)Baeza-Yates and Navarro]{Baeza1999b}
-Baeza-Yates, R.~A. and Navarro, G. (1999).
-\newblock Faster approximate string matching.
-\newblock {\em Algorithmica\/}, {\bf 23}(2), pages 127--158.
+\bibitem[Baeza-Yates and Perleberg(1992)Baeza-Yates and Perleberg]{Baeza1992}
+Baeza-Yates, R.~A. and Perleberg, C.~H. (1992).
+\newblock Fast and practical approximate string matching.
+\newblock In {\em Combinatorial Pattern Matching\/}, pages 185--192. Springer.
 
 \bibitem[Bailey \ea(2001)Bailey, Yavor, Massa, Trask, and Eichler]{Bailey2001}
 Bailey, J.~A., Yavor, A.~M., Massa, H.~F., Trask, B.~J., and Eichler, E.~E.
@@ -215,6 +215,13 @@ Jokinen, P. and Ukkonen, E. (1991).
 \newblock Two algorithms for approxmate string matching in static texts.
 \newblock In {\em Mathematical Foundations of Computer Science 1991\/}, pages
   240--248. Springer.
+
+\bibitem[K{\"a}rkk{\"a}inen and Na(2007)K{\"a}rkk{\"a}inen and
+  Na]{Kaerkkaeinen2007}
+K{\"a}rkk{\"a}inen, J. and Na, J. (2007).
+\newblock Faster filters for approximate string matching.
+\newblock In {\em Workshop on Algorithm Engineering and Experiments
+  (ALENEX07)\/}.
 
 \bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
   Sanders]{Kaerkkaeinen2003}

@@ -67,15 +67,6 @@ Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation 
 Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
-%\begin{example}
-%These definitions allow us to model basic biological sequences.
-%Let us consider the alphabet consisting of DNA bases, $\Sigma_{DNA} = \{\text{A},\text{C},\text{G},\text{T}\}$.
-%Examples of strings over $\Sigma_{DNA}$ are $x=$A, $y=$AGGTAC, $z=$TA.
-%For instance, $y \in \Sigma_{DNA}^6$ and $|y| = 6$.
-%Moreover, the concatenation $x \cdot z$ produces ATA.
-%The string $x$ is a prefix of $y$, and the string $z$ is a substring of $y$  occurring at position 4 in $y$.
-%\end{example}
-
 \section{Alignments}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
