@@ -2,48 +2,48 @@
 
 In this chapter, I present various filtering methods for approximate string matching.
 I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
-Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
+Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters of the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
+%Each class of filters contains various methods.
 %Both classes of filters provide full-sensitive filtration schemes, solving the approximate string matching problem exactly.
 
-The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
-Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
-To this intent, the following techniques have been proposed in literature:
-\begin{inparaenum}[(i)]
-\item gapped $q$-grams generalizing contiguous $q$-grams,
-\item multiple gapped $q$-grams further generalizing gapped $q$-grams;
-\item approximate seeds generalizing exact seeds,
-%\item suffix filters further extending approximate seeds.
-\end{inparaenum}
+%The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
+%Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
 
-The idea of approximate seeds is that, to increase seed length, the pattern is factorized in less than $k+1$ non-overlapping seeds.
-The pigeonhole lemma~\ref{lemma:exact-seeds} however tells that, by doing so, no seed will be guaranteed to be error-free.
-Therefore, seeds must be searched approximately, but within a distance threshold smaller than the original threshold $k$.
-Approximate seeds can be searched with backtracking techniques of section~\ref{sec:backtracking}.
-%In a nutshell, instead of reducing an approximate search into smaller exact searches, I reduce it into smaller approximate searches.
-
-Problems of exact and approximate seeds filters are that
+The following seed filtering methods have been proposed in literature:
 \begin{inparaenum}[(i)]
-\item it is not evident which factorization yields optimal filtration, and
-\item they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
+\item exact seeds,
+\item approximate seeds,
+\item suffix filters.
 \end{inparaenum}
+Exact seeds partition the pattern in $k+1$ non-overlapping seeds to be searched exactly.
+To increase seed length, approximate seeds factorize the pattern in less than $k+1$ non-overlapping seeds to be searched approximately within a distance threshold smaller than $k$.
 Suffix filters are based on tighter pigeonhole lemmas yielding stronger, less redundant, and more adaptive filtration using more efficiently the index.
-The drawback is that the effort to implement them is slightly higher.
+%Problems of exact and approximate seeds filters are that: it is not evident which factorization yields optimal filtration, and they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
+%The drawback is that the effort to implement them is slightly higher.
 
-
-The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
-The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
-Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
-Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
-By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
-As less $q$-grams are now covered by mismatches, I can
+The following $q$-grams methods have been proposed in literature:
 \begin{inparaenum}[(i)]
-\item increase the filtering threshold or
-\item increase the number $q$ of considered characters,
+\item contiguous $q$-grams,
+\item gapped $q$-grams,
+\item multiple gapped $q$-grams.
 \end{inparaenum}
-in either cases preserving full-sensitivity.
-Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
+Contiguous $q$-grams use a counting argument to filter out text regions containing less $q$-gram occurrences than a given threshold.
+Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
+Multiple gapped $q$-grams use different patterns of don't care positions in conjunction to further increase specificity.
 
-%TODO families.
+
+%The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
+%The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
+%Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
+%Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
+%By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
+%As less $q$-grams are now covered by mismatches, I can
+%\begin{inparaenum}[(i)]
+%\item increase the filtering threshold or
+%\item increase the number $q$ of considered characters,
+%\end{inparaenum}
+%in either cases preserving full-sensitivity.
+%Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
 
 
 %In the following of this chapter I first present (multiple) gapped $q$-grams and problems associated with their design.
