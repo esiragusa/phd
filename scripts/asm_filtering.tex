@@ -1,16 +1,9 @@
 \chapter{Filtering methods}
 
-This chapter presents filtering methods for approximate string matching.
+In this chapter, I present various filtering methods for approximate string matching.
 I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
 %Both classes of filters provide full-sensitive filtration schemes, solving the approximate string matching problem exactly.
-
-These filters provide a trade-off between filtration speed and specificity.
-Whenever the total time is dominated by verification time, a stronger filter yielding a lower number of candidate locations becomes appealing.
-The total time improves, despite a moderate increase in filtration time, because of a significant reduction in verification time.
-The former filters minimize filtration time but yield weak filtration, the latter provide a more involved but stronger filtration.
-In practice, seeds filters work best at low error rates, while $q$-gram filters become competitive at higher error rates.
-Thus one would adopt one or the other filtration method depending on the requested error rate.
 
 The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to the parameter $q$ being the seed or $q$-gram length.
 Therefore the crux of designing stronger filters lies into increasing the seed or $q$-gram length while guaranteeing full-sensitivity.
@@ -65,7 +58,7 @@ Note that however, this concept poorly extends to edit distance, and the design 
 %\end{itemize}
 
 \section{Exact seeds}
-\ref{sec:filtering:exact}
+\label{sec:filtering:exact}
 
 I start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
 %If I partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
@@ -101,10 +94,14 @@ Figure~\ref{fig:seeds-ext} shows an example.
 \end{center}
 \end{figure}
 
+\subsection{Implementation}
+
 Thus, $k$-differences is solved by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
 As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to whether corresponds to an approximate occurrence of the pattern in the text.
 Thus, I verify any substring $s$ of the text of length $|s| \in [m - k, m + k]$ containing one seed of $p$.
 Note how this method reduces one approximate search into many smaller exact searches.
+
+\subsection{Efficiency}
 
 How many verifications a seed produces?
 Let us assume the text to be generated according to the uniform Bernoulli model.
@@ -170,6 +167,16 @@ If I partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
 
+\begin{figure}[h]
+\begin{center}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds.}
+\label{fig:seeds-apx}
+\input{figures/filtration_apx.tikz}
+\end{center}
+\end{figure}
+
+\subsection{Implementation}
+
 In order to solve $k$-mismatches, I partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$. According to lemma~\ref{lemma:apx-seeds}, full-sensitivity is guaranteed if I search all seeds $p^i$ within a distance threshold of $\lfloor k/s \rfloor$.
 Note that I am not obliged to assign the same distance threshold to all seeds.
 Indeed, I can assign any arbitrary distance threshold $k_i$ to each seed $p^i$, as long as I satisfy the following inequality
@@ -179,15 +186,6 @@ s + \sum_{i=1}^{s}{k_i} > k.
 I usually tend to distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
 Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
 Also note how lemma~\ref{lemma:exact-seeds} for exact seeds is obtained by posing $s=k+1$ and all $k_i = 0$.
-
-\begin{figure}[h]
-\begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds.}
-\label{fig:seeds-apx}
-\input{figures/filtration_apx.tikz}
-\end{center}
-\end{figure}
-
 
 \subsection{Parameterization}
 
@@ -256,6 +254,8 @@ Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ an
 \end{center}
 \end{figure}
 
+\subsection{Implementation}
+
 Lemma~\ref{lemma:qgrams} itself does not give us a direct solution to approximate string matching.
 Indeed, it considers the edit distance between two arbitrary strings, while in approximate string matching the pattern can match any substring of the text.
 More precisely, if the pattern approximately matches any substring $s$ of $t$, then in the case of $k$-mismatches $s$ must have length $m$; in the case of $k$-difference, the length of $s$ must be within $m - k$ and $m + k$.
@@ -266,6 +266,8 @@ Therefore, I can design an online filtration algorithm scanning the text and cou
 Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
 Alternatively, to speed up the filtration phase, I can count the $q$-grams with the help of a substring index.
 %Overlapping parallelograms?
+
+\subsection{Parameterization}
 
 Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
