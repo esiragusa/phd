@@ -192,8 +192,6 @@ the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-le
 
 \section{String matching}
 
-%\subsection{Problem definition}
-
 I now define \emph{exact string matching}, one of the most fundamental problem in stringology.
 \begin{definition}
 \citep{Gusfield1997}
@@ -211,6 +209,11 @@ For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$
 \begin{definition}
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
+
+In this manuscript, I often consider \emph{multiple} string matching problems.
+Multiple variants of the problems provide many patterns at once.
+Clearly any algorithm for the single variant can solve the multiple one and vice versa.
+However multiple methods can be more efficient.
 
 String matching problems are subdivided in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left).
@@ -230,8 +233,6 @@ Online filtering methods try to jump over the text while scanning it, while offl
 Any filtering method then requires an online verification method.
 Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \eg when the error rate is low, and are thus very appealing from a practical standpoint.
 Nonetheless, filtering methods are just opportunistic combinations of native online and indexed methods.
-
-%A last distinction can be made between single and multiple string matching algorithms.
 
 In the following of this section, I give a quick overview of the fundamental algorithms and data structures adopted in string matching methods.
 This overview serves as an introduction to the indexed and filtering methods presented in the next chapters.
