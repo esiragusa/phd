@@ -1,31 +1,41 @@
 \chapter{Filtering methods}
+\label{sec:filter}
 
 In this chapter, I present various filtering methods for approximate string matching.
 I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters of the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Both classes consist of various filtering methods.
+Both classes include various combinatorial filtering methods of increasing specificity and complexity, always providing filtration schemes with guarantees on filtration sensitivity.
 
 I consider the following seed filtering methods:
-\begin{inparaenum}[(i)]
-\item exact seeds \citep{Baeza1992},
-\item approximate seeds \citep{Myers1994,Navarro2000},
-\item suffix filters \citep{Kaerkkaeinen2007}.
-\end{inparaenum}
-Exact seeds partition the pattern in $k+1$ non-overlapping seeds to be searched exactly.
-Approximate seeds increase specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds to be searched within a smaller distance threshold.
+%\begin{inparaenum}[(i)]
+\emph{exact seeds} \citep{Baeza1992},
+\emph{approximate seeds} \citep{Myers1994,Navarro2000},
+\emph{suffix filters} \citep{Kaerkkaeinen2007}.
+%\end{inparaenum}
+Exact seeds partition the pattern in $k+1$ non-overlapping seeds, to be searched exactly.
+Approximate seeds increase specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds, to be searched within a smaller distance threshold.
 Suffix filters further generalize exact and approximate seeds and yield stronger index based filtration.
-%Problems of exact and approximate seeds filters are that: it is not evident which factorization yields optimal filtration, and they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
-%The drawback is that the effort to implement them is slightly higher.
 
 I consider the following $q$-gram filtering methods:
-\begin{inparaenum}[(i)]
-\item contiguous $q$-grams \citep{Jokinen1991},
-\item gapped $q$-grams \citep{Burkhardt2001},
-\item multiple gapped $q$-grams \citep{Kucherov2005}.
-\end{inparaenum}
+%\begin{inparaenum}[(i)]
+\emph{contiguous $q$-grams} \citep{Jokinen1991},
+\emph{gapped $q$-grams} \citep{Burkhardt2001},
+\emph{multiple gapped $q$-grams} \citep{Kucherov2005}.
+%\end{inparaenum}
 Contiguous $q$-grams rely on a counting argument to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
-Multiple gapped $q$-grams apply multiple patterns of don't care positions in conjunction to further increase specificity.
+Multiple gapped $q$-grams conjunct multiple patterns of don't care positions to further increase specificity.
+
+It will become clear through this chapter that seed filters are more practical, flexible, straightforward to design and implement than $q$-gram filters.
+All seed filters and contiguous $q$-grams provide full-sensitive filtration schemes for the $k$-differences problem, while (multiple) gapped $q$-grams only for $k$-mismatches.
+The design of highly specific yet full-sensitive filtration schemes for $q$-gram filters is combinatorially hard, while it is quite straightforward for seed filters.
+Also implementation-wise, $q$-gram filters are more involved than seeds filter.
+In fact, seed filters lend themselves well to both online and offline variants of the problem, while $q$-gram filters are better suited for the online variant.
+Finally, the experimental evaluation shows that seed filters outperform $q$-gram filters for most practical inputs.
+For these reasons, I designed applications of chapters \ref{sec:masai} and \ref{sec:yara} around seed filtering methods.
+
+%Problems of exact and approximate seeds filters are that: it is not evident which factorization yields optimal filtration, and they yield duplicate occurrences whenever errors are not distributed in the worst-case combination.
+%The drawback is that the effort to implement them is slightly higher.
 
 %In the following of this chapter I first present (multiple) gapped $q$-grams and problems associated with their design.
 %Then I move to more practical approximate seeds, which I will adopt later in chapter~\ref{chap:map-eng}.
@@ -41,9 +51,14 @@ Multiple gapped $q$-grams apply multiple patterns of don't care positions in con
 \section{Exact seeds}
 \label{sec:filtering:exact}
 
-%\subsection{Principle}
+Filtration with exact seeds is one of the na\"ivest filtering methods for approximate string matching.
+I first explain the underlying combinatorial principle, then I discuss implementation details, and lastly give some insights on the efficiency of this method.
 
-I start by considering the case of two arbitrary strings $x,y$ within edit distance $k$.
+\subsection{Principle}
+
+I consider the case of two arbitrary strings $x,y$ within edit distance $k$.
+The generalization to $k$-differences is straightforward.
+
 %If I partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
 \begin{lemma}
 \label{lemma:exact-seeds}
@@ -66,8 +81,10 @@ If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one
 %In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
 %In case~\ref{lemma:exact-seeds:infix}, if I partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
 %\end{proof}
-It is immediate to see that any edit distance error can cover at most one seed, therefore at least one seed of $y$ will not be covered by any seed and occur as a factor of $x$.
+It is immediate to see that any edit distance error can cover at most one seed.
+Therefore, at least one seed of $y$ will not be covered by any seed and hence occur as a factor of $x$.
 Figure~\ref{fig:seeds-ext} shows an example.
+Lemma~\ref{lemma:exact-seeds} is clearly valid for \emph{any substring} of the text within distance $k$ from the pattern.
 
 \begin{figure}[h]
 \begin{center}
@@ -79,15 +96,21 @@ Figure~\ref{fig:seeds-ext} shows an example.
 
 \subsection{Implementation}
 
-Thus, $k$-differences is solved by partitioning the pattern into $k+1$ seeds and searching all seeds into the text, \eg with the help of a substring index.
-As Lemma~\ref{lemma:exact-seeds} gives us a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to whether corresponds to an approximate occurrence of the pattern in the text.
-Thus, I verify any substring $s$ of the text of length $|s| \in [m - k, m + k]$ containing one seed of $p$.
-Note how this method reduces one approximate search into many smaller exact searches.
+This method reduces one approximate search into multiple smaller exact searches.
+Thus, the method solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds into the text, and verifying any substring of the text of length between $[m - k, m + k]$ containing one seed of the pattern.
+
+%The online variant can be solved by...
+
+%As Lemma~\ref{lemma:exact-seeds} is a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to insure that it corresponds to an approximate occurrence of the pattern in the text.
+
 
 \subsection{Efficiency}
+\label{sec:filtering:exact:efficiency}
 
-How many verifications a seed produces?
-Let us assume the text to be generated according to the uniform Bernoulli model.
+%\subsubsection{Expected number of verifications}
+
+How many verifications are triggered by this filter?
+It is straightforward to derive the expected number of verifications under the assumption of the text being generated according to the uniform Bernoulli model.
 The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
 \begin{eqnarray}
 \text{Pr}(H > 0) = \frac{1}{\sigma^q}
@@ -97,58 +120,57 @@ thus the expected number of occurrences of a seed of length $q$ in a text of len
 E[H] = \sum_{i=1}^{n-q+1}{\text{Pr}(H > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
 \end{eqnarray}
 
-Note how lemma~\ref{lemma:exact-seeds} requires us to partition the pattern into $k+1$ seeds but leaves us free to choose their length.
-This leads to the question of which is an optimal pattern partitioning, \ie a partitioning that minimizes the expected number of verifications.
-I fix\footnote{I ignore for simplicity that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
+Lemma~\ref{lemma:exact-seeds} requires to partition the pattern into $k+1$ seeds but leaves the freedom to choose their length.
+This leads to the problem of finding an optimal pattern partitioning to minimize the expected number of verifications.
+I fix\footnote{For simplicity I ignore that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
 \begin{eqnarray}
 \label{eq:seed-len}
 q=\left \lfloor \frac{m}{k+1} \right \rfloor
 \end{eqnarray}
 to minimize the expected number of occurrences of any seed.
-Under these conditions, the expected number of verifications produced by the seed filter is
+Under these conditions, the expected number of verifications produced by filtration with exact seeds is
 \begin{eqnarray}
 E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
 \end{eqnarray}
+Nonetheless, inputs of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
+On those texts, uniform seed length often leads to suboptimal filtration.
 
-I now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
-For which error rate the resulting algorithm is expected to have sublinear runtime?
+%\subsubsection{Expected sublinearity}
+%I now turn to the effect of the error rate on the runtime of the resulting $k$-differences algorithm.
+%For which error rate the resulting algorithm is expected to have \emph{sublinear} runtime?
 %\citeauthor{Gusfield1997} gives a rough estimate to this question.
-If I use the classic $\Oh(m^2)$ DP algorithm of section~\ref{sub:introonline} to verify candidate locations, the expected runtime must be
-\begin{eqnarray}
-E[V] \cdot m^2 < cn
-\end{eqnarray}
-for some constant $c$.
-By substituting $E[V]$ and solving for $q$, I obtain
-\begin{eqnarray}
-q > \log_{\sigma}{\frac{m^3}{c}}
-\end{eqnarray}
-and since I chose $q$ as a function of $m$ and $k$ in equation~\ref{eq:seed-len}, it follows that
-\begin{eqnarray}
-\epsilon = \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
-\end{eqnarray}
-is the error rate for which this $k$-differences algorithm has expected sublinear runtime.
-
-Nonetheless, texts of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
-On those texts uniform seed length can lead to suboptimal filtration.
-In section~\ref{sec:seeds-apx} I analyze the statistical properties of these texts and the effects of pattern partitioning.
-Later, in order to obtain more robust filters, I generalize filtration with seeds to consider approximate seeds.
-
+%If the classic $\Oh(m^2)$ DP algorithm of section~\ref{sub:introonline} is adopted to verify candidate locations, the expected runtime must be
+%\begin{eqnarray}
+%E[V] \cdot m^2 < cn
+%\end{eqnarray}
+%for some constant $c$.
+%Substituting $E[V]$ and solving for $q$ yields
+%\begin{eqnarray}
+%q > \log_{\sigma}{\frac{m^3}{c}}
+%\end{eqnarray}
+%and since $q$ in equation~\ref{eq:seed-len} is a function of $m$ and $k$, it follows that
+%\begin{eqnarray}
+%\epsilon = \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
+%\end{eqnarray}
+%is the error rate for which this $k$-differences algorithm has expected sublinear runtime.
 
 \section{Approximate seeds}
 \label{sec:seeds-apx}
 
-%The simple analysis of section~\ref{sec:filtering:exact} shows that filtration specificity is strongly correlated to seed length.
-%Therefore the crux of designing stronger filters lies into increasing the seed length while guaranteeing full-sensitivity.
+The simple analysis of section~\ref{sec:filtering:exact:efficiency} shows that filtration specificity is strongly correlated to the seed length.
+Therefore, the crux of designing a stronger filter lies into increasing the seed length while maintaining the full-sensitivity constrains.
+\citeauthor{Myers1994}, subsequently followed by \citeauthor{Navarro2000}, proposed \emph{approximate seeds} as a practical and effective generalization of exact seeds, yielding stronger filters for $k$-differences.
+The key idea of approximate seeds is to reduce the approximate search into smaller approximate searches, as opposed to exact seeds that reduce the approximate search into smaller exact searches.
 
-Approximate seeds have been proposed in \citep{Myers1994,Navarro2000} as a practical and effective generalization of exact seeds, yielding stronger filters both for $k$-mismatches and $k$-difference.
-The key idea of approximate seeds is to reduce an approximate search into \emph{smaller} approximate searches, as opposed to exact seeds reducing an approximate search into smaller exact searches.
+\subsection{Principle}
 
 Again, I start by considering two arbitrary strings $x,y$ within edit distance $k$.
+The result then holds for any substring of the text within distance $k$ from the pattern.
 \begin{lemma}
 \label{lemma:apx-seeds}
 \citep{Myers1994,Navarro2000}
 Let $x,y$ be two strings \st $d_E(x,y) = k$.
-If I partition \wlogs $y$ into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed occurs as a factor of $x$ within distance $\lfloor k/s \rfloor$.
+If $y$ is partitioned \wlogs into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed occurs as a factor of $x$ within distance $\lfloor k/s \rfloor$.
 \end{lemma}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
@@ -161,35 +183,34 @@ Figure~\ref{fig:seeds-apx} illustrates.
 \end{center}
 \end{figure}
 
-\subsection{Implementation}
-
-In order to solve $k$-mismatches, I partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$. According to lemma~\ref{lemma:apx-seeds}, full-sensitivity is guaranteed if I search all seeds $p^i$ within a distance threshold of $\lfloor k/s \rfloor$.
-Note that I am not obliged to assign the same distance threshold to all seeds.
-Indeed, I can assign any arbitrary distance threshold $k_i$ to each seed $p^i$, as long as I satisfy the following inequality
+It is not obligatory to assign the same distance threshold to all seeds.
+%I partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$.
+Indeed, each seed $p^i$ can get assigned an arbitrary distance threshold $k_i$, as long as the following constraint is satisfied:
 \begin{equation}
 s + \sum_{i=1}^{s}{k_i} > k.
 \end{equation}
-I usually tend to distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
-Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
-Also note how lemma~\ref{lemma:exact-seeds} for exact seeds is obtained by posing $s=k+1$ and all $k_i = 0$.
+
+\subsection{Implementation}
+
+Online.
+Offline.
 
 \subsection{Parameterization}
 
-With approximate seeds, I am free to choose the number of seeds $s$ which gives us $q =\lfloor m/s \rfloor$, or vice versa, if I fix the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
+With approximate seeds, one is free to choose the number of seeds $s$ which gives $q =\lfloor m/s \rfloor$, or vice versa, fixing the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
 The resulting filter is flexible, indeed by increasing $q$ filtration becomes more specific at the expense of a higher filtration time.
-For $s=1$ I obtain the most specific filtration \ie I perform only backtracking and I do not even need to verify the reported locations, while for $s=k+1$ I obtain the fastest but weakest filtration.
+For $s=1$, I obtain the most specific filtration \ie I perform only backtracking and I do not even need to verify the reported locations, while for $s=k+1$ I obtain the fastest but weakest filtration.
+%Also note how lemma~\ref{lemma:exact-seeds} for exact seeds is obtained by posing $s=k+1$ and all $k_i = 0$.
 
-In practice, it is not easy to find which filter parameterization yields an optimal filtration.
+In practice, it is not easy to find an optimal filtration scheme.
 Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 However, these results did not help us in practice.
-The optimal partitioning depends on
-\begin{inparaenum}[(i)]
-\item the full-text index,
-\item the verification algorithm,
-\item the statistical properties of the text.
-\end{inparaenum}
+The optimal partitioning depends on the full-text index, the verification algorithm, the statistical properties of the text.
 A difference of one from the optimal number of seeds can result in a runtime penalty of an order of magnitude.
+
+Fixed $l$, I distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
+Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
 
 \subsection{Redundancy}
 

@@ -201,7 +201,7 @@ Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of
 \end{definition}
 
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice \citep{Faro2013}.
-Nonetheless, the definition of distance functions between strings let us generalize exact string matching into a more challenging problem: \emph{approximate string matching}.
+Nonetheless, the definition of distance functions between strings lends to the generalization of exact string matching to a more challenging problem: \emph{approximate string matching}.
 
 \begin{definition}
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
@@ -448,12 +448,11 @@ and the sensitivity as:
 \begin{eqnarray}
 \frac{|TP(t)|}{|TP(t)| + |FN(t)|}
 \end{eqnarray}
-%An important case is its sensitivity is 1.
 
+An important case is its sensitivity is 1.
 \begin{definition}
 A filter is \emph{lossless} or \emph{full-sensitive} if its sensitivity is 1, \ie it produces no false negatives, otherwise it is \emph{lossy}.
 \end{definition}
-
 %A full-sensitive filter for approximate string matching solves the problem exactly.
 Most practical applications, \eg read mapping, do not require strictly lossless filtration.
 Nonetheless, a predictable or controlled lossy filter helps to interpret the results and insure their quality.
@@ -476,12 +475,12 @@ For higher error rates, non-filtering methods, either online or offline, work be
 
 \subsubsection{Seeds versus $q$-grams}
 
-Filtering methods apply combinatorial criteria to determine which portions of the text must be filtered in as they might contain some occurrence of the pattern.
+Filtering methods apply combinatorial criteria to determine which portions of the text might contain some occurrence of the pattern.
 These criteria are in general valid for both online and offline variants of the problem.
 In practice, one specific criterion might be more convenient for one variant of the problem rather than the other.
 The combinatorial criterion underlying a filter is of paramount importance as it provides guarantees on filtration sensitivity.
 
-In this manuscript, I consider two classes of combinatorial filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
+In chapter \ref{sec:filter}, I consider two classes of combinatorial filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters in the former class partition the pattern into \emph{non-overlapping} factors called seeds.
 Application of the pigeonhole principle yields full-sensitive partitioning strategies.
 Instead, filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
