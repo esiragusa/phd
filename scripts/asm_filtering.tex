@@ -103,7 +103,7 @@ Thus, the method solves $k$-differences by partitioning the pattern into $k+1$ s
 
 \subsubsection{Filtration step}
 
-The online variant can be solved by...
+The online variant can be solved by.
 
 %As Lemma~\ref{lemma:exact-seeds} is a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to insure that it corresponds to an approximate occurrence of the pattern in the text.
 
@@ -115,20 +115,20 @@ Discuss verification versus extension.
 
 Redundancy is a practical problem of seed filters.
 Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds}, more than one seed reports the same candidate location.
-For instance, if two errors fall in some seed, then at least two seeds will occur exactly.
+For instance, if two errors fall in the same seed, then at least two seeds will occur exactly.
 
-In practice, I can choose to avoid redundancy before or after verifying candidate locations.
-After collecting all candidate locations for a pattern, I have to consider only the induced diagonal positions in the implicit DP matrix.
-This requires locating and sorting all candidate locations for a pattern.
-Alternatively, I prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
-Nonetheless, to avoid reporting duplicate occurrences, I have to consider redundant all occurrences either beginning or ending at the same position in the text.
-This requires memorizing and sorting all occurrences of a pattern.
+In practice, redundancy can be avoided either before or after the verification step.
+In the first case, any diagonal in the implicit DP matrix identifies a distinct pattern occurrence to be verified only once.
+All candidate locations of a pattern have to be collected, then sorted by diagonal position and checked.
+Alternatively, if the verification algorithm is fast or the number of redundant candidate locations is low, it is more appealing to verify candidate locations directly.
+Any two pattern occurrences beginning or ending at the same location in the text are redundant.
+To avoid reporting duplicate occurrences, all pattern occurrences have to be collected, sorted and checked.
 
-How many redundant error configurations are produced by seeds filters?
+How many redundant error configurations are produced by filtration with exact seeds?
 Here I consider the fraction of redundant error combinations, not the fraction of redundant candidate locations reported by the filter.
-For simplicity I consider exact seeds and combinations of exactly $k$ errors.
-I have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
-However, for a fixed seed, I cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
+For simplicity, I consider only combinations of exactly $k$ errors.
+Filtration has to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
+However, a fixed seed covers all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
 Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
 \begin{equation}
 \frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
@@ -140,7 +140,7 @@ For instance, when $k=5$, filtration with exact seeds covers 3 times more combin
 
 %Efficiency depends number of verifications - filtration time is negligible.
 
-How many verifications are triggered by this filter?
+How many verifications are triggered by filtration with exact seeds?
 It is straightforward to derive the expected number of verifications under the assumption of the text being generated according to the uniform Bernoulli model.
 The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
 \begin{eqnarray}
@@ -228,15 +228,15 @@ s + \sum_{i=1}^{s}{k_i} > k.
 Online.
 Offline.
 
-
-With approximate seeds I partition the pattern in less seeds and thus I indirectly reduce filter redundancy.
+The pattern is partitioned in less approximate seeds, thus filter redundancy is indirectly reduced.
 
 \subsection{Parameterization}
 
-With approximate seeds, one is free to choose the number of seeds $s$ which gives $q =\lfloor m/s \rfloor$, or vice versa, fixing the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
-The resulting filter is flexible, indeed by increasing $q$ filtration becomes more specific at the expense of a higher filtration time.
-For $s=1$, I obtain the most specific filtration \ie I perform only backtracking and I do not even need to verify the reported locations, while for $s=k+1$ I obtain the fastest but weakest filtration.
-%Also note how lemma~\ref{lemma:exact-seeds} for exact seeds is obtained by posing $s=k+1$ and all $k_i = 0$.
+Approximate seeds provide filtration schemes of increasing specificity.
+The fastest but weakest scheme is given by $s=k+1$, while the most specific filtration scheme is obtained for $s=1$ \ie perfect filtration without any verification step.
+Alternatively, filtration specificity is controlled by $q$.
+Fixing the minimum seed length $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
+As expected, filtration specificity increases with the minimum seed length $q$.
 
 In practice, it is not easy to find an optimal filtration scheme.
 Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
@@ -245,8 +245,10 @@ However, these results did not help us in practice.
 The optimal partitioning depends on the full-text index, the verification algorithm, the statistical properties of the text.
 A difference of one from the optimal number of seeds can result in a runtime penalty of an order of magnitude.
 
-Fixed $l$, I distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
+Fixed $q$, I distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
 Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
+
+% -----------------------------------------------------------------------------
 
 %\section{Suffix filters}
 
@@ -313,11 +315,11 @@ Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \righ
 %Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
 
 In section~\ref{sec:intro:filtering} I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
-I now generalize this similarity measure to consider the number of common subsequences\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
+I now generalize this similarity measure to consider the number of common \emph{subsequences}\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
 %and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
 
 \begin{definition}
-I call $Q$-gram a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
+A $Q$-gram is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
 I denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $Q$.
 \end{definition}
 
