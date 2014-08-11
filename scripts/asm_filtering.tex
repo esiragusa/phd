@@ -48,6 +48,8 @@ For these reasons, I designed applications of chapters \ref{sec:masai} and \ref{
 %\item I evaluate these filtration schemes in practice.
 %\end{itemize}
 
+% -----------------------------------------------------------------------------
+
 \section{Exact seeds}
 \label{sec:filtering:exact}
 
@@ -99,15 +101,44 @@ Lemma~\ref{lemma:exact-seeds} is clearly valid for \emph{any substring} of the t
 This method reduces one approximate search into multiple smaller exact searches.
 Thus, the method solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds into the text, and verifying any substring of the text of length between $[m - k, m + k]$ containing one seed of the pattern.
 
-%The online variant can be solved by...
+\subsubsection{Filtration step}
+
+The online variant can be solved by...
 
 %As Lemma~\ref{lemma:exact-seeds} is a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to insure that it corresponds to an approximate occurrence of the pattern in the text.
 
+\subsubsection{Verification step}
+
+Discuss verification versus extension.
+
+\subsubsection{Redundancy}
+
+Redundancy is a practical problem of seed filters.
+Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds}, more than one seed reports the same candidate location.
+For instance, if two errors fall in some seed, then at least two seeds will occur exactly.
+
+In practice, I can choose to avoid redundancy before or after verifying candidate locations.
+After collecting all candidate locations for a pattern, I have to consider only the induced diagonal positions in the implicit DP matrix.
+This requires locating and sorting all candidate locations for a pattern.
+Alternatively, I prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
+Nonetheless, to avoid reporting duplicate occurrences, I have to consider redundant all occurrences either beginning or ending at the same position in the text.
+This requires memorizing and sorting all occurrences of a pattern.
+
+How many redundant error configurations are produced by seeds filters?
+Here I consider the fraction of redundant error combinations, not the fraction of redundant candidate locations reported by the filter.
+For simplicity I consider exact seeds and combinations of exactly $k$ errors.
+I have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
+However, for a fixed seed, I cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
+Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
+\begin{equation}
+\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
+\end{equation}
+For instance, when $k=5$, filtration with exact seeds covers 3 times more combinations than required.
 
 \subsection{Efficiency}
 \label{sec:filtering:exact:efficiency}
 
-%\subsubsection{Expected number of verifications}
+%Efficiency depends number of verifications - filtration time is negligible.
 
 How many verifications are triggered by this filter?
 It is straightforward to derive the expected number of verifications under the assumption of the text being generated according to the uniform Bernoulli model.
@@ -154,6 +185,8 @@ On those texts, uniform seed length often leads to suboptimal filtration.
 %\end{eqnarray}
 %is the error rate for which this $k$-differences algorithm has expected sublinear runtime.
 
+% -----------------------------------------------------------------------------
+
 \section{Approximate seeds}
 \label{sec:seeds-apx}
 
@@ -195,6 +228,9 @@ s + \sum_{i=1}^{s}{k_i} > k.
 Online.
 Offline.
 
+
+With approximate seeds I partition the pattern in less seeds and thus I indirectly reduce filter redundancy.
+
 \subsection{Parameterization}
 
 With approximate seeds, one is free to choose the number of seeds $s$ which gives $q =\lfloor m/s \rfloor$, or vice versa, fixing the minimum seed length $q$ then it must hold $s = \lfloor m/q \rfloor$.
@@ -212,34 +248,13 @@ A difference of one from the optimal number of seeds can result in a runtime pen
 Fixed $l$, I distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
 Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
 
-\subsection{Redundancy}
-
-Another practical problem of seeds is redundant filtration.
-Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds} or \ref{lemma:apx-seeds}, more than one seed reports the same candidate location.
-Consider the case of exact seeds: If two errors fall in some seed, then at least two seeds will occur exactly.
-
-In practice, I can choose to avoid redundancy before or after verifying candidate locations.
-After collecting all candidate locations for a pattern, I have to consider only the induced diagonal positions in the implicit DP matrix.
-This requires locating and sorting all candidate locations for a pattern.
-Alternatively, I prefer to verify directly all candidate locations, \eg if the verification algorithm is fast and the number of redundant candidate locations is low.
-Nonetheless, to avoid reporting duplicate occurrences, I have to consider redundant all occurrences either beginning or ending at the same position in the text.
-This requires memorizing and sorting all occurrences of a pattern.
-
-How many redundant error configurations\footnote{Here I consider the fraction of redundant error combinations and not the fraction of redundant candidate locations reported by the filter.} are produced by seeds filters?
-For simplicity I consider exact seeds and combinations of exactly $k$ errors.
-I have to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
-However, for a fixed seed, I cover all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
-Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
-\begin{equation}
-\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
-\end{equation}
-For instance, filtration with exact seeds covers three times more combinations than required when $k=5$.
-With approximate seeds I partition the pattern in less seeds and thus I indirectly reduce filter redundancy.
-%In the next section I see how suffix filters consider only minimal error combinations.
-
 %\section{Suffix filters}
 
+% -----------------------------------------------------------------------------
+
 \section{Contiguous $q$-grams}
+
+\subsection{Principle}
 
 $q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit and Hamming distance.
@@ -280,6 +295,7 @@ Which is the biggest $q$-gram length yielding lossless filtration given $m$ and 
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
 Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
 
+% -----------------------------------------------------------------------------
 
 \section{Gapped $q$-grams}
 
@@ -608,10 +624,10 @@ Burkhardt et al. \citep{Burkhardt2001} bounding criterion. If $Q_1 \subseteq Q_2
 Such bounding criterion allows to discard parts of the search space which do not solve the considered $(m,k)$ instance.
 %The search space of seed families is more dense than the search space of single seeds (i.e. almost all seed families solve a give Non Detection instance). Thus search space pruning would not be as effective.
 
-% === Verification Methods ===
+% -----------------------------------------------------------------------------
 
-\section{Verification methods}
-\label{sec:verification}
+%\section{Verification methods}
+%\label{sec:verification}
 %\section{Myers' bit-vector algorithm}
-\subsection{Banded Myers' bit-vector algorithm}
-\subsection{Increased bit-parallelism using SIMD instructions}
+%\subsection{Banded Myers' bit-vector algorithm}
+%\subsection{Increased bit-parallelism using SIMD instructions}
