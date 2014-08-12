@@ -255,6 +255,7 @@ The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ t
 % -----------------------------------------------------------------------------
 
 \section{Contiguous $q$-grams}
+\label{sec:filtering:qgrams-ext}
 
 $q$-Gram filters rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 The first $q$-gram counting filter has been proposed in \citep{Jokinen1991}.
@@ -316,27 +317,28 @@ Thus, by substituting $\tau$, the $q$-gram length must be $q \leq \left \lfloor 
 % -----------------------------------------------------------------------------
 
 \section{Gapped $q$-grams}
+\label{sec:filtering:qgrams-gapped}
 
 The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
-The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
-The occurrence of any $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
-Gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions within $q$-grams.
-By doing so, one mismatch covers less than $q$ consecutive $q$-grams.
+The occurrence of any contiguous $q$-gram is strongly correlated to the occurrences of its preceding and following $q$-grams.
+One single edit distance error affects a cluster of $q$ consecutive $q$-grams, as evidenced by the $q$-gram lemma~\ref{lemma:qgrams}.
+Gapped $q$-grams skip characters at fixed positions by defining patterns of \emph{don't care positions}.
+Such don't care positions are immune to mismatches but not to insertions and deletions.
+Hence, this generalization of contiguous $q$-grams is useful to solve $k$-mismatches but not $k$-differences.
 
 %This fact leads to an increase of filtration specificity by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity for $k$-mismatches, but not for $k$-differences.
 
-In section~\ref{sec:intro:filtering}, I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
-I now generalize this similarity measure to consider the number of common \emph{subsequences}\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
-%and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
+Gapped $q$-grams are based on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
+A subsequence is a non-contiguous sequence of symbols of a given string.
+Hence, instead of substrings, the $Q$-gram measure counts the number of common subsequences of length $q$, whose symbols are taken from a fixed set $Q$ of positions.
 
 \begin{definition}
 A $Q$-gram is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
-I denote by $w(Q)$ the \emph{weight} of $Q$ as the cardinality of the set $|Q|$, and by $s(Q)$ the \emph{span} of $Q$ as the maximum element of the set $Q$.
+The cardinality $|Q|$ is called the \emph{weight} of $Q$ and denoted as $w(Q)$.
+The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 \end{definition}
-
-In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
-I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
-Figure~\ref{fig:qgram-shape} shows an example of $Q$-gram.
+%In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
+%I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
 
 \begin{figure}[h]
 \begin{center}
@@ -346,16 +348,15 @@ Figure~\ref{fig:qgram-shape} shows an example of $Q$-gram.
 \end{center}
 \end{figure}
 
-The first thing I remark is that, compared to contiguous $q$-grams, I obtain a higher threshold, as mismatches do not cover don't care positions.
-The $q$-gram lemma (\ref{lemma:exact-qgrams}) does not provide us anymore with a tight threshold, but only with a lower bound.
-Note that, as in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
-Indeed, the pattern of covered $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the position of the mismatches in the pattern.
+Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
+As in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
+Indeed, the pattern of occurring $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the mismatch positions.
+As mismatches do not affect don't care positions, any gapped $Q$-gram potentially yields a higher threshold than the contiguous $q$-gram of the same weight.
+Unfortunately, the $q$-gram lemma (\ref{lemma:exact-qgrams}) does not give anymore a tight threshold, but only a lower bound.
 
-%Don't care positions are immune only to mismatches but not to indels.
-
-Gapped $q$-grams raise hard combinatorial questions. A given gapped $q$-gram, 
+Gapped $q$-grams raise hard combinatorial questions.
 \begin{inparaenum}[(i)]
-\item \label{enum:qgram-non-detection} does yield a full-sensitive filter for $k$-mismatches? If so, either
+\item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield a full-sensitive filter for $k$-mismatches? If so, either
 \item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? Or alternatively,
 \item \label{enum:qgram-error} which is the maximum error $k$ for which full-sensitivity is guaranteed?
 If the answer to question~\ref{enum:qgram-nd} is negative and the filter is lossy,
