@@ -244,7 +244,7 @@ Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of
 As expected, filtration specificity increases with seed length.
 
 How to choose a good filtration scheme in practice?
-\citeauthor{Myers1994}, \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+\citeauthor{Myers1994}, \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds of $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 Yet, these results do not necessarily translate into optimal filtration schemes in practice.
 The parameterization depends on the full-text index, the verification algorithm, the statistical properties of the text.
@@ -350,23 +350,23 @@ Indeed, the pattern of covered $q$-grams does not depend on the text or pattern 
 
 %Don't care positions are immune only to mismatches but not to indels.
 
-Gapped $q$-grams raise hard combinatorial questions. Given a gapped $q$-gram, 
+Gapped $q$-grams raise hard combinatorial questions. A given gapped $q$-gram, 
 \begin{inparaenum}[(i)]
-\item \label{enum:qgram-non-detection} does it yield a full-sensitive filter for $k$-mismatches? If so, either
-\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? or 
+\item \label{enum:qgram-non-detection} does yield a full-sensitive filter for $k$-mismatches? If so, either
+\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? Or alternatively,
 \item \label{enum:qgram-error} which is the maximum error $k$ for which full-sensitivity is guaranteed?
 If the answer to question~\ref{enum:qgram-nd} is negative and the filter is lossy,
 \item \label{enum:qgram-fn} how many false negatives the filter discards?
 Considering filtration efficiency,
 \item \label{enum:qgram-fp} how many false positives the filter produces?
-If I take the weight as a simplified criterion predicting filtration efficiency, 
-\item \label{enum:qgram-weight} which is the maximum weight lossless shape?
+%If the weight is taken as a simplified criterion predicting filtration efficiency, 
+%\item \label{enum:qgram-weight} which is the maximum weight lossless shape?
 \end{inparaenum}
 
 Question~\ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005},
-the more general questions~\ref{enum:qgram-non-detection} and \ref{enum:qgram-weight} have been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
+the more general questions~\ref{enum:qgram-non-detection} has been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
 With the aim of elucidating these questions, I first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
-Afterwards, I recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-weight} and give new exact and approximate solutions.
+Afterwards, I recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-fp} and present new exact and approximate solutions.
 
 \subsection{Characteristic functions}
 
@@ -381,6 +381,7 @@ Fixed a $Q$-gram threshold $t$, the $Q$-gram detects $\sigma$ iff it occurs at l
 \subsubsection{Boolean functions}
 
 Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a similarity $\sigma$ of length $m$.
+In general, $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
@@ -396,12 +397,10 @@ T_{F}^{m}(\sigma) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\sigma)
 By definition, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
 Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{minimal}.
 
-In general, $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
-
 \subsubsection{Pseudo-boolean functions}
 
 Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
-I defined such \emph{pseudo-boolean function} as
+I define such \emph{pseudo-boolean function} as
 \begin{equation}
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
@@ -423,14 +422,14 @@ along with its complementary function
 \bar{t}_{F}^{m}(\sigma) = \sum_{Q_i \in F}{(m - s(Q_i) + 1)} - t_{F}^{m}(\sigma)
 \end{equation}
 
-The above functions expose important properties which will let us devise approximate solutions.
+The above functions expose important properties which let me devise approximate solutions.
 \emph{Nondecreasing monotonicity} of functions $t_{Q}^{m}$ and $t_{F}^{m}$ follow from nondecreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{F}^{m}$. Consequently $\bar{t}_{Q}^{m}$ and $\bar{t}_{F}^{m}$ are \emph{monotone nonincreasing}.
 From definition~\ref{eq:supermodularity}, function $t_{Q}^{m}$ is \emph{supermodular}, thus it follows that $\bar{t}_{Q}^{m}$ is \emph{submodular}.
 Since super and submodular functions are closed under non-negative linear combination, functions $t_{F}^{m}$ and $\bar{t}_{F}^{m}$ are respectively super and submodular.
 
 \subsection{Full-sensitivity}
 
-\textsc{Non Detection}~\citep{Nicolas2005}. Does a given gapped $q$-gram yield a full-sensitive filter for $k$-mismatches?
+\textsc{Non Detection}~\citep{Nicolas2005}. Does a given $Q$-gram yield a full-sensitive filter for $k$-mismatches?
 
 \subsubsection{Problem definition}
 
@@ -481,10 +480,10 @@ w.r.t.								\\
 
 Optimal threshold is fixed-parameter tractable (FPT) in the span of the $q$-gram shape.
 \citeauthor{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $O(m \cdot k \cdot 2^{s(Q)})$ \citep{Burkhardt2001}.
-\citeauthor{Kucherov2005} give an extension for $Q$-gram families in \citep{Kucherov2005}.
+\citeauthor{Kucherov2005} give an extension for $Q$-gram families \citep{Kucherov2005}.
 
-All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
-Clause $Q_2$ is considered next...
+%All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
+%Clause $Q_2$ is considered next...
 
 \subsubsection{Exact ILP solution}
 
@@ -498,7 +497,8 @@ w.r.t.							\\
 & \sigma_i \geq c_j				\\
 \end{array}
 \end{equation}
-where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$. Given the ILP solution $c^*$, I obtain the optimal threshold $t^* = |c^*|_1$.
+where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
+The optimal threshold $t^* = |c^*|_1$ is then obtained from the ILP solution $c^*$.
 
 \subsubsection{APX solution}
 
@@ -563,7 +563,7 @@ A_{ij} =
 \end{equation}
 and find the maximum error for which full-sensitivity is guaranteed as $k^* = |\bar{\sigma}^*|_1$ given the solution $\sigma^*$ to the ILP.
 
-Note that contiguous $q$-grams provide an interesting special case of this ILP.
+Contiguous $q$-grams provide an interesting special case of this ILP.
 If $A$ has the \emph{consecutive ones property}, it is \emph{totally unimodular}.
 The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{integral}.
 Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
@@ -603,36 +603,36 @@ The latter problem can be approximated via importance sampling \citep{Vazirani20
 %\subsection{Sensitivity and specificity}
 %and \ref{enum:qgram-fn}.
 
-\subsection{Optimal gapped $q$-grams}
-
-Introduced in \citep{Nicolas2005}.
-
-\subsubsection{Problem definition}
-
-\paragraph{}
-\begin{tabular}{rl}
-{\bf Instance}	&	A finite set $S$ of similarities.\\
-{\bf Solution}	&	A $Q$-gram that detects all similarities of $S$.\\
-{\bf Measure}	&	The weight $w(Q)$ of the $Q$-gram.\\
-\end{tabular}
-\\
-
-Given a set of similarities, find the $Q$-gram of maximum weight detecting all similarities.
-This applies to the DNA Homology Search Framework as well.
-%The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
-%On one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
-
-\subsubsection{Hardness and inapproximability results}
-
-Nicolas et al. \citep{Nicolas2005} perform an approximation preserving reduction from \textsc{Maximum Independent Set}.
-MWLS is NP-hard and APX-hard within $(|S|)^{0.25 - \epsilon}$ unless $P = NP$.
-If $S = \Bo^{m}_{k}$, $|S| = \binom{m}{k}$.
-
-\subsubsection{Branch-and-bound search}
-
-Burkhardt et al. \citep{Burkhardt2001} bounding criterion. If $Q_1 \subseteq Q_2$, then $t_{Q_2}(m,k) \leq t_{Q_1}(m,k)$.
-Such bounding criterion allows to discard parts of the search space which do not solve the considered $(m,k)$ instance.
-%The search space of seed families is more dense than the search space of single seeds (i.e. almost all seed families solve a give Non Detection instance). Thus search space pruning would not be as effective.
+%\subsection{Optimal gapped $q$-grams}
+%
+%Introduced in \citep{Nicolas2005}.
+%
+%\subsubsection{Problem definition}
+%
+%\paragraph{}
+%\begin{tabular}{rl}
+%{\bf Instance}	&	A finite set $S$ of similarities.\\
+%{\bf Solution}	&	A $Q$-gram that detects all similarities of $S$.\\
+%{\bf Measure}	&	The weight $w(Q)$ of the $Q$-gram.\\
+%\end{tabular}
+%\\
+%
+%Given a set of similarities, find the $Q$-gram of maximum weight detecting all similarities.
+%This applies to the DNA Homology Search Framework as well.
+%%The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
+%%On one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
+%
+%\subsubsection{Hardness and inapproximability results}
+%
+%Nicolas et al. \citep{Nicolas2005} perform an approximation preserving reduction from \textsc{Maximum Independent Set}.
+%MWLS is NP-hard and APX-hard within $(|S|)^{0.25 - \epsilon}$ unless $P = NP$.
+%If $S = \Bo^{m}_{k}$, $|S| = \binom{m}{k}$.
+%
+%\subsubsection{Branch-and-bound search}
+%
+%Burkhardt et al. \citep{Burkhardt2001} bounding criterion. If $Q_1 \subseteq Q_2$, then $t_{Q_2}(m,k) \leq t_{Q_1}(m,k)$.
+%Such bounding criterion allows to discard parts of the search space which do not solve the considered $(m,k)$ instance.
+%%The search space of seed families is more dense than the search space of single seeds (i.e. almost all seed families solve a give Non Detection instance). Thus search space pruning would not be as effective.
 
 % -----------------------------------------------------------------------------
 
