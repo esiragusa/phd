@@ -48,10 +48,20 @@ Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
   string collections.
 \newblock {\em Theoretical Computer Science\/}, {\bf 483}, pages 134--148.
 
-\bibitem[Burkhardt and Karkkainen(2001)Burkhardt and Karkkainen]{Burkhardt2001}
-Burkhardt, S. and Karkkainen, J. (2001).
+\bibitem[Burkhardt and K{\"a}rkk{\"a}inen(2001)Burkhardt and
+  K{\"a}rkk{\"a}inen]{Burkhardt2001}
+Burkhardt, S. and K{\"a}rkk{\"a}inen, J. (2001).
 \newblock Better filtering with gapped q-grams.
-\newblock In {\em CPM\/}, volume~1, pages 73--85. Springer.
+\newblock In {\em Proc. of the 12th Annual Symposium on Combinatorial Pattern
+  Matching\/}, CPM~'01, pages 73--85. Springer.
+
+\bibitem[Burkhardt \ea(1999)Burkhardt, Crauser, Ferragina, Lenhof, Rivals, and
+  Vingron]{Burkhardt1999}
+Burkhardt, S., Crauser, A., Ferragina, P., Lenhof, H.-P., Rivals, E., and
+  Vingron, M. (1999).
+\newblock q-gram based database searching using a suffix array ({QUASAR}).
+\newblock In {\em Proc. of the 3rd Annual International Conference on Research
+  in Computational Molecular Biology\/}, RECOMB~'99, pages 77--83. ACM Press.
 
 \bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
 Burrows, M. and Wheeler, D.~J. (1994).
@@ -240,6 +250,11 @@ Kasai, T., Lee, G., Arimura, H., Arikawa, S., and Park, K. (2001).
   its applications.
 \newblock In {\em CPM\/}, pages 181--192.
 
+\bibitem[Kehr \ea(2011)Kehr, Weese, and Reinert]{Kehr2011}
+Kehr, B., Weese, D., and Reinert, K. (2011).
+\newblock Stellar: fast and exact local alignments.
+\newblock {\em BMC Bioinf.}, {\bf 12}(Suppl 9), page S15.
+
 \bibitem[Knuth(1973)Knuth]{Knuth1973}
 Knuth, D. (1973).
 \newblock {\em The Art of Computer Programming. Volume 3, Addision-Wesley\/}.
@@ -421,6 +436,12 @@ Pevzner, P.~A., Tang, H., and Waterman, M.~S. (2001).
 \newblock An eulerian path approach to dna fragment assembly.
 \newblock {\em Proceedings of the National Academy of Sciences\/}, {\bf
   98}(17), pages 9748--9753.
+
+\bibitem[Rasmussen \ea(2006)Rasmussen, Stoye, and Myers]{Rasmussen2006}
+Rasmussen, K.~R., Stoye, J., and Myers, E.~W. (2006).
+\newblock Efficient q-gram filters for finding all $\varepsilon$-matches over a
+  given length.
+\newblock {\em J. Comput. Biol.}, {\bf 13}(2), pages 296--308.
 
 \bibitem[Rumble \ea(2009)Rumble, Lacroute, Dalca, Fiume, Sidow, and
   Brudno]{Rumble2009}

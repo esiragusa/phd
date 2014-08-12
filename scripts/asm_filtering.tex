@@ -100,14 +100,10 @@ It solves $k$-differences by partitioning the pattern into $k+1$ seeds, searchin
 As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text within distance $k$ from the pattern, this method finds all approximate occurrences of the pattern in the text.
 
 %\subsection{Implementation}
-%
 %\subsubsection{Filtration step}
-%
-%The filtration step can be online or offline.
-%
-%\subsubsection{Verification step}
-%
-%Discuss verification versus extension.
+%Due to its simplicity, this filtering method lends itself to both online and offline implementations.
+%In the online implementation, all seeds are preprocessed \eg in a  index.
+%In the offline implementation, seeds are looked up in the text index.
 
 %\subsubsection{Redundancy}
 \subsection{Redundancy}
@@ -230,10 +226,7 @@ Then at least one seed occurs as a factor of $x$ within distance $k_i$.
 \end{lemma}
 
 %\subsection{Implementation}
-%
-%Online.
-%Offline.
-%The pattern is partitioned in less approximate seeds, thus filter redundancy is indirectly reduced.
+%Online/Offline.
 
 \subsection{Parameterization}
 
@@ -264,9 +257,8 @@ The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ t
 \section{Contiguous $q$-grams}
 
 $q$-Gram filters rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
-%I give a counting lemma to derive a full-sensitive threshold.
-%Then, I explain how to implement a counting filter.
-%Finally, I
+The first $q$-gram counting filter has been proposed in \citep{Jokinen1991}.
+More general filters have been proposed and implemented in \citep{Burkhardt1999, Rasmussen2006, Kehr2011}.
 
 \subsection{Principle}
 
@@ -291,24 +283,35 @@ Figure~\ref{fig:qgrams-ext} illustrates.
 \end{center}
 \end{figure}
 
-\subsection{Implementation}
+%\subsection{Implementation}
+\subsection{Bucketing}
 
-When the pattern matches approximately a substring of the text, the length of such substring is $m$ for $k$-mismatches, or within $m - k$ and $m + k$ for $k$-differences.
-The dot plot representation clarifies this concept: $k$-mismatches occurrences cover one single diagonal of the dot plot, while $k$-difference occurrences are enclosed inside a parallelogram of width $2k+1$.
-%Overlapping parallelograms?
+This filtering method requires \emph{bucketing} the text in windows to enforce the counting argument of lemma \ref{lemma:qgrams}.
+Buckets are obtained by subdividing the implicit DP matrix in parallelograms and projecting them on the text.
+Figure \ref{fig:swift} illustrates this concept: any approximate occurrence of the pattern in the text spans at most $k$ diagonals and is thus enclosed inside a parallelogram of width $k+1$ \citep{Rasmussen2006}.
+Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $m - k$ and $m + k$.
+The implementations described in \citep{Rasmussen2006, Kehr2011, Weese2009} use more efficient bucketing strategies with larger, overlapping parallelograms.
 
-An online filtration algorithm scans the text and counts how many $q$-grams of the pattern fall into each parallelograms.
-Parallelograms exceeding threshold $\tau_q(m,k)$ are verified with an online method, \eg standard DP.
+\begin{figure}[h]
+\begin{center}
+\caption[Parallelogram buckets] {Parallelogram buckets. Picture from \citep{Weese2009}.}
+\label{fig:swift}
+\includegraphics[scale=0.75]{figures/swift.pdf}
+\end{center}
+\end{figure}
 
-%QUASAR, SWIFT, Stellar. RazerS.
-
-Alternatively, to speed up the filtration phase, $q$-grams can be counted with the help of an index of the text.
+This method lends itself to work in a multiple online fashion rather than offline.
+The filtration stage scans the text and counts how many $q$-grams of the pattern fall into each bucket.
+The verification stage then verifies only parallelograms exceeding threshold $\tau_q(m,k)$.
+As long as the filter scans the text, such implementation remembers only buckets covering the patterns' lengths.
+To speed up the filtration phase, an index of the text could be used to count the $q$-gram.
+However, this implementation would require more memory, both to keep the text index in memory and to bucket the whole text.
 
 \subsection{Parameterization}
 
 Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+Thus, by substituting $\tau$, the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
 
 % -----------------------------------------------------------------------------
 
