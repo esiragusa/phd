@@ -106,29 +106,28 @@ As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text w
 %In the offline implementation, seeds are looked up in the text index.
 
 %\subsubsection{Redundancy}
-\subsection{Redundancy}
-
-Redundancy is a practical problem of seed filters.
-Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds}, more than one seed reports the same candidate location.
-For instance, if two errors fall in the same seed, then at least two seeds will occur exactly.
-
-In practice, redundancy can be avoided either before or after the verification step.
-In the first case, any diagonal in the implicit DP matrix identifies a distinct pattern occurrence to be verified only once.
-All candidate locations of a pattern have to be collected, then sorted by diagonal position and checked.
-Alternatively, if the verification algorithm is fast or the number of redundant candidate locations is low, it is more appealing to verify candidate locations directly.
-Any two pattern occurrences beginning or ending at the same location in the text are redundant.
-To avoid reporting duplicate occurrences, all pattern occurrences have to be collected, sorted and checked.
-
-How many redundant error configurations are produced by filtration with exact seeds?
-Here I consider the fraction of redundant error combinations, not the fraction of redundant candidate locations reported by the filter.
-For simplicity, I consider only combinations of exactly $k$ errors.
-Filtration has to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
-However, a fixed seed covers all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
-Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
-\begin{equation}
-\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}.
-\end{equation}
-For instance, when $k=5$, filtration with exact seeds covers 3 times more combinations than required.
+%
+%Redundancy is a practical problem of seed filters.
+%Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds}, more than one seed reports the same candidate location.
+%For instance, if two errors fall in the same seed, then at least two seeds will occur exactly.
+%
+%In practice, redundancy can be avoided either before or after the verification step.
+%In the first case, any diagonal in the implicit DP matrix identifies a distinct pattern occurrence to be verified only once.
+%All candidate locations of a pattern have to be collected, then sorted by diagonal position and checked.
+%Alternatively, if the verification algorithm is fast or the number of redundant candidate locations is low, it is more appealing to verify candidate locations directly.
+%Any two pattern occurrences beginning or ending at the same location in the text are redundant.
+%To avoid reporting duplicate occurrences, all pattern occurrences have to be collected, sorted and checked.
+%
+%How many redundant error configurations are produced by filtration with exact seeds?
+%Here I consider the fraction of redundant error combinations, not the fraction of redundant candidate locations reported by the filter.
+%For simplicity, I consider only combinations of exactly $k$ errors.
+%Filtration has to cover all possible ways of distributing $k$ errors among $k+1$ seeds, that is $\binom{2k}{k}$ error combinations.
+%However, a fixed seed covers all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
+%Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
+%\begin{equation}
+%\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}.
+%\end{equation}
+%For instance, when $k=5$, filtration with exact seeds covers 3 times more combinations than required.
 
 \subsection{Efficiency}
 \label{sec:filtering:exact:efficiency}
