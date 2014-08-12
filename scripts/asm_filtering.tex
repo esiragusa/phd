@@ -311,7 +311,8 @@ However, this implementation would require more memory, both to keep the text in
 
 Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau$, the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+Thus, by substituting $\tau$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+%However, a threshold of 1 does not make filtration very specific.
 
 % -----------------------------------------------------------------------------
 
@@ -324,12 +325,12 @@ One single edit distance error affects a cluster of $q$ consecutive $q$-grams, a
 Gapped $q$-grams skip characters at fixed positions by defining patterns of \emph{don't care positions}.
 Such don't care positions are immune to mismatches but not to insertions and deletions.
 Hence, this generalization of contiguous $q$-grams is useful to solve $k$-mismatches but not $k$-differences.
+%Filtration specificity increases either by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity.
 
-%This fact leads to an increase of filtration specificity by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity for $k$-mismatches, but not for $k$-differences.
-
-Gapped $q$-grams are based on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
+Gapped $q$-grams rely on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
 A subsequence is a non-contiguous sequence of symbols of a given string.
-Hence, instead of substrings, the $Q$-gram measure counts the number of common subsequences of length $q$, whose symbols are taken from a fixed set $Q$ of positions.
+Hence, instead of substrings, filtration with gapped $q$-grams counts the number of subsequences of length $q$ common to two strings, whose positions are taken from a fixed set $Q$.
+The formal definition of gapped $q$-gram follows.
 
 \begin{definition}
 A $Q$-gram is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
@@ -448,12 +449,6 @@ Since super and submodular functions are closed under non-negative linear combin
 \textsc{Non Detection} is \emph{strongly} NP-complete \citep{Nicolas2005}.
 \citeauthor{Nicolas2005} introduce an intermediate problem, called \textsc{Soapy Set Cover}. They reduce \textsc{Exact Cover by 3-Sets} to \textsc{Soapy Set Cover} and \textsc{Soapy Set Cover} to \textsc{Non Detection}.
 Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
-
-\subsubsection{FPRAS solution}
-
-%Recalling $Q$-gram pseudo-boolean functions \eqref{sec:seed_pbf}.
-
-Describe FPRAS.
 
 
 \subsection{Optimal threshold}
@@ -599,9 +594,9 @@ Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false po
 
 \subsubsection{FPRAS solution}
 
-I reduce counting false positives to counting the number of true assignments to a boolean function in DNF.
-The latter problem can be approximated via importance sampling \citep{Vazirani2001}.
-\citeauthor{Karp1989} introduce a \emph{RPTAS} approximating the number of true points of a DNF.
+I reduce counting false positives to counting the number of true assignments of a boolean function in DNF.
+\citeauthor{Karp1989} introduce a \emph{FPRAS} approximating the number of true points of a DNF.
+This problem can be approximated via importance sampling \citep{Vazirani2001}.
 
 %\subsection{Sensitivity and specificity}
 %and \ref{enum:qgram-fn}.
