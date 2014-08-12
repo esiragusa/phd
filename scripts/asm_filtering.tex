@@ -54,7 +54,7 @@ For these reasons, I designed applications of chapters \ref{sec:masai} and \ref{
 \label{sec:filtering:exact}
 
 Filtration with exact seeds is one of the na\"ivest filtering methods for approximate string matching.
-I first explain the underlying combinatorial principle, then I discuss implementation details, and lastly give some insights on the efficiency of this method.
+I first explain the underlying combinatorial principle, then I discuss implementation details and lastly give some insights on the efficiency of this method.
 
 \subsection{Principle}
 
@@ -86,7 +86,6 @@ If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one
 It is immediate to see that any edit distance error can cover at most one seed.
 Therefore, at least one seed of $y$ will not be covered by any seed and hence occur as a factor of $x$.
 Figure~\ref{fig:seeds-ext} shows an example.
-Lemma~\ref{lemma:exact-seeds} is clearly valid for \emph{any substring} of the text within distance $k$ from the pattern.
 
 \begin{figure}[h]
 \begin{center}
@@ -96,22 +95,22 @@ Lemma~\ref{lemma:exact-seeds} is clearly valid for \emph{any substring} of the t
 \end{center}
 \end{figure}
 
-\subsection{Implementation}
+This filtering method reduces the approximate search into multiple smaller exact searches.
+It solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds into the text, and verifying all their occurrences in the text.
+As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text within distance $k$ from the pattern, this method finds all approximate occurrences of the pattern in the text.
 
-This method reduces one approximate search into multiple smaller exact searches.
-Thus, the method solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds into the text, and verifying any substring of the text of length between $[m - k, m + k]$ containing one seed of the pattern.
+%\subsection{Implementation}
+%
+%\subsubsection{Filtration step}
+%
+%The filtration step can be online or offline.
+%
+%\subsubsection{Verification step}
+%
+%Discuss verification versus extension.
 
-\subsubsection{Filtration step}
-
-The online variant can be solved by.
-
-%As Lemma~\ref{lemma:exact-seeds} is a necessary but not sufficient condition, any candidate location induced by an occurrence of some seed must be verified to insure that it corresponds to an approximate occurrence of the pattern in the text.
-
-\subsubsection{Verification step}
-
-Discuss verification versus extension.
-
-\subsubsection{Redundancy}
+%\subsubsection{Redundancy}
+\subsection{Redundancy}
 
 Redundancy is a practical problem of seed filters.
 Whenever errors are not distributed according to a worst-case combination for lemma~\ref{lemma:exact-seeds}, more than one seed reports the same candidate location.
@@ -131,7 +130,7 @@ Filtration has to cover all possible ways of distributing $k$ errors among $k+1$
 However, a fixed seed covers all combinations where the seed itself contains no errors and all $k$ errors are distributed among the remaining $k$ seeds, \ie $\binom{2k-1}{k}$ error combinations.
 Thus the fraction of error combinations covered by filtration with exact seeds over the minimal ones is
 \begin{equation}
-\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}
+\frac{(k+1)\binom{2k-1}{k}}{\binom{2k}{k}} = \frac{k+1}{2}.
 \end{equation}
 For instance, when $k=5$, filtration with exact seeds covers 3 times more combinations than required.
 
@@ -161,7 +160,7 @@ q=\left \lfloor \frac{m}{k+1} \right \rfloor
 to minimize the expected number of occurrences of any seed.
 Under these conditions, the expected number of verifications produced by filtration with exact seeds is
 \begin{eqnarray}
-E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}
+E[V] = E[H] \cdot (k + 1) < \frac{n (k + 1)}{\sigma^q}.
 \end{eqnarray}
 Nonetheless, inputs of practical interest like genomes and natural texts do not fit well the uniform Bernoulli model.
 On those texts, uniform seed length often leads to suboptimal filtration.
@@ -216,37 +215,45 @@ Figure~\ref{fig:seeds-apx} illustrates.
 \end{center}
 \end{figure}
 
-It is not obligatory to assign the same distance threshold to all seeds.
-%I partition the pattern $p$ in non-overlapping seeds $p^1, p^2, \dots, p^s$.
-Indeed, each seed $p^i$ can get assigned an arbitrary distance threshold $k_i$, as long as the following constraint is satisfied:
+Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
+I give here a more general definition of approximate seeds.
+
+\begin{lemma}
+\label{lemma:apx-seeds-var}
+Let $x,y$ be two strings \st $d_E(x,y) = k$.
+Partition $y$ into $s$ non-overlapping seeds $y^1, y^2, \dots, y^s$.
+Assign an arbitrary distance threshold $k_i$ to each seed $y^i$, satisfying the following constraint:
 \begin{equation}
 s + \sum_{i=1}^{s}{k_i} > k.
 \end{equation}
+Then at least one seed occurs as a factor of $x$ within distance $k_i$.
+\end{lemma}
 
-\subsection{Implementation}
-
-Online.
-Offline.
-
-The pattern is partitioned in less approximate seeds, thus filter redundancy is indirectly reduced.
+%\subsection{Implementation}
+%
+%Online.
+%Offline.
+%The pattern is partitioned in less approximate seeds, thus filter redundancy is indirectly reduced.
 
 \subsection{Parameterization}
 
 Approximate seeds provide filtration schemes of increasing specificity.
 The fastest but weakest scheme is given by $s=k+1$, while the most specific filtration scheme is obtained for $s=1$ \ie perfect filtration without any verification step.
-Alternatively, filtration specificity is controlled by $q$.
-Fixing the minimum seed length $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
-As expected, filtration specificity increases with the minimum seed length $q$.
+Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
+Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
+As expected, filtration specificity increases with seed length.
 
-In practice, it is not easy to find an optimal filtration scheme.
-Both \citeauthor{Myers1994}, and \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameters. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+How to choose a good filtration scheme in practice?
+\citeauthor{Myers1994}, \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that the optimal number of seeds $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
-However, these results did not help us in practice.
-The optimal partitioning depends on the full-text index, the verification algorithm, the statistical properties of the text.
-A difference of one from the optimal number of seeds can result in a runtime penalty of an order of magnitude.
+Yet, these results do not necessarily translate into optimal filtration schemes in practice.
+The parameterization depends on the full-text index, the verification algorithm, the statistical properties of the text.
+Missing the optimal number of seeds by one often results in a runtime penalty of an order of magnitude.
 
-Fixed $q$, I distribute evenly distance thresholds because seeds with the highest threshold dominate the overall filtration time.
-Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ and to the remaining seeds distance $\lfloor k/s \rfloor - 1$ \citep{Siragusa2013}.
+Having established the number of seeds, or their length, thresholds have to be assigned.
+Lemma \ref{lemma:apx-seeds-var} allows to assign arbitrary distance thresholds.
+In practice, it is convenient to distribute distance thresholds evenly, as seeds with the highest threshold dominate the overall filtration time.
+The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ to $(k \bmod{s}) + 1$ seeds and distance $\lfloor k/s \rfloor - 1$ to the remaining seeds \citep{Siragusa2013}.
 
 % -----------------------------------------------------------------------------
 
@@ -256,19 +263,25 @@ Therefore, I assign to $(k \bmod{s}) + 1$ seeds distance $\lfloor k/s \rfloor$ a
 
 \section{Contiguous $q$-grams}
 
+$q$-Gram filters rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
+%I give a counting lemma to derive a full-sensitive threshold.
+%Then, I explain how to implement a counting filter.
+%Finally, I
+
 \subsection{Principle}
 
-$q$-Gram filters are based on the so-called $q$-gram similarity measure $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
-The following lemma relates $q$-gram similarity to edit and Hamming distance.
+The counting argument of contiguous $q$-gram filters is based on the so-called \emph{$q$-gram similarity measure} $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
+The following lemma relates $q$-gram similarity to edit distance.
 It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ of any two strings $x,y$ within edit distance $k$.
-This means that $\tau_q(x,y) \geq k$ is a necessary but not sufficient condition for $d_E(x,y) \leq k$.
+As for seed filters, the result then easily translates to $k$-differences.
+
 \begin{lemma}[The $q$-gram lemma] \citep{Jokinen1991}
 \label{lemma:qgrams}
 Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ and $|x| = m$. Then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
 The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors ($kq$, \ie at most $q$ per error).
+The threshold function $\tau$ depends only on parameters $q,m,k$ and not on the specific $q$-grams.
 Figure~\ref{fig:qgrams-ext} illustrates.
-Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ and not on any specific $q$-gram.
 
 \begin{figure}[h]
 \begin{center}
@@ -280,16 +293,16 @@ Note how the threshold function $\tau$ depends only on the parameters $q,m,k$ an
 
 \subsection{Implementation}
 
-Lemma~\ref{lemma:qgrams} itself does not give us a direct solution to approximate string matching.
-Indeed, it considers the edit distance between two arbitrary strings, while in approximate string matching the pattern can match any substring of the text.
-More precisely, if the pattern approximately matches any substring $s$ of $t$, then in the case of $k$-mismatches $s$ must have length $m$; in the case of $k$-difference, the length of $s$ must be within $m - k$ and $m + k$.
-The dot plot representation helps us to visualize this concept: $k$-mismatches occurrences cover one single diagonal of the dot plot, while $k$-difference occurrences are enclosed inside a parallelogram of side $2k+1$.
-
-%How do I use lemma~\ref{lemma:qgrams} to solve approximate string matching?
-Therefore, I can design an online filtration algorithm scanning the text and counting how many $q$-grams of the pattern fall into each parallelograms.
-Only the parallelograms exceeding the threshold $\tau_q(m,k)$ have to be verified with an online method, \eg standard DP.
-Alternatively, to speed up the filtration phase, I can count the $q$-grams with the help of a substring index.
+When the pattern matches approximately a substring of the text, the length of such substring is $m$ for $k$-mismatches, or within $m - k$ and $m + k$ for $k$-differences.
+The dot plot representation clarifies this concept: $k$-mismatches occurrences cover one single diagonal of the dot plot, while $k$-difference occurrences are enclosed inside a parallelogram of width $2k+1$.
 %Overlapping parallelograms?
+
+An online filtration algorithm scans the text and counts how many $q$-grams of the pattern fall into each parallelograms.
+Parallelograms exceeding threshold $\tau_q(m,k)$ are verified with an online method, \eg standard DP.
+
+%QUASAR, SWIFT, Stellar. RazerS.
+
+Alternatively, to speed up the filtration phase, $q$-grams can be counted with the help of an index of the text.
 
 \subsection{Parameterization}
 
@@ -301,20 +314,15 @@ Thus, by substituting $\tau$, I obtain $q \leq \left \lfloor \frac{m}{k+1} \righ
 
 \section{Gapped $q$-grams}
 
-%The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
-%The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
-%Thus, the occurrence of a $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
-%Therefore, gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions inside all $q$-grams.
-%By doing so, a mismatch does not cover anymore all consecutive $q$-grams.
-%As less $q$-grams are now covered by mismatches, I can
-%\begin{inparaenum}[(i)]
-%\item increase the filtering threshold or
-%\item increase the number $q$ of considered characters,
-%\end{inparaenum}
-%in either cases preserving full-sensitivity.
-%Note that however, this concept poorly extends to edit distance, and the design of gapped $q$-grams is hard.
+The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
+The $q$-gram lemma~\ref{lemma:qgrams} shows that one error covers $q$ consecutive $q$-grams.
+The occurrence of any $q$-gram is strongly correlated to the occurrence of its preceding and following $q$-grams.
+Gapped $q$-grams introduce \emph{don't care positions} to skip characters at fixed positions within $q$-grams.
+By doing so, one mismatch covers less than $q$ consecutive $q$-grams.
 
-In section~\ref{sec:intro:filtering} I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
+%This fact leads to an increase of filtration specificity by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity for $k$-mismatches, but not for $k$-differences.
+
+In section~\ref{sec:intro:filtering}, I introduced the $q$-gram similarity measure as the number of substrings of length $q$ common to two given strings.
 I now generalize this similarity measure to consider the number of common \emph{subsequences}\footnote{A subsequence is a non-contiguous sequence of symbols of a given string.} of length $q$ whose symbols are taken from a fixed set $Q$ of positions.
 %and related it to the edit and Hamming distance measures, with the intent of devising filtration criteria for approximate string matching.
 
