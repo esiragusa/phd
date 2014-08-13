@@ -119,6 +119,11 @@ Derrien, T., Estell\'e, J., Marco~Sola, S., Knowles, D.~G., Raineri, E.,
 \newblock Fast computation and applications of genome mappability.
 \newblock {\em PLoS ONE\/}, {\bf 7}(1), page e30377.
 
+\bibitem[D\"oring \ea(2008)D\"oring, Weese, Rausch, and Reinert]{Doering2008}
+D\"oring, A., Weese, D., Rausch, T., and Reinert, K. (2008).
+\newblock {SeqAn} an efficient, generic {C}++ library for sequence analysis.
+\newblock {\em BMC Bioinformatics\/}, {\bf 9}, page~11.
+
 \bibitem[Elias(1975)Elias]{Elias1975}
 Elias, P. (1975).
 \newblock Universal codeword sets and representations of the integers.
@@ -164,6 +169,11 @@ Ferragina, P. and Manzini, G. (2001).
 Fonseca, N.~A., Rung, J., Brazma, A., and Marioni, J.~C. (2012).
 \newblock Tools for mapping high-throughput sequencing data.
 \newblock {\em Bioinformatics\/}, {\bf 28}(24), pages 3169--3177.
+
+\bibitem[Galil and Giancarlo(1988)Galil and Giancarlo]{Galil1988}
+Galil, Z. and Giancarlo, R. (1988).
+\newblock Data structures and algorithms for approximate string matching.
+\newblock {\em Journal of Complexity\/}, {\bf 4}(1), pages 33--72.
 
 \bibitem[Gallant \ea(1980)Gallant, Maier, and Astorer]{Gallant1980}
 Gallant, J., Maier, D., and Astorer, J. (1980).

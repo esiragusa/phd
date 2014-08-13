@@ -503,7 +503,7 @@ Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Sc
 
 The cyclic shifts matrix is conceptual and does not have to be to constructed explicitly in order to derive the BWT of a text.
 The BWT can be obtained in linear time by scanning the suffix array $A$ and assigning to the $i$-th BWT symbol the text character $s_{A[i]-1}$.
-As constructing the suffix array is not desirable, due to its space consumption of $n \log{n}$ bits, various direct BWT construction algorithms working within $o(n)$ bits plus constant space have been recently proposed\citep{Bauer2013, Crochemore2013}.
+As constructing the suffix array is not desirable, due to its space consumption of $n \log{n}$ bits, various direct BWT construction algorithms working within $o(n)$ bits plus constant space have been recently proposed in \citep{Bauer2013, Crochemore2013}.
 
 \subsubsection{Inversion}
 
@@ -851,9 +851,9 @@ I first consider a simple algorithm performing top-down traversals bounded by de
 Then, I present algorithms for exact string matching, $k$-mismatches and $k$-differences.
 I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of exact string matching and $k$-mismatches.
 
-At the same time, I perform an experimental evaluation of each algorithm on various suffix trie implementations.
+At the same time, I perform an experimental evaluation of each of these algorithms on various suffix trie implementations.
 As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the interleaved FM-index with two-levels rank dictionaries (FM-2), the wavelet tree FM-index with two-levels rank dictionaries (FM-WT).
-As text, I consider the C.~elegans reference genome (WormBase WS195), \ie a collection of 5 DNA strings of about 100~MB total length.
+As text, I consider the C.~elegans reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
 As patterns, I use sequences extrapolated from an Illumina sequencing run (SRR065390).
 The evaluation reports \emph{average} runtimes per pattern, both in single and multiple string matching variants.
 
@@ -897,7 +897,7 @@ The experimental evaluation provides a first glimpse on what are the practical p
 
 \subsection{Exact string matching}
 
-I start by giving a simple algorithm performing exact string matching on a suffix trie.
+I now give a simple algorithm performing exact string matching on a generic suffix trie.
 I assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
@@ -947,14 +947,17 @@ If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in l
 
 \subsection{Backtracking $k$-mismatches}
 
-I now give a backtracking algorithm solving $k$-mismatches on a generic suffix trie.
-The method of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993, Baeza1999}.
-According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
+I now give an algorithm that solves $k$-mismatches by backtracking a generic suffix trie.
+The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993}.
+Variations of this method, in conjunction with some FM-index implementation, recently became in vogue for bioinformatics applications \citep{Langmead2009, Li2009}.
 
 Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, the algorithm incrementally computes the distance between the query and the spelled string.
+While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
 If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
 Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+
+%The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
+%According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -989,7 +992,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 
 %\begin{figure}[h]
 %\begin{center}
-%\caption{Approximate string matching on a suffix trie.}
+%\caption[Backtracking $k$-mismatches]{$k$-mismatches on a suffix trie.}
 %\label{fig:st-hamming}
 %\input{figures/strie_exact.tikz}
 %\end{center}
@@ -1005,15 +1008,43 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 
 \subsection{Backtracking $k$-differences}
 
-I can compute $k$-differences on a suffix trie in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
+I present two alternative algorithms for $k$-differences.
+Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors while traversing the suffix trie. Conversely, algorithm~\ref{alg:st-edit} computes the edit distance between the pattern and any branch of the suffix trie.
+This latter algorithm necessitates of a method capable of checking whether the edit distance at any node is within the imposed threshold $k$.
 
-In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
-However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
-Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
+%Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
+%Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
+%To obtain a better theoretical runtime, \citep{Navarro2000} consider an algorithm that computes in $\Oh(1)$ per node.
 
-Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
-Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
-
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
+\Algorithm{KDifferences}{$t,p,e$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+ 			    & $p$ : pointer to the root node of the trie of the patterns\\
+ 			    & $e$ : integer bounding the number of errors\\
+\textbf{Output} & list of all occurrences of the pattern in the text\\
+\end{tabular}
+\begin{algorithmic}[1]
+\If {$e = k$}
+	\State \Call{ExactSearch}{$t,p$}
+\Else 
+	\State \Call{KDifferences}{$t,p_{2..|p|},e-1$}
+	\ForAll {$\Cn \in \Ci(\Tn)$}
+		\State \Call{KDifferences}{$t,p,e-1$}
+		\If {$\Call{label}{\Cn} = p_1$}
+			\State \Call{KDifferences}{$t,p_{2..|p|},e$}
+		\Else
+			\State \Call{KDifferences}{$t,p_{2..|p|},e-1$}
+		\EndIf
+	\EndFor
+\EndIf
+\end{algorithmic}
+\label{alg:st-edit-explicit}
+\end{algorithm}
+\end{minipage}
+\end{center}
 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -1022,7 +1053,7 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
  			    & $p$ : pointer to the root node of the trie of the patterns\\
- 			    & $D$ : vector of integers\\
+ 			    & $D$ : vector of integers representing a DP column\\
 \textbf{Output} & list of all occurrences of the pattern in the text\\
 \end{tabular}
 \begin{algorithmic}[1]
@@ -1032,7 +1063,9 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 	\If {\Call{goDown}{$t$}}
 		\Repeat
 			\State {$D' \gets$ \Call{DP}{$D, \Call{label}{t}, p$}}
+			\State \Call{goNext}{$p$}
 			\State \Call{KDifferences}{$t,p,D'$}
+			\State \Call{goPrevious}{$p$}
 		\Until {\Call{goRight}{$t$}}
 	\EndIf
 \EndIf
@@ -1042,28 +1075,6 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 \end{minipage}
 \end{center}
 
-%\begin{algorithm}[h]
-%\caption{$k$-differences on a suffix trie.}
-%\label{alg:st-edit-explicit}
-%\begin{algorithmic}[1]
-%\Procedure{KDifferences}{$\Tn,p,e$}
-%	\If {$e = 0$}
-%		\State \Call{ExactSearch}{$\Tn,p$}
-%	\Else 
-%		\State \Call{KDifferences}{$\Tn,p_{2..|p|},e-1$}
-%		\ForAll {$\Cn \in \Ci(\Tn)$}
-%			\State \Call{KDifferences}{$\Cn,p,e-1$}
-%			\If {$label(\Cn) = p_1$}
-%				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e$}
-%			\Else
-%				\State \Call{KDifferences}{$\Cn,p_{2..|p|},e-1$}
-%			\EndIf
-%		\EndFor
-%	\EndIf
-%\EndProcedure
-%\end{algorithmic}
-%\end{algorithm}
-%
 %\begin{algorithm}[h]
 %\caption{$k$-difference on a suffix trie.}
 %\label{alg:st-edit}
@@ -1079,9 +1090,11 @@ Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
 
 \subsection{Multiple exact string matching}
 
-I start by giving the simple exact string matching algorithm using suffix trie iterators.
+Before turning to multiple $k$-mismatches, I describe a simpler multiple exact string matching algorithm.
+Algorithm \ref{alg:st-exact-multi} necessitates of the trie of the patterns, in addition to the suffix trie of the text.
+This algorithm searches simultaneously in the suffix trie all patterns represented by the trie.
+The traversal of this algorithm is the intersection between the labeled branches of the two tries.
 
-%Multiple exact string matching on a suffix trie.
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1108,6 +1121,8 @@ I start by giving the simple exact string matching algorithm using suffix trie i
 \end{algorithm}
 \end{minipage}
 \end{center}
+
+In the evaluation, I compare algorithm~\ref{alg:st-exact-multi} (Dfs) with algorithm~\ref{alg:st-exact} processing patterns in random order (Naive) and in lexicographic order (Sorted).
 
 \begin{figure}[h]
 \begin{center}
