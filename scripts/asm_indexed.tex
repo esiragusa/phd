@@ -864,7 +864,7 @@ The evaluation reports \emph{average} runtimes per pattern, both in single and m
 \subsection{Top-down traversal bounded by depth}
 
 Before turning to string matching algorithms, I present a simple traversal algorithm.
-Algorithm \ref{alg:st-dfs} performs a top-down traversal in depth-first layout of a suffix trie.
+Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in depth-first order.
 The traversal is bounded, \ie it stops after visiting any node at depth $d$.
 This algorithm helps to comprehend subsequent algorithms backtracking suffix tries.
 The experimental evaluation provides a first glimpse on what are the practical performances of various suffix trie implementations.
@@ -1014,7 +1014,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 
 I present two alternative algorithms for $k$-differences.
 Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors while traversing the suffix trie. Conversely, algorithm~\ref{alg:st-edit} computes the edit distance between the pattern and any branch of the suffix trie.
-This latter algorithm necessitates of a method capable of checking whether the edit distance at any node is within the imposed threshold $k$.
+This latter algorithm necessitates of a method capable of checking incrementally whether the edit distance at any node is within the imposed threshold $k$.
 
 %Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
 %Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
@@ -1033,16 +1033,19 @@ This latter algorithm necessitates of a method capable of checking whether the e
 \begin{algorithmic}[1]
 \If {$e = k$}
 	\State \Call{ExactSearch}{$t,p$}
-\Else 
-	\State \Call{KDifferences}{$t,p_{2..|p|},e-1$}
-	\ForAll {$\Cn \in \Ci(\Tn)$}
-		\State \Call{KDifferences}{$t,p,e-1$}
-		\If {$\Call{label}{\Cn} = p_1$}
-			\State \Call{KDifferences}{$t,p_{2..|p|},e$}
-		\Else
-			\State \Call{KDifferences}{$t,p_{2..|p|},e-1$}
-		\EndIf
-	\EndFor
+\Else
+	\State \Call{goNext}{$p$}
+	\State \Call{KDifferences}{$t,p,e+1$}
+	\State \Call{goPrevious}{$p$}
+	\If {\Call{goDown}{$t$}}
+		\Repeat
+			\State \Call{KDifferences}{$t,p,e+1$}
+			\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
+			\State \Call{goNext}{$p$}
+			\State \Call{KDifferences}{$t,p,e + d$}
+			\State \Call{goPrevious}{$p$}
+		\Until {\Call{goRight}{$t$}}
+	\EndIf
 \EndIf
 \end{algorithmic}
 \label{alg:st-edit-explicit}
