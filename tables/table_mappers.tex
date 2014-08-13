@@ -1,31 +1,31 @@
 % latex table generated in R 2.15.0 by xtable 1.7-0 package
 % Sun Jul  1 11:47:28 2012
-\begin{tabular}{lcccccccccccccccc}
+\begin{tabular}{lccccccccccccccc}
 \toprule 
-& \multicolumn{4}{c}{ sequencer } & & \multicolumn{3}{c}{ paradigm } & & \multicolumn{3}{c}{ alignment } & & \multicolumn{3}{c}{ index }\\
-\cmidrule{2-5} \cmidrule{7-9} \cmidrule{11-13} \cmidrule{15-17}
-& { Illumina } & {Ion}  & { 454 } & {SOLiD} & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {type} & {optimal} & {algorithm} & \phantom{-} & { type } & { reference } & { reads } \\ 
+& \multicolumn{3}{c}{ sequencer } & & \multicolumn{3}{c}{ paradigm } & & \multicolumn{3}{c}{ alignment } & & \multicolumn{3}{c}{ index }\\
+\cmidrule{2-4} \cmidrule{6-8} \cmidrule{10-12} \cmidrule{14-16}
+& { Illumina } & {Ion}  & { 454 } & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {type} & {optimal} & {method} & \phantom{-} & { type } & { reference } & { reads } \\ 
 \midrule
-{Bowtie} & $\leq 50$ & \xmark & \xmark & \cmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-{Bowtie~2} & $\geq 75$ & \cmark & \cmark & \xmark & & \cmark & \bullet & \bullet & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
+{Bowtie} & $\leq 75$~bp & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Bowtie~2} & $\geq 75$~bp & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
 \\
-{BWA} & $\leq 100$ & \xmark & \xmark & \xmark & & \cmark & \xmark & \bullet & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-{BWA-SW} & \xmark & \cmark & \cmark & \xmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \cmark \\
+{BWA} & \cmark & \xmark & \xmark & & \cmark & \xmark & \bullet & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{BWA-SW} & \xmark & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \cmark \\
 \\
-{Soap~2} & $\leq 75$ & \xmark & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Soap~2} & $\leq 75$~bp & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
-{RazerS} & $\geq 50$ & \xmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
-{RazerS~3} & $\geq 50$ & \cmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
+{RazerS} & \cmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
+{RazerS~3} & \cmark & \cmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
 \\
-{SHRiMP~2} & \cmark & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
+{SHRiMP~2} & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
 \\
-{mrsFast} & $\leq 75$ & \xmark & \xmark & \xmark & & \bullet & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
-{mrFast} & $\leq 125$ & \xmark & \xmark & \xmark & & \bullet & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrsFast} & $\leq 75$~bp & \xmark & \xmark & & \bullet & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrFast} & $\leq 125$~bp & \xmark & \xmark & & \bullet & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
 \\
-{GEM} & \cmark & \cmark & \xmark & \cmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
+{GEM} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
 \\
-{Masai} & \cmark & \xmark & \xmark & \xmark & & \cmark & \bullet & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
-{Yara} & \cmark & \cmark & \xmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \xmark \\
+{Masai} & \cmark & \xmark & \xmark & & \cmark & \bullet & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
+{Yara} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \xmark \\
 
 
 %{Masai} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
