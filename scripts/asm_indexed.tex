@@ -15,16 +15,17 @@ Over the last years, a significant effort has been devoted to the engineering of
 In particular, much research has been done into designing succinct (or even compressed) data structures providing efficient query times using space proportional to that of the uncompressed (or compressed) input.
 Thanks to this research, I am able to index the human genome in as little as 3.5~GB of memory and at the same time improve query time over classic indices.
 
-In this chapter, I introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently a succinct full-text index (an uncompressed variant of the original FM-index).
-Afterwards I give generic approximate string matching algorithms working on any of these data structures.
+In this chapter, I introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently succinct full-text indices (uncompressed FM-index variants).
+Afterwards, I give generic string matching algorithms working on any of these data structures and at the same time provide experimental evaluations.
+A \CC implementation of all algorithms and data structures is publicly available in source form within the SeqAn library \citep{Doering2008}.
 
 \section{Classic full-text indices}
 
 \subsection{Suffix array}
 
-The key idea of the suffix array \citep{Manber1990} is that most information explicitly encoded in a suffix trie is superfluous for pattern matching.
+The key idea of the suffix array \citep{Manber1990} is that most information explicitly encoded in a suffix trie is superfluous for string matching.
 The explicit representation of suffix trie's internal nodes and outgoing edges can be therefore omitted.
-Leaves pointing to the sorted suffixes are sufficient to perform exact pattern matching or even trie traversals.
+Leaves pointing to the sorted suffixes are sufficient to perform exact string matching or even trie traversals.
 Indeed, any path from the root to an internal node can computed on the fly via binary search over the leaves.
 In this way, an additional logarithmic time complexity has to be paid to reduce space by a linear factor.
 
@@ -457,7 +458,7 @@ The former property allows us to reconstruct the original string from its BWT, t
 Thanks to these two properties, the BWT has been recognized as a fundamental method for text compression and practically used in the bzip2 \citep{Seward1996} tool.
 
 More recently, \citeauthor{Ferragina2000} proposed the BWT as a tool for full-text indexing.
-They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact pattern matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
+They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact string matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular Bioinformatics tools \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the next subsections I give the fundamental ideas behind the BWT and the FM-index.
@@ -845,9 +846,25 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 \section{Algorithms}
 
-\subsection{Bounded top-down traversal}
+In this section, I give generic string matching algorithms, working on any of the data structures presented so far.
+I first consider a simple algorithm performing top-down traversals bounded by depth.
+Then, I present algorithms for exact string matching, $k$-mismatches and $k$-differences.
+I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of exact string matching and $k$-mismatches.
 
-%Top-down traversal of a suffix trie bounded by depth.
+At the same time, I perform an experimental evaluation of each algorithm on various suffix trie implementations.
+As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the interleaved FM-index with two-levels rank dictionaries (FM-2), the wavelet tree FM-index with two-levels rank dictionaries (FM-WT).
+As text, I consider the C.~elegans reference genome (WormBase WS195), \ie a collection of 5 DNA strings of about 100~MB total length.
+As patterns, I use sequences extrapolated from an Illumina sequencing run (SRR065390).
+The evaluation reports \emph{average} runtimes per pattern, both in single and multiple string matching variants.
+
+\subsection{Top-down traversal bounded by depth}
+
+Before turning to string matching algorithms, I present a simple traversal algorithm.
+Algorithm \ref{alg:st-dfs} performs a top-down traversal in depth-first layout of a suffix trie.
+The traversal is bounded, \ie it stops after visiting any node at depth $d$.
+This algorithm helps to comprehend subsequent algorithms backtracking suffix tries.
+The experimental evaluation provides a first glimpse on what are the practical performances of various suffix trie implementations.
+
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
@@ -878,14 +895,11 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 \end{center}
 \end{figure}
 
-\subsection{Exact pattern matching}
+\subsection{Exact string matching}
 
-Using the above generic top-down traversal operations, I am able to formulate generic string matching algorithms.
-Here I formulate the simple algorithm for exact string matching on a suffix trie.
-%Later, I give analogous algorithms solving $k$-mismatches and $k$-differences by means of a backtracking top-down traversal \citep{Ukkonen1993, Baeza1999}.
-
+I start by giving a simple algorithm performing exact string matching on a suffix trie.
 I assume the text $t$ to be indexed by its suffix trie $\Ti$.
-Algorithm~\ref{alg:st-exact} searches a pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
+Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
@@ -913,26 +927,35 @@ If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in l
 \end{minipage}
 \end{center}
 
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Exact string matching on a suffix trie]{Exact string matching on a suffix trie. The pattern NA is searched exactly in the text ANANAS\$.}
+%\label{fig:st-exact}
+%\input{figures/strie_exact.tikz}
+%\end{center}
+%\end{figure}
+
+%I now benchmark algorithm~\ref{alg:st-exact}.
+
 \begin{figure}[h]
 \begin{center}
-\caption[Exact string matching on a suffix tree]{Exact string matching on a suffix tree. The pattern NA is searched exactly in the text ANANAS\$.}
-\label{fig:st-exact}
-\input{figures/strie_exact.tikz}
+\caption[Exact string matching runtime]{Runtime of exact string matching on various suffix trie implementations.}
+\label{fig:query-dna-exact}
+\includegraphics{query.dna.celegans.0.pdf}
 \end{center}
 \end{figure}
 
-I now benchmark algorithm~\ref{alg:st-exact}.
-
 \subsection{Backtracking $k$-mismatches}
 
-I show how to solve $k$-mismatches by backtracking \citep{Ukkonen1993, Baeza1999} on the suffix trie $\Ti$, in average time sublinear in $n$ \citep{Navarro2000}.
-A top-down traversal on $\Ti$ spells incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, I incrementally compute the distance between the query and the spelled string.
-If the computed distance exceeds $k$, the traversal stops and proceeds on the next branch.
-Conversely, if the pattern $p$ has been completely spelled and the traversal ended up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
-See algorithm~\ref{alg:st-hamming}.
+I now give a backtracking algorithm solving $k$-mismatches on a generic suffix trie.
+The method of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993, Baeza1999}.
+According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
 
-%$k$-mismatches on a suffix trie.
+Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, the algorithm incrementally computes the distance between the query and the spelled string.
+If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -964,11 +987,34 @@ See algorithm~\ref{alg:st-hamming}.
 \end{minipage}
 \end{center}
 
+%\begin{figure}[h]
+%\begin{center}
+%\caption{Approximate string matching on a suffix trie.}
+%\label{fig:st-hamming}
+%\input{figures/strie_exact.tikz}
+%\end{center}
+%\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\caption[$k$-mismatches runtime]{Runtime of $k$-mismatches on various suffix trie implementations.}
+\label{fig:query-dna-apx}
+\includegraphics{query.dna.celegans.1.pdf}
+\end{center}
+\end{figure}
+
 \subsection{Backtracking $k$-differences}
 
-Algorithm for $k$-differences.
+I can compute $k$-differences on a suffix trie in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
-%$k$-differences on a suffix trie.
+In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
+However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
+Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
+
+Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
+Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
+
+
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -995,8 +1041,6 @@ Algorithm for $k$-differences.
 \end{algorithm}
 \end{minipage}
 \end{center}
-
-I can compute $k$-differences on a suffix tree in two different ways. Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors by recursing on the suffix trie. Algorithm~\ref{alg:st-edit} computes the edit distance on the suffix trie.
 
 %\begin{algorithm}[h]
 %\caption{$k$-differences on a suffix trie.}
@@ -1032,40 +1076,8 @@ I can compute $k$-differences on a suffix tree in two different ways. Algorithm~
 %\end{algorithmic}
 %\end{algorithm}
 
-In algorithm~\ref{alg:st-edit}, any online method can be used to compute the edit distance.
-However, for theoretical considerations, it is important to consider an algorithm which computes in $\Oh(1)$ per node.
-Note that it is sufficient to have an algorithm capable of checking whether the current edit distance is within the imposed threshold $k$.
 
-Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
-Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
-
-
-\begin{figure}[h]
-\begin{center}
-\caption[Exact string matching runtime]{Runtime of exact string matching on various suffix trie implementations.}
-\label{fig:query-dna-exact}
-\includegraphics{query.dna.celegans.0.pdf}
-\end{center}
-\end{figure}
-
-\begin{figure}[h]
-\begin{center}
-\caption{Approximate string matching on a suffix trie.}
-\label{fig:st-hamming}
-\input{figures/strie_exact.tikz}
-\end{center}
-\end{figure}
-
-\begin{figure}[h]
-\begin{center}
-\caption[$k$-mismatches runtime]{Runtime of $k$-mismatches on various suffix trie implementations.}
-\label{fig:query-dna-apx}
-\includegraphics{query.dna.celegans.1.pdf}
-\end{center}
-\end{figure}
-
-
-\subsection{Multiple backtracking}
+\subsection{Multiple exact string matching}
 
 I start by giving the simple exact string matching algorithm using suffix trie iterators.
 
@@ -1097,7 +1109,16 @@ I start by giving the simple exact string matching algorithm using suffix trie i
 \end{minipage}
 \end{center}
 
-%Multiple $k$-mismatches on a suffix trie.
+\begin{figure}[h]
+\begin{center}
+\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations.}
+\label{fig:query-dna-exact-multi}
+\includegraphics{multi.dna.celegans.0.15.pdf}
+\end{center}
+\end{figure}
+
+\subsection{Multiple $k$-mismatches}
+
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1130,14 +1151,6 @@ I start by giving the simple exact string matching algorithm using suffix trie i
 \end{algorithm}
 \end{minipage}
 \end{center}
-
-\begin{figure}[h]
-\begin{center}
-\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations.}
-\label{fig:query-dna-exact-multi}
-\includegraphics{multi.dna.celegans.0.15.pdf}
-\end{center}
-\end{figure}
 
 \begin{figure}[h]
 \begin{center}
