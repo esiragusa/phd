@@ -14,29 +14,18 @@
 \\
 {Soap~2} & $\leq 75$~bp & \xmark & \xmark & & \cmark & \cmark & \bullet & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
-{RazerS} & \cmark & \xmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
-{RazerS~3} & \cmark & \cmark & \xmark & & \bullet & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
+{RazerS} & \cmark & \xmark & \xmark & & \xmark & \bullet & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
+{RazerS~3} & \cmark & \cmark & \xmark & & \xmark & \bullet & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
 \\
-{SHRiMP~2} & \cmark & \cmark & \cmark & & \cmark & \bullet & \bullet & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
+{SHRiMP~2} & \cmark & \cmark & \cmark & & \cmark & \xmark & \cmark & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
 \\
-{mrsFast} & $\leq 75$~bp & \xmark & \xmark & & \bullet & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
-{mrFast} & $\leq 125$~bp & \xmark & \xmark & & \bullet & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrsFast} & $\leq 75$~bp & \xmark & \xmark & & \xmark & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrFast} & $\leq 125$~bp & \xmark & \xmark & & \xmark & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
 \\
 {GEM} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
 \\
-{Masai} & \cmark & \xmark & \xmark & & \cmark & \bullet & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
-{Yara} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \xmark \\
+{Masai} & \cmark & \xmark & \xmark & & \bullet & \xmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
+{Yara} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
 
-
-%{Masai} & \emph{edit distance} & \emph{approximate seeds} & \emph{generic} & \cmark & \cmark \\ 
-%  {Bowtie\,2} & qualities + affine & exact seeds &  FM-index & \cmark & \xmark \\ 
-%  {BWA} & qualities & backtracking & FM-index & \cmark & \xmark \\
-%  {Soap\,2} & hamming + qualities & backtracking  & FM-index & \cmark & \xmark \\ 
-%
-%  {RazerS} & edit distance & $q$-grams & $q$-gram index & \xmark & \cmark  \\ 
-%  {RazerS\,3 } & edit distance & exact seeds & $q$-gram index & \xmark & \cmark  \\ 
-%
-%  {mrsFAST } & hamming distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
-%  {mrFAST } & edit distance & exact seeds & $q$-gram index & \cmark & \cmark \\ 
 \bottomrule
 \end{tabular}

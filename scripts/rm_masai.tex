@@ -186,7 +186,7 @@ A read is mapped \emph{correctly} if the mapper reports its original location,
 and it is mapped \emph{uniquely} if the mapper reports only one location.
 Rabema defines \emph{recall} to be the fraction of reads which were correctly mapped and \emph{precision} the fraction of uniquely mapped reads that were mapped correctly.
 
-Similarly to \\citep{Langmead2012}, I used the read simulator Mason \citep{Holtgrewe2010} with default profile settings to simulate from each whole genome 100\,k reads of length 100\,bp having sequencing errors distributed like in a typical Illumina run.
+Similarly to \citep{Langmead2012}, I used the read simulator Mason \citep{Holtgrewe2010} with default profile settings to simulate from each whole genome 100\,k reads of length 100\,bp having sequencing errors distributed like in a typical Illumina run.
 I performed the benchmark for an error rate of 5\,\%, which corresponds to edit distance 5 for reads of length 100\,bp. Therefore, I built a Rabema gold standard for each dataset by running RazerS~3 in full-sensitive mode up to edit distance 5. I further classified mapping locations in each category by their edit distance.
 
 For a more fair and thorough comparison, I also consider BWA and Bowtie\,2 as all-mappers (Soap\,2 cannot be configured accordingly).

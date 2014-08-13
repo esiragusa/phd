@@ -760,6 +760,8 @@ This is possible because of the relationship between the cyclic shifts matrix an
 First I show how to emulate a top-down traversal of the suffix trie, which is sufficient to count the number of occurrences of any substring in the original text.
 Later I focus on how to represent the leaves, which are necessary to locate occurrences in the original text.
 
+\subsubsection{Top-down traversal}
+
 I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 %In order to answer \textsc{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 \begin{itemize}
@@ -834,6 +836,8 @@ Conversely, \textsc{goDown} and \textsc{goRight} run in time $\Oh(\sigma)$ (see 
 \end{algorithm}
 \end{minipage}
 \end{figure*}
+
+\subsubsection{Sampled suffix array}
 
 The suffix array $A$ is required to locate occurrences, yet I do not want to maintain the whole array $A$.
 As proposed by \citeauthor{Ferragina2000}, I maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
@@ -1123,6 +1127,9 @@ The traversal of this algorithm corresponds to the intersection of the labeled b
 \end{center}
 
 In the evaluation, I compare algorithm~\ref{alg:st-exact-multi} (Dfs) with algorithm~\ref{alg:st-exact} processing patterns in random order (Naive) and in lexicographic order (Sorted).
+A simple lexicographical sort of the patterns speeds up exact string matching by 2 times.
+Algorithm~\ref{alg:st-exact-multi} suffers from the preprocessing time to construct the trie of the patterns.
+
 
 \begin{figure}[h]
 \begin{center}
