@@ -20,7 +20,7 @@ I consider the following $q$-gram filtering methods:
 %\begin{inparaenum}[(i)]
 \emph{contiguous $q$-grams} \citep{Jokinen1991},
 \emph{gapped $q$-grams} \citep{Burkhardt2001},
-\emph{multiple gapped $q$-grams} \citep{Kucherov2005}.
+\emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 %\end{inparaenum}
 Contiguous $q$-grams rely on a counting argument to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
@@ -211,7 +211,7 @@ Figure~\ref{fig:seeds-apx} illustrates.
 \end{figure}
 
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
-I give here a more general definition of approximate seeds.
+Hence, I give a more general definition of approximate seeds.
 
 \begin{lemma}
 \label{lemma:apx-seeds-var}
@@ -271,8 +271,8 @@ As for seed filters, the result then easily translates to $k$-differences.
 \label{lemma:qgrams}
 Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ and $|x| = m$. Then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
-The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors ($kq$, \ie at most $q$ per error).
-The threshold function $\tau$ depends only on parameters $q,m,k$ and not on the specific $q$-grams.
+The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
+The threshold function $\tau$ depends only on parameters $q,m,k$ and not on the specific $q$-gram characters.
 Figure~\ref{fig:qgrams-ext} illustrates.
 
 \begin{figure}[h]
@@ -286,7 +286,7 @@ Figure~\ref{fig:qgrams-ext} illustrates.
 %\subsection{Implementation}
 \subsection{Bucketing}
 
-This filtering method requires \emph{bucketing} the text in windows to enforce the counting argument of lemma \ref{lemma:qgrams}.
+This filtering method requires \emph{bucketing} the text in windows, in order to enforce the counting argument of lemma \ref{lemma:qgrams}.
 Buckets are obtained by subdividing the implicit DP matrix in parallelograms and projecting them on the text.
 Figure \ref{fig:swift} illustrates this concept: any approximate occurrence of the pattern in the text spans at most $k$ diagonals and is thus enclosed inside a parallelogram of width $k+1$ \citep{Rasmussen2006}.
 Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $m - k$ and $m + k$.
@@ -321,8 +321,8 @@ Thus, by substituting $\tau$, it follows that the $q$-gram length must be $q \le
 
 The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
 The occurrence of any contiguous $q$-gram is strongly correlated to the occurrences of its preceding and following $q$-grams.
-One single edit distance error affects a cluster of $q$ consecutive $q$-grams, as evidenced by the $q$-gram lemma~\ref{lemma:qgrams}.
-Gapped $q$-grams skip characters at fixed positions by defining patterns of \emph{don't care positions}.
+One single edit distance error affects a cluster of $q$ consecutive $q$-grams, as evidenced by the $q$-gram lemma.
+Gapped $q$-grams hence define patterns of \emph{don't care positions} to skip characters at fixed positions.
 Such don't care positions are immune to mismatches but not to insertions and deletions.
 Hence, this generalization of contiguous $q$-grams is useful to solve $k$-mismatches but not $k$-differences.
 %Filtration specificity increases either by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity.
@@ -352,14 +352,14 @@ Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
 As in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
 Indeed, the pattern of occurring $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the mismatch positions.
 As mismatches do not affect don't care positions, any gapped $Q$-gram potentially yields a higher threshold than the contiguous $q$-gram of the same weight.
-Unfortunately, the $q$-gram lemma (\ref{lemma:exact-qgrams}) does not give anymore a tight threshold, but only a lower bound.
+Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a tight threshold, but only a lower bound.
 
 Gapped $q$-grams raise hard combinatorial questions.
 \begin{inparaenum}[(i)]
 \item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield a full-sensitive filter for $k$-mismatches? If so, either
 \item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? Or alternatively,
-\item \label{enum:qgram-error} which is the maximum error $k$ for which full-sensitivity is guaranteed?
-If the answer to question~\ref{enum:qgram-nd} is negative and the filter is lossy,
+\item \label{enum:qgram-error} which is the maximum distance $k$ for which full-sensitivity is guaranteed?
+If the answer to question~\ref{enum:qgram-non-detection} is negative and the filter is lossy,
 \item \label{enum:qgram-fn} how many false negatives the filter discards?
 Considering filtration efficiency,
 \item \label{enum:qgram-fp} how many false positives the filter produces?
@@ -368,7 +368,7 @@ Considering filtration efficiency,
 \end{inparaenum}
 
 Question~\ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005},
-the more general questions~\ref{enum:qgram-non-detection} has been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
+the more general question \ref{enum:qgram-non-detection} has been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}-\ref{enum:qgram-fp}.
 With the aim of elucidating these questions, I first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
 Afterwards, I recapitulate known results for questions \ref{enum:qgram-non-detection}-\ref{enum:qgram-fp} and present new exact and approximate solutions.
 
@@ -378,20 +378,21 @@ Consider an arbitrary transcript $\sigma$ as a $m$-dimensional vector over $\Bo$
 Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such that $|\sigma|_0 = k$.
 
 \begin{definition}
+\label{def:qgram-occ}
 A $Q$-gram \emph{occurs} at position $i$ in a similarity $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
-Fixed a $Q$-gram threshold $t$, the $Q$-gram detects $\sigma$ iff it occurs at least $t$ times in $\sigma$.
+Fixed a $Q$-gram threshold $t$, the $Q$-gram \emph{detects} $\sigma$ iff it occurs at least $t$ times in $\sigma$.
 \end{definition}
 
 \subsubsection{Boolean functions}
 
 Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a similarity $\sigma$ of length $m$.
-In general, $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
 T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
+According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all similarities of length $m$.
 I define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
 \begin{equation}
@@ -409,7 +410,7 @@ I define such \emph{pseudo-boolean function} as
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
 \end{equation}
-Here $t_{Q}^{m}(\sigma)$ counts how many times a $Q$-gram occurs in a similarity $\sigma$ of length $m$.
+Here $t_{Q}^{m}(\sigma)$ \emph{counts} how many times a $Q$-gram occurs in a similarity $\sigma$ of length $m$.
 It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a similarity $\sigma$, as
 \begin{equation}
 \label{eq:qgram-pseudoneg}
