@@ -278,13 +278,13 @@ In the light of the above consideration, the most important feature of a read ma
 Most read mappers are specifically designed to fit one paradigm, while others are versatile enough to work well in both cases.
 
 The rest of this section presents most popular read mapping tools.
-Among them, BWA~\citep{Li2009,Li2010a}, Bowtie~\citep{Langmead2009,Langmead2012} and Soap~\citep{Li2009b} are prominent tools designed for best-mapping, while mr(s)Fast~\citep{Alkan2009,Hach2010}, RazerS~\citep{Weese2009,Weese2012}, SHRiMP~\citep{Rumble2009,David2011} are designed for all-mapping.
+Among them, BWA \citep{Li2009,Li2010a}, Bowtie \citep{Langmead2009,Langmead2012} and Soap \citep{Li2009b} are prominent tools designed for best-mapping, while mr(s)Fast \citep{Alkan2009,Hach2010}, RazerS \citep{Weese2009,Weese2012}, SHRiMP \citep{Rumble2009,David2011} are designed for all-mapping.
 Grosso modo, most prominent best-mappers recursively enumerate substrings on a suffix/prefix tree of the reference genome via backtracking algorithms.
 Backtracking alone is impractical as its time complexity grows exponentially with the number of errors considered, hence best-mappers apply heuristics to reduce and prioritize enumeration.
 Conversely, all-mappers are based on filtering algorithms for approximate string matching.
 They quickly determine, often with the help of an index, locations of the reference genome candidate to contain approximate occurrences, then verify them with conventional methods.
 Their efficiency is bound to filtration specificity and thus deteriorates with increasing error rates and genome lengths.
-Finally, the most recent tools GEM~\citep{MarcoSola2012}, Masai~\citep{Siragusa2013}, and Yara, fit both best and all-mapping paradigms.
+Finally, the most recent tools GEM \citep{MarcoSola2012}, Masai \citep{Siragusa2013}, and Yara \citep{Siragusa2014}, fit both best and all-mapping paradigms.
 They speed up best-mapping by stratifying mapping locations by edit distance and prioritizing filtration accordingly.
 In addition to that, they also speed up all-mapping by means of more specific filters based on backtracking.
 

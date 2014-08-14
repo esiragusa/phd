@@ -1,23 +1,28 @@
 
 \chapter{Preliminaries}
 
-In this chapter I introduce fundamental definitions and problems of stringology.
-%At the end of the manuscript I provide a summary of notations.
-The reader familiar with basic stringology can skip this chapter and proceed to chapter~\ref{chr:online}.
+In this chapter, I introduce fundamental definitions and problems of stringology.
+%At the end of the manuscript, I provide a summary of notations.
+The reader familiar with basic stringology can skip this chapter and proceed to chapter~\ref{chr:index}.
 
 \section{Definitions}
 
-I start by introducing primitive objects of stringology: alphabets and strings.
+I introduce primitive objects of stringology and give basic definitions.
 
 \begin{definition}
-\label{def:alphastr}
-An \emph{alphabet} is a finite ordered set of symbols (or characters); a \emph{string} (or word) over an alphabet is a finite sequence of symbols from that alphabet.
+\label{def:alpha}
+An \emph{alphabet} is a finite ordered set of symbols (or characters).
+\end{definition}
+
+\begin{definition}
+\label{def:string}
+A \emph{string} (or word) over an alphabet is a finite sequence of symbols from that alphabet.
 I denote the length of a string $s$ by $|s|$, and by $\epsilon$ the empty string \st $|\epsilon|=0$.
 \end{definition}
 
 \begin{definition}
 Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains the empty string, $\Sigma^n$ contains all strings of length $n$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
-%Finally, any subset of $\Sigma^*$ is called a language over $\Sigma$.
+%Finally, a language over $\Sigma$ is a subset of $\Sigma^*$.
 \end{definition}
 
 \begin{definition}
@@ -25,14 +30,14 @@ The concatenation operator of two strings is defined as $\cdot : \Sigma^* \times
 Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (simply denoted $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
 \end{definition}
 
-%From concatenation we can derive the notion of prefix, suffix and substring.
+%The notions of prefix, suffix and substring are derived from concatenation.
 \begin{definition}
 A string $x$ is a \emph{prefix} of $y$ iff there is some string $z$ \st $y=x\cdot z$;
 analogously, $x$ is a \emph{suffix} of $y$ iff there is some string $z$ \st $y=z\cdot x$;
 moreover, $x$ is a \emph{substring} of $y$ iff there is some string $w,z$ \st $y=w\cdot x \cdot z$.
 I denote by $y_{1 \dots i}$ the prefix of $y$ ending at position $i \in \N$, by $y_{i \dots n}$ (or simply $y_{i \dots}$) the suffix of $y$ beginning at position $i \in \N$, and by $y_{i \dots j}$ the substring of $y$ within positions $i \leq j \in \N$.
 \end{definition}
-% and then we say that $x$ occurs within $y$ at position $|w|$.
+% $x$ occurs within $y$ at position $|w|$...
 
 \begin{definition}
 \label{def:rho}
@@ -70,48 +75,50 @@ Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collec
 \section{Alignments}
 
 The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
-Given two strings $x,y$ of equal length $n$, the string $x$ can be transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
-If the given strings have different lengths, insertion and deletion of symbols from $x$ become necessary to transform it into $y$.
+Given two strings $x,y$ of equal length $n$, the string $x$ is transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
+If the two strings have different lengths, it becomes necessary to insert or delete symbols from $x$ to transform it into $y$.
+This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
 \label{def:alignment}
 An edit transcript for any two given strings $x,y$ is a finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
 \end{definition}
-%See Figure~\ref{fig:edit-transcript} for an example.
+%See figure~\ref{fig:edit-transcript} for an example.
 
-\begin{figure}[h]
-\begin{center}
-\caption[Example of edit transcript]{Example of edit transcript transforming the string $x=AAAA$ into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.}
-\label{fig:edit-transcript}
-\input{figures/transcript.tikz}
-\end{center}
-\end{figure}
-
-An alignment is an alternative yet equivalent way of visualizing a transformation between strings.
-While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment relates pairs of corresponding symbols between two strings.
-Because some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed, a gap symbol $-$, not being part of the string alphabet $\Sigma$, has to be introduced first.
+An \emph{alignment} is an alternative yet equivalent way of visualizing a transformation between strings.
+While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of corresponding symbols between two strings.
+Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed.
+For this reason, a gap symbol $-$ not being part of the string alphabet $\Sigma$ has to be introduced.
 
 \begin{definition}
 \label{def:alignment}
 An alignment of two strings of length $m,n$ over $\Sigma$ is a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
 \end{definition}
 
-\begin{example}
-\label{ex:alignment}
-An alignment of the strings $x=AAAA$ and $y=CCCC$ is given by the string
+\begin{figure}[h]
+\begin{center}
+\caption[Example of edit transcript and alignment]{Example of edit transcript and alignment. The string $x=AAAA$ is transformed into $y=CCCC$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.
+The alignment of the strings $x=AAAA$ and $y=CCCC$ is given by the string
 $z={\text{A} \choose \text{A}}{\text{A} \choose \text{-}}{\text{A} \choose \text{C}}{\text{G} \choose \text{G}}$
-\end{example}
+}
+\label{fig:edit-transcript}
+\input{figures/transcript.tikz}
+\end{center}
+\end{figure}
 
-A dotplot is a way to visualize any alignment between two strings and highlight their similarities.
+A \emph{dotplot} is yet another way to visualize any alignment between two strings and highlight their similarities.
+\begin{definition}
+\label{def:dotplot}
 Given two string $x,y$ of length $m,n$, a dotplot is a $m \times n$ matrix containing a dot at position $(i,j)$ iff the symbol $x_i$ matches symbol $y_j$.
+\end{definition}
 A dotplot trace is a monotonical path in the matrix connecting non-decreasing positions of the matrix.
-A dotplot trace corresponds to an alignment and vice versa.
+Any dotplot trace corresponds to an alignment and vice versa.
 In a trace, match and mismatch columns of the corresponding alignment appear as diagonal stretches, while insertions and deletions are horizontal or vertical stretches.
-See Figure~\ref{fig:dotplot}.
+See figure~\ref{fig:dotplot}.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of dotplot]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the alignment of example~\ref{ex:alignment}.}
+\caption[Example of dotplot]{Example of dotplot of the strings $x=AAAA$ and $y=CCCC$. The highlighted trace corresponds to the transcript and alignment of figure~\ref{fig:edit-transcript}.}
 \label{fig:dotplot}
 \input{figures/dotplot.tikz}
 \end{center}
@@ -125,30 +132,29 @@ A cost is assigned to any alignment, and to its associated edit transformation, 
 \item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
 \item $\omega(-,\beta)$ for all $\beta \in \Sigma$ defines the cost of inserting the symbol $\beta$,
 \end{itemize}
-and by defining the total cost $C(z)$ of an alignment $z$ between two strings as the sum of the weights of all its alignment symbols:
+
+The total cost $C(z)$ of an alignment $z$ between two strings is the sum of the weights of all its alignment symbols:
 \begin{eqnarray}
 C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
 \end{eqnarray}
-Consequently, the distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ is defined to take the minimum cost over all possible alignments of $x,y$:
+Consequently, any distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ takes the minimum cost over all possible alignments of $x,y$:
 \begin{eqnarray}
 d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
 \end{eqnarray}
 
 \begin{definition}
 \label{def:hamming}
-The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ is defined as the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$ counting the number of substitutions necessary to transform $x$ into $y$.
-It is obtained by defining $\omega(\alpha,\beta)$ as in the edit distance, and by setting all $\omega(\alpha,-)$ and $\omega(-,\beta)$ to be $\infty$ in order to disallow indels.
+The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ counts the number of substitutions necessary to transform $x$ into $y$.
 \end{definition}
+I denote the Hamming distance by the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$.
+The function is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(-,\beta)$ to be $+ \infty$ in order to disallow insertions and deletions.
 
 \begin{definition}
 \label{def:edit}
-The \emph{Levenshtein} or \emph{edit distance} between two strings $x,y \in \Sigma^{*}$ is defined as the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ counting the \emph{minimum} number of edit operation necessary to transform $x$ into $y$.
-It is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(\alpha,-)$ and $\omega(-,\beta)$ as 1.
+The \emph{Levenshtein} or \emph{edit distance} between two strings $x,y \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $x$ into $y$.
 \end{definition}
-
-%\begin{example}
-%TODO: example of edit and hamming distance.
-%\end{example}
+I denote the edit distance by the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$.
+The function is obtained by defining $\omega(\alpha,\beta)$ as for the Hamming distance, and $\omega(\alpha,-) = \omega(-,\beta) = 1$.
 
 \section{Optimal alignments}
 
@@ -156,14 +162,15 @@ The problem of finding an optimal alignment between two strings is equivalent to
 A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
 Below I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 
-Given two strings $x,y$ of length $m,n$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$ I define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$.
+Let $x,y$ be two strings of length $m \leq n$.
+I recursively define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d(\epsilon,\epsilon)&=&0\\
 d(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq m\\
 d(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
-and the recursive case is defined as follows:
+and the recursive case is as follows:
 \begin{eqnarray}
 d(x_{1..i},y_{1..j}) = \min \left\{
 \begin{array}{lcl}
@@ -175,7 +182,7 @@ d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
 \end{eqnarray}
 
 The above recurrence relation is computed in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
-The sole distance without any alignment is computed in space $\Oh(\min\{ n, m \})$, as only column $D[:j-1]$ is needed to compute column $D[:j]$ (or row $D[i-1:]$ to compute $D[i:]$), and the table $D$ can be filled either column-wise or row-wise. %\footnote{Note that $D$ can be filled also diagonal-wise or antidiagonal-wise.}.
+The sole distance without any alignment is computed in space $\Oh(m)$, as only column $D[:j-1]$ is needed to compute column $D[:j]$.
 An optimal alignment is computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
 the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
@@ -199,14 +206,14 @@ Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of
 \end{definition}
 
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice \citep{Faro2013}.
-Nonetheless, the definition of distance functions between strings lends to the generalization of exact string matching to a more challenging problem: \emph{approximate string matching}.
+Nonetheless, the definition of distance functions between strings lends to a more challenging generalization of exact string matching: \emph{approximate string matching}.
 
 \begin{definition}
 \citep{Galil1988}
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
 \end{definition}
 The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
-For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern occurs at any position in the text if all its $m$ characters are substituted.
+For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern trivially occurs at any position in the text if all its $m$ characters are substituted.
 \begin{definition}
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
@@ -220,24 +227,24 @@ In practice, if the text is long, static and searched frequently, provided the n
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
 Very often, such \emph{full-text index} is the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
-Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and also approximate string matching via backtracking \citep{Ukkonen1993}.
-Often the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
+Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and approximate string matching via backtracking \citep{Ukkonen1993}.
+Often, the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
-Filtering methods first discard uninteresting portions of the text and subsequently use a conventional method to verify only narrow areas.
+Filtering methods first discard uninteresting portions of the text and subsequently use a conventional method to verify narrower areas.
 These methods work either online or offline.
-Online filtering methods try to jump over the text while scanning it, while offline filtering methods use an index to place anchors in the text.
-Any filtering method then requires an online verification method.
-Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \eg when the error rate is low, and are thus very appealing from a practical standpoint.
+Online filtering methods try to jump over the text while scanning it; instead, offline filtering methods use an index to place anchors in the text.
+Any filtering method relies on a conventional method for verification.
+Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \ie when the error rate is low, and are thus very appealing from a practical standpoint.
 Nonetheless, filtering methods are just opportunistic combinations of native online and indexed methods.
 
-In this manuscript, I often consider \emph{multiple} string matching problems, \ie variants in which many patterns are given at once, instead of \emph{single} problems where they are given one by one in an online fashion.
+In this manuscript, I often consider \emph{multiple} string matching problems, \ie variants in which many patterns are given at once, instead of \emph{single} problems where patterns are given one by one in an online fashion.
 Obviously, any method for the single case can solve the multiple case and vice versa.
 However, it is clear that multiple methods have an advantage over single methods.
-For instance, multiple online methods are allowed to preprocess all patterns and then scan the text only once, while single online methods have to scan the text every time a pattern is provided.
+For instance, multiple online methods are allowed to preprocess all patterns and then scan the text only once, while single online methods have to scan the text every time a pattern is given.
 Thus, provided multiple patterns at once, multiple string matching methods are more appealing than single methods.
 
-In the following of this section, I give a quick overview of the fundamental algorithms and data structures adopted in string matching methods.
-This overview serves as an introduction to the indexed and filtering methods presented in the next chapters.
+In the following of this section, I give a quick overview of the fundamental algorithms and data structures adopted by classic string matching methods.
+This overview serves as an introduction to the indexed and filtering methods presented in the next two chapters.
 For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001a} and indexed \citep{Navarro2001} approximate string matching methods.
 
 % --- Online methods ---
@@ -255,16 +262,16 @@ For an extensive treatment of this subject, the reader is referred to complete s
 
 %\subsubsection{Dynamic programming}
 
-The dynamic programming algorithm~\ref{?} to compute the distance of two strings can be easily turned into a string matching algorithm.
-Since an occurrence of the pattern can start and end anywhere in the text, $k$-differences consists of computing the edit distance between the pattern and any substring of the text.
-The problem can be thus solved by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
+The dynamic programming algorithm~\ref{?} to compute the distance between two strings is easily turned into an online approximate string matching algorithm.
+Since an occurrence of the pattern can start and end anywhere in the text, approximate string matching consists of computing the edit distance between the pattern and \emph{any substring} of the text.
+The problem can be thus solved by computing the distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
 Consider equation~\ref{eq:dp-min} and pose $x=p$ and $y=t$.
 Since an occurrence of the pattern can start anywhere in the text, the initialization of the top row $D[0:]$ of the DP matrix is changed to:
 \begin{eqnarray}
 d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
-and since an occurrence of the pattern can end anywhere in the text, all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ have to be checked for the condition $D[m,j] \leq k$.
+and since an occurrence of the pattern can end anywhere in the text, all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ are checked for the condition $D[m,j] \leq k$.
 
 \begin{figure}[h]
 \begin{center}
@@ -282,10 +289,10 @@ and since an occurrence of the pattern can end anywhere in the text, all cells $
 %Indexed methods are more attractive than online methods when several patterns are to be searched in the same static text.
 %These methods work by building an index of the text beforehand to speed up subsequent searches.
 %To this intent,
-Here I introduce \emph{suffix tries}, idealized data structures to index full-texts.
-Moreover, I define a set of generic operations to traverse suffix tries in a top-down fashion.
-In chapter~\ref{chr:index}, I will expose various data structures replacing suffix tries in practice.
-The generic traversal operations here introduced lead to the formulation of generic algorithms solving string matching problems on any of these data structures.
+I now introduce \emph{suffix tries}, idealized data structures to index full-texts.
+I define a set of generic operations to traverse them in a top-down fashion.
+In chapter~\ref{chr:index}, I expose various data structures replacing suffix tries in practice.
+The generic traversal operations here introduced lead to the formulation of generic algorithms that solve string matching problems on any of these data structures.
 
 \subsubsection{Trie}
 
@@ -293,16 +300,16 @@ Consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) consistin
 Note that padding is necessary to ensure that no string $s^i \in \Sc$ is a prefix of another string $s^j \in \Sc$.
 \begin{definition}
 The trie $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
-The entering edge of any node of $\Si$ is labeled with a symbol in $\Sigma$, while the entering edge of any leaf of $\Si$ is labeled with a terminator symbol.
+The edge entering any node of $\Si$ is labeled with a symbol in $\Sigma$, while the edge entering any leaf of $\Si$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
 
 \subsubsection{Suffix trie}
 
-The suffix trie is the trie of all suffixes of a string.
 \begin{definition}
-Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ of $s$ has $n$ leaves where leaf $\Ln_i$ points to suffix $s_{i..n}$.
+Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ is the trie of all suffixes of $s$.
+The suffix trie $\Si$ has $n$ leaves where leaf $\Ln_i$ points to suffix $s_{i..n}$.
 \end{definition}
 The suffix trie generalizes to index string collections.
 \begin{definition}
@@ -311,15 +318,15 @@ Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \do
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
-Note that the suffix trie so defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose generic algorithms.
+Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose generic algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
-However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see Figure~\ref{fig:stree}).
+However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
 This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
-For this reason, in the following of this manuscript I always consider \wlogs suffix tries instead of suffix trees.
+For this reason, in the following of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
 %I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
-\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree for the string ANANAS\$.}
+\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree of the string {\ttfamily ANANAS\$} .}
 \label{fig:stree}
 \begin{subfigure}{.5\textwidth}
 \begin{center}
@@ -334,7 +341,7 @@ For this reason, in the following of this manuscript I always consider \wlogs su
 \end{figure}
 
 \begin{figure}[h]
-\caption[Example of generalized suffix trie]{Generalized suffix trie for the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
+\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
 \input{figures/gstrie.tikz}
@@ -343,7 +350,7 @@ For this reason, in the following of this manuscript I always consider \wlogs su
 
 \subsubsection{Top-down traversal}
 
-I now give a set of generic operations to traverse tries in a top-down fashion.
+I define a set of generic operations to traverse tries in a top-down fashion.
 Given a trie $\Ti$, I define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
 \begin{itemize}
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
@@ -361,7 +368,7 @@ and the following operations moving from pointed node $\Tn$, and returning true 
 
 Time complexities of the above operations depend on the data structure implementing the trie.
 Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $n$, \textsc{occurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(n)$ space complexity to stack all parent nodes.
-Note that is always possible to implement \textsc{goDown} and \textsc{goRight} by relying on \textsc{goDown} a symbol and \textsc{goUp}, but their complexity becomes $\Oh(\sigma)$.
+Algorithms \ref{alg:st-godown} and \ref{alg:st-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} using \textsc{goDown} a symbol and \textsc{goUp}, although with a worst-case time complexity of $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, I consider various data structures to implement suffix tries, I show how to implement these operations and give their complexities.
 
 \begin{figure*}
@@ -441,8 +448,7 @@ Any filtering method is thus a binary classification method.
 Any text location is \emph{true} if it coincides with the beginning of an occurrence of the pattern and \emph{false} if it does not.
 The outcome of the classification method is \emph{positive} for text locations filtered in and \emph{negative} for locations filtered out.
 Therefore, as shown in table \ref{tab:filter:accuracy}, any text location represents either a \emph{true positive} (TP), a \emph{false positive} (FP), a \emph{true negative} (TN), or a \emph{false negative} (FN).
-
-\emph{Specificity} and \emph{sensitivity} measure the accuracy of filtering methods.
+Standard \emph{specificity} and \emph{sensitivity} measure the accuracy of filtering methods.
 The specificity of a filter is defined as:
 \begin{eqnarray}
 \frac{|TN(t)|}{|TN(t)| + |FP(t)|}
@@ -452,12 +458,12 @@ and the sensitivity as:
 \frac{|TP(t)|}{|TP(t)| + |FN(t)|}
 \end{eqnarray}
 
-An important case is its sensitivity is 1.
+%An important case is its sensitivity is 1.
 \begin{definition}
 A filter is \emph{lossless} or \emph{full-sensitive} if its sensitivity is 1, \ie it produces no false negatives, otherwise it is \emph{lossy}.
 \end{definition}
 %A full-sensitive filter for approximate string matching solves the problem exactly.
-Most practical applications, \eg read mapping, do not require strictly lossless filtration.
+Many practical applications, \eg read mapping do not require strictly lossless filtration.
 Nonetheless, a predictable or controlled lossy filter helps to interpret the results and insure their quality.
 For this reason, I focus on criteria yielding filters which are lossless or lossy in a predictable fashion.
 
@@ -467,7 +473,7 @@ The total runtime of a filtering method is given by the sum of the runtimes of i
 Filtration specificity determines how much time goes in the verification stage.
 Clearly, the number of false positives must be low to keep verification time small.
 Nonetheless, the filtration stage must also run in a reasonable amount of time.
-Hence, efficient filtering methods balance their runtime between filtration and verification.
+Hence, an efficient filtering method balances its runtime between filtration and verification.
 In any way, no filtering method can be efficient when the number of true positive locations approaches the text length.
 %No filtering method is effective unless $|TP(t)| \ll |t|$.
 
@@ -487,4 +493,4 @@ In chapter \ref{sec:filter}, I consider two classes of combinatorial filtering m
 Filters in the former class partition the pattern into \emph{non-overlapping} factors called seeds.
 Application of the pigeonhole principle yields full-sensitive partitioning strategies.
 Instead, filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Simple lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary condition for an approximate occurrence of the pattern.
+Simple counting lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary condition for an approximate occurrence of the pattern.
