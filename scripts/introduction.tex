@@ -1,13 +1,13 @@
 \chapter{Introduction}
 
-The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
-Very surprisingly, this milestone has been achieved twice, by two independent groups.
+The sequencing of the whole human genome is one of the major scientific achievements of the last decades.
+It is surprisingly how this milestone has been achieved simultaneously by two independent groups.
 The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
 The privately funded company \emph{Celera Genomics} concurrently published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
 Celera Genomics and various international sequencing consortiums contributed to characterize the entire genomes of other model organisms, such as mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
 
 These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
-Indeed, both groups used sequencing technologies based on the \emph{shotgun} approach.
+Both groups used sequencing technologies based on the \emph{shotgun} approach.
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 
@@ -15,46 +15,44 @@ These ambitious sequencing projects used \emph{capillary electrophoresis} based 
 This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces reads of an average length of 700~bp at a throughput of about 150~Kbp/h.
 Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
 At this pace, the sequencing of the human genome took years and many million dollars.
-Nonetheless, the success of these huge sequencing projects did not mark the end of the sequencing era, but its beginning.
+Nonetheless, the success of these sequencing projects did not mark the end of the sequencing era but its beginning.
 
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
 
-Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS), or \emph{next-generation sequencing} (NGS).
+Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS) or \emph{next-generation sequencing} (NGS).
 In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of 20--30~Mbp/h.
 High-throughput sequencing was born.
 
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
-The instrument produced reads as short as 30~bp, at lower accuracy than Sanger sequencing, but at very high-throughput: it allowed \emph{resequencing} a human genome in three months for about \$100,000.
+The instrument produced reads as short as 30~bp with lower accuracy than Sanger sequencing but at very high-throughput: it allowed \emph{resequencing} a human genome in three months for about \$100,000.
 Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
-At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing the sequencing of many human whole-genomes at \$1,000 each, in less than three days.
+At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing in less than three days the sequencing of many whole human genomes at \$1,000 each.
 
 Over the last decade, other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
-I return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
 
+I return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
 In the following of this section, I continue to provide the context of this work.
 I first introduce most relevant \emph{applications} of HTS and then explain how HTS \emph{analysis pipelines} proceed.
-Then, I outline the structure of this work and state my contributions to this field.
+In the next section, I outline the structure of this work and state my contributions.
 
 \subsection{Protocols and applications}
 
-In the last years, HTS has become an invaluable method of investigation for molecular biologists.
+In the last years, HTS has become an invaluable method of investigation for computational molecular biologists.
 Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at unpreceded single-base resolution.
-For instance, applications of HTS include genotyping and discovery of structural variation (from DNA-seq);
-assessments of gene expression and alternative splicing events, analysis of microRNAs, discovery of novel non-coding RNAs (through RNA-seq);
-prediction of transcription factor binding-sites, analysis of methylation patterns (using ChIP-seq).
-Some HTS applications are already oriented towards clinical settings, \eg in the context of mendelian disorders and cancer diagnostic.
+For instance, DNA resequencing applications include genotyping and discovery of structural variations, the sequencing of RNA transcripts allows to assess gene expression as well as to analyse non-coding RNAs, epigenetic applications predict gene regulation according to methylation patterns and transcription factor binding-sites activity.
 
 \subsubsection{Whole genome and exome-seq}
 
 \emph{Whole genome sequencing} (WGS, DNA-reseq) allows discovery of genetic variations across the whole genome.
 These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
 \emph{Whole exome sequencing} (WES, exome-seq) is a cost-effective yet powerful alternative to WGS.
-This protocol consists in the targeted sequencing of the \emph{exome}, \ie the protein coding subset of the human genome.
+This protocol consists in the \emph{targeted sequencing} of the \emph{exome}, \ie the protein coding subset of a genome.
+%WES applications are oriented towards clinical settings, \eg towards mendelian disorders and cancer diagnostic.
 
 \subsubsection{RNA-seq}
-\emph{RNA sequencing} (RNA-seq) is a protocol to sequence the \emph{transcriptome}, \ie the set of RNA molecules of an organism, including mRNAs, rRNAs, tRNAs, and other non-coding RNAs.
+\emph{RNA sequencing} (RNA-seq) is a protocol to sequence the \emph{transcriptome}, \ie the set of RNA molecules of an organism, including mRNAs, rRNAs, tRNAs and other non-coding RNAs.
 Actual HTS technologies perform deep-sequencing of RNA molecules after they have been reverse-transcribed into cDNA.
 RNA-seq provides a myriad of information on gene expression, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and genetic variation with single-base accuracy.
 
@@ -87,7 +85,7 @@ The base caller processes instrumental signals and assigns a base to each peak, 
 The software assigns a quality value to each called base, estimating the probability of a base calling error.
 On early generation instruments, users could provide their own base calling tool.
 Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instrument.
-The result of primary analysis is a standard \emph{FASTQ} file containing DNA read sequences and their associated quality scores in \emph{Phred} format (see section \ref{sec:background:phred}).
+The result of primary analysis is a standard \emph{FASTQ} file containing DNA read sequences and their associated quality scores in \emph{Phred} format (see section \ref{sec:background:hts:phred}).
 
 \subsubsection{Secondary analysis}
 
@@ -110,23 +108,23 @@ According to plan B, the secondary analysis step consists of three tasks: \emph{
 \emph{Quality control} (Q/C) checks the quality of raw reads.
 Reads produced by current HTS technologies contain sequencing artefacts, in form of single miscalled bases or stretches of oligonucleotides.
 In order to circumvent this problem, various techniques have been developed, ranging from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{Weese2013a}.
-Nonetheless, sometimes Q/C is simply omitted.
+Sometimes, Q/C is simply omitted.
 
 \emph{Read mapping} takes care of aligning the reads to the reference genome.
 Read mappers adopt state of the art \emph{approximate string matching} methods to efficiently analyze the deluge of data produced by HTS instruments.
 Approximate matching accounts for two kinds of errors:
 residual sequencing artefacts not removed by Q/C, and small genetic variations in the donor genome to which reads belong.
-Thus, the read mapper must take into account errors when mapping reads.
+Consequently, a read mapper must take into account errors when mapping reads.
 
-Mapped reads, often stored in de-facto standard BAM files, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
+Mapped reads, often stored in de-facto standard BAM files \citep{Li2009a}, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
 higher depth implies more confidence in the consensus sequence of the donor genome and thus more accuracy in tertiary analysis.
 
 \subsubsection{Tertiary analysis}
 
-Tertiary analysis aims at interpreting the deluge of information provided by secondary analysis.
+Tertiary analysis aims at interpreting information provided by secondary analysis.
 This pipeline stage groups a wide range of analyses specific to the sequencing application.
-In many pipelines, downstream analysis performs data mining over aggregated data coming from multiple samples.
+In some pipelines, downstream analysis performs data mining over aggregated data coming from multiple samples.
 
 Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
 The result of \emph{variant calling} is usually a VFC file annotating the variations of the donor genome.
