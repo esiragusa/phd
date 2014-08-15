@@ -284,6 +284,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 %\end{figure}
 
 \subsection{$q$-Gram index}
+\label{sec:index:qgram}
 
 The logarithmic factor introduced by the suffix array is removed by restricting the traversal of the idealized suffix trie to a maximum depth $q$.
 The idea is to supplement the suffix array $A$ with a so-called $q$-gram directory: an additional array $D$ of $\Sigma^q + 1$ integers, storing the suffix array ranges computed by algorithm~\ref{alg:sa-lower} for any possible word of length $q$.
@@ -876,6 +877,7 @@ As patterns, I use sequences extrapolated from an Illumina sequencing run (SRR06
 The evaluation always reports \emph{average} runtimes per pattern, both in single and multiple string matching variants.
 
 \subsection{Top-down traversal bounded by depth}
+\label{sec:index:algo:traversal}
 
 Before turning to string matching algorithms, I present a simple traversal algorithm.
 Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in depth-first order.
@@ -915,6 +917,7 @@ The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first
 \end{figure}
 
 \subsection{Exact string matching}
+\label{sec:index:algo:exact}
 
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
 I assume the text $t$ to be indexed by its suffix trie $\Ti$.
@@ -964,6 +967,7 @@ If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in l
 \end{figure}
 
 \subsection{Backtracking $k$-mismatches}
+\label{sec:index:algo:kmismatches}
 
 I now give an algorithm that solves $k$-mismatches by backtracking a generic suffix trie.
 The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993}.
@@ -1025,6 +1029,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 \end{figure}
 
 \subsection{Backtracking $k$-differences}
+\label{sec:index:algo:kdifferences}
 
 I present two alternative algorithms for $k$-differences.
 Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors while traversing the suffix trie. Conversely, algorithm~\ref{alg:st-edit} computes the edit distance between the pattern and any branch of the suffix trie.
@@ -1110,6 +1115,7 @@ This latter algorithm necessitates of a method capable of checking incrementally
 
 
 \subsection{Multiple exact string matching}
+\label{sec:index:algo:multiexact}
 
 Before turning to multiple $k$-mismatches, I describe a simpler multiple exact string matching algorithm.
 Algorithm \ref{alg:st-exact-multi} necessitates of the trie of the patterns, in addition to the suffix trie of the text.
@@ -1157,6 +1163,7 @@ Algorithm~\ref{alg:st-exact-multi} suffers from the preprocessing time to constr
 \end{figure}
 
 \subsection{Multiple $k$-mismatches}
+\label{sec:index:algo:multimismatch}
 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
