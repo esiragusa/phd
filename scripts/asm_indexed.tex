@@ -613,6 +613,7 @@ The key problem of encoding the permutation $LF$ lies in representing function $
 In the next subsection, I address the problem of representing function $Occ$ efficiently. Subsequently, I explain how to implement generic full-text index traversal using the permutation $LF$.
 
 \subsection{Rank dictionaries}
+\label{sec:index:succinct:rd}
 
 The question \emph{``how many times a given character $c$ occurs in the prefix $l_{1 \dots i}$?''}, has to be answered efficiently, ideally in constant time and linear space.
 The general problem on arbitrary strings has been tackled by several studies on the succinct representation of data structures \citep{Jacobson1989}.
@@ -864,6 +865,7 @@ In practice, I sample text positions at rates between $2^{-3}$ and $2^{-5}$.
 The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 \section{Algorithms}
+\label{sec:index:algo}
 
 In this section, I give generic string matching algorithms, working on any of the data structures presented so far.
 I first consider a simple algorithm performing top-down traversals bounded by depth.

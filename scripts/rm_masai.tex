@@ -38,8 +38,7 @@ Nonetheless, independently of the chosen parameterization, filtration is guarant
 
 Masai partitions all reads (and their reverse complements) in non-overlapping seeds and indexes them in a conceptual \emph{trie}.
 Using the \emph{multiple backtracking} algorithm of section~\ref{sec:index:algo:multimismatch}, the tool backtracks simultaneously all indexed seeds in the suffix trie of the reference genome.
-The program performs seed extension on all candidate locations reported by the multiple backtracking algorithm;
-it extends both ends of each seed occurrence using a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999} (details in section~\ref{masai:engineering:extension}).
+The program verifies all candidate locations, reported by the multiple backtracking algorithm, performing seed extension with a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999} (details in section~\ref{masai:engineering:extension}).
 
 \subsection{Filtration}
 \label{masai:engineering:seeding}
