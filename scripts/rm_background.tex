@@ -300,8 +300,8 @@ Bowtie \citep{Langmead2009} is a mapper designed to have a small memory footprin
 The tool achieves the former goal by indexing the reference genome with an FM-index and the latter one by performing a greedy backtracking on it.
 The greedy top-down traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
 In addition, Bowtie speeds up backtracking by applying \emph{case pruning} \citep{Maekinen2010}, a simple application of the pigeonhole principle.
-However this technique is mostly suited for $k=1$ and requires the index of the forward and reverse text.
-Bowtie can be configured to search by strata, however the search time increases significantly while the traversal still misses a large fraction of the search space due to seeding heuristics.
+However, this technique is mostly suited for $k=1$ and requires the index of the forward and reverse reference genome.
+Bowtie can be configured to search by strata, but the search time increases significantly while the traversal still misses a large fraction of the search space due to seeding heuristics.
 
 Bowtie~2 \citep{Langmead2012} has been designed to quickly report a couple of mapping locations for longer Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
 This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
@@ -374,9 +374,9 @@ Moreover, these programs exhibit an high memory footprint as they remember the m
 
 The tools mrsFast \citep{Hach2010} and mrFast \citep{Ahmadi2012} are designed to map Illumina/Solexa reads.
 They report all mapping locations within a fixed absolute number errors, respectively under the edit and Hamming distance.
-Similarly to RazerS~3, these two programs are based on full-sensitive filtration using exact seeds (section \ref{sec:filtering:exact}).
+Similarly to RazerS~3, these two programs implement full-sensitive filtration using exact seeds (section \ref{sec:filtering:exact}).
 Their peculiarity is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
-MrsFast computes the edit distance between one read and one mapping location in the reference genome with an antidiagonal-wise vectorial dynamic programming algorithm, implemented using SIMD instructions.
+In addition, mrsFast computes the edit distance between one read and one mapping location in the reference genome with an antidiagonal-wise vectorial dynamic programming algorithm, implemented using SIMD instructions.
 These tools perform only all-mapping, lack multi-threading support, contain various bugs, only accept reads of fixed length and produce files of impractical size.
 
 % -----------------------------------------------------------------------------
@@ -400,6 +400,7 @@ Unfortunately, the tool lacks direct SAM output, it is not open source, and prov
 \begin{landscape}
 \begin{table}[h]
   \center
+  \caption[Overview of popular read mappers]{Overview of popular read mappers.}
   \sffamily
 %  \resizebox{1.0\textwidth}{!}
 %  {
