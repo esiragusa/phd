@@ -3,7 +3,7 @@
 
 In this chapter I present my first attempt to engineer an efficient all-mapper.
 When I started this project, in October 2011, the fastest all-mappers (mrFast and RazerS~3) were two order of magnitude slower than prominent best-mappers (Bowtie and BWA).
-On one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration method would had been beneficial.
+On the one hand, all-mappers were using filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration method would had been beneficial.
 On the other hand, best-mappers were based on heuristic backtracking, which was becoming inadequate to map reads of increasing length.
 After a thorough literature review, I came out with a novel read mapping method combining seed-based filtering with backtracking, published in \citep{Siragusa2013}.
 
