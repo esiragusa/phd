@@ -25,11 +25,6 @@ Apostolico, A. (1985).
 \newblock The myriad virtues of subword trees.
 \newblock In {\em Combinatorial algorithms on words\/}, pages 85--96. Springer.
 
-\bibitem[Baeza-Yates and Gonnet(1999)Baeza-Yates and Gonnet]{Baeza1999}
-Baeza-Yates, R.~A. and Gonnet, G.~H. (1999).
-\newblock A fast algorithm on average for all-against-all sequence matching.
-\newblock In {\em SPIRE/CRIWG\/}, pages 16--23. IEEE.
-
 \bibitem[Baeza-Yates and Perleberg(1992)Baeza-Yates and Perleberg]{Baeza1992}
 Baeza-Yates, R.~A. and Perleberg, C.~H. (1992).
 \newblock Fast and practical approximate string matching.
@@ -47,6 +42,14 @@ Bauer, M.~J., Cox, A.~J., and Rosone, G. (2013).
 \newblock Lightweight algorithms for constructing and inverting the bwt of
   string collections.
 \newblock {\em Theoretical Computer Science\/}, {\bf 483}, pages 134--148.
+
+\bibitem[Belazzougui \ea(2013)Belazzougui, Cunial, K{\"a}rkk{\"a}inen, and
+  M{\"a}kinen]{Belazzougui2013}
+Belazzougui, D., Cunial, F., K{\"a}rkk{\"a}inen, J., and M{\"a}kinen, V.
+  (2013).
+\newblock Versatile succinct representations of the bidirectional
+  burrows-wheeler transform.
+\newblock In {\em Algorithms--ESA 2013\/}, pages 133--144. Springer.
 
 \bibitem[Burkhardt and K{\"a}rkk{\"a}inen(2001)Burkhardt and
   K{\"a}rkk{\"a}inen]{Burkhardt2001}
@@ -342,17 +345,18 @@ Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
 \newblock {SOAP2}: an improved ultrafast tool for short read alignment.
 \newblock {\em Bioinformatics\/}, {\bf 25}(15), pages 1966--1967.
 
-\bibitem[Liu \ea(2012)Liu, Wong, Wu, Luo, Yiu, Li, Wang, Yu, Chu, Zhao,
-  \ea]{Liu2012}
-Liu, C.-M., Wong, T., Wu, E., Luo, R., Yiu, S.-M., Li, Y., Wang, B., Yu, C.,
-  Chu, X., Zhao, K., \ea (2012).
-\newblock Soap3: ultra-fast gpu-based parallel alignment tool for short reads.
-\newblock {\em Bioinformatics\/}, {\bf 28}(6), pages 878--879.
-
 \bibitem[Maier and Storer(1977)Maier and Storer]{Maier1977}
 Maier, D. and Storer, J.~A. (1977).
 \newblock A note on the complexity of the superstring problem.
 \newblock {\em Computer Science Laboratory, Report\/}, (233).
+
+\bibitem[M{\"a}kinen \ea(2010)M{\"a}kinen, V{\"a}lim{\"a}ki, Laaksonen, and
+  Katainen]{Maekinen2010}
+M{\"a}kinen, V., V{\"a}lim{\"a}ki, N., Laaksonen, A., and Katainen, R. (2010).
+\newblock Unified view of backward backtracking in short read mapping.
+\newblock In T.~Elomaa, H.~Mannila, and P.~Orponen, editors, {\em Algorithms
+  and Applications\/}, volume 6060 of {\em Lecture Notes in Computer
+  Science\/}, pages 182--195. Springer Berlin Heidelberg.
 
 \bibitem[Manber and Myers(1990)Manber and Myers]{Manber1990}
 Manber, U. and Myers, G. (1990).
