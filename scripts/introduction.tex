@@ -1,28 +1,26 @@
 \chapter{Introduction}
 
-The sequencing of the whole human genome is one of the major scientific achievements of the last decades.
-It is surprisingly how this milestone has been achieved simultaneously by two independent groups.
-The three billion dollars publicly funded \emph{Human Genome Project} (HGP) in February 2001 published the first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
-The privately funded company \emph{Celera Genomics} concurrently published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
-Celera Genomics and various international sequencing consortiums contributed to characterize the entire genomes of other model organisms, such as mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
+The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
+In February 2001, the three billion dollars publicly funded \emph{Human Genome Project} (HGP) published the first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
+Concurrently, the privately funded company \emph{Celera Genomics} published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
+Celera Genomics and various international sequencing consortiums contributed to characterize the entire genomes of several other model organisms, including mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
+The knowledge of these entire genomics sequences paved the way to a myriad of computational biology studies.
 
-These achievements are not only due to the efforts of molecular biologists but also of computer scientists.
-Both groups used sequencing technologies based on the \emph{shotgun} approach.
+These successes have been due to the joint effort of molecular biologists and computer scientists.
+Whole genome sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
+Because of such technological limitation, sequencing of whole genomes had to be coupled with the \emph{shotgun} approach.
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
-
-These ambitious sequencing projects used \emph{capillary electrophoresis} based on the \emph{Sanger sequencing} method~\citep{Sanger1977}.
-This sequencing technology is capable of reading DNA with high fidelity but at low speed: it produces reads of an average length of 700~bp at a throughput of about 150~Kbp/h.
-Moreover, in order to produce an assembly with high fidelity, DNA must be sequenced multiple times to obtain a manyfold \emph{coverage}.
-At this pace, the sequencing of the human genome took years and many million dollars.
-Nonetheless, the success of these sequencing projects did not mark the end of the sequencing era but its beginning.
+%In order to produce a contiguous assembly, DNA sequences must be read with a manyfold \emph{coverage} \citep{Lander1988}.
+At the pace of Sanger sequencing, it took years and many million dollars for these projects to complete.
+Nonetheless, their success did not mark the end of the sequencing era but its beginning.
 
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
 
 Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS) or \emph{next-generation sequencing} (NGS).
-In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of 20--30~Mbp/h.
+In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of about 20~Mbp/h.
 High-throughput sequencing was born.
 
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
@@ -30,9 +28,9 @@ The instrument produced reads as short as 30~bp with lower accuracy than Sanger 
 Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
 At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing in less than three days the sequencing of many whole human genomes at \$1,000 each.
 
-Over the last decade, other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
+%Over the last decade, other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
 
-I return to sequencing technologies in chapter~\ref{sec:background:sequencing}, to give more insights on the kind of data produced and understand the problematics linked with their analysis.
+I return to sequencing technologies in chapter~\ref{chr:background}, where I give insights on the kind of data produced by HTS instruments, in order to understand the problematics linked with their analysis.
 In the following of this section, I continue to provide the context of this work.
 I first introduce most relevant \emph{applications} of HTS and then explain how HTS \emph{analysis pipelines} proceed.
 In the next section, I outline the structure of this work and state my contributions.
