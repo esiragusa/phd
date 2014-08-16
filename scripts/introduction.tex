@@ -136,29 +136,55 @@ In ChIP-seq, this stage consists of calling peaks in correspondence of mapped re
 
 \section{Outline}
 
-In this work, I present novel methods for the efficient and accurate mapping of high-throughput sequencing reads, based on state of the art approximate string matching algorithms and data structures.
-Read mapping is an ubiquitous and non-trivial task in all resequencing applications.
-Efficiency is required to keep the pace of HTS technologies constantly increasing their throughput.
-Accuracy is required to provide data analysis with single-base resolution.
+This thesis presents novel methods for the \emph{efficient} and \emph{accurate} mapping of high-throughput sequencing DNA reads, based on state of the art \emph{approximate string matching} algorithms and data structures.
+Read mapping is a non-trivial, ubiquitous task in all resequencing applications.
+Efficiency is mandatory to keep the pace of sequencing technologies, exponentially increasing in throughput.
+Accuracy is required to enable downstream data analysis at single-base resolution.
+The ingenuity of state of the art approximate string matching methods is crucial for the design and implementation of efficient and accurate read mapping programs.
 
-%The read mapping methods here presented work at least for reads coming from WGS, WES, and ChIP-seq protocols.
-
-I decided to subdivide this work in two parts: part I is about approximate string matching, while part II is about read mapping.
-The initial ingenuity of approximate string matching methods turns out to be beneficial in the design of an accurate method for read mapping.
+The contributions of this work are of purely practical interest, nonetheless I follow a practical yet rigorous approach.
+I subdivide this work in two parts: the former part exposes \emph{practical} approximate string matching methods, while the latter one describes the engineering and evaluation of two read mapping programs developed by myself.
 
 \subsection{Approximate string matching}
 
-In chapter 2, I introduce basic stringology concepts. 
+In chapter 2, I introduce basic stringology concepts, as the relation between optimal alignments and distances between strings.
+I give an overview of the basic online, indexed and filtering methods for exact and approximate string matching.
+In particular, in section \ref{sub:introindex}, I introduce full-text indices and define a set of \emph{generic} operations to traverse them in a top-down fashion.
 
-In chapter 3, I expose indexed methods for approximate string matching.
+In chapter 3, I cover \emph{indexed methods} for exact and approximate string matching.
+First, I describe some classic full-text indices (suffix arrays and $q$-gram indices) and succinct full-text indices (uncompressed FM-index variants).
+Afterwards, I expose generic string matching algorithms, working on any of these data structures, and provide their experimental evaluation.
+To the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
+In addition, my implementation of all these algorithms and data structures is publicly available in source form within the \CC library SeqAn \citep{Doering2008}.
 
-In chapter 4, I expose filtering methods for approximate string matching.
+In chapter 4, I cover \emph{filtering methods} for approximate string matching.
+I consider two classes of full-sensitive filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
+From the former class, I cover:
+\emph{exact seeds} \citep{Baeza1992},
+\emph{approximate seeds} \citep{Myers1994,Navarro2000},
+\emph{suffix filters} \citep{Kaerkkaeinen2007}.
+From the latter one:
+\emph{contiguous $q$-grams} \citep{Jokinen1991},
+\emph{gapped $q$-grams} \citep{Burkhardt2001},
+\emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
+Again, to the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
+In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads me to the formulation of APX and FPRAS\footnote{Randomized Polynomial-Time Approximation Scheme} algorithms  answering some combinatorially hard filter design questions.
 
 \subsection{Read mapping}
 
-In chapter 5, I return to read mapping. I give a solid background.
+In chapter 5, I finally return to read mapping. Before diving into the plethora of tools proposed during the last years, I give a quick overview of market-leading HTS technologies and expose the \emph{de facto} standard analysis paradigms adopted to analyze the deluge of data produced by such instruments.
+By reviewing some recent works \citep{Derrien2012,Lee2012}, I try to delineate which are the limits of these HTS technologies and data analysis paradigms.
+Finally, I give an overview of the most popular read mappers.
+In the last two chapters, I consider these popular programs in the evaluation of my own tools, Masai \citep{Siragusa2013} and Yara \citep{Siragusa2014}.
 
 In chapter 6, I present my first attempt at engineering a read mapping tool.
+My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
+Masai is part of the SeqAn library \citep{Doering2008}, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
+The result of this work has been published \citep{Siragusa2013} in the peer-reviewed journal \emph{Nucleic Acids Research}.
 
-In chapter 7, I present Yara, a state of the art read mapping tool.
+In chapter 7, I present \emph{Yara}, a state of the art read mapping tool.
+Yara is capable of quickly reporting all stratified mapping locations within a given error rate.
+The tool works with Illumina or Ion Torrent reads, supports paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
+%The result of this work has been published \citep{Siragusa2014} in ??.
+Yara is the foremost contribution of this work.
 
