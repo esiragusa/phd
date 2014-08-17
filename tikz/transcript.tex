@@ -12,27 +12,31 @@
 \tikzstyle{line}=[-, thin]
 \tikzstyle{gap}=[-, style=double, thin, double distance=0.3mm]
 
-
-\newcommand{\transcript}[3]
+\newcommand{\semitranscript}[5]
 {
     \foreach[count=\i] \r/\t/\g in {#2}
     {
     	\node[n] (read_\i) at (0.4*\i,#3*0.4) {\r};
 		\node[n] (genome_\i)  at (0.4*\i,-1) {\g};
-%		\ifthenelse{\equal{\t}{M}}
-%	    {
+		\ifthenelse{\equal{\t}{$ $}}
+	    {
+%			\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[m] (transcript_\i) {\t};
+		}
+		{
 			\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[m] (transcript_\i) {\t};
-%		}
-%		{
-%			\draw[e] (read_\i.south)+(0,-#3*0.4) -- (genome_\i) node[t] (transcript_\i) {\t};
-%		}
+		}
     }
     
     \begin{pgfonlayer}{background} 
-		\draw[tape] ([xshift=0.1cm, yshift=-0.01cm]transcript_1.north west)
+		\draw[tape] ([xshift=0.1cm, yshift=-0.01cm]transcript_#4.north west)
 				rectangle
-					([xshift=-0.1cm, yshift=0.01cm]transcript_#1.south east) ;
+					([xshift=-0.1cm, yshift=0.01cm]transcript_#5.south east) ;
 	\end{pgfonlayer}
+}
+
+\newcommand{\transcript}[3]
+{
+    \semitranscript{#1}{#2}{#3}{1}{#1}
 }
 
 \newcommand{\band}[1]

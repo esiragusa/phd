@@ -308,7 +308,7 @@ Bowtie~2 \citep{Langmead2012} has been designed to quickly report a couple of ma
 This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
 Bowtie~2 randomly chooses candidate locations, to avoid uncompressing large suffix array intervals and executing many DP instances.
 The tool verifies candidate locations using a striped vectorial dynamic programming algorithm by \citep{Farrar2007}, implemented using SIMD instructions.
-Bowtie~2 can be configured to report end-to-end or local alignments, scored using a tunable affine scoring scheme.
+Bowtie~2 can be configured to report semi-global or local alignments, scored using a tunable affine scoring scheme.
 %However, its heuristic filtration method, independent of the scoring scheme, makes it hard to believe what it promises.
 
 % -----------------------------------------------------------------------------
@@ -316,7 +316,7 @@ Bowtie~2 can be configured to report end-to-end or local alignments, scored usin
 \subsection{BWA}
 \label{background:mappers:bwa}
 
-BWA \citep{Li2009} is designed to map Illumina/Solexa reads and report a few best end-to-end alignments.
+BWA \citep{Li2009} is designed to map Illumina/Solexa reads and report a few best semi-global alignments.
 The program backtracks the FM-index of the reference genome with a \emph{greedy breadth-first search}.
 The tool ranks nodes to be visited by edit distance score: the best node is popped from a priority queue and visited, its children are then inserted again in the queue.
 The traversal considers indels using a more involved 9-fold recursion.

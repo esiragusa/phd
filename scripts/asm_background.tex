@@ -266,11 +266,22 @@ Nonetheless, the definition of distance functions between strings lends to a mor
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
 \end{definition}
 The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
+Figure \ref{fig:edit-occurrence} shows an example of occurrence for $k$-differences.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern trivially occurs at any position in the text if all its $m$ characters are substituted.
 Frequently, the problem's input respects the condition $k \ll m \ll n$.
 \begin{definition}
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Example of occurrence for $k$-differences]{Example of occurrence for $k$-differences. Pattern $p$ occurs in text $t$ at edit distance 3, \ie with a 19~\% error rate.
+The alignment between $p$ and any substring of $t$ is called semi-global, as opposed to the global alignment of two complete strings.
+}
+\label{fig:edit-occurrence}
+\input{figures/occurrence.tikz}
+\end{center}
+\end{figure}
 
 String matching problems are subdivided in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left).
