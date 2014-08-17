@@ -107,7 +107,7 @@ This fact motivates the following definition of \emph{edit transcript}.
 An \emph{alignment} is an alternative yet equivalent way of visualizing a transformation between strings.
 While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of symbols from the two strings.
 Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie when some symbols are inserted or removed.
-For this reason, it is necessary to introduce an additional gap symbol $-$, not being part of the string alphabet $\Sigma$.
+For this reason, it is necessary to introduce an additional gap symbol $-$ not being part of the string alphabet $\Sigma$.
 The definition of alignment follows.
 Figure~\ref{fig:edit-transcript} shows an example of edit transcript and alignment.
 
@@ -280,7 +280,7 @@ In practice, if the text is long, static and searched frequently, provided the n
 
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
-Very often, such \emph{full-text index} is the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
+Very often such \emph{full-text index} is the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
 Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and approximate string matching via backtracking \citep{Ukkonen1993}.
 Often, the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
