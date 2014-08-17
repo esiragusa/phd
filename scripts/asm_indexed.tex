@@ -36,7 +36,7 @@ The suffix array of a padded string $s$ of length $n$ is defined as an array $A$
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of suffix array]{Suffix array for the string {\ttfamily ANANAS\$}.}
+\caption[Example of suffix array]{Suffix array of the string {\ttfamily ANANAS\$}.}
 \label{fig:sa}
 \ttfamily
 \begin{tabular}{ccl}
@@ -61,7 +61,7 @@ Pairs are ordered such that $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for al
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of generalized suffix array]{Generalized suffix array for the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
+\caption[Example of generalized suffix array]{Generalized suffix array of the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
@@ -290,7 +290,7 @@ Using a 32 bits integer encoding, the directory alone consumes 1~GB of memory.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of $q$-gram index]{$q$-Gram index for the string {\texttt ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$.}
+\caption[Example of $q$-gram index]{$2$-Gram index of the string {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$.}
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
@@ -459,7 +459,7 @@ The BWT of $s$ is the string $s_{A[i]-1}$, \ie the string obtained concatenating
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of Burrows-Wheeler transform]{Burrows-Wheeler transform for the string {\ttfamily ANANAS\$}.}
+\caption[Example of Burrows-Wheeler transform]{Burrows-Wheeler transform of the string {\ttfamily ANANAS\$}.}
 \label{fig:bwt}
 \ttfamily
 \begin{tabular}{cccccc}
@@ -509,7 +509,7 @@ LF^{i+1}(j) &=& LF(LF^{i}(j))
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of functions $LF$ and $\Psi$]{Functions $LF$ and $\Psi$ for the string {\ttfamily ANANAS\$}. Note how $LF(\Psi(i)) = \Psi(LF(i)) = i$ for any $i$. Also note how the $i$-th occurrence of any character $c$ in $l$ corresponds to the $i$-th occurrence of the same character $c$ in $f$.}
+\caption[Example of functions $LF$ and $\Psi$]{Functions $LF$ and $\Psi$ of the string {\ttfamily ANANAS\$}. Note how $LF(\Psi(i)) = \Psi(LF(i)) = i$ for any $i$. Also note how the $i$-th occurrence of any character $c$ in $l$ corresponds to the $i$-th occurrence of the same character $c$ in $f$.}
 \label{fig:lf_psi}
 \ttfamily
 \begin{tabular}{ccccccc}
@@ -627,9 +627,9 @@ Thus, this rank dictionary consumes $2n$ bits.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Example of binary rank dictionaries for the string $s=$ {\ttfamily 010101100100}. On the one-level rank dictionary, $b=4$ and $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. On the two-levels rank dictionary, $b=2$ and $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{6 \dots 6}, 1) = 3$.}
+\caption[Example of binary rank dictionaries]{Example of binary rank dictionaries of the string $s=$ {\ttfamily 010101100100}. On the one-level rank dictionary, $b=4$ and $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. On the two-levels rank dictionary, $b=2$ and $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{6 \dots 6}, 1) = 3$.}
 \begin{tabular}{lcr}
-%\caption[One-level rank dictionary]{One-level rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=4$. In the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$.}
+%\caption[One-level rank dictionary]{One-level rank dictionary of the string $s=$ {\ttfamily 010101100100} with $b=4$. In the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$.}
 \label{fig:rd1}
 \ttfamily
 \begin{tabular}{rcc}
@@ -654,7 +654,7 @@ $i$	& $s_i$	& $R[\frac{i}{b}]$\\
 &
 \phantom{----}
 &
-%\caption[Two-levels rank dictionary]{Two-levels rank dictionary for the string $s=$ {\ttfamily 010101100100} with $b=2$.}
+%\caption[Two-levels rank dictionary]{Two-levels rank dictionary of the string $s=$ {\ttfamily 010101100100} with $b=2$.}
 \label{fig:rd2}
 \ttfamily
 \begin{tabular}{rccc}
@@ -716,7 +716,7 @@ Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole rank dictionary $n + n
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of one-level DNA rank dictionary]{Example of one-level DNA rank dictionary for the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{DNA}$.}
+\caption[Example of one-level DNA rank dictionary]{Example of one-level DNA rank dictionary of the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{DNA}$.}
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcccc}
@@ -739,8 +739,8 @@ $i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
 \end{figure}
 
 
-%\subsubsection{Wavelet tree}
-%For large alphabets.
+\subsubsection{Wavelet tree}
+For large alphabets. TODO.
 
 \subsection{FM-index}
 \label{sub:fmtrie}
