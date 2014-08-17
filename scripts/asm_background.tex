@@ -234,7 +234,7 @@ d_E(x_{1 \dots i-1},y_{1 \dots j-1})&+&\delta(x_i, y_j)
 \end{center}
 \end{figure*}
 
-Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d_E(x_{1 \dots i},y_{1 \dots j})$.
+Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(n+1) \times (m+1)$ cells, where cell $D[i,j]$ stores the value of $d_E(x_{1 \dots i},y_{1 \dots j})$.
 The sole edit distance without any alignment can be computed in space $\Oh(m)$, as only column $D[:j-1]$ is needed to compute column $D[:j]$.
 An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
 the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yields the value of $D[m,n]$.
@@ -355,7 +355,7 @@ Thus, the base condition \ref{eq:dp-row} of the edit distance recurrence relatio
 d(x_{1 \dots i}, \epsilon) = 0 \; \text{ for all } 1 \leq i \leq n\label{eq:dp-row-kdiff}
 \end{eqnarray}
 Thus, algorithm~\ref{alg:dp-kdiff} initializes the top row $D[0:]$ of the DP matrix accordingly
-and, since an occurrence of the pattern can end anywhere in the text, checks all cells in the bottom row of $D$ for the condition $D[i,m] \leq k$.
+and, since an occurrence of the pattern can end anywhere in the text, it checks any cell in the bottom row for the condition $D[i,m] \leq k$.
 
 %\begin{figure}[h]
 %\begin{center}
