@@ -6,7 +6,7 @@ Concurrently, the privately funded company \emph{Celera Genomics} published \emp
 Celera Genomics and various international sequencing consortiums contributed to characterize the entire genomes of several other model organisms, including mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
 The knowledge of these entire genomics sequences paved the way to a myriad of computational biology studies.
 
-These successes have been due to the joint effort of molecular biologists and computer scientists.
+These projects joined the efforts of molecular biologists and computer scientists.
 Whole genome sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
 Because of such technological limitation, sequencing of whole genomes had to be coupled with the \emph{shotgun} approach.
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
@@ -147,9 +147,9 @@ I subdivide this work in two parts: the former part exposes \emph{practical} app
 
 \subsection{Approximate string matching}
 
-In chapter 2, I introduce basic stringology concepts, as the relation between optimal alignments and distances between strings.
+In chapter 2, I introduce basic stringology concepts.
 I give an overview of the basic online, indexed and filtering methods for exact and approximate string matching.
-In particular, in section \ref{sub:introindex}, I introduce full-text indices and define a set of \emph{generic} operations to traverse them in a top-down fashion.
+In particular, in section \ref{sub:introindex}, I introduce the concept of full-text index and define a set of \emph{generic} top-down traversal operations.
 
 In chapter 3, I cover \emph{indexed methods} for exact and approximate string matching.
 First, I describe some classic full-text indices (suffix arrays and $q$-gram indices) and succinct full-text indices (uncompressed FM-index variants).
@@ -168,7 +168,7 @@ From the latter one:
 \emph{gapped $q$-grams} \citep{Burkhardt2001},
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 Again, to the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
-In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads me to the formulation of APX and FPRAS\footnote{Randomized Polynomial-Time Approximation Scheme} algorithms  answering some combinatorially hard filter design questions.
+In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads to the formulation of APX and FPRAS\footnote{Randomized Polynomial-Time Approximation Scheme} algorithms  answering some combinatorially hard filter design questions.
 
 \subsection{Read mapping}
 
