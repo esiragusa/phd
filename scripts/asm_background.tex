@@ -154,14 +154,14 @@ d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
 The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ counts the number of substitutions necessary to transform $x$ into $y$.
 \end{definition}
 I denote the Hamming distance by the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$.
-The function is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(-,\beta)$ to be $+ \infty$ in order to disallow insertions and deletions.
+The function $d_H$ is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(-,\beta)$ to be $+ \infty$ in order to disallow insertions and deletions.
 
 \begin{definition}
 \label{def:edit}
 The \emph{Levenshtein} or \emph{edit distance} between two strings $x,y \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $x$ into $y$.
 \end{definition}
 I denote the edit distance by the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$.
-The function is obtained by defining $\omega(\alpha,\beta)$ as for the Hamming distance, and $\omega(\alpha,-) = \omega(-,\beta) = 1$.
+The function $d_E$ is obtained by defining $\omega(\alpha,\beta)$ as for the Hamming distance, and $\omega(\alpha,-) = \omega(-,\beta) = 1$.
 
 \section{Optimal alignments}
 
