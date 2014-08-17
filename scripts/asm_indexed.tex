@@ -170,24 +170,9 @@ Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involv
 \end{minipage}
 \end{figure*}
 
-\begin{figure*}
-%\begin{minipage}[t]{.5\textwidth}
-%\begin{algorithm}[H]
-%\Algorithm{goRoot}{$\Tn$}
-%\begin{tabular}{ll}
-%\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
-%\end{tabular}
-%\begin{algorithmic}[1]
-%\State {$\Tn \gets \{ 1, n, 0\}$}
-%%\State {$\Tn.l \gets 1$}
-%%\State {$\Tn.r \gets n$}
-%%\State {$\Tn.d \gets 0$}
-%\end{algorithmic}
-%\label{alg:sa-goroot}
-%\end{algorithm}
-%\end{minipage}
-%\hfill
-\begin{minipage}[t]{.5\textwidth}
+\begin{figure*}[b]
+\begin{center}
+\begin{minipage}[t]{.6\textwidth}
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn,c$}
 \begin{tabular}{ll}
@@ -207,6 +192,7 @@ Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involv
 \label{alg:sa-godownc}
 \end{algorithm}
 \end{minipage}
+\end{center}
 \end{figure*}
 
 Algorithms~\ref{alg:sa-godown} and \ref{alg:sa-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} to exhibit a time complexity independent of the alphabet size $\sigma$.
@@ -343,10 +329,7 @@ I define the basic node operations as follows:
 \item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
 \end{itemize}
 
-Algorithms \ref{alg:qgram-lower} and \ref{alg:qgram-upper} respectively show functions \textsc{L} and \textsc{R} using the directory $D$ instead of $A$.
-In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} and \ref{alg:sa-godown}) and \textsc{goRight} (algorithm \ref{alg:sa-goright}) take $\Oh(1)$ time.
-
-\begin{figure*}
+\begin{figure*}[b]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \Algorithm{L}{$\Tn,c$}
@@ -380,21 +363,12 @@ In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} a
 \end{minipage}
 \end{figure*}
 
+Algorithms \ref{alg:qgram-lower} and \ref{alg:qgram-upper} respectively show functions \textsc{L} and \textsc{R} using the directory $D$ instead of $A$.
+In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} and \ref{alg:sa-godown}) and \textsc{goRight} (algorithm \ref{alg:sa-goright}) take $\Oh(1)$ time.
+
 \begin{figure*}
-%\begin{minipage}[t]{.5\textwidth}
-%\begin{algorithm}[H]
-%\Algorithm{goRoot}{$\Tn$}
-%\begin{tabular}{ll}
-%\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
-%\end{tabular}
-%\begin{algorithmic}[1]
-%\State {$\Tn \gets \{ 1, n, 0, 1, \sigma^q, \epsilon \}$}
-%\end{algorithmic}
-%\label{alg:qgram-goroot}
-%\end{algorithm}
-%\end{minipage}
-%\hfill
-\begin{minipage}[t]{.5\textwidth}
+\begin{center}
+\begin{minipage}[t]{.6\textwidth}
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn,c$}
 \begin{tabular}{ll}
@@ -415,6 +389,7 @@ In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} a
 \label{alg:qgram-godownc}
 \end{algorithm}
 \end{minipage}
+\end{center}
 \end{figure*}
 
 %Exact string matching algorithm~\ref{alg:st-exact} runs in time $\Oh(q)$, nonetheless it can be improved to perform $\Oh(1)$ lookups in $D$.
