@@ -25,23 +25,38 @@ Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains the empty
 %Finally, a language over $\Sigma$ is a subset of $\Sigma^*$.
 \end{definition}
 
-\begin{definition}
-The concatenation operator of two strings is defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
-Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (simply denoted $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
-\end{definition}
-
+%\begin{definition}
+%The concatenation operator of two strings is defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
+%Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (or simply $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
+%\end{definition}
 %The notions of prefix, suffix and substring are derived from concatenation.
-\begin{definition}
-A string $x$ is a \emph{prefix} of $y$ iff there is some string $z$ \st $y=x\cdot z$;
-analogously, $x$ is a \emph{suffix} of $y$ iff there is some string $z$ \st $y=z\cdot x$;
-moreover, $x$ is a \emph{substring} of $y$ iff there is some string $w,z$ \st $y=w\cdot x \cdot z$.
-I denote by $y_{1 \dots i}$ the prefix of $y$ ending at position $i \in \N$, by $y_{i \dots n}$ (or simply $y_{i \dots}$) the suffix of $y$ beginning at position $i \in \N$, and by $y_{i \dots j}$ the substring of $y$ within positions $i \leq j \in \N$.
-\end{definition}
-% $x$ occurs within $y$ at position $|w|$...
 
 \begin{definition}
-\label{def:subseq}
-A \emph{subsequence} is a non-contiguous sequence of symbols of a given string.
+A string $x$ is a \emph{prefix} of another string $y$ iff $x = y_{1 \dots i}$ for some $1 \leq i \leq |y|$.
+\end{definition}
+
+\begin{definition}
+A string $x$ is a \emph{suffix} of another string $y$ iff $x = y_{i \dots n}$ for some $1 \leq i \leq |y|$.
+For convenience, I often denote the suffix of $y$ beginning at position $i$ simply as $y_{i \dots}$.
+\end{definition}
+
+\begin{definition} 
+A string $x$ is a \emph{substring} of another string $y$ iff $x = y_{i \dots j}$ for some $1 \leq i \leq j \leq |y|$.
+\end{definition}
+
+\begin{definition}
+A string $x$ \emph{occurs} in another string $y$ iff it is a substring of $y$.
+Given $x = y_{i \dots j}$, the occurrence of $x$ starts at position $i$ and ends at position $j$ in $y$.
+\end{definition}
+
+%\begin{definition}
+%\label{def:subseq}
+%A \emph{subsequence} is a non-contiguous sequence of symbols of a given string.
+%\end{definition}
+
+\begin{definition}
+\label{def:delta}
+Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any two distinct $a,b \in \Sigma$ and 0 otherwise.
 \end{definition}
 
 \begin{definition}
@@ -64,7 +79,7 @@ I extend the notation of prefix, suffix and substring also to multisets, \eg $\S
 
 \begin{definition}
 \label{def:dollar}
-I call \emph{terminator symbol} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
+I call \emph{terminator} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
 \end{definition}
 
 \begin{definition}
@@ -77,21 +92,21 @@ Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation 
 Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
-\section{Alignments}
+\section{Transcripts, alignments and distances}
 
-The next step is to define the minimal set of edit operations to transform one string into another: substitutions, insertions and deletions.
+I now define the minimal set of edit operations to transform one string into another.
 Given two strings $x,y$ of equal length $n$, the string $x$ is easily transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
 If the two strings have different lengths, it becomes necessary to insert or delete symbols from $x$ to transform it into $y$.
 This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
 \label{def:alignment}
-An edit transcript for any two given strings $x,y$ is a finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
+\citep{Gusfield1997} An edit transcript for any two given strings $x,y$ is a finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
 \end{definition}
 
 An \emph{alignment} is an alternative yet equivalent way of visualizing a transformation between strings.
-While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of corresponding symbols between two strings.
-Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie some symbols are inserted or removed.
+While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of symbols from the two strings.
+Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie when some symbols are inserted or removed.
 For this reason, it is necessary to introduce an additional gap symbol $-$, not being part of the string alphabet $\Sigma$.
 The definition of alignment follows.
 Figure~\ref{fig:edit-transcript} shows an example of edit transcript and alignment.
@@ -129,87 +144,118 @@ An alignment of two strings of length $m,n$ over $\Sigma$ is a string of length 
 %\end{center}
 %\end{figure}
 
+%\section{Distance functions}
 
+%A cost is assigned to any alignment, and to its associated edit transformation, by defining a weight function $\delta : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
+%\begin{itemize}
+%\item $\delta(\alpha,\beta)$ for all $(\alpha,\beta) \in \Sigma \times \Sigma$ defines the cost of substituting $\alpha$ with $\beta$,
+%\item $\delta(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
+%\item $\delta(-,\beta)$ for all $\beta \in \Sigma$ defines the cost of inserting the symbol $\beta$,
+%\end{itemize}
+%
+%The total cost $C(z)$ of an alignment $z$ between two strings is the sum of the weights of all its alignment symbols:
+%\begin{eqnarray}
+%C(z) = \sum_{i=0}^{|z|}{\delta(z_i)}
+%\end{eqnarray}
+%Consequently, any distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ takes the minimum cost over all possible alignments of $x,y$:
+%\begin{eqnarray}
+%d(x,y) = \min_{z \in \mathbb{A}(x,y)}{C(z)}
+%\end{eqnarray}
 
-\section{Distance functions}
-
-A cost is assigned to any alignment, and to its associated edit transformation, by defining a weight function $\omega : (\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \rightarrow \R_0^{+}$, where:
-\begin{itemize}
-\item $\omega(\alpha,\beta)$ for all $(\alpha,\beta) \in \Sigma \times \Sigma$ defines the cost of substituting $\alpha$ with $\beta$,
-\item $\omega(\alpha,-)$ for all $\alpha \in \Sigma$ defines the cost of deleting the symbol $\alpha$,
-\item $\omega(-,\beta)$ for all $\beta \in \Sigma$ defines the cost of inserting the symbol $\beta$,
-\end{itemize}
-
-The total cost $C(z)$ of an alignment $z$ between two strings is the sum of the weights of all its alignment symbols:
-\begin{eqnarray}
-C(z) = \sum_{i=0}^{|z|}{\omega(z_i)}
-\end{eqnarray}
-Consequently, any distance function $d : \Sigma^{*} \times \Sigma^{*} \rightarrow \R_0^{+}$ takes the minimum cost over all possible alignments of $x,y$:
-\begin{eqnarray}
-d(x,y) = \sum_{z \in \mathbb{A}(x,y)}{C(z)}
-\end{eqnarray}
+At this point, I define two fundamental distance functions between strings.
 
 \begin{definition}
 \label{def:hamming}
-The \emph{Hamming distance} between two strings $x,y \in \Sigma^{n}$ counts the number of substitutions necessary to transform $x$ into $y$.
+\citep{Hamming1950} The \emph{Hamming distance} $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$ between two strings $x,y \in \Sigma^{n}$ counts the number of substitutions necessary to transform $x$ into $y$.
 \end{definition}
-I denote the Hamming distance by the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$.
-The function $d_H$ is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\omega(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\omega(-,\beta)$ to be $+ \infty$ in order to disallow insertions and deletions.
+%I denote the Hamming distance by the function $d_H : \Sigma^{n} \times \Sigma^{n} \rightarrow \N_0$.
+%The function $d_H$ is obtained by defining for all $(\alpha,\beta) \in \Sigma \times \Sigma$, $\delta(\alpha,\beta) = 1$ iff $\alpha \neq \beta$ and 0 otherwise, and $\delta(-,\beta)$ to be $+ \infty$ in order to disallow insertions and deletions.
 
 \begin{definition}
 \label{def:edit}
-The \emph{Levenshtein} or \emph{edit distance} between two strings $x,y \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $x$ into $y$.
+\citep{Levenshtein1966} The \emph{Levenshtein} or \emph{edit distance} $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ between two strings $x,y \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $x$ into $y$.
 \end{definition}
-I denote the edit distance by the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$.
-The function $d_E$ is obtained by defining $\omega(\alpha,\beta)$ as for the Hamming distance, and $\omega(\alpha,-) = \omega(-,\beta) = 1$.
-
-\section{Optimal alignments}
+%I denote the edit distance by the function $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$.
+%The function $d_E$ is obtained by defining $\delta(\alpha,\beta)$ as for the Hamming distance, and $\delta(\alpha,-) = \delta(-,\beta) = 1$.
 
 The problem of finding an optimal alignment between two strings is equivalent to the problem of finding their minimum distance \citep{Gusfield1997}.
-A solution to this optimization problem can be efficiently computed via dynamic programming (DP).
-Below I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
+While the Hamming distance between any two strings of length $n$ is easily computed in time $\Oh(n)$, computing the edit distance involves solving a non-trivial optimization problem.
 
+\section{Edit distance computation}
+
+The edit distance between two strings is efficiently computed via \emph{dynamic programming} (DP).
+%Below, I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 Let $x,y$ be two strings of length $m \leq n$.
-I recursively define with $d(x_{1..i},y_{1..j})$ the distance between their prefixes $x_{1..i}$ and $y_{1..j}$, for all $1 \leq i \leq m$ and $1 \leq j \leq n$.
+The edit distance $d_E(x_{1 \dots i},y_{1 \dots j})$ between any their prefixes $x_{1 \dots i}$ and $y_{1 \dots j}$ is defined recursively.
+%for all $1 \leq i \leq m$ and $1 \leq j \leq n$,
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
-d(\epsilon,\epsilon)&=&0\\
-d(x_{1..i},\epsilon)&=&\sum_{l=1}^{i}{\omega(x_l, -)} \text{ for all } 1 \leq i \leq m\\
-d(\epsilon, y_{1..j})&=&\sum_{l=1}^{j}{\omega(-, y_l)} \text{ for all } 1 \leq j \leq n
+d_E(\epsilon,\epsilon)&=&0\\
+d_E(x_{1 \dots i},\epsilon)&=&i \; \text{ for all } 1 \leq i \leq m\\
+d_E(\epsilon, y_{1 \dots j})&=&j \; \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
-and the recursive case is as follows:
+and the recursive case for all $1 < i \leq m$ and $1 < j \leq n$ is as follows:
 \begin{eqnarray}
-d(x_{1..i},y_{1..j}) = \min \left\{
+d_E(x_{1\dots i},y_{1 \dots j}) = \min \left\{
 \begin{array}{lcl}
-d(x_{1..i-1},y_{1..j})&+&\omega(x_i, -)\\
-d(x_{1..i},y_{1..j-1})&+&\omega(-, y_j)\\
-d(x_{1..i-1},y_{1..j-1})&+&\omega(x_i, y_j)
+d_E(x_{1 \dots i-1},y_{1 \dots j})&+&1\\
+d_E(x_{1 \dots i},y_{1 \dots j-1})&+&1\\
+d_E(x_{1 \dots i-1},y_{1 \dots j-1})&+&\delta(x_i, y_j)
 \end{array}
 \right.\label{eq:dp-min}
 \end{eqnarray}
 
-The above recurrence relation is computed in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d(x_{1..i},y_{1..j})$.
-The sole distance without any alignment is computed in space $\Oh(m)$, as only column $D[:j-1]$ is needed to compute column $D[:j]$.
-An optimal alignment is computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
-the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
-
-\begin{figure}[h]
+\begin{figure*}[b!]
 \begin{center}
-\caption[Example of DP table]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
-\label{fig:edit-dp}
-\input{figures/dp_edit.tikz}
+\begin{minipage}[t]{.9\textwidth}
+\begin{algorithm}[H]
+\Algorithm{EditDistance}{$x,y$}
+\begin{tabular}{ll}
+\textbf{Input}  & $x$ : string of length $n$\\
+				& $y$ : string of length $m$\\
+\textbf{Output} & the edit distance $d_E(x,y)$ between $x$ and $y$\\
+\end{tabular}
+\begin{algorithmic}[1]
+\State {$D[0,0] \gets 0$}
+\For {$i \gets 1 \, \To m$}
+	\State {$D[i,0] \gets D[i-1,0] + 1$}
+\EndFor
+\For {$j \gets 1 \, \To n$}
+	\State {$D[0,j] \gets D[0,j-1] + 1$}
+	\For {$i \gets 1 \, \To m$}
+		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_j, p_i) \, \}$}
+	\EndFor
+\EndFor
+\State \Return D[m,n]
+\end{algorithmic}
+\label{alg:dp-edit}
+\end{algorithm}
+\end{minipage}
 \end{center}
-\end{figure}
+\end{figure*}
+
+Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(nm)$ using a dynamic programming table $D$ of $(m+1) \times (n+1)$ cells, where cell $D[i,j]$ stores the value of $d_E(x_{1 \dots i},y_{1 \dots j})$.
+The sole edit distance without any alignment can be computed in space $\Oh(m)$, as only column $D[:j-1]$ is needed to compute column $D[:j]$.
+An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$:
+the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yields the value of $D[m,n]$.
+
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Example of DP table]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
+%\label{fig:edit-dp}
+%\input{figures/dp_edit.tikz}
+%\end{center}
+%\end{figure}
 
 
 % === Overview of existing methods ===
 
 \section{String matching}
 
-I now define \emph{exact string matching}, one of the most fundamental problems in stringology.
+\emph{Exact string matching} is one of the most fundamental problems in stringology.
 \begin{definition}
 \citep{Gusfield1997}
-Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of length $n$, called the \emph{text}, the exact string matching problem is to find all occurrences of pattern $p$ into text $t$.
+Given a string $p$ of length $m$, called the \emph{pattern}, and a string $t$ of length $n$, called the \emph{text}, the exact string matching problem is to find all occurrences of $p$ into $t$.
 \end{definition}
 
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice \citep{Faro2013}.
@@ -221,6 +267,7 @@ Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the
 \end{definition}
 The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern trivially occurs at any position in the text if all its $m$ characters are substituted.
+Frequently, the problem's input respects the condition $k \ll m \ll n$.
 \begin{definition}
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
@@ -259,19 +306,46 @@ For an extensive treatment of this subject, the reader is referred to complete s
 \subsection{Online methods}
 \label{sub:introonline}
 
-%Exact search of one pattern. Knuth-Morris-Pratt automaton.
-%Exact search of multiple patterns. Aho-corasick automaton.
-
 %The most important category of algorithms for approximate string matching are based on dynamic programming.
 %DP bit-parallelism.
-
 %Other algorithms for approximate string matching are based on automata \citep{Navarro2001b}.
 
 %\subsubsection{Dynamic programming}
 
-The dynamic programming algorithm~\ref{?} to compute the distance between two strings is easily turned into an online approximate string matching algorithm.
+The DP algorithm~\ref{alg:dp-edit} to compute the edit distance between two strings is easily turned into an online $k$-differences algorithm.
 Since an occurrence of the pattern can start and end anywhere in the text, approximate string matching consists of computing the edit distance between the pattern and \emph{any substring} of the text.
 The problem can be thus solved by computing the distance between the text and the pattern without penalizing leading and trailing deletions in the text.
+
+\begin{figure*}[h]
+\begin{center}
+\begin{minipage}[t]{.9\textwidth}
+\begin{algorithm}[H]
+\Algorithm{KDifferences}{$t,p$}
+\begin{tabular}{ll}
+\textbf{Input}  & $t$ : text string of length $n$\\
+				& $p$ : pattern string of length $m$\\
+\textbf{Output} & all end positions of $k$-differences occurrences of $p$ in $t$\\
+\end{tabular}
+\begin{algorithmic}[1]
+\State {$D[0,0] \gets 0$}
+\For {$i \gets 1 \, \To m$}
+	\State {$D[i,0] \gets i$}
+\EndFor
+\For {$j \gets 1 \, \To n$}
+	\State {$D[0,j] \gets 0$}
+	\For {$i \gets 1 \, \To m$}
+		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_j, p_i) \, \}$}
+	\EndFor
+	\If {$D[m,j] \leq k$}
+		\State \Report $j$
+	\EndIf
+\EndFor
+\end{algorithmic}
+\label{alg:dp-kdiff}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\end{figure*}
 
 Consider equation~\ref{eq:dp-min} and pose $x=p$ and $y=t$.
 Since an occurrence of the pattern can start anywhere in the text, the initialization of the top row $D[0:]$ of the DP matrix is changed to:
@@ -280,13 +354,13 @@ d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
 \end{eqnarray}
 and since an occurrence of the pattern can end anywhere in the text, all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ are checked for the condition $D[m,j] \leq k$.
 
-\begin{figure}[h]
-\begin{center}
-\caption[Example of approximate string matching via DP]{DP table representing the match of $p=...$ in $t=...$.}
-\label{fig:asm-dp}
-\input{figures/dp_asm.tikz}
-\end{center}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Example of approximate string matching via DP]{DP table representing the match of $p=...$ in $t=...$.}
+%\label{fig:asm-dp}
+%\input{figures/dp_asm.tikz}
+%\end{center}
+%\end{figure}
 
 % --- Indexed methods ---
 

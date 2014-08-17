@@ -209,6 +209,11 @@ Hach, F., Hormozdiari, F., Alkan, C., Hormozdiari, F., Birol, I., Eichler,
 \newblock {mrsFAST}: a cache-oblivious algorithm for short-read mapping.
 \newblock {\em Nat. Methods\/}, {\bf 7}(8), pages 576--577.
 
+\bibitem[Hamming(1950)Hamming]{Hamming1950}
+Hamming, R.~W. (1950).
+\newblock Error detecting and error correcting codes.
+\newblock {\em Syst. Tech. J.}, {\bf 29}, pages 147--160.
+
 \bibitem[Holtgrewe(2010)Holtgrewe]{Holtgrewe2010}
 Holtgrewe, M. (2010).
 \newblock Mason -- a read simulator for second generation sequencing data.
@@ -300,6 +305,12 @@ Lee, H. and Schatz, M.~C. (2012).
 \newblock Genomic dark matter: the reliability of short read mapping
   illustrated by the genome mappability score.
 \newblock {\em Bioinformatics\/}, {\bf 28}(16), pages 2097--2105.
+
+\bibitem[Levenshtein(1966)Levenshtein]{Levenshtein1966}
+Levenshtein, V.~I. (1966).
+\newblock Binary codes capable of correcting deletions, insertions and
+  reversals.
+\newblock {\em Soviet Physics -- Doklady\/}, {\bf 10}, pages 707--710.
 
 \bibitem[Li(2012)Li]{Li2012}
 Li, H. (2012).

@@ -1001,7 +1001,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 		\State \Report \Call{occurrences}{$t$}
 	\ElsIf {\Call{goDown}{$t$}}
 		\Repeat
-			\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
+			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
 			\State \Call{goNext}{$p$}
 			\State \Call{KMismatches}{$t,p,e + d$}
 			\State \Call{goPrevious}{$p$}
@@ -1061,7 +1061,7 @@ This latter algorithm necessitates of a method capable of checking incrementally
 	\If {\Call{goDown}{$t$}}
 		\Repeat
 			\State \Call{KDifferences}{$t,p,e+1$}
-			\State {$d \gets \omega(\Call{label}{t}, \Call{value}{p})$}
+			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
 			\State \Call{goNext}{$p$}
 			\State \Call{KDifferences}{$t,p,e + d$}
 			\State \Call{goPrevious}{$p$}
@@ -1187,7 +1187,7 @@ Algorithm~\ref{alg:st-exact-multi} suffers from the preprocessing time to constr
 		\Repeat
 			\State {\Call{goDown}{$p$}}
 			\Repeat
-				\State {$d \gets \omega(\Call{label}{t}, \Call{label}{p})$}
+				\State {$d \gets \delta(\Call{label}{t}, \Call{label}{p})$}
 				\State \Call{MultipleKMismatches}{$t,p,e+d$}
 			\Until {\Call{goRight}{$p$}}
 			\State {\Call{goUp}{$p$}}
