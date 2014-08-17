@@ -185,16 +185,16 @@ While the Hamming distance between any two strings of length $n$ is easily compu
 
 The edit distance between two strings is efficiently computed via \emph{dynamic programming} (DP).
 %Below, I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
-Let $x,y$ be two strings of length $m \leq n$.
+Let $x,y$ be two strings of length $n \geq m$.
 The edit distance $d_E(x_{1 \dots i},y_{1 \dots j})$ between any their prefixes $x_{1 \dots i}$ and $y_{1 \dots j}$ is defined recursively.
 %for all $1 \leq i \leq m$ and $1 \leq j \leq n$,
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
-d_E(\epsilon,\epsilon)&=&0\\
-d_E(x_{1 \dots i},\epsilon)&=&i \; \text{ for all } 1 \leq i \leq m\\
-d_E(\epsilon, y_{1 \dots j})&=&j \; \text{ for all } 1 \leq j \leq n
+d_E(\epsilon,\epsilon)&=&0\label{eq:dp-ee}\\
+d_E(x_{1 \dots i},\epsilon)&=&i \; \text{ for all } 1 \leq i \leq n\label{eq:dp-row}\\
+d_E(\epsilon, y_{1 \dots j})&=&j \; \text{ for all } 1 \leq j \leq m\label{eq:dp-col}
 \end{eqnarray}
-and the recursive case for all $1 < i \leq m$ and $1 < j \leq n$ is as follows:
+and the recursive case for all $1 < i \leq n$ and $1 < j \leq m$ is as follows:
 \begin{eqnarray}
 d_E(x_{1\dots i},y_{1 \dots j}) = \min \left\{
 \begin{array}{lcl}
@@ -217,13 +217,13 @@ d_E(x_{1 \dots i-1},y_{1 \dots j-1})&+&\delta(x_i, y_j)
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$D[0,0] \gets 0$}
-\For {$i \gets 1 \, \To m$}
-	\State {$D[i,0] \gets D[i-1,0] + 1$}
+\For {$j \gets 1 \, \To m$}
+	\State {$D[j,0] \gets D[j-1,0] + 1$}
 \EndFor
-\For {$j \gets 1 \, \To n$}
-	\State {$D[0,j] \gets D[0,j-1] + 1$}
-	\For {$i \gets 1 \, \To m$}
-		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_j, p_i) \, \}$}
+\For {$i \gets 1 \, \To n$}
+	\State {$D[0,i] \gets D[0,i-1] + 1$}
+	\For {$j \gets 1 \, \To m$}
+		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_i, p_j) \, \}$}
 	\EndFor
 \EndFor
 \State \Return D[m,n]
@@ -320,24 +320,25 @@ The problem can be thus solved by computing the distance between the text and th
 \begin{center}
 \begin{minipage}[t]{.9\textwidth}
 \begin{algorithm}[H]
-\Algorithm{KDifferences}{$t,p$}
+\Algorithm{KDifferences}{$t,p,k$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : text string of length $n$\\
 				& $p$ : pattern string of length $m$\\
+				& $k$ : integer bounding the number of errors\\
 \textbf{Output} & all end positions of $k$-differences occurrences of $p$ in $t$\\
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$D[0,0] \gets 0$}
-\For {$i \gets 1 \, \To m$}
-	\State {$D[i,0] \gets i$}
+\For {$j \gets 1 \, \To m$}
+	\State {$D[j,0] \gets j$}
 \EndFor
-\For {$j \gets 1 \, \To n$}
-	\State {$D[0,j] \gets 0$}
-	\For {$i \gets 1 \, \To m$}
-		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_j, p_i) \, \}$}
+\For {$i \gets 1 \, \To n$}
+	\State {$D[0,i] \gets 0$}
+	\For {$j \gets 1 \, \To m$}
+		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_i, p_j) \, \}$}
 	\EndFor
-	\If {$D[m,j] \leq k$}
-		\State \Report $j$
+	\If {$D[i,m] \leq k$}
+		\State \Report $i$
 	\EndIf
 \EndFor
 \end{algorithmic}
@@ -347,12 +348,14 @@ The problem can be thus solved by computing the distance between the text and th
 \end{center}
 \end{figure*}
 
-Consider equation~\ref{eq:dp-min} and pose $x=p$ and $y=t$.
-Since an occurrence of the pattern can start anywhere in the text, the initialization of the top row $D[0:]$ of the DP matrix is changed to:
+Consider the recurrence relation described by equations~\ref{eq:dp-ee}--\ref{eq:dp-min} and pose $x=t$ and $y=p$.
+In approximate string matching, an occurrence of the pattern can start anywhere in the text.
+Thus, the base condition \ref{eq:dp-row} of the edit distance recurrence relation is changed to:
 \begin{eqnarray}
-d(\epsilon, y_{1..j}) = 0 \text{ for all } 1 \leq j \leq n
+d(x_{1 \dots i}, \epsilon) = 0 \; \text{ for all } 1 \leq i \leq n\label{eq:dp-row-kdiff}
 \end{eqnarray}
-and since an occurrence of the pattern can end anywhere in the text, all cells $D[m,j]$ for all $1 \leq j \leq n$ in the bottom row of $D$ are checked for the condition $D[m,j] \leq k$.
+Thus, algorithm~\ref{alg:dp-kdiff} initializes the top row $D[0:]$ of the DP matrix accordingly
+and, since an occurrence of the pattern can end anywhere in the text, checks all cells in the bottom row of $D$ for the condition $D[i,m] \leq k$.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -380,7 +383,7 @@ The generic traversal operations here introduced lead to the formulation of gene
 Consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) consisting of $c$ strings.
 Note that padding is necessary to ensure that no string $s^i \in \Sc$ is a prefix of another string $s^j \in \Sc$.
 \begin{definition}
-The trie $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+The \emph{trie} $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
 The edge entering any node of $\Si$ is labeled with a symbol in $\Sigma$, while the edge entering any leaf of $\Si$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
@@ -390,9 +393,9 @@ Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its 
 
 \begin{definition}
 Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ is the trie of all suffixes of $s$.
-The suffix trie $\Si$ has $n$ leaves where leaf $\Ln_i$ points to suffix $s_{i..n}$.
+The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix $s_{i..n}$.
 \end{definition}
-The suffix trie generalizes to index string collections.
+%The suffix trie generalizes to index string collections.
 \begin{definition}
 Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
 Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
