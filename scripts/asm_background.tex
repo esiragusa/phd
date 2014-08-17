@@ -317,15 +317,11 @@ For an extensive treatment of this subject, the reader is referred to complete s
 \subsection{Online methods}
 \label{sub:introonline}
 
-%The most important category of algorithms for approximate string matching are based on dynamic programming.
-%DP bit-parallelism.
-%Other algorithms for approximate string matching are based on automata \citep{Navarro2001b}.
-
 %\subsubsection{Dynamic programming}
 
 The DP algorithm~\ref{alg:dp-edit} to compute the edit distance between two strings is easily turned into an online $k$-differences algorithm.
-Since an occurrence of the pattern can start and end anywhere in the text, approximate string matching consists of computing the edit distance between the pattern and \emph{any substring} of the text.
-The problem can be thus solved by computing the distance between the text and the pattern without penalizing leading and trailing deletions in the text.
+Since an approximate occurrence of the pattern can start (and end) anywhere in the text, the problem involves computing the edit distance between the pattern and \emph{any substring} of the text.
+Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
 \begin{figure*}[h]
 \begin{center}
@@ -360,13 +356,12 @@ The problem can be thus solved by computing the distance between the text and th
 \end{figure*}
 
 Consider the recurrence relation described by equations~\ref{eq:dp-ee}--\ref{eq:dp-min} and pose $x=t$ and $y=p$.
-In approximate string matching, an occurrence of the pattern can start anywhere in the text.
-Thus, the base condition \ref{eq:dp-row} of the edit distance recurrence relation is changed to:
+Because an occurrence of the pattern can start anywhere in the text, the base condition \ref{eq:dp-row} of the edit distance recurrence relation becomes:
 \begin{eqnarray}
 d(x_{1 \dots i}, \epsilon) = 0 \; \text{ for all } 1 \leq i \leq n\label{eq:dp-row-kdiff}
 \end{eqnarray}
-Thus, algorithm~\ref{alg:dp-kdiff} initializes the top row $D[0:]$ of the DP matrix accordingly
-and, since an occurrence of the pattern can end anywhere in the text, it checks any cell in the bottom row for the condition $D[i,m] \leq k$.
+and algorithm~\ref{alg:dp-kdiff} initializes the top row $D[0:]$ of the DP matrix accordingly.
+Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-kdiff} checks any cell in the bottom row for the condition $D[i,m] \leq k$.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -375,6 +370,11 @@ and, since an occurrence of the pattern can end anywhere in the text, it checks 
 %\input{figures/dp_asm.tikz}
 %\end{center}
 %\end{figure}
+
+%\subsubsection{Myers' algorithm}
+
+%DP bit-parallelism.
+%Other algorithms for approximate string matching are based on automata \citep{Navarro2001b}.
 
 % --- Indexed methods ---
 
