@@ -568,19 +568,21 @@ The character $s^i$ is recovered by starting at the position of $\$^i$ and follo
 
 Also permutation $LF$ is conceptual: it is not necessary to encode it explicitly.
 Luckily, it is possible to deduce it from the BWT, with the help of some additional character counts.
-This is possible due to two simple observations on the cyclic shifts matrix \citep{Burrows1994}.
+This is possible due to two simple observations on the cyclic shifts matrix.
 
 \begin{observation}
 \label{obs:lf-a}
+\citep{Burrows1994}
 For all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$.% (except when $l_i = \$$);
 \end{observation}
 \begin{observation}
 \label{obs:lf-b}
-For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
+\citep{Burrows1994}
+For all characters $c \in \Sigma$, the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{observation}
 
 These observation are evident, indeed $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:lf_psi}).
-Given the two above observations, \citeauthor{Ferragina2000} define the permutation $LF$ as in \citep{Burrows1994}:
+Given the two above observations, \citeauthor{Ferragina2000} define the permutation $LF$ as:
 \begin{eqnarray}
 LF(i) = C(l_i) + Occ(l_i, i)
 \end{eqnarray}
@@ -773,12 +775,7 @@ Now, suppose the traversal being at an arbitrary node $v$ of known interval $[b_
 The traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
 Thus, I know all prefixes of $\bar{\Sc}$ ending with $s_v$ (hence all suffixes of $\Sc$ starting with $s_v$) and I am looking for all the prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$ (hence all suffixes of $\Sc$ starting with $s_v \cdot c$).
 All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Sc_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
-Moreover, these characters $c$ are
-\begin{inparaenum}[(i)]
-\item contiguous and
-\item in relative order
-\end{inparaenum}
-in $f$ (see observations~\ref{obs:lf1-a}--\ref{obs:lf-b}).
+Moreover, these characters $c$ are \emph{contiguous} and \emph{in relative order} in $f$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
 If $b$ and $e$ are the first and last position in $l$ within $[b_v, e_v]$ such that $l_b = c$ and $l_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
 Therefore $LF(b)$ becomes:
 \begin{eqnarray}
