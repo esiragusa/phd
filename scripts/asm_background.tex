@@ -466,7 +466,7 @@ Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc
 Algorithms \ref{alg:st-godown} and \ref{alg:st-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} using \textsc{goDown} a symbol and \textsc{goUp}, although with a worst-case time complexity of $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, I consider various data structures to implement suffix tries, I show how to implement these operations and give their complexities.
 
-\begin{figure*}
+\begin{figure*}[h]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn$}
@@ -522,21 +522,6 @@ The filtration stage proceeds online by scanning the text or alternatively offli
 The verification stage uses a conventional method, \eg the online dynamic programming method or some variation of it.
 The crux of filtering methods is thus to accurately and efficiently classify text portions as containing or not an occurrence of the pattern.
 
-\begin{table}[h]
-\begin{center}
-\caption[Classification of text locations by filtering methods]{Classification of text locations by filtering methods.}
-\begin{tabular}{ccc}
-\toprule
-Occurrence & Filtered in & Filtered out\\
-\midrule
-Yes & True positive (TP) & False negative (FN) \\
-No & False positive (FP) & True negative (TN) \\
-\bottomrule
-\end{tabular}
-\label{tab:filter:accuracy}
-\end{center}
-\end{table}
-
 \subsubsection{Specificity and sensitivity}
 
 Any filtering method is thus a binary classification method.
@@ -561,6 +546,21 @@ A filter is \emph{lossless} or \emph{full-sensitive} if its sensitivity is 1, \i
 Many practical applications, \eg read mapping do not require strictly lossless filtration.
 Nonetheless, a predictable or controlled lossy filter helps to interpret the results and insure their quality.
 For this reason, I focus on criteria yielding filters which are lossless or lossy in a predictable fashion.
+
+\begin{table}[h]
+\begin{center}
+\caption[Classification of text locations by filtering methods]{Classification of text locations by filtering methods.}
+\begin{tabular}{ccc}
+\toprule
+Occurrence & Filtered in & Filtered out\\
+\midrule
+Yes & True positive (TP) & False negative (FN) \\
+No & False positive (FP) & True negative (TN) \\
+\bottomrule
+\end{tabular}
+\label{tab:filter:accuracy}
+\end{center}
+\end{table}
 
 \subsubsection{Efficiency}
 
