@@ -791,21 +791,7 @@ Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and 
 Conversely, \textsc{goDown} and \textsc{goRight} are implemented as generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright}, thus run in time $\Oh(\sigma)$.
 
 \begin{figure*}
-%\begin{minipage}[t]{.5\textwidth}
-%\begin{algorithm}[H]
-%\Algorithm{goRoot}{$\Tn$}
-%\begin{tabular}{ll}
-%\textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
-%\end{tabular}
-%\begin{algorithmic}[1]
-%\State {$x \gets \{ 1, n, \epsilon \}$}
-%%\State {$x.l \gets 1$}
-%%\State {$x.r \gets n$}
-%\end{algorithmic}
-%\label{alg:fm-goroot}
-%\end{algorithm}
-%\end{minipage}
-%\hfill
+\begin{center}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn, c$}
@@ -826,6 +812,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} are implemented as generic algo
 \label{alg:fm-godownc}
 \end{algorithm}
 \end{minipage}
+\end{center}
 \end{figure*}
 
 \subsubsection{Sampled suffix array}
