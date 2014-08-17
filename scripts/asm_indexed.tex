@@ -31,7 +31,7 @@ In this way, an additional logarithmic time complexity is paid to reduce space c
 I formally define the suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
-The suffix array of a padded string $s$ of length $n$ is defined as an array $A$ containing a permutation of the interval $[1,n]$, such that $s_{A[i] \dots n} <_{lex} s_{A[i+1] \dots n}$ for all $1 \leq i < n$.
+The \emph{suffix array} of a padded string $s$ of length $n$ is an array $A$ containing a permutation of the interval $[1,n]$, \st $s_{A[i] \dots n} <_{lex} s_{A[i+1] \dots n}$ for all $1 \leq i < n$.
 \end{definition}
 
 \begin{figure}[h]
@@ -53,10 +53,10 @@ $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 \end{center}
 \end{figure}
 
-I define the generalized suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
+I generalize the suffix array to index string collections, analogously to the generalized suffix trie introduced in section~\ref{sub:introindex}.
 \begin{definition}
-The generalized suffix array of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is defined as an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $j$ points to one of the $n_i$ suffixes of $s^i$.
-Pairs are ordered such that $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
+The \emph{generalized suffix array} of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $j$ points to one of the $n_i$ suffixes of $s^i$.
+Pairs are ordered \st $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
 \end{definition}
 
 \begin{figure}[h]
@@ -424,10 +424,10 @@ This gives a twofold advantage, as one can:
 \end{inparaenum}
 The latter property allows to compress the suffix array bucket-wise \eg using Elias $\delta$ encoding \citep{Elias1975} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
 
-The $q$-gram index is still useful even if traversals needs to go below depth $q$.
-An hybrid method can use the directory $D$ to conduct the traversal up to depth $q$ and later continue with binary searches on the suffix array.
-This hybrid index cuts the most expensive binary searches and increases memory locality.
-Furthermore, this hybrid index becomes useful whenever the suffix array is too big to fit in main memory and has to reside in external memory.
+The $q$-gram index is still useful even if the traversal need to go below depth $q$.
+An hybrid traversal can use the directory $D$ up to depth $q$ and later continue with binary searches on the suffix array $A$.
+This hybrid traversal cuts the most expensive binary searches and increases memory locality.
+Furthermore, this traversal becomes useful whenever the suffix array is too big to fit in main memory and has to reside in external memory.
 
 \section{Succinct full-text indices}
 
@@ -571,9 +571,11 @@ Luckily, it is possible to deduce it from the BWT, with the help of some additio
 This is possible due to two simple observations on the cyclic shifts matrix \citep{Burrows1994}.
 
 \begin{observation}
+\label{obs:lf-a}
 For all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the original string $s$.% (except when $l_i = \$$);
 \end{observation}
 \begin{observation}
+\label{obs:lf-b}
 For all characters $c \in \Sigma$ the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{observation}
 
@@ -753,9 +755,9 @@ Later I focus on how to represent the leaves, which are necessary to locate occu
 \subsubsection{Top-down traversal}
 
 Given a padded string collection $\Sc$, its associated permutation $LF$ recovers any substring of $\bar{\Sc}$.
-Nonetheless, I want to recover substrings of $\Sc$ in \emph{forward direction}, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
+Nonetheless, I need to recover substrings of $\Sc$ in \emph{forward direction}, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
 Therefore, I consider the BWT of $\bar{\Sc}$, such that $LF$ recovers any substring of $\Sc$.
-Now I can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
+In this way, I can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
 
 I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 \begin{itemize}
@@ -766,19 +768,19 @@ I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]
 \end{itemize}
 %In order to answer \textsc{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 
-From the root node, I easily obtain the interval of its child node labeled by $c$ as $[C(c),C(c+1)]$.
-Now, suppose an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$;
-I want to reach the node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
+The traversal easily goes from the root node to its child node labeled by $c$: it suffices to derive the interval $[C(c),C(c+1)]$.
+Now, suppose the traversal being at an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$.
+The traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
 Thus, I know all prefixes of $\bar{\Sc}$ ending with $s_v$ (hence all suffixes of $\Sc$ starting with $s_v$) and I am looking for all the prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$ (hence all suffixes of $\Sc$ starting with $s_v \cdot c$).
 All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Sc_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
-Moreover, I know that these characters $c$ are
+Moreover, these characters $c$ are
 \begin{inparaenum}[(i)]
 \item contiguous and
 \item in relative order
 \end{inparaenum}
-in $f$ \citep{Ferragina2000}.
+in $f$ (see observations~\ref{obs:lf1-a}--\ref{obs:lf-b}).
 If $b$ and $e$ are the first and last position in $l$ within $[b_v, e_v]$ such that $l_b = c$ and $l_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
-I rewrite $LF(b)$ as:
+Therefore $LF(b)$ becomes:
 \begin{eqnarray}
 \begin{array}{lcl}
 LF(b) &=& C(l_b) + Occ(l_b, b)\\
@@ -786,9 +788,9 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 	  &=& C(c) + Occ(c, b_v - 1) + 1
 \end{array}
 \end{eqnarray}
-Analogously, I rewrite $LF(e)$ as $C(c) + Occ(c, e_v)$.
+and, analogously, $LF(e)$ becomes $C(c) + Occ(c, e_v)$.
 Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and runs in time $\Oh(1)$.
-Conversely, \textsc{goDown} and \textsc{goRight} are implemented as generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright}, thus run in time $\Oh(\sigma)$.
+Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright}, thus run in time $\Oh(\sigma)$.
 
 \begin{figure*}
 \begin{center}
@@ -817,7 +819,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} are implemented as generic algo
 
 \subsubsection{Sampled suffix array}
 
-The suffix array $A$ is required to locate occurrences, yet I do not want to maintain the whole array $A$.
+The suffix array $A$ is required to locate occurrences, yet it is not appealing to maintain the whole array.
 As proposed by \citeauthor{Ferragina2000}, I maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
 In order to determine if and where I sampled any $A[i]$ in $A^{\epsilon}$, I maintain a binary rank dictionary $S$ of length $n$: if $S[i]=1$, then I sampled $A[i]$ in $A^{\epsilon}[rank_1(S,i)]$.
 I obtain any $A[i]$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $A^{\epsilon}$, and then $A[i] = A[LF^j(i)] + j$.
@@ -832,7 +834,7 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 In this section, I give generic string matching algorithms, working on any of the data structures presented so far.
 I first consider a simple algorithm performing top-down traversals bounded by depth.
 Then, I present algorithms for exact string matching, $k$-mismatches and $k$-differences.
-I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of exact string matching and $k$-mismatches.
+I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
 
 At the same time, I perform an experimental evaluation of each of these algorithms on various suffix trie implementations.
 As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the interleaved FM-index with two-levels rank dictionaries (FM-2), the wavelet tree FM-index with two-levels rank dictionaries (FM-WT).
