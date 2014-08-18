@@ -507,7 +507,7 @@ This fact motivates me to give ILP or approximate solutions to optimization and 
 Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define this problem as the minimization of a linear function subject to submodular constraints
 \begin{equation}
 \begin{array}{ll}
-\min & |\sigma|_1			\\
+\min & |\sigma|_0			\\
 w.r.t.								\\
 & \sigma \in \Bo^m					\\
 & \bar{t}_{Q}^{m}(\sigma) \leq 0	\\
@@ -519,7 +519,7 @@ w.r.t.								\\
 I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
-\min & |\sigma|_1	\\
+\min & |\sigma|_0	\\
 w.r.t.				\\
 & \sigma \in \Bo^m	\\
 & b \in \Bo^{m-s(Q)+1}\\
@@ -536,7 +536,7 @@ A_{ij} =
 	\end{array}
 \right.
 \end{equation}
-Given the ILP solution $\sigma^*$, I find the maximum distance as $k^* = |\bar{\sigma}^*|_1$.
+Given the ILP solution $\sigma^*$, I find the maximum distance as $k^* = |\sigma^*|_0$.
 
 \begin{observation}
 Contiguous $q$-grams provide an interesting special case of this ILP.
@@ -649,11 +649,11 @@ The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 \begin{algorithmic}[1]
 \State {$\sigma \gets \mathbb{1}^m$}
 \While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\sigma)}{\partial \sigma_j}$}
+	\State {i \gets $ \argmin_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\sigma)}{\partial \sigma_j}$}
 	\State {$\sigma_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return $t^m_Q(\sigma)$
+\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\sigma)$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
