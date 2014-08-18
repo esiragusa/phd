@@ -296,8 +296,8 @@ Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ an
 \end{lemma}
 The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
 Figure~\ref{fig:qgrams-ext} illustrates.
-The threshold function $\tau$ depends only on parameters $q,m,k$ and not on the specific $q$-gram characters.
-For this reason, I call any pair $(q,t)$ solving a $(m,k)$ instance a valid $q$-gram filtration scheme.
+The threshold function $\tau$ depends only on parameters $(m,k)$ in addition to $q$, and not on the specific $q$-gram characters.
+Any pair $(q,t)$ solving a $(m,k)$ instance is a full-sensitive $q$-gram filtration scheme.
 
 \begin{figure}[h]
 \begin{center}
@@ -393,13 +393,14 @@ Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a t
 
 Gapped $q$-grams raise hard combinatorial questions:
 \begin{inparaenum}[(i)]
-\item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield any full-sensitive filtration scheme for $k$-mismatches? If so, either
-\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? Or alternatively,
-\item \label{enum:qgram-error} which is the maximum distance $k$ for which full-sensitivity is guaranteed?
-If the answer to question~\ref{enum:qgram-non-detection} is negative and the filter is lossy,
-\item \label{enum:qgram-fn} how many false negatives the filter discards?
-Considering filtration efficiency,
-\item \label{enum:qgram-fp} how many false positives the filter produces?
+\item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield any full-sensitive filtration scheme for an $(m,k)$ instance? If so, either
+\item \label{enum:qgram-error} which is the maximum distance $k^*$ for which full-sensitivity is guaranteed?
+Or alternatively,
+\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t^*$ that guarantees full-sensitivity?
+If the answer to question~\ref{enum:qgram-non-detection} is negative and the filtration scheme is lossy,
+\item \label{enum:qgram-fn} which is its expected sensitivity?
+And
+\item \label{enum:qgram-fp} which is its expected specificity?
 %If the weight is taken as a simplified criterion predicting filtration efficiency, 
 %\item \label{enum:qgram-weight} which is the maximum weight lossless shape?
 \end{inparaenum}
@@ -472,13 +473,13 @@ Since super and submodular functions are closed under non-negative linear combin
 
 \subsection{Full-sensitivity}
 
-\textsc{Non Detection}~\citep{Nicolas2005}. Does a given $Q$-gram yield a full-sensitive filter for $k$-mismatches?
+%\textsc{Non Detection}~\citep{Nicolas2005} asks the question: does a given $Q$-gram solve a $(m,k)$ instance?
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, two integers $m,k$ with $0 < k < m$. \\
+{\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance. \\
 {\bf Question}	&	Does it exist a similarity $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
 \end{tabular}
 \\
@@ -488,19 +489,79 @@ Since super and submodular functions are closed under non-negative linear combin
 \textsc{Non Detection} is \emph{strongly} NP-complete \citep{Nicolas2005}.
 \citeauthor{Nicolas2005} introduce an intermediate problem, called \textsc{Soapy Set Cover}. They reduce \textsc{Exact Cover by 3-Sets} to \textsc{Soapy Set Cover} and \textsc{Soapy Set Cover} to \textsc{Non Detection}.
 Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
+This fact motivates me to give ILP or approximate solutions to optimization and counting problems related to \textsc{Non Detection}.
 
+\subsection{Maximum distance}
 
-\subsection{Optimal threshold}
-
-Which is the highest $Q$-gram threshold $t$ that guarantees full-sensitivity?
-This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
+%Which is the maximum distance $k^*$ for which a $Q$-gram guarantees full-sensitivity?
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, two integers $m,k$ such that $0 < k < m$.\\
-{\bf Solution}	&	The largest integer $t^*$ such that \textsc{Non Detection} for $(Q,t^*),m,k$ answers \emph{no}.\\
+{\bf Instance}	&	A $Q$-gram, an integer $m > 0$.\\
+{\bf Solution}	&	The largest integer $k^*$ such that \textsc{Non Detection} for $Q$, $(m,k^*)$ answers \emph{no}.\\
+\end{tabular}
+\\
+
+Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define this problem as the minimization of a linear function subject to submodular constraints
+\begin{equation}
+\begin{array}{ll}
+\min & |\sigma|_1			\\
+w.r.t.								\\
+& \sigma \in \Bo^m					\\
+& \bar{t}_{Q}^{m}(\sigma) \leq 0	\\
+\end{array}
+\end{equation}
+
+\subsubsection{ILP solution}
+
+I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001} and solve it with the following ILP
+\begin{equation}
+\begin{array}{ll}
+\min & |\sigma|_1	\\
+w.r.t.				\\
+& \sigma \in \Bo^m	\\
+& b \in \Bo^{m-s(Q)+1}\\
+& A\sigma \geq b	\\
+\end{array}
+\end{equation}
+where the value $A_{ij}$ of the coefficient matrix $A$ is defined as
+\begin{equation}
+A_{ij} = 
+\left\{
+	\begin{array}{ll}
+		1  & \mbox{if } i-j+1 \in Q		\\
+		0  & \mbox{if } i-j+1 \notin Q	\\
+	\end{array}
+\right.
+\end{equation}
+Given the ILP solution $\sigma^*$, I find the maximum distance as $k^* = |\bar{\sigma}^*|_1$.
+
+\begin{observation}
+Contiguous $q$-grams provide an interesting special case of this ILP.
+If $A$ has the \emph{consecutive ones property}, it is \emph{totally unimodular}.
+The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{integral}.
+Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
+\end{observation}
+
+\subsubsection{APX solution}
+
+I compute an approximate solution via deepest descent.
+APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
+
+
+\subsection{Optimal threshold}
+
+%Which is the highest $Q$-gram threshold $t^*$ that guarantees full-sensitivity for a $()$?
+%This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance.\\
+{\bf Solution}	&	The largest integer $t^*$ such that $(Q,t^*)$ solves $(m,k)$.\\
 \end{tabular}
 \\
 
@@ -513,14 +574,11 @@ w.r.t.								\\
 \end{array}
 \end{equation}
 
-\subsubsection{Exact DP solution}
+\subsubsection{Previous results}
 
-Optimal threshold is fixed-parameter tractable (FPT) in the span of the $q$-gram shape.
+\textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the span of the $Q$-gram.
 \citeauthor{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $O(m \cdot k \cdot 2^{s(Q)})$ \citep{Burkhardt2001}.
 \citeauthor{Kucherov2005} give an extension for $Q$-gram families \citep{Kucherov2005}.
-
-%All possible assignments, \ie $\Bo^s(Q)$, for the first clause $\bigwedge_{j \in Q}{\sigma_j}$ of the boolean function $T_{Q}^{m}$ are considered and all satisfying assignments for it, \ie $\phi(Q)$, are computed.
-%Clause $Q_2$ is considered next...
 
 \subsubsection{Exact ILP solution}
 
@@ -548,80 +606,22 @@ w.r.t.								\\
 \end{array}
 \end{equation}
 where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
-
-I compute an approximate solution via deepest descent.
-My greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
+Algorithm~\ref{?} computes an approximate solution via \emph{deepest descent}.
+This greedy algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
-
-\subsection{Maximum distance}
-
-Which is the maximum distance $k^*$ for which a $Q$-gram guarantees full-sensitivity?
-
-\subsubsection{Problem definition}
-
-\paragraph{}
-\begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, an integer $m > 0$.\\
-{\bf Solution}	&	The largest integer $k^*$ such that \textsc{Non Detection} for $Q,m,k^*$ answers \emph{no}.\\
-\end{tabular}
-\\
-
-Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define this problem as the minimization of a linear function subject to submodular constraints
-\begin{equation}
-\begin{array}{ll}
-\min & |\sigma|_1			\\
-w.r.t.								\\
-& \sigma \in \Bo^m					\\
-& \bar{t}_{Q}^{m}(\sigma) \leq 0	\\
-\end{array}
-\end{equation}
-
-\subsubsection{ILP solution}
-
-I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001}, solve it with the following ILP
-\begin{equation}
-\begin{array}{ll}
-\min & |\sigma|_1	\\
-w.r.t.				\\
-& \sigma \in \Bo^m	\\
-& b \in \Bo^{m-s(Q)+1}\\
-& A\sigma \geq b	\\
-\end{array}
-\end{equation}
-where the value $A_{ij}$ of the coefficient matrix $A$ is defined as
-\begin{equation}
-A_{ij} = 
-\left\{
-	\begin{array}{ll}
-		1  & \mbox{if } i-j+1 \in Q		\\
-		0  & \mbox{if } i-j+1 \notin Q	\\
-	\end{array}
-\right.
-\end{equation}
-and find the maximum error for which full-sensitivity is guaranteed as $k^* = |\bar{\sigma}^*|_1$ given the solution $\sigma^*$ to the ILP.
-
-Contiguous $q$-grams provide an interesting special case of this ILP.
-If $A$ has the \emph{consecutive ones property}, it is \emph{totally unimodular}.
-The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{integral}.
-Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
-
-
-\subsubsection{APX solution}
-
-Again, I compute an approximate solution via deepest descent.
-APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
 
 
 \subsection{Specificity}
 
-How many false positives a filtration scheme $(Q,t)$ produces?
+Fixed a $(m,k)$ instance, how many false positive transcripts are detected by a given filtration scheme $(Q,t)$?
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram and a threshold $t$, two integers $m,k$ such that $0 < k < m$.\\
-{\bf Solution}	&	The number of false positives produced by the filtration scheme $(Q,t)$.\\
+{\bf Instance}	&	A filtration scheme $(Q,t)$, a $(m,k)$ instance.\\
+{\bf Solution}	&	How many similarities $\sigma \in \bar{\Bo^{m}_{k}}$ \st $t_{Q}^{m}(\sigma) > t$ ?\\
+{\bf Solution}	&	The number of false positive similarities detected by $(Q,t)$.\\
 \end{tabular}
 \\
 
