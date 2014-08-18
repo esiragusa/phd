@@ -695,12 +695,11 @@ Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold:
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{TranscriptsDetected}{$Q,t,m,k$}
+\Algorithm{TranscriptsDetected}{$Q,t,m$}
 \begin{tabular}{ll}
 \textbf{Input}  & $Q$ : $Q$-gram sequence\\
 				& $t$ : integer denoting the threshold\\
 				& $m$ : integer denoting the pattern length\\
-				& $k$ : integer denoting the mismatches threshold\\
 \textbf{Output} & integer indicating the number of transcripts detected\\
 \end{tabular}
 %\begin{algorithmic}[1]
