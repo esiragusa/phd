@@ -82,11 +82,11 @@ It is easy to see that also this method performs redundant computation: the tota
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
 Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $\min \,\{ e^*+l, k\}$.
-Given any filtration scheme full-sensitive within distance $k$, with $s$ seeds having thresholds $\mathbb{k}=(k_1,\dots,k_s)$, any subset consisting of $s^* < s$ seeds with thresholds $\mathbb{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
+Given a filtration scheme $\mathbb{k}=(k_1,\dots,k_s)$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbb{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
 \begin{eqnarray}
-s^* + \sum \mathbb{k^*} > \min \,\{ e^*+l, k\}.
+|\mathbb{k^*}| + \sum \mathbb{k^*} > \min \,\{ e^*+l, k\}.
 \end{eqnarray}
-The proof is analogous to that one given in section~\ref{sec:filtering:apx}.
+The proof is analogous to that one given in section~\ref{sec:seeds-apx}.
 %Verification of all candidate locations produced by one seed or by one threshold accounts for one stratum $S(r,i)$.
 
 \begin{example}

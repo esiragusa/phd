@@ -419,7 +419,11 @@ Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such 
 \begin{definition}
 \label{def:qgram-occ}
 A $Q$-gram \emph{occurs} at position $i$ in a transcript $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
-Fixed a $Q$-gram threshold $t$, the $Q$-gram \emph{detects} $\sigma$ iff it occurs at least $t$ times in $\sigma$.
+\end{definition}
+
+\begin{definition}
+\label{def:qgram-detection}
+A $(Q,t)$ filtration scheme \emph{detects} $\sigma$ iff the $Q$-gram occurs at least $t$ times in $\sigma$.
 \end{definition}
 
 \subsubsection{Boolean functions}
