@@ -239,7 +239,7 @@ A seeds filtration scheme is an integer vector $\mathbb{k} \in \N_0^s$, where in
 \label{lemma:apx-scheme}
 Fixed a $k$-differences instance, any filtration scheme $\mathbb{k}$, \st
 \begin{eqnarray}
-\sum \mathbb{k} > k - |\mathbb{k}|
+|\mathbb{k}| + \sum \mathbb{k} > k
 \end{eqnarray}
 is full-sensitive.
 \end{lemma}
@@ -386,7 +386,9 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
 As in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
 Indeed, the pattern of occurring $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the mismatch positions.
-As mismatches do not affect don't care positions, any gapped $Q$-gram potentially yields a higher threshold than the contiguous $q$-gram of the same weight.
+Therefore, in the following, I consider $(Q,t)$ instances solving $(m,k)$ instances.
+Analogously to contiguous $q$-grams, mismatches do not affect don't care positions.
+Thus any gapped $Q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
 Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a tight threshold, but only a lower bound.
 
 Gapped $q$-grams raise hard combinatorial questions:
@@ -683,4 +685,4 @@ This method is importance sampling \citep{Vazirani2001}.
 \label{sec:filtering:evaluation}
 
 TODO.
-I experimentally evaluate filtration efficiency.
+Evaluate experimentally the filtration efficiency of seeds and $q$-grams filters.
