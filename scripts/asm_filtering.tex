@@ -393,7 +393,7 @@ Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a t
 
 Gapped $q$-grams raise hard combinatorial questions:
 \begin{inparaenum}[(i)]
-\item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield a full-sensitive filter for $k$-mismatches? If so, either
+\item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield any full-sensitive filtration scheme for $k$-mismatches? If so, either
 \item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t$ that guarantees full-sensitivity? Or alternatively,
 \item \label{enum:qgram-error} which is the maximum distance $k$ for which full-sensitivity is guaranteed?
 If the answer to question~\ref{enum:qgram-non-detection} is negative and the filter is lossy,
@@ -504,7 +504,7 @@ This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \
 \end{tabular}
 \\
 
-Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I can define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \min & t_{Q}^{m} (\sigma)			\\
@@ -553,9 +553,9 @@ I compute an approximate solution via deepest descent.
 My greedy algorithm for complementary \textsc{Optimal Threshold} has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
-\subsection{Maximum error}
+\subsection{Maximum distance}
 
-Which is the maximum $k^*$ for which a $Q$-gram guarantees full-sensitivity?
+Which is the maximum distance $k^*$ for which a $Q$-gram guarantees full-sensitivity?
 
 \subsubsection{Problem definition}
 
