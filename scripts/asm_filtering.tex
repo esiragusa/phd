@@ -560,9 +560,16 @@ Algorithm \ref{alg:qgram-maxdist-apx} has an APX-ratio of $H_{w(Q)}$ \citep{Vazi
 				& $m$ : integer denoting the pattern length\\
 \textbf{Output} & integer indicating the maximum lossless distance\\
 \end{tabular}
-%\begin{algorithmic}[1]
-%\State \Return $k$
-%\end{algorithmic}
+\begin{algorithmic}[1]
+\State {$k \gets 0$}
+\State {$\sigma \gets \mathbb{1}^m$}
+\While {$t^m_Q(\sigma) > 0$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\sigma)}{\partial \sigma_j}$}
+	\State {$\sigma_i \gets 0$}
+	\State {$k \gets k + 1$}
+\EndWhile
+\State \Return $k$
+\end{algorithmic}
 \label{alg:qgram-maxdist-apx}
 \end{algorithm}
 \end{minipage}
@@ -640,14 +647,13 @@ The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 \textbf{Output} & integer indicating the maximum lossless threshold\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$c[1:m-s(Q)+1] \gets 1$}
-\State {$dt[1:m] \gets 1$}
+\State {$\sigma \gets \mathbb{1}^m$}
 \While {$k > 0$}
-	\State {$i \gets$ argmax($dt$) }
-	
-	\State {$k \gets k -1$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\sigma)}{\partial \sigma_j}$}
+	\State {$\sigma_i \gets 0$}
+	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return sum(c)
+\State \Return $t^m_Q(\sigma)$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
@@ -689,7 +695,7 @@ For threshold $t=1$, this number is simply the number of true assignments of $T_
 \end{equation}
 \citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
 This method is known as \emph{importance sampling} \citep{Vazirani2001}.
-Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold:
+Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
 
 \begin{figure*}[h]
 \begin{center}
