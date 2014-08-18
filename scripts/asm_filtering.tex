@@ -651,7 +651,7 @@ The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 \begin{algorithmic}[1]
 \State {$\sigma \gets \mathbb{1}^m$}
 \While {$k > 0$}
-	\State {i \gets $ \argmin_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\sigma)}{\partial \sigma_j}$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\sigma)}{\partial \sigma_j}$}
 	\State {$\sigma_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
