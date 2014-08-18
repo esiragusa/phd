@@ -611,7 +611,7 @@ w.r.t.							\\
 \end{array}
 \end{equation}
 where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
-The optimal threshold $t^* = |c^*|_1$ is then obtained from the ILP solution $c^*$.
+I derive the optimal threshold $t^* = |c^*|_1$ from the ILP solution $c^*$.
 
 \subsubsection{APX solution}
 
@@ -666,23 +666,29 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A filtration scheme $(Q,t)$, a $(m,k)$ instance.\\
-{\bf Solution}	&	The number transcripts $\sigma \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
-%{\bf Solution}	&	The number of false positive transcripts detected by $(Q,t)$.\\
+%{\bf Solution}	&	The number of transcripts $\sigma \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
+{\bf Solution}	&	The number of transcripts $\sigma \in \Bo^{m}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
 \end{tabular}
 \\
 
-False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q}^{m}$.
-Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
-\begin{equation}
+%False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q}^{m}$.
+%Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
+%\begin{equation}
 %\text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\sigma) \geq t
-\text{}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\sigma) \geq t
-\end{equation}
+%\end{equation}
 
 \subsubsection{FPRAS solution}
 
-I reduce counting false positive transcripts to counting the number of true assignments of a boolean function in DNF.
-\citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) to count the number of true assignments of a DNF \citep{Karp1989}.
+I am interested in the number of true assignments of $T_{Q}^{m}$:
+\begin{equation}
+\text{\#P}^{m}(Q,1) = | \{ \sigma \in \Bo^{m} : T_{Q}^{m}(\sigma) \} |
+\end{equation}
+\citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
 This method is known as \emph{importance sampling} \citep{Vazirani2001}.
+Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold:
+\begin{equation}
+\text{\#P}^{m}(Q,t) = | \{ \sigma \in \Bo^{m} : t_{Q}^{m}(\sigma) \geq t \} |
+\end{equation}
 
 \begin{figure*}[h]
 \begin{center}
