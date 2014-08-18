@@ -201,8 +201,12 @@ If $y$ is partitioned \wlogs into $s$ non-overlapping seeds \st $1 \leq s \leq k
 \end{lemma}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
-Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
-Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
+
+Approximate seeds provide filtration of variable specificity.
+The fastest but weakest filtration is given by $s=k+1$, while the most specific filtration is obtained for $s=1$ \ie perfect filtration without any verification step.
+Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
+Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
+Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
@@ -225,44 +229,30 @@ Hence, I give a more general definition of \emph{filtration scheme} for approxim
 
 \subsection{Filtration schemes}
 
-I consider a so called $k$-differences , and say that a \emph{full-sensitive} filtration scheme \emph{solves} a $(m,k)$-differences instance.
-
+Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
+Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
 \begin{definition}
-A seeds filtration scheme is a pair of integer vectors $(\mathbb{s},\mathbb{k})$, where
-\begin{eqnarray}
-\mathbb{s} \in \N^s\\
-\mathbb{k} \in \N_0^s\\
-\sum \mathbb{s} \leq m
-\end{eqnarray}
-The integer $s_i \in \mathbb{s}$ represents the length of the $i$-th seed.
-The first seed starts at position $1$ in the pattern, while the $i$-th seed starts at position $\sum_{j=1}^{i-1}{s_j}$.
-The integer $k_i \in \mathbb{k}$ represents the threshold assigned to the $i$-th seed.
+A seeds filtration scheme is an integer vector $\mathbb{k} \in \N_0^s$, where integer $k_i \in \mathbb{k}$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-Given a $(m,k)$-differences instance, any filtration scheme $(\mathbb{s},\mathbb{k})$, \st
+Fixed a $k$-differences instance, any filtration scheme $\mathbb{k}$, \st
 \begin{eqnarray}
-\sum \mathbb{k} \geq k - |\mathbb{s}|
+\sum \mathbb{k} > k - |\mathbb{k}|
 \end{eqnarray}
 is full-sensitive.
 \end{lemma}
+%I say that a \emph{full-sensitive} filtration scheme \emph{solves} a $k$-differences instance.
 
 \begin{example}
-The following $(\mathbb{s},\mathbb{k})$ filtration schemes solve $(100,4)$-differences:
-
-$\mathbb{s}=(20,20,20,20,20)$, $\mathbb{k}=(0,0,0,0,0)$
-
-$\mathbb{s}=(33,33,33)$, $\mathbb{k}=(1,1,0)$
+\label{ex:seeds-apx-scheme}
+The filtration schemes $(0,0,0,0,0)$, $(1,1,0)$, $(2,1)$, $(4)$ are full-sensitive for $4$-differences.
+%or any their permutation
+For instance, given a pattern of length $m=100$, according to equation~\ref{eq:seed-len}, $q$ is respectively $20, 33, 50, 100$.
 \end{example}
 
-Approximate seeds provide filtration schemes of increasing specificity.
-The fastest but weakest scheme is given by $s=k+1$, while the most specific filtration scheme is obtained for $s=1$ \ie perfect filtration without any verification step.
-Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
-Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
-Filtration specificity is expected to increase with seed length.
-
-How to choose a good filtration scheme in practice?
+How to choose a \emph{good} filtration scheme in practice?
 \citeauthor{Myers1994}, \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds of $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 Yet, these results do not necessarily translate into optimal filtration schemes in practice.
@@ -277,6 +267,8 @@ The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ t
 %\subsection{Implementation}
 %Online/Offline. Backtracking.
 
+%\subsection{Counting}
+%Maybe introduce the $k+s$ seeds counting principle?
 
 % -----------------------------------------------------------------------------
 
@@ -315,6 +307,24 @@ For this reason, I call any pair $(q,t)$ solving a $(m,k)$ instance a valid $q$-
 \end{center}
 \end{figure}
 
+\subsection{Filtration schemes}
+
+Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
+In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
+Thus, by substituting $\tau$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+
+However, the biggest $q$-gram length does not yield always the most specific filtration scheme.
+For instance, a threshold of 1 discards completely the counting argument of lemma~\ref{lemma:qgrams} and makes filtration very unspecific in practice.
+Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length potentially yields a more specific filtration.
+Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes for a fixed $(m,k)$ instance.
+
+\begin{example}
+\label{ex:qgrams-ext-scheme}
+Given a $(100,4)$ instance, the following $(q,t)$ filtration schemes are full-sensitive:
+$(20,1)$, $(19,6)$, $(18,11)$.
+%or any their permutation
+\end{example}
+
 %\subsection{Implementation}
 \subsection{Bucketing}
 
@@ -338,13 +348,6 @@ The verification stage then verifies only parallelograms exceeding threshold $\t
 As long as the filter scans the text, such implementation remembers only buckets covering the patterns' lengths.
 To speed up the filtration phase, an index of the text could be used to count the $q$-gram.
 However, this implementation would require more memory, both to keep the text index in memory and to bucket the whole text.
-
-\subsection{Filtration schemes}
-
-Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
-In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
-%However, a threshold of 1 does not make filtration very specific.
 
 % -----------------------------------------------------------------------------
 
