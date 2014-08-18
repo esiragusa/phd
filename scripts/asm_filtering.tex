@@ -583,7 +583,7 @@ Algorithm \ref{alg:qgram-maxdist-apx} has an APX-ratio of $H_{w(Q)}$ \citep{Vazi
 \end{tabular}
 \\
 
-Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define the optimal threshold problem as the minimization of a supermodular function subject to linear constraints
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define \textsc{Optimal Threshold} as the minimization of a supermodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \min & t_{Q}^{m} (\sigma)			\\
@@ -679,16 +679,17 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 
 \subsubsection{FPRAS solution}
 
-I am interested in the number of true assignments of $T_{Q}^{m}$:
+I am interested in the number of transcripts:
+\begin{equation}
+\text{\#P}^{m}(Q,t) = | \{ \sigma \in \Bo^{m} : t_{Q}^{m}(\sigma) \geq t \} |
+\end{equation}
+For threshold $t=1$, this number is simply the number of true assignments of $T_{Q}^{m}$:
 \begin{equation}
 \text{\#P}^{m}(Q,1) = | \{ \sigma \in \Bo^{m} : T_{Q}^{m}(\sigma) \} |
 \end{equation}
 \citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
 This method is known as \emph{importance sampling} \citep{Vazirani2001}.
 Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold:
-\begin{equation}
-\text{\#P}^{m}(Q,t) = | \{ \sigma \in \Bo^{m} : t_{Q}^{m}(\sigma) \geq t \} |
-\end{equation}
 
 \begin{figure*}[h]
 \begin{center}
