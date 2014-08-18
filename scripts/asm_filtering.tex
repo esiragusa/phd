@@ -395,8 +395,8 @@ Gapped $q$-grams raise hard combinatorial questions:
 \begin{inparaenum}[(i)]
 \item \label{enum:qgram-non-detection} Does a given gapped $q$-gram yield any full-sensitive filtration scheme for an $(m,k)$ instance? If so, either
 \item \label{enum:qgram-error} which is the maximum distance $k^*$ for which full-sensitivity is guaranteed?
-Or alternatively,
-\item \label{enum:qgram-threshold} which is the maximum $q$-gram threshold $t^*$ that guarantees full-sensitivity?
+Or,
+\item \label{enum:qgram-threshold} which is the maximum threshold $t^*$ that guarantees full-sensitivity?
 If the answer to question~\ref{enum:qgram-non-detection} is negative and the filtration scheme is lossy,
 \item \label{enum:qgram-fn} which is its expected sensitivity?
 And
@@ -418,13 +418,13 @@ Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such 
 
 \begin{definition}
 \label{def:qgram-occ}
-A $Q$-gram \emph{occurs} at position $i$ in a similarity $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
+A $Q$-gram \emph{occurs} at position $i$ in a transcript $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
 Fixed a $Q$-gram threshold $t$, the $Q$-gram \emph{detects} $\sigma$ iff it occurs at least $t$ times in $\sigma$.
 \end{definition}
 
 \subsubsection{Boolean functions}
 
-Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a similarity $\sigma$ of length $m$.
+Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a transcript $\sigma$ of length $m$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
@@ -432,7 +432,7 @@ T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
 According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
-%The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all similarities of length $m$.
+%The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all transcripts of length $m$.
 I define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
 \begin{equation}
 \label{eq:family-bool}
@@ -449,8 +449,8 @@ I define such \emph{pseudo-boolean function} as
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
 \end{equation}
-Here $t_{Q}^{m}(\sigma)$ \emph{counts} how many times a $Q$-gram occurs in a similarity $\sigma$ of length $m$.
-It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a similarity $\sigma$, as
+Here $t_{Q}^{m}(\sigma)$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\sigma$ of length $m$.
+It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\sigma$, as
 \begin{equation}
 \label{eq:qgram-pseudoneg}
 \bar{t}_{Q}^{m}(\sigma) = m - s(Q) + 1 - t_{Q}^{m}(\sigma)
@@ -480,7 +480,7 @@ Since super and submodular functions are closed under non-negative linear combin
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance. \\
-{\bf Question}	&	Does it exist a similarity $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
+{\bf Question}	&	Does it exist a transcript $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
 \end{tabular}
 \\
 
@@ -547,9 +547,27 @@ Hence the optimal solution of the relaxed LP is also the optimal solution of the
 
 \subsubsection{APX solution}
 
-I compute an approximate solution via deepest descent.
-APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
+I give a an algorithm computing an approximate solution via \emph{gradient descent}.
+Algorithm \ref{alg:qgram-maxdist-apx} has an APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
 
+\begin{figure*}[h]
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
+\Algorithm{MaxDistance}{$Q,m$}
+\begin{tabular}{ll}
+\textbf{Input}  & $Q$ : $Q$-gram sequence\\
+				& $m$ : integer denoting the pattern length\\
+\textbf{Output} & integer indicating the maximum lossless distance\\
+\end{tabular}
+%\begin{algorithmic}[1]
+%\State \Return $k$
+%\end{algorithmic}
+\label{alg:qgram-maxdist-apx}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\end{figure*}
 
 \subsection{Optimal threshold}
 
@@ -582,7 +600,7 @@ w.r.t.								\\
 
 \subsubsection{Exact ILP solution}
 
-I reduce this problem to \emph{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
+I reduce this problem to \textsc{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
 \max & |c|_1					\\
@@ -597,7 +615,7 @@ The optimal threshold $t^* = |c^*|_1$ is then obtained from the ILP solution $c^
 
 \subsubsection{APX solution}
 
-I reduce the complementary optimal threshold problem to the maximization of a submodular function subject to linear constraints
+I reduce the \emph{complementary} \textsc{Optimal Threshold} problem to the maximization of a submodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
 \max & \bar{t}_{Q}^{m}(\sigma)		\\
@@ -605,37 +623,87 @@ w.r.t.								\\
 & \sigma \in \bar{\Bo}^m_k			\\
 \end{array}
 \end{equation}
-where the complementary optimal threshold is $\bar{t}^* = m - s(Q) + 1 - t^*$.
-Algorithm~\ref{?} computes an approximate solution via \emph{deepest descent}.
-This greedy algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
+and derive the solution to \textsc{Optimal Threshold} as $t^* = m - s(Q) + 1 - \bar{t}^*$.
+Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution via \emph{gradient descent}.
+This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
+\begin{figure*}[h]
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
+\Algorithm{OptimalThreshold}{$Q,m,k$}
+\begin{tabular}{ll}
+\textbf{Input}  & $Q$ : $Q$-gram sequence\\
+				& $m$ : integer denoting the pattern length\\
+				& $k$ : integer denoting the mismatches threshold\\
+\textbf{Output} & integer indicating the maximum lossless threshold\\
+\end{tabular}
+\begin{algorithmic}[1]
+\State {$c[1:m-s(Q)+1] \gets 1$}
+\State {$dt[1:m] \gets 1$}
+\While {$k > 0$}
+	\State {$i \gets$ argmax($dt$) }
+	
+	\State {$k \gets k -1$}
+\EndWhile
+\State \Return sum(c)
+\end{algorithmic}
+\label{alg:qgram-threshold-apx}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\end{figure*}
 
 \subsection{Specificity}
 
-Fixed a $(m,k)$ instance, how many false positive transcripts are detected by a given filtration scheme $(Q,t)$?
+Which is the expected specificity of a filtration scheme $(Q,t)$?
+Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of a filtration scheme is proportional to the number of detected transcripts.
+Among full-sensitive filtration schemes, one that maximizes the expected specificity is preferable.
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A filtration scheme $(Q,t)$, a $(m,k)$ instance.\\
-{\bf Solution}	&	How many similarities $\sigma \in \bar{\Bo^{m}_{k}}$ \st $t_{Q}^{m}(\sigma) > t$ ?\\
-{\bf Solution}	&	The number of false positive similarities detected by $(Q,t)$.\\
+{\bf Solution}	&	The number transcripts $\sigma \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
+%{\bf Solution}	&	The number of false positive transcripts detected by $(Q,t)$.\\
 \end{tabular}
 \\
 
-False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q^t}^{m}$.
+False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q}^{m}$.
 Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
 \begin{equation}
-\text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} T_{Q,t}^{m}(\sigma)
+%\text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\sigma) \geq t
+\text{}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\sigma) \geq t
 \end{equation}
 
 \subsubsection{FPRAS solution}
 
 I reduce counting false positive transcripts to counting the number of true assignments of a boolean function in DNF.
 \citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) to count the number of true assignments of a DNF \citep{Karp1989}.
-This method is importance sampling \citep{Vazirani2001}.
+This method is known as \emph{importance sampling} \citep{Vazirani2001}.
+
+\begin{figure*}[h]
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
+\Algorithm{TranscriptsDetected}{$Q,t,m,k$}
+\begin{tabular}{ll}
+\textbf{Input}  & $Q$ : $Q$-gram sequence\\
+				& $t$ : integer denoting the threshold\\
+				& $m$ : integer denoting the pattern length\\
+				& $k$ : integer denoting the mismatches threshold\\
+\textbf{Output} & integer indicating the number of transcripts detected\\
+\end{tabular}
+%\begin{algorithmic}[1]
+%\State {\Return 0}
+%\end{algorithmic}
+\label{alg:qgram-specificity}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\end{figure*}
 
 %\subsection{Sensitivity and specificity}
 %and \ref{enum:qgram-fn}.
@@ -648,13 +716,13 @@ This method is importance sampling \citep{Vazirani2001}.
 %
 %\paragraph{}
 %\begin{tabular}{rl}
-%{\bf Instance}	&	A finite set $S$ of similarities.\\
-%{\bf Solution}	&	A $Q$-gram that detects all similarities of $S$.\\
+%{\bf Instance}	&	A finite set $S$ of transcripts.\\
+%{\bf Solution}	&	A $Q$-gram that detects all transcripts of $S$.\\
 %{\bf Measure}	&	The weight $w(Q)$ of the $Q$-gram.\\
 %\end{tabular}
 %\\
 %
-%Given a set of similarities, find the $Q$-gram of maximum weight detecting all similarities.
+%Given a set of transcripts, find the $Q$-gram of maximum weight detecting all transcripts.
 %This applies to the DNA Homology Search Framework as well.
 %%The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
 %%On the one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
