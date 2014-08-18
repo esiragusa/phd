@@ -78,6 +78,12 @@ Chinwalla, A.~T., Cook, L.~L., Delehaunty, K.~D., Fewell, G.~A., Fulton, L.~A.,
 \newblock Initial sequencing and comparative analysis of the mouse genome.
 \newblock {\em Nature\/}, {\bf 420}(6915), pages 520--562.
 
+\bibitem[Chvatal(1979)Chvatal]{Chvatal1979}
+Chvatal, V. (1979).
+\newblock A greedy heuristic for the set-covering problem.
+\newblock {\em Mathematics of operations research\/}, {\bf 4}(3), pages
+  233--235.
+
 \bibitem[Consortium(2001)Consortium]{Consortium2001}
 Consortium, I. H. G.~S. (2001).
 \newblock Initial sequencing and analysis of the human genome.

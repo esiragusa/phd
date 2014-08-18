@@ -383,12 +383,12 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 \end{center}
 \end{figure}
 
-Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
+Figure~\ref{fig:qgrams-gapped} shows an example of gapped $q$-gram.
 As in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
 Indeed, the pattern of occurring $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the mismatch positions.
-Therefore, in the following, I consider $(Q,t)$ instances solving $(m,k)$ instances.
-Analogously to contiguous $q$-grams, mismatches do not affect don't care positions.
-Thus any gapped $Q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
+Therefore, in the following, I refer to gapped $q$-gram filtration schemes $(Q,t)$ solving $(m,k)$ instances.
+As opposed to contiguous $q$-grams, don't care positions are not affected by mismatches.
+Thus any gapped $q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
 Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a tight threshold, but only a lower bound.
 
 Gapped $q$-grams raise hard combinatorial questions:
@@ -413,8 +413,8 @@ Afterwards, I recapitulate known results for questions \ref{enum:qgram-non-detec
 \subsection{Characteristic functions}
 
 Consider any Hamming distance transcript $\sigma$ as a $m$-dimensional vector over $\Bo = \{ 0, 1 \}$.
-I denote by $|\sigma|_0$ the Hamming distance of the transcript.
-Let $\Bo^m_k \subset \Bo^m$ be the set containing all transcripts $\sigma$ such that $|\sigma|_0 = k$.
+I denote the Hamming distance of the transcript by $|\sigma|_0=m - \sum \sigma$.
+Accordingly, I denote by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\sigma$ \st $|\sigma|_0 = k$.
 
 \begin{definition}
 \label{def:qgram-occ}
@@ -495,16 +495,14 @@ Since super and submodular functions are closed under non-negative linear combin
 Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for it exist, under the assumption that $P \neq NP$.
 This fact motivates me to give ILP or approximate solutions to optimization and counting problems related to \textsc{Non Detection}.
 
-\subsection{Maximum distance}
-
-%Which is the maximum distance $k^*$ for which a $Q$-gram guarantees full-sensitivity?
+\subsection{Minimum lossy distance}
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an integer $m > 0$.\\
-{\bf Solution}	&	The largest integer $k^*$ such that \textsc{Non Detection} for $Q$, $(m,k^*)$ answers \emph{no}.\\
+{\bf Solution}	&	The smallest integer $k^*$ such that \textsc{Non Detection} for $Q$, $(m,k^*)$ answers \emph{no}.\\
 \end{tabular}
 \\
 
@@ -514,7 +512,7 @@ Recalling pseudo-boolean functions \ref{eq:qgram-pseudo}, I define this problem 
 \min & |\sigma|_0			\\
 w.r.t.								\\
 & \sigma \in \Bo^m					\\
-& \bar{t}_{Q}^{m}(\sigma) \leq 0	\\
+& \bar{t}_{Q}^{m}(\sigma) = 0	\\
 \end{array}
 \end{equation}
 
@@ -523,10 +521,9 @@ w.r.t.								\\
 I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
-\min & |\sigma|_0	\\
-w.r.t.				\\
-& \sigma \in \Bo^m	\\
-& b \in \Bo^{m-s(Q)+1}\\
+\min & \sum \bar{\sigma}	\\
+w.r.t.						\\
+& \sigma \in \Bo^m			\\
 & A\sigma \geq b	\\
 \end{array}
 \end{equation}
@@ -540,7 +537,8 @@ A_{ij} =
 	\end{array}
 \right.
 \end{equation}
-Given the ILP solution $\sigma^*$, I find the maximum distance as $k^* = |\sigma^*|_0$.
+and $b$ is the unitary vector $\mathbb{1}^{m - s(Q) + 1}$.
+Given the ILP solution $\bar{\sigma}^*$, the minimum distance for which the $Q$-gram is lossy is $k^* = |\sigma^*|_0$.
 
 \begin{observation}
 Contiguous $q$-grams provide an interesting special case of this ILP.
@@ -551,18 +549,18 @@ Hence the optimal solution of the relaxed LP is also the optimal solution of the
 
 \subsubsection{APX solution}
 
-I give a an algorithm computing an approximate solution via \emph{gradient descent}.
-Algorithm \ref{alg:qgram-maxdist-apx} has an APX-ratio of $H_{w(Q)}$ \citep{Vazirani2001}.
+I adapt the greedy algorithm by \citeauthor{Chvatal1979} to compute an approximate solution to \textsc{Minimum Set Cover}.
+Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a solution with an APX-ratio of $H_{w(Q)}$ \citep{Chvatal1979}.
 
 \begin{figure*}[h]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{MaxDistance}{$Q,m$}
+\Algorithm{MinLossyDistance}{$Q,m$}
 \begin{tabular}{ll}
 \textbf{Input}  & $Q$ : $Q$-gram sequence\\
 				& $m$ : integer denoting the pattern length\\
-\textbf{Output} & integer indicating the maximum lossless distance\\
+\textbf{Output} & integer indicating the minimum lossy distance\\
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$k \gets 0$}
@@ -603,6 +601,15 @@ w.r.t.								\\
 \end{array}
 \end{equation}
 
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudoneg}, I consider the \emph{complementary} \textsc{Optimal Threshold} problem as the maximization of a submodular function subject to linear constraints:
+\begin{equation}
+\begin{array}{ll}
+\max & \bar{t}_{Q}^{m} (\sigma)		\\
+w.r.t.								\\
+& \sigma \in \bar{\Bo}^m_k			\\
+\end{array}
+\end{equation}
+
 \subsubsection{Previous results}
 
 \textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the span of the $Q$-gram.
@@ -614,7 +621,7 @@ w.r.t.								\\
 I reduce this problem to \textsc{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
-\max & |c|_1					\\
+\max & \sum c_j					\\
 w.r.t.							\\
 & \sigma \in \Bo^m_k			\\
 & c \in \Bo^{m - s(Q) + 1}		\\
@@ -622,20 +629,11 @@ w.r.t.							\\
 \end{array}
 \end{equation}
 where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
-I derive the optimal threshold $t^* = |c^*|_1$ from the ILP solution $c^*$.
+From the ILP solution $c^*$, I derive the exact solution to \textsc{Optimal Threshold} as $t^* = m - s(Q) + 1 - \sum c^*$.
 
 \subsubsection{APX solution}
 
-I reduce the \emph{complementary} \textsc{Optimal Threshold} problem to the maximization of a submodular function subject to linear constraints
-\begin{equation}
-\begin{array}{ll}
-\max & \bar{t}_{Q}^{m}(\sigma)		\\
-w.r.t.								\\
-& \sigma \in \bar{\Bo}^m_k			\\
-\end{array}
-\end{equation}
-and derive the solution to \textsc{Optimal Threshold} as $t^* = m - s(Q) + 1 - \bar{t}^*$.
-Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution via \emph{gradient descent}.
+Algorithm~\ref{alg:qgram-threshold-apx} computes via \emph{gradient descent} an approximate solution to \textsc{Optimal Threshold}.
 This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
 The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 
