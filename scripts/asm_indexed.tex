@@ -490,7 +490,7 @@ As constructing the suffix array is not desirable, due to its space consumption 
 I now describe how to invert the BWT to reconstruct the original text.
 For convenience, I denote the first column $s_{A[i]}$ by $f$ and the last column $s_{A[i] - 1}$ by $l$.
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
-To this extent, I introduce two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
+To this intent, I introduce two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
 Figure~\ref{fig:lf_psi} illustrates.
 I define the iterated $\Psi$ as
 \begin{eqnarray}
@@ -587,7 +587,6 @@ Given the two above observations, \citeauthor{Ferragina2000} define the permutat
 LF(i) = C(l_i) + Occ(l_i, i)
 \end{eqnarray}
 where $C : \Sigma \rightarrow [1,n]$ denotes the total number of occurrences in $s$ of all characters alphabetically smaller than $c$, and $Occ :  \Sigma \times [1,n] \rightarrow [1,n]$ the number of occurrences of character $c$ in the prefix $l_{1 \dots i}$.
-
 The key problem of encoding the permutation $LF$ lies in representing function $Occ$, as function $C$ is easily tabulated by a small array of size $\sigma \log{n}$ bits.
 In the next subsection, I address the problem of representing function $Occ$ efficiently. Subsequently, I explain how to implement generic full-text index traversal using the permutation $LF$.
 
@@ -596,38 +595,40 @@ In the next subsection, I address the problem of representing function $Occ$ eff
 
 The question \emph{``how many times a given character $c$ occurs in the prefix $l_{1 \dots i}$?''}, has to be answered efficiently, ideally in constant time and linear space.
 The general problem on arbitrary strings has been tackled by several studies on the succinct representation of data structures \citep{Jacobson1989}.
-This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary}.
+This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary} (RD).
 
 \begin{definition}
 Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\rank_c(s, i)$ returns the number of occurrences of $c$ in the prefix $s_{1 \dots i}$.
 \end{definition}
 
-The key idea of rank dictionaries is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.
-By doing so, \citeauthor{Jacobson1989} shows how rank queries are answered in constant time (on the RAM model) using $n+o(n)$ bits for an input binary string of $n$ bits \citep{Jacobson1989}.
-Here I cover only most practical, succinct rank dictionaries, and discuss their implementation details, crucial to obtain practical efficiency.
-I first consider the binary case $\Sigma_B = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
+The key idea of RDs is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.
+By doing so, \citeauthor{Jacobson1989} shows how to answer rank queries in constant time (on the RAM model) using $n+o(n)$ bits for an input binary string of $n$ bits \citep{Jacobson1989}.
+Here I cover only most practical, succinct RDs, and discuss their implementation details, crucial to obtain practical efficiency.
+I first consider the binary case $\Sigma = \mathbb{B} = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
 
 \subsubsection{Binary alphabet}
 
 I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
-Later, I extend it as a \emph{two-levels} dictionary consuming only $n + o(n)$ bits.
-Given the binary string $s \in \Sigma_B$, I partition it in blocks of size $b$.
+Then, I describe an extended \emph{two-levels} RD consuming only $n + o(n)$ bits.
+Finally, I briefly discuss how I implemented practical \emph{multi-level} RDs.
 In the following, I assume \wlogs the string length $n$ to be a multiple of $b$, otherwise values in all subsequent formulas must be rounded accordingly.
 
-I attach to the binary string $s$ an array $R$ of length $\frac{n}{b}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i b}$, \ie $R[\frac{i}{b}] = \rank_1(s, \frac{i}{b})$.
+The binary one-level RD partitions the binary input string $s \in \mathbb{B}^*$ in blocks of $b$ symbols.
+It attaches to $s$ an array $R$ of length $\frac{n}{b}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i b}$, \ie $R[\frac{i}{b}] = \rank_1(s, \frac{i}{b})$.
 Note that $\rank_0(s, i) = i - \rank_1(s, i)$, so $R$ considers only $\rank_1(s, i)$.
-Therefore, the rank query is rewritten as:
+Therefore, the RD rewrites the query as:
 \begin{eqnarray}
-\rank_1(s,i) = R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, i \mod{b})
+\rank_1(s,i) = R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i \imod{b})
 \end{eqnarray}
-and answered in time $\Oh(b)$ by 
+and answers it in time $\Oh(b)$ by 
 \begin{inparaenum}[(i)]
 \item \label{itm:fetch} fetching the rank summary from $R$ in constant time, and
 \item \label{itm:count} counting the number of occurrences of the bit 1 within a block of length $b$.
 \end{inparaenum}
-By posing $b=\log{n}$, step~\ref{itm:count} is $\Oh(1)$, by means of the four-Russians tabulation technique \citep{Arlazarov1975}.
-Moreover, the array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, so $R$ consumes $n$ bits.
-Thus, this rank dictionary consumes $2n$ bits.
+Figure \ref{fig:rd1} illustrates.
+\citeauthor{Jacobson1989} poses $b=\log{n}$, in order to answer step~\ref{itm:count} in time $\Oh(1)$, using the four-Russians tabulation technique \citep{Arlazarov1975}.
+As the array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, $R$ consumes $n$ bits.
+Thus, the binary one-level RD consumes $2n$ bits.
 
 \begin{figure}[h]
 \begin{center}
@@ -684,39 +685,39 @@ $i$	& $s_i$	& $R[\frac{i}{b}]$ & $R^2[\frac{i}{b^2}]$\\
 \end{center}
 \end{figure}
 
-A \emph{two-levels} rank dictionary squeezes space consumption to $n+o(n)$ bits.
+A binary \emph{two-levels} rank dictionary squeezes space consumption to $n+o(n)$ bits.
 The idea is to add another array $R^2$ summarizing the ranks on $b^2$ bits boundaries and let the initial array $R$ store only local positions within the corresponding blocks defined by $R^2$.
-I rewrite $\rank_1(s,i)$ accordingly:
+Accordingly, the query $\rank_1(s,i)$ becomes:
 \begin{eqnarray}
-\rank_1(s,i) = R^2[\frac{i}{b^2}] + R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, i \mod{b})
+\rank_1(s,i) = R^2[\frac{i}{b^2}] + R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i \imod{b}).
 \end{eqnarray}
 Each entry of $R$ now represents only $b^2$ possible values and thus consumes only $2\log{b}$ bits.
-Summing up, this two-levels rank dictionary consumes $n$ bits for the input string, $\Oh(\frac{n \log{n}}{b^2})$ bits for $R^2$ and $\Oh(\frac{n \log{b}}{b})$ bits for $R$.
+Summing up, this RD consumes $n$ bits for the input string, $\Oh(\frac{n \log{n}}{b^2})$ bits for $R^2$ and $\Oh(\frac{n \log{b}}{b})$ bits for $R$.
 By posing $b=\log{n}$, I obtain $\Oh(\frac{n}{\log{n}})$ bits for $R^2$ and $\Oh(\frac{n \log{\log{n}}}{\log{n}})$ bits for $R$.
-Hence, the two-levels rank dictionary consumes $n + o(n)$ bits.
+Hence, the binary two-levels RD consumes $n + o(n)$ bits.
 
-I implemented generic \emph{multi-levels} rank dictionaries, where the block size $b$ is a template parameter adjustable at compile time.
-Whenever the input string has length inferior to 4~GB, I employ one-level rank dictionaries with $b = 32$ bits or two-levels rank dictionaries with $b = 16$ bits and $b^2 = 32$ bits;
-otherwise, I employ two-levels rank dictionaries with $b = 32$ bits and $b^2 = 64$ bits, or three-levels rank dictionaries with $b = 16$ bits, $b^2 = 32$ bits and $b^3 = 64$ bits.
-In order to reduce the number of cache misses, I interleaved the succinct representation of the input string with the lowest level summaries array $R$.
-Moreover, I compute step~\ref{itm:count} in $\Oh(1)$ using the SSE~4.2 popcnt instruction \citep{Intel2011}.
+I implemented generic \emph{multi-levels} RDs, where the block size $b$ is a template parameter adjustable at compile time.
+Whenever the input string has length inferior to 4~GB, I employ the one-level RD with $b = 32$ bits or the two-level RD with $b = 16$ bits and $b^2 = 32$ bits;
+otherwise, I employ the two-levels RD with $b = 32$ bits and $b^2 = 64$ bits, or the three-levels RD with $b = 16$ bits, $b^2 = 32$ bits and $b^3 = 64$ bits.
+In order to reduce the number of cache misses, the succinct representation of the input string is \emph{interleaved} with the lowest level summaries array $R$.
+Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbols within a block in time $\Oh(b/w)$, where $w$ is the total SSE register width (on modern processors $w=256$ bits).
 
 \subsubsection{Small alphabets}
 
-The extension to small alphabets \eg $\Sigma_{\text{DNA}}$ is easy.
-Here I show how to extend the one-level rank dictionary.
-Given an input string $s$ over $\Sigma_{\text{DNA}}$ of size $n$ bits (and thus of length $\frac{n}{\log{\sigma}}$ symbols), I partition it in blocks of $b$ symbols (which do not correspond to $b$ bits as in the $\Sigma_B$ case).
-I supplement each block of $s$ with an occurrences summary for all symbols in $\Sigma$, thus I use a matrix $R_{\sigma}$ of size $\frac{n}{b} \times \sigma$ entries.
-I rewrite $\rank_c(s,i)$ as:
+The extension of multi-levels RDs to small alphabets \eg $\Sigma_{\text{DNA}}$ is easy.
+Here I show how to extend the one-level RD.
+Consider an input string $s$ over $\Sigma_{\text{DNA}}$, of size $n$ bits and thus of length $\frac{n}{\log{\sigma}}$ symbols.
+As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols, now corresponding to $b \log{\sigma}$ bits.
+The RD supplements each block of $s$ with an occurrences summary for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\frac{n}{b} \times \sigma$ entries.
+The rank query $\rank_c(s,i)$ becomes:
 \begin{eqnarray}
-\rank_c(s,i) = R_{\sigma}[\frac{i}{b}][\rho(c)] + \rank_c(s_{\frac{i}{b} \dots \frac{i}{b}+b}, i \mod{b})
+\rank_c(s,i) = R_{\sigma}[\frac{i}{b}][\rho(c)] + \rank_c(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i\imod{b})
 \end{eqnarray}
-where $i$ now is the $i$-th symbol in $s$, not the $i$-th bit as in the $\Sigma_B$ case.
-
-In order to answer rank queries in constant time, I have to count the number of occurrences of the character $c$ inside a block of length $b$.
-I pose $b=\frac{\log{n}}{\log{\sigma}}$ symbols, thus $b=\log{n}$ bits as in the $\Sigma_B$ case.
+where $i$ is the $i$-th symbol in $s$.
+Answering this query requires counting the number of occurrences of the character $c$ inside a block of length $b$.
+In order to answer this query in constant time, I consider blocks of $\frac{\log{n}}{\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
 The matrix $R_{\sigma}$ has $\frac{n}{\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
-Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole rank dictionary $n + n \sigma$ bits.
+Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole RD $n + n \sigma$ bits.
 
 \begin{figure}[h]
 \begin{center}
@@ -742,9 +743,47 @@ $i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
 \end{center}
 \end{figure}
 
-
 \subsubsection{Wavelet tree}
-For large alphabets. TODO.
+
+\citeauthor{Grossi2003} propose a \emph{hierarchical} RD, called the \emph{wavelet tree} (WT), to mitigate the factor $\sigma$ affecting the RD just exposed.
+This tree data structure hierarchically partitions the alphabet $\Sigma$ in balanced subsets, and accordingly decomposes the input string in \emph{subsequences} containing symbols from one subset.
+The root of the WT represents all alphabet symbols, while each leaf represents exactly one symbol.
+The WT encodes information inside each node using a separate binary RD.
+Any query $\rank_c$ is decomposed as a sequence of binary rank queries, following the path from the root node to the leaf corresponding to symbol $c$.
+The formal definition of WT follows.
+
+\begin{definition}
+\citep{Navarro2007}
+The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$, where the root node represents all symbols in $\Sigma$ and each leaf exactly one symbol.
+Any non-leaf node $v$ represents the subset of symbols $\Sigma_v$ whose lexicographic rank is in range $[i,j]$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in [i,j] \}$, its left child $u$ represents the subset $\Sigma_u$ of symbols in range $[i,\frac{i+j}{2}]$ while its right child $w$ represents in $\Sigma_w$ those in range $[\frac{i+j}{2}+1, j]$.
+Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes the binary decomposition of $s^v$ as a binary string $b^v$ \st $b^v_i = 0$ iff $s^v_i \in \Sigma_u$.
+\end{definition}
+
+\begin{figure}[h]
+\begin{center}
+\caption[Example of wavelet tree]{Example of DNA wavelet tree of the string $s=$ {\ttfamily CCCGCA}.}
+\label{fig:wt_dna}
+%\ttfamily
+%\begin{tabular}{rcccc}
+%$i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
+%\midrule
+%1   & C & 0 & 0 & A\\
+%2   &   & 1 & 0 & C\\
+%3   & C & 0 & 0 & G\\
+%4   &   & 1 & 0 & T\\
+%5   & C & 0 & 0 & A\\
+%6   &   & 1 & 2 & C\\
+%7   & G & 1 & 0 & G\\
+%8   &   & 0 & 0 & T\\
+%9   & C & 0 & 0 & A\\
+%10  &   & 1 & 3 & C\\
+%11  & A & 0 & 1 & G\\
+%12  &   & 0 & 0 & T\\
+%\end{tabular}
+\end{center}
+\end{figure}
+
+%answers query $\rank_c$ in $\log \sigma$ steps,
 
 \subsection{FM-index}
 \label{sub:fmtrie}

@@ -445,6 +445,11 @@ Navarro, G. and Baeza-Yates, R.~A. (2000).
 \newblock A hybrid indexing method for approximate string matching.
 \newblock {\em Journal of Discrete Algorithms\/}, {\bf 1}(1), pages 205--239.
 
+\bibitem[Navarro and M{\"a}kinen(2007)Navarro and M{\"a}kinen]{Navarro2007}
+Navarro, G. and M{\"a}kinen, V. (2007).
+\newblock Compressed full-text indexes.
+\newblock {\em ACM Computing Surveys (CSUR)\/}, {\bf 39}(1), page~2.
+
 \bibitem[Navarro \ea(2001)Navarro, Baeza-Yates, Sutinen, and
   Tarhio]{Navarro2001}
 Navarro, G., Baeza-Yates, R.~A., Sutinen, E., and Tarhio, J. (2001).
