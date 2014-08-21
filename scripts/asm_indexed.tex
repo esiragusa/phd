@@ -761,7 +761,7 @@ Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of wavelet tree]{Example of DNA wavelet tree of the string $s=$ {\ttfamily CCCGCA}.}
+\caption[Example of wavelet tree]{Example of wavelet tree of the DNA string $s=$ {\ttfamily CCCGCA}.}
 \label{fig:wt_dna}
 %\ttfamily
 %\begin{tabular}{rcccc}
@@ -799,6 +799,7 @@ Given a padded string collection $\Sc$, its associated permutation $LF$ recovers
 Nonetheless, I need to recover substrings of $\Sc$ in \emph{forward direction}, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
 Therefore, I consider the BWT of $\bar{\Sc}$, such that $LF$ recovers any substring of $\Sc$.
 In this way, I can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
+I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, either multi-levels or wavelet tree.
 
 I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 \begin{itemize}
