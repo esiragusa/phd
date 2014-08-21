@@ -436,11 +436,11 @@ The transformed string exposes two important properties: \emph{reversibility} an
 The former property allows to reconstruct the original string from its BWT, while the latter property makes the transformed string more amenable to compression.
 Because of these two properties, the BWT is a fundamental method for text compression, practically used in the bzip2 tool \citep{Seward1996}.
 
-More recently, \citeauthor{Ferragina2000} proposed the BWT as a method for full-text indexing.
-They showed in \citep{Ferragina2000} that the BWT alone allows to perform exact string matching and engineered in \citep{Ferragina2001} a compressed full-text index called FM-index.
+More recently, \citeauthor{Ferragina2000} have proposed the BWT as a method for full-text indexing.
+They show in \citep{Ferragina2000} that the BWT alone allows to perform exact string matching and engineer in \citep{Ferragina2001} a compressed full-text index called FM-index.
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular bioinformatics tools \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences.
 
-In the following, I give the fundamental ideas behind the BWT and the FM-index.
+In the following, I give the fundamental ideas behind the BWT.
 Subsequently, I discuss my succinct FM-index implementations covering strings and string collections.
 
 \subsection{Burrows-Wheeler transform}
