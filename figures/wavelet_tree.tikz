@@ -1,0 +1,61 @@
+\begin{tikzpicture}[scale=1.5,font=\sffamily]
+
+\tikzstyle{level 1}=[sibling distance=30mm, level distance=20mm]
+\tikzstyle{level 2}=[sibling distance=8mm, level distance=12mm]
+
+\tikzstyle{transparent}=[edge from parent/.style={draw=none}]
+\tikzstyle{el}=[-,thick,color=black,text=black]
+\tikzstyle{inner}=[circle,draw,color=black,inner sep=1.5pt]
+\tikzstyle{wt}=[leaf,rounded corners]
+
+
+\node[wt](ACGT)
+{
+\begin{tabular}{r|p{0mm}p{0mm}p{0mm}p{0mm}p{0mm}c}
+$i$&1&2&3&4&5&6\\
+$s_i$&C&C&C&G&C&A\\
+$b_i$&0&0&0&1&0&0\\
+\end{tabular}
+}
+child[transparent] {
+node[wt](AC)
+{
+\begin{tabular}{r|p{0mm}p{0mm}p{0mm}p{0mm}c}
+$i$&1&2&3&4&5\\
+$s_i^v$&C&C&C&C&A\\
+$b_i^v$&1&1&1&1&0\\
+\end{tabular}
+}
+child[transparent] {
+node[leaf](A) {$$}
+}
+child[transparent] {
+node[leaf](C) {$$}
+}
+}
+child[transparent] {
+node[wt](GT)
+{
+\begin{tabular}{c|l}
+1&$i$\\
+G&$s^w$\\
+0&$b^w$\\
+\end{tabular}
+}
+child[transparent] {
+node[leaf](G) {$$}
+}
+child[transparent] {
+node[leaf](T) {$$}
+}
+}
+;
+
+\draw[el] (ACGT) -- (AC) \labelA{$\Sigma_v = \{ \text{A},\text{C} \}$};
+\draw[el] (ACGT) -- (GT) \labelA{$\{ \text{G},\text{T} \} = \Sigma_w$};
+\draw[el] (AC) -- (A) \labelA{A};
+\draw[el] (AC) -- (C) \labelA{C};
+\draw[el] (GT) -- (G) \labelA{G};
+\draw[el] (GT) -- (T) \labelA{T};
+
+\end{tikzpicture}
