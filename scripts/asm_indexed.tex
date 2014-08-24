@@ -537,7 +537,7 @@ Figure \ref{fig:psi} exemplifies.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of BWT inversion]{Recovering the string {\ttfamily ANANAS\$} from the permutation $\Psi$. Here I depict only the first two steps of the inversion recovering {\ttfamily AN}.}
+\caption[Example of BWT inversion]{Recovering the string {\ttfamily ANANAS\$} from the permutation $\Psi$. Here, I depict only the first two steps of the inversion recovering {\ttfamily AN}.}
 \label{fig:psi}
 \ttfamily
 \begin{tabular}{ccc}
@@ -603,14 +603,15 @@ Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\r
 
 The key idea of RDs is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.
 By doing so, \citeauthor{Jacobson1989} shows how to answer rank queries in constant time (on the RAM model) using $n+o(n)$ bits for an input binary string of $n$ bits \citep{Jacobson1989}.
-Here I cover only most practical, succinct RDs, and discuss their implementation details, crucial to obtain practical efficiency.
-I first consider the binary case $\Sigma = \mathbb{B} = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
+Here, I cover only most practical, succinct RDs, and discuss their implementation details, crucial to obtain practical efficiency.
+I first consider the binary alphabet $\mathbb{B} = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
 
 \subsubsection{Binary alphabet}
 
-I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
+Here, I follow the explanation of \citep{Navarro2007}.
+Hence, I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
 Then, I describe an extended \emph{two-levels} RD consuming only $n + o(n)$ bits.
-Finally, I briefly discuss how I implemented practical \emph{multi-level} RDs.
+In addition, I briefly discuss my implementation of practical \emph{multi-level} RDs.
 In the following, I assume \wlogs the string length $n$ to be a multiple of $b$, otherwise values in all subsequent formulas must be rounded accordingly.
 
 The binary one-level RD partitions the binary input string $s \in \mathbb{B}^*$ in blocks of $b$ symbols.
@@ -705,15 +706,17 @@ Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbol
 \subsubsection{Small alphabets}
 
 The extension of multi-levels RDs to small alphabets \eg $\Sigma_{\text{DNA}}$ is easy.
-Here I show how to extend the one-level RD.
+Here, I show how to extend the one-level RD.
 Consider an input string $s$ over $\Sigma_{\text{DNA}}$, of size $n$ bits and thus of length $\frac{n}{\log{\sigma}}$ symbols.
 As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols, now corresponding to $b \log{\sigma}$ bits.
-The RD supplements each block of $s$ with an occurrences summary for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\frac{n}{b} \times \sigma$ entries.
+The RD supplements each block of $s$ with a summary of occurrences for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\frac{n}{b} \times \sigma$ entries.
 The rank query $\rank_c(s,i)$ becomes:
 \begin{eqnarray}
 \rank_c(s,i) = R_{\sigma}[\frac{i}{b}][\rho(c)] + \rank_c(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i\imod{b})
 \end{eqnarray}
 where $i$ is the $i$-th symbol in $s$.
+Figure \ref{fig:rd_dna} shows an example of one-level $\Sigma_{\text{DNA}}$ RD.
+
 Answering this query requires counting the number of occurrences of the character $c$ inside a block of length $b$.
 In order to answer this query in constant time, I consider blocks of $\frac{\log{n}}{\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
 The matrix $R_{\sigma}$ has $\frac{n}{\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
@@ -746,22 +749,31 @@ $i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}]$ & $\sigma$\\
 \subsubsection{Wavelet tree}
 
 \citeauthor{Grossi2003} propose a \emph{hierarchical} RD, called the \emph{wavelet tree} (WT), to mitigate the factor $\sigma$ affecting the RD just exposed.
-This tree data structure hierarchically partitions the alphabet $\Sigma$ in balanced subsets, and accordingly decomposes the input string in \emph{subsequences} containing symbols from one subset.
-The root of the WT represents all alphabet symbols, while each leaf represents exactly one symbol.
-The WT encodes information inside each node using a separate binary RD.
-Any query $\rank_c$ is decomposed as a sequence of binary rank queries, following the path from the root node to the leaf corresponding to symbol $c$.
-The formal definition of WT follows.
+This tree data structure recursively partitions the alphabet $\Sigma$ in balanced subsets and accordingly decomposes the input string in \emph{subsequences} containing symbols from one subset.
+Any tree node represents one alphabet partition and its associated subsequence.
+I first give the formal definition of WT and then discuss how to answer rank queries.
 
 \begin{definition}
-\citep{Navarro2007}
-The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$, where the root node represents all symbols in $\Sigma$ and each leaf exactly one symbol.
-Any non-leaf node $v$ represents the subset of symbols $\Sigma_v$ whose lexicographic rank is in range $[i,j]$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in [i,j] \}$, its left child $u$ represents the subset $\Sigma_u$ of symbols in range $[i,\frac{i+j}{2}]$ while its right child $w$ represents in $\Sigma_w$ those in range $[\frac{i+j}{2}+1, j]$.
-Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes the binary decomposition of $s^v$ as a binary string $b^v$ \st $b^v_i = 0$ iff $s^v_i \in \Sigma_u$.
+\citep{Grossi2003, Navarro2007}
+The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$, where the root node represents all symbols in $\Sigma$ and each leaf exactly one symbol $c \in \Sigma$.
+Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $[i,j]$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in [i,j] \}$, its left child $l$ represents the subset $\Sigma_l$ of symbols in range $[i,\frac{i+j}{2}]$ while its right child $r$ represents in $\Sigma_r$ those in range $[\frac{i+j}{2}+1, j]$.
+Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $s^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
+
+Any query $\rank_c(s,i)$ is decomposed in a sequence of $\Oh(\log{\sigma})$ binary rank queries.
+The sequence of queries starts in the root node and follows the path to the leaf node corresponding to symbol $c$.
+On any non-leaf node $v$, the traversal goes left if $c$ belongs to $\Sigma_l$, otherwise it goes right.
+Suppose \wlogs that $c$ belongs to $\Sigma_l$.
+The rank of symbol $c$ in $s^v$ is established by $\rank_0(b^v, j)$, where $j$ is the rank in the parent node or $i$ in the root node.
+Figure \ref{fig:wt_dna} illustrates.
+
+The WT encodes the binary string $b^v$ of each non-leaf node $v$ using a separate binary RD.
+Using two-levels binary RDs, the WT consumes $(n + o(n)) \lceil \log \sigma \rceil$ bits and answers any rank query in time $\Oh(\log{\sigma})$.
+The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input sequence.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of wavelet tree]{Example of wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is decomposed as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_C(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ and then $\rank_1(b^{AC}, 2) = 2$.}
+\caption[Example of wavelet tree]{Example of wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_C(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ and then $\rank_1(b^{AC}, 2) = 2$.}
 \label{fig:wt_dna}
 \ttfamily
 \input{figures/wavelet_tree.tikz}
@@ -776,7 +788,7 @@ Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\
 I now turn to the problem of implementing a full-text index relying on the permutation $LF$.
 This is possible because of the relationship between the cyclic shifts matrix and the suffix array $A$.
 First, I show how to emulate a top-down traversal of the suffix trie, which is sufficient to count the number of occurrences of any substring in the original text.
-Later I focus on how to represent the leaves, which are necessary to locate occurrences in the original text.
+Later, I focus on how to represent the leaves, which are necessary to locate occurrences in the original text.
 
 \subsubsection{Top-down traversal}
 
