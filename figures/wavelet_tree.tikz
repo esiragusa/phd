@@ -1,7 +1,7 @@
 \begin{tikzpicture}[scale=1.5,font=\sffamily]
 
 \tikzstyle{level 1}=[sibling distance=30mm, level distance=20mm]
-\tikzstyle{level 2}=[sibling distance=8mm, level distance=12mm]
+\tikzstyle{level 2}=[sibling distance=8mm, level distance=14mm]
 
 \tikzstyle{transparent}=[edge from parent/.style={draw=none}]
 \tikzstyle{el}=[-,thick,color=black,text=black]
@@ -13,49 +13,49 @@
 {
 \begin{tabular}{r|p{0mm}p{0mm}p{0mm}p{0mm}p{0mm}c}
 $i$&1&2&3&4&5&6\\
-$s_i$&C&C&C&G&C&A\\
-$b_i$&0&0&0&1&0&0\\
+$s_i$&C&T&C&G&C&A\\
+$b_i$&0&1&0&1&0&0\\
 \end{tabular}
 }
 child[transparent] {
 node[wt](AC)
 {
-\begin{tabular}{r|p{0mm}p{0mm}p{0mm}p{0mm}c}
-$i$&1&2&3&4&5\\
-$s_i^v$&C&C&C&C&A\\
-$b_i^v$&1&1&1&1&0\\
+\begin{tabular}{r|p{0mm}p{0mm}p{0mm}c}
+$i$&1&2&3&4\\
+$s_i^{AC}$&C&C&C&A\\
+$b_i^{AC}$&1&1&1&0\\
 \end{tabular}
 }
 child[transparent] {
-node[leaf](A) {$$}
+node[leaf](A) {A}
 }
 child[transparent] {
-node[leaf](C) {$$}
+node[leaf](C) {C}
 }
 }
 child[transparent] {
 node[wt](GT)
 {
-\begin{tabular}{c|l}
-1&$i$\\
-G&$s^w$\\
-0&$b^w$\\
+\begin{tabular}{p{0mm}c|l}
+1&2&$i$\\
+T&G&$s^{GT}$\\
+1&0&$b^{GT}$\\
 \end{tabular}
 }
 child[transparent] {
-node[leaf](G) {$$}
+node[leaf](G) {G}
 }
 child[transparent] {
-node[leaf](T) {$$}
+node[leaf](T) {T}
 }
 }
 ;
 
-\draw[el] (ACGT) -- (AC) \labelA{$\Sigma_v = \{ \text{A},\text{C} \}$};
-\draw[el] (ACGT) -- (GT) \labelA{$\{ \text{G},\text{T} \} = \Sigma_w$};
-\draw[el] (AC) -- (A) \labelA{A};
-\draw[el] (AC) -- (C) \labelA{C};
-\draw[el] (GT) -- (G) \labelA{G};
-\draw[el] (GT) -- (T) \labelA{T};
+\draw[el] (ACGT) -- (AC) \labelA{0};
+\draw[el] (ACGT) -- (GT) \labelA{1};
+\draw[el] (AC) -- (A) \labelA{0};
+\draw[el] (AC) -- (C) \labelA{1};
+\draw[el] (GT) -- (G) \labelA{0};
+\draw[el] (GT) -- (T) \labelA{1};
 
 \end{tikzpicture}
