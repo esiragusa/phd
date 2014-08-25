@@ -753,6 +753,8 @@ $i$	& $s_i$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \,
 \end{center}
 \end{figure}
 
+%In practice, I encode the DNA alphabet $\{ A, C, G, T \}$ as $\{ 00, 01, 10, 11 \}$.
+
 \subsubsection{Wavelet tree}
 
 \citeauthor{Grossi2003} propose a \emph{hierarchical} RD, called the \emph{wavelet tree} (WT), to mitigate the factor $\sigma$ affecting the RD just exposed.
@@ -786,6 +788,10 @@ At the same time, the WT does not need to store the original input string $s$ of
 \label{fig:wt_dna}
 \ttfamily
 \input{figures/wavelet_tree.tikz}
+\around{i4}
+\eround{b1}{b4}
+\around{iac2}
+\eround{bac1}{bac2}
 \end{center}
 \end{figure}
 
