@@ -734,25 +734,22 @@ Thus, $R_{\sigma}$ consumes $\sigma n \log{\sigma}$ bits and the whole RD $n \lo
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $s=$ {\ttfamily CCCGCA} under the binary encoding $\{ A,C,G,T \} = \{ 00,01,10,11 \}$ of the alphabet $\Sigma_{\text{DNA}}$.}
+\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $s=$ {\ttfamily CTCGCA} with $b=2$. In the example, $rank_{\text{C}}(s,4)= R_{\sigma}[2,2] + rank_{\text{C}}(s_{3 \dots 4}, 1)=2.$}
 \label{fig:rd_dna}
 \ttfamily
-\begin{tabular}{rcccc}
-$i$	& $s_{\xfloor{i/2}}$ & $s_i$ & $R_{\sigma}[\xfloor{i/2},\rho(c)]$ & $c$\\
+\begin{tabular}{rcr}
+$i$	& $s_i$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \, \text{T}\}]$\\
 \midrule
-1   & C & 0 & 0 & A\\
-2   &   & 1 & 0 & C\\
-3   & T & 1 & 0 & G\\
-4   &   & 1 & 0 & T\\
-5   & C & 0 & 0 & A\\
-6   &   & 1 & 2 & C\\
-7   & G & 1 & 0 & G\\
-8   &   & 0 & 0 & T\\
-9   & C & 0 & 0 & A\\
-10  &   & 1 & 3 & C\\
-11  & A & 0 & 1 & G\\
-12  &   & 0 & 0 & T\\
+1   & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
+2   & T\\
+3   & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
+\cell{i4}{4}   & \cell{s4}{G}\\
+5   & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
+6   & A\\
 \end{tabular}
+\around{i4}
+\eround{s3}{s4}
+\around{R3C}
 \end{center}
 \end{figure}
 
@@ -785,7 +782,7 @@ At the same time, the WT does not need to store the original input string $s$ of
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of wavelet tree]{Wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_C(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
+\caption[Example of wavelet tree]{Wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_{\text{C}}(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
 \label{fig:wt_dna}
 \ttfamily
 \input{figures/wavelet_tree.tikz}
