@@ -607,6 +607,7 @@ Here, I cover only most practical, succinct RDs, and discuss their implementatio
 I first consider the binary alphabet $\mathbb{B} = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
 
 \subsubsection{Binary alphabet}
+\label{sec:index:rd:binary}
 
 Here, I follow the explanation of \citep{Navarro2007}.
 Hence, I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
@@ -755,21 +756,23 @@ I first give the formal definition of WT and then discuss how to answer rank que
 
 \begin{definition}
 \citep{Grossi2003, Navarro2007}
-The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$, where the root node represents all symbols in $\Sigma$ and each leaf exactly one symbol $c \in \Sigma$.
+The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$. The root represents all symbols in $\Sigma$ and each leaf exactly one symbol $c \in \Sigma$.
 Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $[i,j]$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in [i,j] \}$, its left child $l$ represents the subset $\Sigma_l$ of symbols in range $[i,\frac{i+j}{2}]$ while its right child $r$ represents in $\Sigma_r$ those in range $[\frac{i+j}{2}+1, j]$.
 Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $s^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
 
 Any query $\rank_c(s,i)$ is decomposed in a sequence of $\Oh(\log{\sigma})$ binary rank queries.
-The sequence of queries starts in the root node and follows the path to the leaf node corresponding to symbol $c$.
+The sequence of queries starts in the root node and follows the path to the leaf corresponding to symbol $c$.
 On any non-leaf node $v$, the traversal goes left if $c$ belongs to $\Sigma_l$, otherwise it goes right.
 Suppose \wlogs that $c$ belongs to $\Sigma_l$.
-The rank of symbol $c$ in $s^v$ is established by $\rank_0(b^v, j)$, where $j$ is the rank in the parent node or $i$ in the root node.
+The rank of symbol $c$ in $s^v$ is established as $\rank_0(b^v, j)$, where $j$ is the rank of $c$ in the parent node or $i$ in the root node.
 Figure \ref{fig:wt_dna} illustrates.
 
-The WT encodes the binary string $b^v$ of each non-leaf node $v$ using a separate binary RD.
-Using two-levels binary RDs, the WT consumes $(n + o(n)) \lceil \log \sigma \rceil$ bits and answers any rank query in time $\Oh(\log{\sigma})$.
-The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input sequence.
+The WT encodes any binary string $b^v$ associated to some non-leaf node $v$ using a separate binary RD.
+The WT contains $\lceil \log \sigma - 1 \rceil$ non-leaf levels and any such level encodes $n$ bits overall.
+Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(n + o(n)) \log \sigma$ bits, \ie $n \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$
+At the same time, the WT does not need to store the original input string $s$, consuming $n \log \sigma$ bits.
+%The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input string.
 
 \begin{figure}[h]
 \begin{center}
