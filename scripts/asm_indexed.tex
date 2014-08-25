@@ -626,7 +626,7 @@ Therefore, the rank query is rewritten as:
 and answered in time $\Oh(b)$ by 
 \begin{inparaenum}[(i)]
 \item \label{itm:fetch} fetching the rank summary from $R$ in constant time and
-\item \label{itm:count} counting the number of occurrences of the bit 1 within a block of length $b$.
+\item \label{itm:count} counting the number of occurrences of the bit 1 within a block of $\Oh(b)$ bits.
 \end{inparaenum}
 Figure \ref{fig:rd1} illustrates.
 \citeauthor{Jacobson1989} poses $b=\log{n}$ in order to answer step~\ref{itm:count} in time $\Oh(1)$ with the four-Russians tabulation technique \citep{Arlazarov1975}.
@@ -714,22 +714,23 @@ Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbol
 
 \subsubsection{Small alphabets}
 
-The extension of multi-levels RDs to small alphabets \eg $\Sigma_{\text{DNA}}$ is easy.
+The extension of binary RDs to arbitrary alphabets is easy.
 Here, I show how to extend the one-level RD.
-Consider an input string $s$ over $\Sigma_{\text{DNA}}$, of size $n$ bits and thus of length $n/\log{\sigma}$ symbols.
-As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols, now corresponding to $b \log{\sigma}$ bits.
-The RD supplements each block of $s$ with a summary of occurrences for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\xfloor{n/b} \times \sigma$ entries.
+However, the space consumption of such RD has a linear dependency in the alphabet size.
+This fact renders such extension appealing only for small alphabets, \eg $\Sigma_{\text{DNA}}$.
+
+Consider an input string $s$ of length $n$ over $\Sigma$, thus consisting of $n \log{\sigma}$ bits.
+As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols.
+It complements the string $s$ with a matrix $R_{\sigma}$ of size $\xfloor{n/b} \times \sigma$ entries, summarizing the number of occurrences for each symbol in $\Sigma$.
 The rank query is rewritten accordingly:
 \begin{eqnarray}
-\rank_c(s,i) = R_{\sigma}[\xfloor{i/b},\rho(c)] + \rank_c(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i\imod{b})
+\rank_c(s,i) = R_{\sigma}[\xfloor{i/b},\rho(c)] + \rank_c(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i\imod{b}).
 \end{eqnarray}
-where $i$ is the $i$-th symbol in $s$.
-Figure \ref{fig:rd_dna} shows an example of one-level $\Sigma_{\text{DNA}}$ RD.
-
-Answering this query requires counting the number of occurrences of the character $c$ inside a block of length $b$.
-In order to answer this query in constant time, I consider blocks of $\xfloor{\log{n}/\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
-The matrix $R_{\sigma}$ has $\xfloor{n/\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
-Thus, $R_{\sigma}$ consumes $n \sigma$ bits and the whole RD $n + n \sigma$ bits.
+Figure \ref{fig:rd_dna} shows an example of one-level DNA RD.
+Answering this query requires counting the number of occurrences of the character $c$ inside a block of $\Oh(b)$ symbols.
+In order to answer this query in constant time, I consider blocks of $\xfloor{\log{n}/\log{\sigma}}$ symbols, \ie I pose $b=\log{n}$ bits as in the binary RD case.
+The matrix $R_{\sigma}$ has thus $\xfloor{n \log{\sigma}/\log{n}} \times \sigma$ entries, each one consuming $\log{n}$ bits.
+Thus, $R_{\sigma}$ consumes $\sigma n \log{\sigma}$ bits and the whole RD $n \log{\sigma} (\sigma + 1)$ bits.
 
 \begin{figure}[h]
 \begin{center}
@@ -769,7 +770,7 @@ Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicog
 Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $s^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
 
-Any query $\rank_c(s,i)$ is decomposed in a sequence of $\Oh(\log{\sigma})$ binary rank queries.
+Any query $\rank_c(s,i)$ is decomposed as a sequence of $\Oh(\log{\sigma})$ binary rank queries.
 The sequence of queries starts in the root node and follows the path to the leaf corresponding to symbol $c$.
 On any non-leaf node $v$, the traversal goes left if $c$ belongs to $\Sigma_l$, otherwise it goes right.
 Suppose \wlogs that $c$ belongs to $\Sigma_l$.
@@ -779,7 +780,7 @@ Figure \ref{fig:wt_dna} illustrates.
 The WT encodes any binary string $b^v$ associated to some non-leaf node $v$ using a separate binary RD.
 The WT contains $\lceil \log \sigma - 1 \rceil$ non-leaf levels and any such level encodes $n$ bits overall.
 Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(n + o(n)) \log \sigma$ bits, \ie $n \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$.
-At the same time, the WT does not need to store the original input string $s$, consuming $n \log \sigma$ bits.
+At the same time, the WT does not need to store the original input string $s$ of $n \log \sigma$ bits.
 %The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input string.
 
 \begin{figure}[h]
