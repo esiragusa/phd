@@ -611,37 +611,38 @@ I first consider the binary alphabet $\mathbb{B} = \{ 0, 1 \}$ and subsequently 
 
 Here, I follow the explanation of \citep{Navarro2007}.
 Hence, I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
-Then, I describe an extended \emph{two-levels} RD consuming only $n + o(n)$ bits.
-In addition, I briefly discuss my implementation of practical \emph{multi-level} RDs.
-In the following, I assume \wlogs the string length $n$ to be a multiple of $b$, otherwise values in all subsequent formulas must be rounded accordingly.
+Subsequently, I describe an extended \emph{two-levels} RD consuming only $n + o(n)$ bits.
+In addition to that, I briefly discuss my implementation of practical \emph{multi-level} RDs.
+%In the following, I assume \wlogs the string length $n$ to be a multiple of $b$, otherwise values in all subsequent formulas must be rounded accordingly.
 
-The binary one-level RD partitions the binary input string $s \in \mathbb{B}^*$ in blocks of $b$ symbols.
-It attaches to $s$ an array $R$ of length $\frac{n}{b}$, where the $i$-th entry gives a summary of the number of occurrences of the bit $1$ in $s_{1 \dots i b}$, \ie $R[\frac{i}{b}] = \rank_1(s, \frac{i}{b})$.
-Note that $\rank_0(s, i) = i - \rank_1(s, i)$, so $R$ considers only $\rank_1(s, i)$.
+The binary one-level RD partitions the binary input string $s \in \mathbb{B}^*$ in blocks of $b$ symbols and
+complements it with an array $R$ of length $\xfloor{n/b}$.
+The $j$-th entry of $R$ provides a summary of the number of occurrences of the bit $1$ in $s$ before position $j b$, \ie $R[1] = 0$ and $R[j] = \rank_1(s, j b - 1)$ for any $j > 1$.
+$R$ summarizes only $\rank_1$, as $\rank_0(s, i) = i - \rank_1(s, i)$.
 Therefore, the rank query is rewritten as:
 \begin{eqnarray}
-\rank_1(s,i) = R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i \imod{b})
+\rank_1(s,i) = R[\xfloor{i/b}] + \rank_1(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i \imod{b})
 \end{eqnarray}
-and answers it in time $\Oh(b)$ by 
+and answered in time $\Oh(b)$ by 
 \begin{inparaenum}[(i)]
-\item \label{itm:fetch} fetching the rank summary from $R$ in constant time, and
+\item \label{itm:fetch} fetching the rank summary from $R$ in constant time and
 \item \label{itm:count} counting the number of occurrences of the bit 1 within a block of length $b$.
 \end{inparaenum}
 Figure \ref{fig:rd1} illustrates.
-\citeauthor{Jacobson1989} poses $b=\log{n}$, in order to answer step~\ref{itm:count} in time $\Oh(1)$, using the four-Russians tabulation technique \citep{Arlazarov1975}.
-As the array $R$ stores $\frac{n}{\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, $R$ consumes $n$ bits.
+\citeauthor{Jacobson1989} poses $b=\log{n}$ in order to answer step~\ref{itm:count} in time $\Oh(1)$ with the four-Russians tabulation technique \citep{Arlazarov1975}.
+As the array $R$ stores $\xfloor{n/\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, $R$ consumes $n$ bits.
 Thus, the binary one-level RD consumes $2n$ bits.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $s=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; for instance, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 6}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$; for instance, $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 6}, 1) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $s=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$; in the example, $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 8}, 1) = 3$.}
 
-\begin{subfigure}[b]{0.4\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
+\begin{center}
 \caption{One-level rank dictionary}
 \ttfamily
-\begin{center}
 \begin{tabular}{rcc}
-$i$	& $s_i$	& $R[\frac{i}{4}]$\\
+$i$	& $s_i$	& $R[\xfloor{i/4}]$\\
 \midrule
 1   & 0     & 0\\
 2   & 1\\
@@ -662,12 +663,12 @@ $i$	& $s_i$	& $R[\frac{i}{4}]$\\
 \label{fig:rd1}
 \end{center}
 \end{subfigure}%
-\begin{subfigure}[b]{0.4\textwidth}
+\begin{subfigure}[b]{0.45\textwidth}
+\begin{center}
 \caption{Two-levels rank dictionary}
 \ttfamily
-\begin{center}
 \begin{tabular}{rccc}
-$i$	& $s_i$	& $R[\frac{i}{2}]$ & $R^2[\frac{i}{4}]$\\
+$i$	& $s_i$	& $R[\xfloor{i/2}]$ & $R^2[\xfloor{i/4}]$\\
 \midrule
 1   & 0 & 0 & 0\\
 2   & 1\\
@@ -693,15 +694,16 @@ $i$	& $s_i$	& $R[\frac{i}{2}]$ & $R^2[\frac{i}{4}]$\\
 \end{center}
 \end{figure}
 
-A binary \emph{two-levels} rank dictionary squeezes space consumption to $n+o(n)$ bits.
+A binary \emph{two-levels} RD squeezes space consumption to $n+o(n)$ bits.
 The idea is to add another array $R^2$ summarizing the ranks on $b^2$ bits boundaries and let the initial array $R$ store only local positions within the corresponding blocks defined by $R^2$.
 Accordingly, the rank query becomes:
 \begin{eqnarray}
-\rank_1(s,i) = R^2[\frac{i}{b^2}] + R[\frac{i}{b}] + \rank_1(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i \imod{b}).
+\rank_1(s,i) = R^2[\xfloor{i/b^2}] + R[\xfloor{i/b}] + \rank_1(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i \imod{b}).
 \end{eqnarray}
+Figure \ref{fig:rd2} exemplifies.
 Each entry of $R$ now represents only $b^2$ possible values and thus consumes only $2\log{b}$ bits.
 Summing up, this RD consumes $n$ bits for the input string, $\Oh(\frac{n \log{n}}{b^2})$ bits for $R^2$ and $\Oh(\frac{n \log{b}}{b})$ bits for $R$.
-By posing $b=\log{n}$, I obtain $\Oh(\frac{n}{\log{n}})$ bits for $R^2$ and $\Oh(\frac{n \log{\log{n}}}{\log{n}})$ bits for $R$.
+By posing $b=\log{n}$ as above, it follows $\Oh(\frac{n}{\log{n}})$ bits for $R^2$ and $\Oh(\frac{n \log{\log{n}}}{\log{n}})$ bits for $R$.
 Hence, the binary two-levels RD consumes $n + o(n)$ bits.
 
 I implemented generic \emph{multi-levels} RDs, where the block size $b$ is a template parameter adjustable at compile time.
@@ -714,19 +716,19 @@ Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbol
 
 The extension of multi-levels RDs to small alphabets \eg $\Sigma_{\text{DNA}}$ is easy.
 Here, I show how to extend the one-level RD.
-Consider an input string $s$ over $\Sigma_{\text{DNA}}$, of size $n$ bits and thus of length $\frac{n}{\log{\sigma}}$ symbols.
+Consider an input string $s$ over $\Sigma_{\text{DNA}}$, of size $n$ bits and thus of length $n/\log{\sigma}$ symbols.
 As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols, now corresponding to $b \log{\sigma}$ bits.
-The RD supplements each block of $s$ with a summary of occurrences for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\frac{n}{b} \times \sigma$ entries.
+The RD supplements each block of $s$ with a summary of occurrences for all symbols in $\Sigma$, using a matrix $R_{\sigma}$ of size $\xfloor{n/b} \times \sigma$ entries.
 The rank query is rewritten accordingly:
 \begin{eqnarray}
-\rank_c(s,i) = R_{\sigma}[\frac{i}{b}][\rho(c)] + \rank_c(s_{\frac{i}{b} \dots \frac{i}{b}+b}, \, i\imod{b})
+\rank_c(s,i) = R_{\sigma}[\xfloor{i/b},\rho(c)] + \rank_c(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i\imod{b})
 \end{eqnarray}
 where $i$ is the $i$-th symbol in $s$.
 Figure \ref{fig:rd_dna} shows an example of one-level $\Sigma_{\text{DNA}}$ RD.
 
 Answering this query requires counting the number of occurrences of the character $c$ inside a block of length $b$.
 In order to answer this query in constant time, I consider blocks of $\frac{\log{n}}{\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
-The matrix $R_{\sigma}$ has $\frac{n}{\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
+The matrix $R_{\sigma}$ has $\xfloor{n/\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
 Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole RD $n + n \sigma$ bits.
 
 \begin{figure}[h]
@@ -735,7 +737,7 @@ Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole RD $n + n \sigma$ bits
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcccc}
-$i$	& $s_{\frac{i}{2}}$	& $s_i$ & $R_{\sigma}[\frac{i}{b}][\rho(c)]$ & $c$\\
+$i$	& $s_{\xfloor{i/2}}$ & $s_i$ & $R_{\sigma}[\xfloor{i/2},\rho(c)]$ & $c$\\
 \midrule
 1   & C & 0 & 0 & A\\
 2   &   & 1 & 0 & C\\
