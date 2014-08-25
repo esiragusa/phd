@@ -727,9 +727,9 @@ where $i$ is the $i$-th symbol in $s$.
 Figure \ref{fig:rd_dna} shows an example of one-level $\Sigma_{\text{DNA}}$ RD.
 
 Answering this query requires counting the number of occurrences of the character $c$ inside a block of length $b$.
-In order to answer this query in constant time, I consider blocks of $\frac{\log{n}}{\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
+In order to answer this query in constant time, I consider blocks of $\xfloor{\log{n}/\log{\sigma}}$ symbols, \ie $b=\log{n}$ bits as in the binary RD case.
 The matrix $R_{\sigma}$ has $\xfloor{n/\log{n}}$ entries, each one consuming $\sigma \log{n}$ bits.
-Thus $R_{\sigma}$ consumes $n \sigma$ bits, and the whole RD $n + n \sigma$ bits.
+Thus, $R_{\sigma}$ consumes $n \sigma$ bits and the whole RD $n + n \sigma$ bits.
 
 \begin{figure}[h]
 \begin{center}
@@ -778,7 +778,7 @@ Figure \ref{fig:wt_dna} illustrates.
 
 The WT encodes any binary string $b^v$ associated to some non-leaf node $v$ using a separate binary RD.
 The WT contains $\lceil \log \sigma - 1 \rceil$ non-leaf levels and any such level encodes $n$ bits overall.
-Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(n + o(n)) \log \sigma$ bits, \ie $n \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$
+Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(n + o(n)) \log \sigma$ bits, \ie $n \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$.
 At the same time, the WT does not need to store the original input string $s$, consuming $n \log \sigma$ bits.
 %The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input string.
 
