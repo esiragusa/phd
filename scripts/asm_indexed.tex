@@ -830,9 +830,9 @@ Therefore, I define the following node operations:
 %In order to answer \textsc{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 
 The traversal easily goes from the root node to its child node labeled by $c$: it suffices to derive the interval $[C(c),C(c+1)]$.
-Now, suppose the traversal is on an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$.
-The traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
-Thus, I know all prefixes of $\bar{\Sc}$ ending with $s_v$ (hence all suffixes of $\Sc$ starting with $s_v$) and I am looking for all the prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$ (hence all suffixes of $\Sc$ starting with $s_v \cdot c$).
+Suppose the traversal is on an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$.
+Now, the traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
+The known interval $[b_v, e_v]$ contains all prefixes of $\bar{\Sc}$ ending with $s_v$, \ie all suffixes of $\Sc$ starting with $s_v$, while the unknown interval $[b_w, e_w]$ contains all prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$, \ie all suffixes of $\Sc$ starting with $s_v \cdot c$.
 All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Sc_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
 Moreover, these characters $c$ are \emph{contiguous} and \emph{in relative order} in $f$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
 If $b$ and $e$ are the first and last position in $l$ within $[b_v, e_v]$ such that $l_b = c$ and $l_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
@@ -844,9 +844,11 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 	  &=& C(c) + Occ(c, b_v - 1) + 1
 \end{array}
 \end{eqnarray}
-and, analogously, $LF(e)$ becomes $C(c) + Occ(c, e_v)$.
-Therefore, \textsc{goDown} a symbol computes two values of permutation $LF$ and runs in time $\Oh(1)$.
-Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright}, thus run in time $\Oh(\sigma)$.
+and analogously $LF(e)$ becomes $C(c) + Occ(c, e_v)$.
+
+Algorithm \ref{alg:fm-godownc} implements operation \textsc{goDown} a symbol.
+This algorithm computes two values of permutation $LF$ and thus runs in time $\Oh(1)$.
+Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright} running in time $\Oh(\sigma)$.
 
 % This is backward search. The traversal computes the interval.
 
