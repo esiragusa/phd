@@ -308,7 +308,7 @@ SS & 9 & 6 \\
 \end{center}
 \end{figure}
 
-With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow [1 \dots \sigma^q]$ defined as in \citep{Knuth1973}:
+With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow [1, \sigma^q]$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
 h(p) = 1 + \sum_{i=1}^{q}{\rho_0(p_i) \cdot \sigma^{q-i}}
 \end{eqnarray}
@@ -777,6 +777,19 @@ Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicog
 Node $v$ implicitly represents the subsequence $s^v$ of all symbols of $s$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $s^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
 
+\begin{figure}[b]
+\begin{center}
+\caption[Example of wavelet tree]{Wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_{\text{C}}(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
+\label{fig:wt_dna}
+\ttfamily
+\input{figures/wavelet_tree.tikz}
+\around{i4}
+\eround{b1}{b4}
+\around{iac2}
+\eround{bac1}{bac2}
+\end{center}
+\end{figure}
+
 Any query $\rank_c(s,i)$ is decomposed as a sequence of $\Oh(\log{\sigma})$ binary rank queries.
 The sequence of queries starts in the root node and follows the path to the leaf corresponding to symbol $c$.
 On any non-leaf node $v$, the traversal goes left if $c$ belongs to $\Sigma_l$, otherwise it goes right.
@@ -789,19 +802,6 @@ The WT contains $\lceil \log \sigma - 1 \rceil$ non-leaf levels and any such lev
 Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(n + o(n)) \log \sigma$ bits, \ie $n \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$.
 At the same time, the WT does not need to store the original input string $s$ of $n \log \sigma$ bits.
 %The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input string.
-
-\begin{figure}[t]
-\begin{center}
-\caption[Example of wavelet tree]{Wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_{\text{C}}(s,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
-\label{fig:wt_dna}
-\ttfamily
-\input{figures/wavelet_tree.tikz}
-\around{i4}
-\eround{b1}{b4}
-\around{iac2}
-\eround{bac1}{bac2}
-\end{center}
-\end{figure}
 
 \subsection{FM-index}
 \label{sub:fmtrie}
@@ -820,6 +820,7 @@ To encode $LF$, I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, ei
 In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
 
 I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
+Therefore, I define the following node operations:
 \begin{itemize}
 \item \textsc{goRoot}($\Tn$) initializes $\Tn$ to $\{ 1, n, \epsilon \}$;
 %\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.r \in \mathbb{I}$;
@@ -907,6 +908,15 @@ Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in dep
 The traversal is bounded, \ie it stops after visiting any node at depth $d$.
 This algorithm helps to comprehend subsequent algorithms backtracking suffix tries.
 
+The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first glimpse on what are the practical performances of various suffix trie implementations.
+As expected, the WT FM-index is always slower than the TL FM-index.
+The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for traversals below depth 14.
+%The SA is significantly slower than all other indices as binary search converges slowly.
+The turning point is depth 12, when the index becomes sparse.
+The TL FM-index is the fastest index up to depth $10$, while $q$-gram index is the fastest at depths 10--11.
+Below depth 12, the Esa (which is a tree) becomes significantly faster than all other trie indices.
+Conversely, the FM-indices (which are backward search based) become two order of magnitude slower.
+
 \begin{figure*}[h]
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
@@ -931,16 +941,7 @@ This algorithm helps to comprehend subsequent algorithms backtracking suffix tri
 \end{center}
 \end{figure*}
 
-The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first glimpse on what are the practical performances of various suffix trie implementations.
-As expected, the WT FM-index is always slower than the TL FM-index.
-The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for traversals below depth 14.
-%The SA is significantly slower than all other indices as binary search converges slowly.
-The turning point is depth 12, when the index becomes sparse.
-Within depth $10$, the TL FM-index is the fastest full-text index for traversals, while at depth 10 and 11 the $q$-gram index is faster.
-Below depth 12, the Esa (which is a tree) becomes significantly faster than all other trie indices;
-conversely, the FM-indices (which are backward search based) become two order of magnitude slower.
-
-\begin{figure}[b!]
+\begin{figure}[h!]
 \begin{center}
 \caption[Top-down traversal runtime]{Runtime of top-down traversal of various suffix trie implementations.}
 \label{fig:visit-dna}
@@ -963,9 +964,9 @@ This evaluation considers traversal times, while it excludes the times to locate
 %The total search time for short pattern is dominated the time to locate the occurrences, yet no practical application needs to locate so many occurrences.
 The results are somewhat surprising, indeed there is no clear time-memory tradeoff.
 
-The search time of forward indices becomes constant for patterns of length above 15, \ie when the index becomes sparse.
-Conversely, the search time of backward (FM) indices is linear in the pattern length. 
-The SA alone is roughly 20\,\% slower than the $q$-gram index, hence never competitive.
+On forward indices the search time becomes constant for patterns of length above 15, \ie when the index becomes sparse.
+Conversely, on backward (FM) indices the search time is linear in the pattern length. 
+The SA alone is at least 20\,\% slower than the $q$-gram index, hence never competitive.
 In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
 In addition, the Esa is never faster than the $q$-gram index despite its higher memory consumption.
 Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, due to the fact that the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
@@ -1026,7 +1027,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 %The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
 %According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
 
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
