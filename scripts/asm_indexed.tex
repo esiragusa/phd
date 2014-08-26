@@ -985,11 +985,11 @@ The results are somewhat surprising, indeed there is no clear time-memory tradeo
 
 The search time of forward indices becomes constant for patterns of length above 15, \ie when the index becomes sparse.
 Conversely, the search time of backward (FM) indices is linear in the pattern length. 
-As expected the SA alone is never competitive with the $q$-gram index.
-In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search converges more slowly for shorter patterns.
-In addition, the Esa is never faster than the $q$-gram index, despite its higher memory consumption.
-Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, due to the fact that it performs twice the number of random memory accesses.
-Summing up, the TL FM-index is the fastest index to perform exact search of patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
+The SA alone is roughly 20\,\% slower than the $q$-gram index, hence never competitive.
+In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
+In addition, the Esa is never faster than the $q$-gram index despite its higher memory consumption.
+Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, due to the fact that the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
+Summing up, the TL FM-index is the fastest index to match exact patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
 
 \begin{figure}[h]
 \begin{center}
@@ -1009,7 +1009,7 @@ Variations of this method, in conjunction with some FM-index implementation, rec
 Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
 While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
 If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
-Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i \in \Li(\Tn)$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
 
 %The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
 %According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
@@ -1053,12 +1053,13 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 %\end{center}
 %\end{figure}
 
-Figure \ref{fig:query-dna-apx} shows the results of the experimental evaluation of algorithm~\ref{alg:st-hamming}.
-
+Figure \ref{fig:query-dna-apx} shows the results of the experimental evaluation of algorithm~\ref{alg:st-hamming} for $k=1$.
+The TL FM-index is always faster than any other index: for instance, on patterns of length 30, the SA it is 3 times slower; even the $q$-gram index is 50\,\% slower than the TL FM-index.
+On the TL FM-index, $1$-approximate matching of patterns of length 30 is 16 times slower than exact matching: on average, exact matching takes $1.3$ microseconds ($\mu s$), while $1$-approximate matching spends $21 \, \mu s$.
 
 \begin{figure}[h]
 \begin{center}
-\caption[$k$-mismatches runtime]{Runtime of $k$-mismatches on various suffix trie implementations.}
+\caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
 \label{fig:query-dna-apx}
 \includegraphics{query.dna.celegans.1.pdf}
 \end{center}
