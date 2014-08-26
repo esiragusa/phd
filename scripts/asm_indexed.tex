@@ -1174,8 +1174,8 @@ This latter algorithm necessitates of a method capable of checking incrementally
 \label{sec:index:algo:multiexact}
 
 Before turning to multiple $k$-mismatches, I describe a simpler multiple exact string matching algorithm.
-Algorithm \ref{alg:st-exact-multi} necessitates of the trie of the patterns, in addition to the suffix trie of the text.
-This algorithm searches simultaneously in the suffix trie all patterns represented by the trie.
+Algorithm \ref{alg:st-exact-multi} necessitates of the trie of the patterns in addition to the suffix trie of the text.
+This algorithm searches all patterns represented by the trie simultaneously in the suffix trie.
 The traversal of this algorithm corresponds to the intersection of the labeled branches of the two tries.
 
 \begin{figure*}[b]
@@ -1207,14 +1207,20 @@ The traversal of this algorithm corresponds to the intersection of the labeled b
 \end{center}
 \end{figure*}
 
-In the evaluation, I compare algorithm~\ref{alg:st-exact-multi} (Dfs) with algorithm~\ref{alg:st-exact} processing patterns in random order (Naive) and in lexicographic order (Sorted).
-A simple lexicographical sort of the patterns speeds up exact string matching by 2 times.
-Algorithm~\ref{alg:st-exact-multi} suffers from the preprocessing time to construct the trie of the patterns.
+The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Dfs) with algorithm~\ref{alg:st-exact} processing patterns in random order (Naive) and in lexicographic order (Sorted).
+Figure~\ref{fig:query-dna-exact-multi} shows the results.
+In this evaluation, all patterns have length 15.
+Hence, runtimes in the naive algorithm histogram in figure \ref{fig:query-dna-exact-multi} correspond to runtimes in the plot in figure~\ref{fig:query-dna-exact} for pattern length 15, \ie the TL FM-index is the fastest index, followed by the WT FM-index, the $q$-gram index, and by the SA and Esa.
+
+Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns speeds up exact string matching on the SA and Esa by a factor of 2.
+The same trick does not yield a significant speed-up on the $q$-gram index, as it is already cache local.
+Similarly, the speed-up on FM-indices is modest.
+Algorithm~\ref{alg:st-exact-multi} further suffers from the preprocessing time to construct the trie of the patterns.
 
 
 \begin{figure}[t]
 \begin{center}
-\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations.}
+\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. The preprocessing time is shown in black.}
 \label{fig:query-dna-exact-multi}
 \includegraphics{multi.dna.celegans.0.15.pdf}
 \end{center}
@@ -1260,7 +1266,7 @@ Algorithm~\ref{alg:st-exact-multi} suffers from the preprocessing time to constr
 
 \begin{figure}[t]
 \begin{center}
-\caption[Multiple $k$-mismatches runtime]{Runtime of multiple $k$-mismatches on various suffix trie implementations.}
+\caption[Multiple $k$-mismatches runtime]{Runtime of multiple $k$-mismatches on various suffix trie implementations. The preprocessing time is shown in black.}
 \label{fig:query-dna-apx-multi}
 \includegraphics{multi.dna.celegans.1.30.pdf}
 \end{center}
