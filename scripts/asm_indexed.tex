@@ -900,7 +900,10 @@ At the same time, I perform an experimental evaluation of each of these algorith
 As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the interleaved FM-index with two-levels rank dictionaries (FM-2), the wavelet tree FM-index with two-levels rank dictionaries (FM-WT).
 As text, I consider the C.~elegans reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
 As patterns, I use sequences extrapolated from an Illumina sequencing run (SRR065390).
-The evaluation always reports \emph{average} runtimes per pattern, both in single and multiple string matching variants.
+
+The evaluations always report \emph{average} runtimes per pattern, both in single and multiple string matching variants.
+Moreover, they consider only traversal times, while they exclude times to locate the patterns in the text by following leaf pointers, \eg uncompressing SA values.
+%The total search time for short pattern is dominated the time to locate the occurrences, yet no practical application needs to locate so many occurrences.
 
 \subsection{Top-down traversal bounded by depth}
 \label{sec:index:algo:traversal}
@@ -914,7 +917,7 @@ The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first
 As expected, the WT FM-index is always slower than the TL FM-index.
 The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for traversals below depth 14.
 %The SA is significantly slower than all other indices as binary search converges slowly.
-The turning point is depth 12, when the index becomes sparse.
+Depth 12 marks the turning point, as the index becomes sparse.
 The TL FM-index is the fastest index up to depth $10$, while $q$-gram index is the fastest at depths 10--11.
 Below depth 12, the Esa (which is a tree) becomes significantly faster than all other trie indices.
 Conversely, the FM-indices (which are backward search based) become two order of magnitude slower.
@@ -955,24 +958,21 @@ Conversely, the FM-indices (which are backward search based) become two order of
 \label{sec:index:algo:exact}
 
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
-I assume the text $t$ to be indexed by its suffix trie $\Ti$.
+In the following, I assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
 Figure \ref{fig:query-dna-exact} shows the results of the experimental evaluation of algorithm~\ref{alg:st-exact}.
-This evaluation considers traversal times, while it excludes the times to locate the patterns in the text by following leaf pointers, \eg uncompressing SA values.
-%The total search time for short pattern is dominated the time to locate the occurrences, yet no practical application needs to locate so many occurrences.
-The results are somewhat surprising, indeed there is no clear time-memory tradeoff.
-
 On forward indices the search time becomes constant for patterns of length above 15, \ie when the index becomes sparse.
 Conversely, on backward (FM) indices the search time is linear in the pattern length. 
 The SA alone is at least 20\,\% slower than the $q$-gram index, hence never competitive.
 In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
-In addition, the Esa is never faster than the $q$-gram index despite its higher memory consumption.
-Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, due to the fact that the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
+The Esa is never faster than the $q$-gram index despite its higher memory consumption.
+Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, as the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
 Summing up, the TL FM-index is the fastest index to match exact patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
+%Surprisingly, there is no clear time-memory tradeoff.
 
 \begin{figure*}[b]
 \begin{center}
@@ -1019,7 +1019,8 @@ Summing up, the TL FM-index is the fastest index to match exact patterns within 
 
 I now give an algorithm that solves $k$-mismatches by backtracking a generic suffix trie.
 The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993}.
-Variations of this method, in conjunction with some FM-index implementation, recently became in vogue for bioinformatics applications \citep{Langmead2009, Li2009}.
+Recently, various popular bioinformatics tools \citep{Langmead2009, Li2009} adopted variations of this method in conjunction with a FM-index.
+Yet, the idea dates back to more than twenty years ago.
 
 Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
 While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
