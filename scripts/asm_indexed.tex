@@ -920,7 +920,7 @@ The $q$-gram index is never slower than the SA alone, however the contribution o
 Depth 12 marks the turning point, as the index becomes sparse.
 The TL FM-index is the fastest index up to depth $10$, while $q$-gram index is the fastest at depths 10--11.
 Below depth 12, the Esa (which is a tree) becomes significantly faster than all other trie indices.
-Conversely, the FM-indices (which are backward search based) become two order of magnitude slower.
+Conversely, the FM-indices (which are based on backward search) become up to two order of magnitude slower than the Esa.
 
 \begin{figure*}[h]
 \begin{center}
@@ -928,7 +928,7 @@ Conversely, the FM-indices (which are backward search based) become two order of
 \begin{algorithm}[H]
 \Algorithm{Dfs}{$x,d$}
 \begin{tabular}{ll}
-\textbf{Input}  & $x$ : pointer to the root node of the suffix trie\\
+\textbf{Input}  & $x$ : pointer to the root node of a suffix trie\\
  			    & $d$ : integer bounding the traversal depth\\
 \end{tabular}
 \begin{algorithmic}[1]
@@ -976,12 +976,12 @@ Summing up, the TL FM-index is the fastest index to match exact patterns within 
 
 \begin{figure*}[b]
 \begin{center}
-\begin{minipage}[t]{.7\textwidth}
+\begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
 \Algorithm{ExactSearch}{$t,p$}
 \begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to a suffix trie node\\
-				& $p$ : pointer to a pattern\\
+\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+				& $p$ : pointer to the pattern\\
 \textbf{Output} & list of all occurrences of the pattern in the text\\
 \end{tabular}
 \begin{algorithmic}[1]
@@ -1022,22 +1022,14 @@ The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen
 Recently, various popular bioinformatics tools \citep{Langmead2009, Li2009} adopted variations of this method in conjunction with a FM-index.
 Yet, the idea dates back to more than twenty years ago.
 
-Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
-If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
-Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
-
-%The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
-%According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
-
-\begin{figure*}[t]
+\begin{figure*}[h!]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
 \Algorithm{KMismatches}{$t,p,e$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the root node of the trie of the patterns\\
+ 			    & $p$ : pointer to the pattern\\
  			    & $e$ : integer bounding the number of mismatches\\
 \textbf{Output} & list of all occurrences of the pattern in the text\\
 \end{tabular}
@@ -1063,7 +1055,15 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 \end{center}
 \end{figure*}
 
-\begin{figure}[t]
+Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
+If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+
+%The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
+%According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
+
+\begin{figure}[b]
 \begin{center}
 \caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
 \label{fig:query-dna-apx}
@@ -1083,105 +1083,110 @@ Figure \ref{fig:query-dna-apx} shows the results of the experimental evaluation 
 The TL FM-index is always faster than any other index: for instance, on patterns of length 30, the SA it is 3 times slower; even the $q$-gram index is 50\,\% slower than the TL FM-index.
 On the TL FM-index, $1$-approximate matching of patterns of length 30 is 16 times slower than exact matching: on average, exact matching takes $1.3$ microseconds ($\mu s$), while $1$-approximate matching spends $21 \, \mu s$.
 
-\subsection{Backtracking $k$-differences}
-\label{sec:index:algo:kdifferences}
-
-I present two alternative algorithms for $k$-differences.
-Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors while traversing the suffix trie. Conversely, algorithm~\ref{alg:st-edit} computes the edit distance between the pattern and any branch of the suffix trie.
-This latter algorithm necessitates of a method capable of checking incrementally whether the edit distance at any node is within the imposed threshold $k$.
-
-%Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
-%Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
-%To obtain a better theoretical runtime, \citep{Navarro2000} consider an algorithm that computes in $\Oh(1)$ per node.
-
-\begin{figure*}[b]
-\begin{center}
-\begin{minipage}[t]{.8\textwidth}
-\begin{algorithm}[H]
-\Algorithm{KDifferences}{$t,p,e$}
-\begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the root node of the trie of the patterns\\
- 			    & $e$ : integer bounding the number of errors\\
-\textbf{Output} & list of all occurrences of the pattern in the text\\
-\end{tabular}
-\begin{algorithmic}[1]
-\If {$e = k$}
-	\State \Call{ExactSearch}{$t,p$}
-\Else
-	\State \Call{goNext}{$p$}
-	\State \Call{KDifferences}{$t,p,e+1$}
-	\State \Call{goPrevious}{$p$}
-	\If {\Call{goDown}{$t$}}
-		\Repeat
-			\State \Call{KDifferences}{$t,p,e+1$}
-			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
-			\State \Call{goNext}{$p$}
-			\State \Call{KDifferences}{$t,p,e + d$}
-			\State \Call{goPrevious}{$p$}
-		\Until {\Call{goRight}{$t$}}
-	\EndIf
-\EndIf
-\end{algorithmic}
-\label{alg:st-edit-explicit}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{figure*}
-
-\begin{figure*}[b]
-\begin{center}
-\begin{minipage}[t]{.8\textwidth}
-\begin{algorithm}[H]
-\Algorithm{KDifferences}{$t,p,D$}
-\begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the root node of the trie of the patterns\\
- 			    & $D$ : vector of integers representing a DP column\\
-\textbf{Output} & list of all occurrences of the pattern in the text\\
-\end{tabular}
-\begin{algorithmic}[1]
-\If {$D[m] \leq k$}
-	\State \Report \Call{occurrences}{$t$}
-\ElsIf {$\min{D} \leq k$}
-	\If {\Call{goDown}{$t$}}
-		\Repeat
-			\State {$D' \gets$ \Call{DP}{$D, \Call{label}{t}, p$}}
-			\State \Call{goNext}{$p$}
-			\State \Call{KDifferences}{$t,p,D'$}
-			\State \Call{goPrevious}{$p$}
-		\Until {\Call{goRight}{$t$}}
-	\EndIf
-\EndIf
-\end{algorithmic}
-\label{alg:st-edit}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{figure*}
-
-%\begin{algorithm}[h]
-%\caption{$k$-difference on a suffix trie.}
-%\label{alg:st-edit}
+%\subsection{Backtracking $k$-differences}
+%\label{sec:index:algo:kdifferences}
+%
+%I present two alternative algorithms for $k$-differences.
+%Algorithm~\ref{alg:st-edit-explicit} explicitly enumerates errors while traversing the suffix trie. Conversely, algorithm~\ref{alg:st-edit} computes the edit distance between the pattern and any branch of the suffix trie.
+%This latter algorithm necessitates of a method capable of checking incrementally whether the edit distance at any node is within the imposed threshold $k$.
+%
+%%Algorithm~\ref{alg:st-edit-explicit} reports more occurrences than algorithm~\ref{alg:st-edit}.
+%%Discuss neighborhood, condensed neighborhood, and super-condensed neighborhood.
+%%To obtain a better theoretical runtime, \citep{Navarro2000} consider an algorithm that computes in $\Oh(1)$ per node.
+%
+%\begin{figure*}[b]
+%\begin{center}
+%\begin{minipage}[t]{.8\textwidth}
+%\begin{algorithm}[H]
+%\Algorithm{KDifferences}{$t,p,e$}
+%\begin{tabular}{ll}
+%\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+% 			    & $p$ : pointer to the root node of the trie of the patterns\\
+% 			    & $e$ : integer bounding the number of errors\\
+%\textbf{Output} & list of all occurrences of the pattern in the text\\
+%\end{tabular}
 %\begin{algorithmic}[1]
-%\Procedure{KDifferences}{$\Tn,p,e$}
-%	\ForAll {$\Cn \in \Ci(\Tn)$}
-%		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
-%	\EndFor
-%\EndProcedure
+%\If {$e = k$}
+%	\State \Call{ExactSearch}{$t,p$}
+%\Else
+%	\State \Call{goNext}{$p$}
+%	\State \Call{KDifferences}{$t,p,e+1$}
+%	\State \Call{goPrevious}{$p$}
+%	\If {\Call{goDown}{$t$}}
+%		\Repeat
+%			\State \Call{KDifferences}{$t,p,e+1$}
+%			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
+%			\State \Call{goNext}{$p$}
+%			\State \Call{KDifferences}{$t,p,e + d$}
+%			\State \Call{goPrevious}{$p$}
+%		\Until {\Call{goRight}{$t$}}
+%	\EndIf
+%\EndIf
 %\end{algorithmic}
+%\label{alg:st-edit-explicit}
 %\end{algorithm}
+%\end{minipage}
+%\end{center}
+%\end{figure*}
+%
+%\begin{figure*}[b]
+%\begin{center}
+%\begin{minipage}[t]{.8\textwidth}
+%\begin{algorithm}[H]
+%\Algorithm{KDifferences}{$t,p,D$}
+%\begin{tabular}{ll}
+%\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
+% 			    & $p$ : pointer to the root node of the trie of the patterns\\
+% 			    & $D$ : vector of integers representing a DP column\\
+%\textbf{Output} & list of all occurrences of the pattern in the text\\
+%\end{tabular}
+%\begin{algorithmic}[1]
+%\If {$D[m] \leq k$}
+%	\State \Report \Call{occurrences}{$t$}
+%\ElsIf {$\min{D} \leq k$}
+%	\If {\Call{goDown}{$t$}}
+%		\Repeat
+%			\State {$D' \gets$ \Call{DP}{$D, \Call{label}{t}, p$}}
+%			\State \Call{goNext}{$p$}
+%			\State \Call{KDifferences}{$t,p,D'$}
+%			\State \Call{goPrevious}{$p$}
+%		\Until {\Call{goRight}{$t$}}
+%	\EndIf
+%\EndIf
+%\end{algorithmic}
+%\label{alg:st-edit}
+%\end{algorithm}
+%\end{minipage}
+%\end{center}
+%\end{figure*}
+%
+%%\begin{algorithm}[h]
+%%\caption{$k$-difference on a suffix trie.}
+%%\label{alg:st-edit}
+%%\begin{algorithmic}[1]
+%%\Procedure{KDifferences}{$\Tn,p,e$}
+%%	\ForAll {$\Cn \in \Ci(\Tn)$}
+%%		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
+%%	\EndFor
+%%\EndProcedure
+%%\end{algorithmic}
+%%\end{algorithm}
 
 
 \subsection{Multiple exact string matching}
 \label{sec:index:algo:multiexact}
 
-Before turning to multiple $k$-mismatches, I describe a simpler multiple exact string matching algorithm.
-Algorithm \ref{alg:st-exact-multi} necessitates of the trie of the patterns in addition to the suffix trie of the text.
-This algorithm searches all patterns represented by the trie simultaneously in the suffix trie.
-The traversal of this algorithm corresponds to the intersection of the labeled branches of the two tries.
+Before turning to multiple $k$-mismatches, I describe a simpler algorithm for multiple exact string matching.
+In addition to the text $t$, multiple exact string matching provides a collection of patterns $\mathbb{P}$.
+Hence, in addition to the suffix trie $\mathcal{T}$ of $t$, algorithm \ref{alg:st-exact-multi} considers the trie $\mathcal{P}$ of $\mathbb{P}$.
+Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\mathcal{T}$ all patterns indexed in $\mathcal{P}$.
+The traversal performed by algorithm \ref{alg:st-exact-multi} visits pairs of nodes in $\mathcal{T} \times \mathcal{P}$ whose entering edges have the same label.
+Such traversal implicitly \emph{intersects} the two tries.
+However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\mathcal{T}$ and $\mathcal{P}$ cannot be interchanged.
+The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports the occurrences pointed by all the leaves beneath the current node in $\mathcal{T}$.
+%If the collection $\mathbb{P}$ contains two equal strings, some leaf of $\mathcal{P}$ points to more than one pattern.
 
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1212,16 +1217,10 @@ The traversal of this algorithm corresponds to the intersection of the labeled b
 
 The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Dfs) with algorithm~\ref{alg:st-exact} processing patterns in random order (Naive) and in lexicographic order (Sorted).
 Figure~\ref{fig:query-dna-exact-multi} shows the results.
-In this evaluation, all patterns have length 15.
-Hence, runtimes in the naive algorithm histogram in figure \ref{fig:query-dna-exact-multi} correspond to runtimes in the plot in figure~\ref{fig:query-dna-exact} for pattern length 15, \ie the TL FM-index is the fastest index, followed by the WT FM-index, the $q$-gram index, and by the SA and Esa.
+In this evaluation, all patterns have length 15: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Naive) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
+%For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, Esa and SA.
 
-Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns speeds up exact string matching on the SA and Esa by a factor of 2.
-The same trick does not yield a significant speed-up on the $q$-gram index, as it is already cache local.
-Similarly, the speed-up on FM-indices is modest.
-Algorithm~\ref{alg:st-exact-multi} further suffers from the preprocessing time to construct the trie of the patterns.
-
-
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. The preprocessing time is shown in black.}
 \label{fig:query-dna-exact-multi}
@@ -1229,8 +1228,16 @@ Algorithm~\ref{alg:st-exact-multi} further suffers from the preprocessing time t
 \end{center}
 \end{figure}
 
+Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns (histogram Sorted) speeds up algorithm \ref{alg:st-exact-multi} on the SA and Esa by a factor of 2.
+The same trick does not yield a significant speed-up on the $q$-gram index, as it is already cache local, nor on FM-indices.
+Algorithm~\ref{alg:st-exact-multi} further reduces the traversal time.
+Nonetheless, its runtime is dominated by the additional preprocessing time paid to construct the trie of the patterns.
+%This algorithm turns out to be more useful within the multiple $k$-mismatches algorithm.
+
 \subsection{Multiple $k$-mismatches}
 \label{sec:index:algo:multimismatch}
+
+Algorithm \ref{alg:st-hamming-multi} receives a collection of patterns $\mathbb{P}$ and performs multiple $k$-mismatches using the associated trie $\mathcal{P}$.
 
 \begin{figure*}[b]
 \begin{center}
@@ -1267,7 +1274,7 @@ Algorithm~\ref{alg:st-exact-multi} further suffers from the preprocessing time t
 \end{center}
 \end{figure*}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Multiple $k$-mismatches runtime]{Runtime of multiple $k$-mismatches on various suffix trie implementations. The preprocessing time is shown in black.}
 \label{fig:query-dna-apx-multi}
