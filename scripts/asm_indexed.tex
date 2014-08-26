@@ -806,10 +806,10 @@ Later, I focus on how to represent the leaves, which are necessary to locate occ
 \subsubsection{Top-down traversal}
 
 Given a padded string collection $\Sc$, its associated permutation $LF$ recovers any substring of $\bar{\Sc}$.
-Nonetheless, I need to recover substrings of $\Sc$ in \emph{forward direction}, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
+Nonetheless, the top-down traversal needs to recover substrings of $\Sc$ in \emph{forward direction}, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
 Therefore, I consider the BWT of $\bar{\Sc}$, such that $LF$ recovers any substring of $\Sc$.
-In this way, I can use the permutation $LF$ to decode the intervals computed during a suffix trie traversal.
-I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, either multi-levels or wavelet tree.
+To encode $LF$, I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, either multi-levels or wavelet tree.
+In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
 
 I represent the pointed node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 \begin{itemize}
