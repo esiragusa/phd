@@ -1228,16 +1228,26 @@ In this evaluation, all patterns have length 15: runtimes shown in figure \ref{f
 \end{center}
 \end{figure}
 
-Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns (histogram Sorted) speeds up algorithm \ref{alg:st-exact-multi} on the SA and Esa by a factor of 2.
-The same trick does not yield a significant speed-up on the $q$-gram index, as it is already cache local, nor on FM-indices.
-Algorithm~\ref{alg:st-exact-multi} further reduces the traversal time.
+Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns (histogram Sorted) speeds up algorithm \ref{alg:st-exact} on the SA and Esa by a factor of 2.
+The same trick does not yield a significant speed-up on FM-indices nor on the $q$-gram index, as the $q$-gram directory already provides a cache local access pattern.
+
+Algorithm~\ref{alg:st-exact-multi} (histogram Dfs) further reduces the traversal time.
 Nonetheless, its runtime is dominated by the additional preprocessing time paid to construct the trie of the patterns.
-%This algorithm turns out to be more useful within the multiple $k$-mismatches algorithm.
+This algorithm becomes more useful within the multiple $k$-mismatches algorithm.
 
 \subsection{Multiple $k$-mismatches}
 \label{sec:index:algo:multimismatch}
 
 Algorithm \ref{alg:st-hamming-multi} receives a collection of patterns $\mathbb{P}$ and performs multiple $k$-mismatches using the associated trie $\mathcal{P}$.
+
+The experimental evaluation compares algorithm~\ref{alg:st-hamming-multi} (Dfs) with algorithm~\ref{alg:st-hamming} processing patterns in random order (Naive) and in lexicographic order (Sorted).
+In this evaluation, all patterns have length 30: runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Naive) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
+
+Algorithm \ref{alg:st-hamming} on lexicographically sorted patterns (histogram Sorted) is faster by a factor of 2 or more, on all indices.
+The time to sort the patterns becomes insignificant compared to the traversal time.
+Algorithm \ref{alg:st-exact-multi} (histogram Dfs) reduces traversal time by a factor 5 on SA and Esa, thus the time to construct the trie of the patterns is easily justified.
+In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
+Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
 
 \begin{figure*}[b]
 \begin{center}
