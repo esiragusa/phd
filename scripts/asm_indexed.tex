@@ -858,7 +858,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorit
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn, c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a FM-index node\\
+\textbf{Input}  & $\Tn$ : pointer to an FM-index node\\
 				& $c$ : char to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
@@ -893,12 +893,12 @@ The rank dictionary $S$ consumes always $n+o(n)$ extra space.
 
 In this section, I give generic string matching algorithms that work on any of the data structures presented so far.
 I first consider a simple algorithm performing a top-down traversal bounded by depth.
-Then, I present algorithms for exact string matching, $k$-mismatches and $k$-differences.
+Then, I present algorithms for exact string matching and $k$-mismatches.% and $k$-differences.
 I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
 
 At the same time, I perform an experimental evaluation of each of these algorithms on various suffix trie implementations.
-As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the interleaved FM-index with two-levels rank dictionaries (FM-2), the wavelet tree FM-index with two-levels rank dictionaries (FM-WT).
-As text, I consider the C.~elegans reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
+As data structures, I consider the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the FM-index with a two-levels DNA rank dictionary (FM-TL), the FM-index with a wavelet tree composed of two-levels binary rank dictionaries (FM-WT).
+As text, I take the C.~elegans reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
 As patterns, I use sequences extrapolated from an Illumina sequencing run (SRR065390).
 
 The evaluations always report \emph{average} runtimes per pattern, both in single and multiple string matching variants.
@@ -908,17 +908,17 @@ Moreover, they consider only traversal times, while they exclude times to locate
 \subsection{Top-down traversal bounded by depth}
 \label{sec:index:algo:traversal}
 
-Before turning to string matching algorithms, I present a simple traversal algorithm.
+Before turning to proper string matching algorithms, I present a simple algorithm that helps to comprehend subsequent backtracking algorithms.
 Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in depth-first order.
 The traversal is bounded, \ie it stops after visiting any node at depth $d$.
-This algorithm helps to comprehend subsequent algorithms backtracking suffix tries.
 
 The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first glimpse on what are the practical performances of various suffix trie implementations.
 As expected, the WT FM-index is always slower than the TL FM-index.
-The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for traversals below depth 14.
+The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for deep traversals.
 %The SA is significantly slower than all other indices as binary search converges slowly.
-Depth 12 marks the turning point, as the index becomes sparse.
-The TL FM-index is the fastest index up to depth $10$, while $q$-gram index is the fastest at depths 10--11.
+
+Depth 12 marks the turning point, as the indices become sparse.
+The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index is the fastest at depths 10--11.
 Below depth 12, the ESA (which is a tree) becomes significantly faster than all other trie indices.
 Conversely, the FM-indices (which are based on backward search) become up to two order of magnitude slower than the ESA.
 
@@ -926,7 +926,7 @@ Conversely, the FM-indices (which are based on backward search) become up to two
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
-\Algorithm{Multiple}{$x,d$}
+\Algorithm{Dfs}{$x,d$}
 \begin{tabular}{ll}
 \textbf{Input}  & $x$ : pointer to the root node of a suffix trie\\
  			    & $d$ : integer bounding the traversal depth\\
@@ -935,7 +935,7 @@ Conversely, the FM-indices (which are based on backward search) become up to two
 \If {$d > 0$}
 	\If {\Call{goDown}{$x$}}
 		\Repeat
-			\State \Call{Multiple}{$x,d - 1$}
+			\State \Call{Dfs}{$x,d - 1$}
 		\Until \Call{goRight}{$x$}
 	\EndIf
 \EndIf
@@ -960,7 +960,7 @@ Conversely, the FM-indices (which are based on backward search) become up to two
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
 In the following, I assume the text $t$ to be indexed by its suffix trie $\Ti$.
 Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
-If the search ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
+If the search ends up in a node $\Tn$, then each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
@@ -1019,31 +1019,31 @@ Summing up, the TL FM-index is the fastest index to match exact patterns within 
 
 I now give an algorithm that solves $k$-mismatches by backtracking a generic suffix trie.
 The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993}.
-Recently, various popular bioinformatics tools \citep{Langmead2009, Li2009} adopted variations of this method in conjunction with a FM-index.
+Recently, various popular bioinformatics tools \citep{Langmead2009, Li2009} adopted variations of this method in conjunction with an FM-index.
 Yet, the idea dates back to more than twenty years ago.
 
 \begin{figure*}[h!]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{KMismatches}{$t,p,e$}
+\Algorithm{KMismatches}{$t,p,k$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
  			    & $p$ : pointer to the pattern\\
- 			    & $e$ : integer bounding the number of mismatches\\
+ 			    & $k$ : integer bounding the number of mismatches\\
 \textbf{Output} & list of all occurrences of the pattern in the text\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {$e = k$}
+\If {$k = 0$}
 	\State {\Call{ExactSearch}{$t,p$}}
-\ElsIf {$e < k$}
+\Else
 	\If {\Call{atEnd}{$p$}}
 		\State \Report \Call{occurrences}{$t$}
 	\ElsIf {\Call{goDown}{$t$}}
 		\Repeat
 			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
 			\State \Call{goNext}{$p$}
-			\State \Call{KMismatches}{$t,p,e + d$}
+			\State \Call{KMismatches}{$t,p,e - d$}
 			\State \Call{goPrevious}{$p$}
 		\Until \Call{goRight}{$t$}
 	\EndIf
@@ -1253,17 +1253,17 @@ Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{MultipleKMismatches}{$t,p,e$}
+\Algorithm{MultipleKMismatches}{$t,p,k$}
 \begin{tabular}{ll}
 \textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
  			    & $p$ : pointer to the root node of the trie of the patterns\\
- 			    & $e$ : integer bounding the number of mismatches\\
+ 			    & $k$ : integer bounding the number of mismatches\\
 \textbf{Output} & list of all occurrences of any pattern in the text\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {$e = k$}
+\If {$k = 0$}
 	\State {\Call{MultipleExactSearch}{$t,p$}}
-\ElsIf {$e < k$}
+\Else
 	\If {\Call{isLeaf}{$p$}}
 		\State \Report \Call{occurrences}{$t$} $\times$ \Call{occurrences}{$p$}
 	\ElsIf {\Call{goDown}{$t$}}
@@ -1271,7 +1271,7 @@ Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-
 			\State {\Call{goDown}{$p$}}
 			\Repeat
 				\State {$d \gets \delta(\Call{label}{t}, \Call{label}{p})$}
-				\State \Call{MultipleKMismatches}{$t,p,e+d$}
+				\State \Call{MultipleKMismatches}{$t,p,e-d$}
 			\Until {\Call{goRight}{$p$}}
 			\State {\Call{goUp}{$p$}}
 		\Until {\Call{goRight}{$t$}}
