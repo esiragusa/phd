@@ -1217,7 +1217,7 @@ The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports
 
 The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
 Figure~\ref{fig:query-dna-exact-multi} shows the results.
-In this evaluation, all patterns have length 15: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
+These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
 %For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, ESA and SA.
 
 \begin{figure}[b]
@@ -1238,16 +1238,28 @@ This algorithm becomes more useful within the multiple $k$-mismatches algorithm.
 \subsection{Multiple $k$-mismatches}
 \label{sec:index:algo:multimismatch}
 
-Algorithm \ref{alg:st-hamming-multi} receives a collection of patterns $\mathbb{P}$ and performs multiple $k$-mismatches using the associated trie $\mathcal{P}$.
+Algorithm \ref{alg:st-hamming-multi} is the straightforward generalization of algorithm \ref{alg:st-exact-multi} to $k$-mismatches.
+The algorithm receives a collection of patterns $\mathbb{P}$ and performs backtracking on $\mathcal{T}$ as in algorithm  \ref{alg:st-hamming}, this time using the associated trie $\mathcal{P}$.
 
 The experimental evaluation compares algorithm~\ref{alg:st-hamming-multi} (Multiple) with algorithm~\ref{alg:st-hamming} processing patterns in random order (Single) and in lexicographic order (Sorted).
-In this evaluation, all patterns have length 30: runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
+All three methods ran on 10~M patterns of length 30, with $k$ fixed to 1.
+Thus, runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
 
 Algorithm \ref{alg:st-hamming} on lexicographically sorted patterns (histogram Sorted) is faster by a factor of 2 or more, on all indices.
 The time to sort the patterns becomes insignificant compared to the traversal time.
-Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor 5 on SA and ESA, thus the time to construct the trie of the patterns is easily justified.
+Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor of 5 on SA and ESA, thus the time to construct the trie of the patterns is easily justified.
 In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
 Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
+
+Figure \ref{fig:query-dna-apx-multi-sa} shows the average runtime of the three approaches on the SA by varying the number of patterns.
+While the average runtime of the single method is constant, both multiple methods clearly benefit from receiving a higher number of patterns.
+In particular, method Multiple is constantly faster than Sorted, and the runtime gap increases with the number of patterns.
+The speed-up of multiple methods slowly decreases, though there is still some space of improvement with more than 10~M patterns.
+
+Figure \ref{fig:query-dna-apx-multi-fmtl} presents the same evaluation of figure \ref{fig:query-dna-apx-multi-sa}, but for the TL FM-index.
+Multiple methods exhibit again decreasing average runtimes by number of patterns.
+However, here method Sorted is constantly faster than Multiple, but the runtime gap decreases with the number of patterns.
+Moreover, the speed-up of both multiple methods slowly increases with the number of patterns instead of decreasing.
 
 \begin{figure*}[b]
 \begin{center}
