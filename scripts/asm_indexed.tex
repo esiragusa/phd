@@ -1222,7 +1222,7 @@ In this evaluation, all patterns have length 15: runtimes shown in figure \ref{f
 
 \begin{figure}[b]
 \begin{center}
-\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. The preprocessing time is shown in black.}
+\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. Pattern length is fixed to 15. Preprocessing times are shown in black.}
 \label{fig:query-dna-exact-multi}
 \includegraphics{multi.dna.celegans.0.15.pdf}
 \end{center}
@@ -1284,11 +1284,26 @@ Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-
 \end{center}
 \end{figure*}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
-\caption[Multiple $k$-mismatches runtime]{Runtime of multiple $k$-mismatches on various suffix trie implementations. The preprocessing time is shown in black.}
+\caption[Multiple $k$-mismatches runtime]{Runtime of multiple $1$-mismatch on various suffix trie implementations. Pattern length is fixed to 30. Preprocessing times are shown in black.}
 \label{fig:query-dna-apx-multi}
 \includegraphics{multi.dna.celegans.1.30.pdf}
 \end{center}
 \end{figure}
 
+\begin{figure}[t]
+\begin{center}
+\caption[Multiple $k$-mismatches speed-up on SA]{Speed-up of multiple $1$-mismatch by number of patterns on the SA. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
+\label{fig:query-dna-apx-multi-sa}
+\includegraphics{multi.dna.celegans.1.sa.pdf}
+\end{center}
+\end{figure}
+
+\begin{figure}[b]
+\begin{center}
+\caption[Multiple $k$-mismatches speed-up on FM-index]{Speed-up of multiple $1$-mismatch by number of patterns on the TL FM-Index. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
+\label{fig:query-dna-apx-multi-fmtl}
+\includegraphics{multi.dna.celegans.1.fm-tl.pdf}
+\end{center}
+\end{figure}
