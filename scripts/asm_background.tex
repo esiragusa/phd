@@ -92,11 +92,16 @@ Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation 
 Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
+\begin{definition}
+Matrix notation D[:i]
+\end{definition}
+
+
 \section{Transcripts, alignments and distances}
 
-I now define the minimal set of edit operations to transform one string into another.
+I now define basic edit operations to transform one string into another.
 Given two strings $x,y$ of equal length $n$, the string $x$ is easily transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
-If the two strings have different lengths, it becomes necessary to insert or delete symbols from $x$ to transform it into $y$.
+If the two strings have different lengths, some symbols from $x$ must be necessarily inserted or deleted in order to obtain $y$.
 This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
@@ -104,16 +109,16 @@ This fact motivates the following definition of \emph{edit transcript}.
 \citep{Gusfield1997} An edit transcript for any two given strings $x,y$ is a finite sequence of substitutions, insertions and deletions transforming $x$ into $y$.
 \end{definition}
 
-An \emph{alignment} is an alternative yet equivalent way of visualizing a transformation between strings.
+An \emph{alignment} is an alternative way of visualizing a transformation between strings.
 While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of symbols from the two strings.
 Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie when some symbols are inserted or removed.
-For this reason, it is necessary to introduce an additional gap symbol $-$ not being part of the string alphabet $\Sigma$.
+For this reason, it is necessary to introduce an additional gap symbol $-$, not being part of the string alphabet $\Sigma$.
 The definition of alignment follows.
-Figure~\ref{fig:edit-transcript} shows an example of edit transcript and alignment.
+Figure~\ref{fig:edit-transcript} shows an example of edit transcript with its associated alignment.
 
 \begin{definition}
 \label{def:alignment}
-An alignment of two strings of length $m,n$ over $\Sigma$ is a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \})$.
+An alignment of two strings of length $m,n$ over $\Sigma$ is a string of length between $\min\{m,n\}$ and $m+n$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \setminus \{ (-,-) \} $.
 \end{definition}
 
 \begin{figure}[h]
@@ -270,7 +275,7 @@ Figure \ref{fig:edit-occurrence} shows an example of occurrence for $k$-differen
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern trivially occurs at any position in the text if all its $m$ characters are substituted.
 Frequently, the problem's input respects the condition $k \ll m \ll n$.
 \begin{definition}
-Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = \frac{k}{m}$, with $0 < \epsilon < 1$ given the above conditions.
+Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = k/m$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
 
 \begin{figure}[h]
@@ -287,18 +292,19 @@ String matching problems are subdivided in two categories, \emph{online} and \em
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left).
 Algorithms for offline string matching are instead allowed to preprocess the text,
 hence they build an index of the text beforehand to speed up subsequent searches.
-In practice, if the text is long, static and searched frequently, provided the necessary amount of memory for text indexing, offline methods outperform online methods in terms of runtime.
+In practice, if the text is long, static and searched frequently, offline methods outperform online methods in terms of runtime, provided the necessary amount of memory for text indexing.
 
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
-Very often such \emph{full-text index} is the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
+Very often, such \emph{full-text index} is realized as the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
 Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and approximate string matching via backtracking \citep{Ukkonen1993}.
 Often, the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
-Filtering methods first discard uninteresting portions of the text and subsequently use a conventional method to verify narrower areas.
+Filtering methods first discard uninteresting portions of the text and subsequently verify only narrower areas.
 These methods work either online or offline.
 Online filtering methods try to jump over the text while scanning it; instead, offline filtering methods use an index to place anchors in the text.
-Any filtering method relies on a conventional method for verification.
+Both classes of filtering methods then require a native online method to verify the anchors.
+
 Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \ie when the error rate is low, and are thus very appealing from a practical standpoint.
 Nonetheless, filtering methods are just opportunistic combinations of native online and indexed methods.
 
@@ -308,7 +314,7 @@ However, it is clear that multiple methods have an advantage over single methods
 For instance, multiple online methods are allowed to preprocess all patterns and then scan the text only once, while single online methods have to scan the text every time a pattern is given.
 Thus, provided multiple patterns at once, multiple string matching methods are more appealing than single methods.
 
-In the following of this section, I give a quick overview of the fundamental algorithms and data structures adopted by classic string matching methods.
+In the remainder of this section, I give a quick overview of the fundamental algorithms and data structures adopted by classic string matching methods.
 This overview serves as an introduction to the indexed and filtering methods presented in the next two chapters.
 For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001a} and indexed \citep{Navarro2001} approximate string matching methods.
 
@@ -384,9 +390,9 @@ Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\r
 %Indexed methods are more attractive than online methods when several patterns are to be searched in the same static text.
 %These methods work by building an index of the text beforehand to speed up subsequent searches.
 %To this intent,
-I now introduce \emph{suffix tries}, idealized data structures to index full-texts.
+I now introduce \emph{suffix tries}, idealized data structures to index full texts.
 I define a set of generic operations to traverse them in a top-down fashion.
-In chapter~\ref{chr:index}, I expose various data structures replacing suffix tries in practice.
+In chapter~\ref{chr:index}, I introduce various data structures replacing suffix tries in practice.
 The generic traversal operations here introduced lead to the formulation of generic algorithms that solve string matching problems on any of these data structures.
 
 \subsubsection{Trie}
@@ -409,15 +415,15 @@ The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix
 %The suffix trie generalizes to index string collections.
 \begin{definition}
 Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
-Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
+Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$ (definition~\ref{def:colt}).
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
-Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to expose generic algorithms.
+Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
 However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
 This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
-For this reason, in the following of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
+For this reason, in the remainder of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
 %I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[h]
@@ -453,7 +459,7 @@ Given a trie $\Ti$, I define the following operations inspecting any pointed nod
 \item \textsc{label}($\Tn$) returns the symbol labeling the edge entering $\Tn$;
 \item \textsc{occurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
 \end{itemize}
-and the following operations moving from pointed node $\Tn$, and returning true on success and false otherwise:
+Moreover, I define the following operations moving from pointed node $\Tn$, and returning true on success and false otherwise:
 \begin{itemize}
 \item \textsc{goDown}($\Tn$) moves to the lexicographically smallest child of $\Tn$;
 \item \textsc{goDown}($\Tn, c$) moves to the child of $\Tn$ whose entering edge is labeled by $c$;
@@ -565,7 +571,7 @@ No & False positive (FP) & True negative (TN) \\
 \subsubsection{Efficiency}
 
 The total runtime of a filtering method is given by the sum of the runtimes of its filtration and verification stages.
-Filtration specificity determines how much time goes in the verification stage.
+Filtration specificity determines how much time is spent in the verification stage.
 Clearly, the number of false positives must be low to keep verification time small.
 Nonetheless, the filtration stage must also run in a reasonable amount of time.
 Hence, an efficient filtering method balances its runtime between filtration and verification.
@@ -573,9 +579,11 @@ In any way, no filtering method can be efficient when the number of true positiv
 %No filtering method is effective unless $|TP_f(t)| \ll |t|$.
 
 Filtering methods for string matching work under the assumption that patterns occur in the text with a \emph{low average probability}.
-For $k$-differences, the occurrence probability is a function of the error rate $\epsilon$, in addition to the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source.
-Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $\frac{1}{\sigma}$, \citeauthor{Navarro2000} estimate that $\epsilon < 1 - \frac{1}{\sigma}$ is a conservative bound on the error rate which ensures few occurrences and for which filtering algorithms are effective.
+For $k$-differences, the occurrence probability is a function of the error rate $\epsilon$ and the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source.
+Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $1/\sigma$, \citeauthor{Navarro2001a} experimentally finds that $\epsilon < 1 - 1 / \sqrt{\sigma}$ is a tight upper bound on the error rate which ensures few occurrences and for which filtering algorithms are effective.
 For higher error rates, non-filtering methods, either online or offline, work better.
+On the one hand, the filtration efficiency bound for the DNA alphabet is 50 \% error rate, while on the other hand HTS read mapping applications require a range of 3 to 10 \% error rate.
+According to the above considerations, filtering methods are expected to be very efficient in HTS applications.
 
 \subsubsection{Seeds versus $q$-grams}
 
@@ -588,4 +596,4 @@ In chapter \ref{sec:filter}, I consider two classes of combinatorial filtering m
 Filters in the former class partition the pattern into \emph{non-overlapping} factors called seeds.
 Application of the pigeonhole principle yields full-sensitive partitioning strategies.
 Instead, filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Simple counting lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary condition for an approximate occurrence of the pattern.
+Simple counting lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary conditions for an approximate occurrence of the pattern.
