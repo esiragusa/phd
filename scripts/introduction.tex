@@ -3,16 +3,17 @@
 The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
 In February 2001, the three billion dollars publicly funded \emph{Human Genome Project} (HGP) published the first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
 Concurrently, the privately funded company \emph{Celera Genomics} published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
-Celera Genomics and various international sequencing consortiums contributed to characterize the entire genomes of several other model organisms, including mice \citep{Chinwalla2002}, fruit flies \citep{Myers2000}, nematode worms \citep{Sulston1992} and yeasts.
-The knowledge of these entire genomics sequences paved the way to a myriad of computational biology studies.
+Other international sequencing consortiums, analogous to the HGP, contributed to characterize the entire genomes of several other model organisms, including mouse \citep{Chinwalla2002}, nematode worms \citep{Sulston1992} and yeasts.
+In addition, Celera Genomics carried on the sequencing of fruit fly \citep{Myers2000} and mouse \citep{Mural2002}.
+%The knowledge of these entire genomics sequences paved the way to a myriad of computational biology studies.
 
-These projects joined the efforts of molecular biologists and computer scientists.
+The application of efficient computational methods has been crucial for the accomplishment of these projects.
 Whole genome sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
 Because of such technological limitation, sequencing of whole genomes had to be coupled with the \emph{shotgun} approach.
 Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
 %In order to produce a contiguous assembly, DNA sequences must be read with a manyfold \emph{coverage} \citep{Lander1988}.
-At the pace of Sanger sequencing, it took years and many million dollars for these projects to complete.
+At the pace of Sanger sequencing, it took years and hundreds of million dollars for these projects to complete.
 Nonetheless, their success did not mark the end of the sequencing era but its beginning.
 
 % -----------------------------------------------------------------------------
@@ -20,7 +21,7 @@ Nonetheless, their success did not mark the end of the sequencing era but its be
 \section{High-throughput sequencing}
 
 Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS) or \emph{next-generation sequencing} (NGS).
-In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA under the form of 400~bp reads at a throughput of about 20~Mbp/h.
+In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA in form of 400~bp reads at a throughput of about 20~Mbp/h.
 High-throughput sequencing was born.
 
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
@@ -30,22 +31,22 @@ At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing in
 
 %Over the last decade, other sequencing instruments hit the market with mixed success, \eg the \emph{SOLiD} system of \emph{Applied Biosystems}, as well as the \emph{third-generation sequencing} \emph{Ion Torrent} instruments by \emph{Life Technologies} and the \emph{RS II} by \emph{Pacific Bioscience}.
 
-I return to sequencing technologies in chapter~\ref{chr:background}, where I give insights on the kind of data produced by HTS instruments, in order to understand the problematics linked with their analysis.
-In the following of this section, I continue to provide the context of this work.
-I first introduce most relevant \emph{applications} of HTS and then explain how HTS \emph{analysis pipelines} proceed.
+I return to sequencing technologies in chapter~\ref{chr:background}, where I give insights on the kind of data produced by HTS instruments, in order to understand the problems linked with their analysis.
+In the rest of this section, I continue to provide the context of this work.
+I first introduce most relevant \emph{applications} of HTS and then explain how HTS \emph{analysis pipelines} work.
 The reader familiar with HTS can jump directly to section \ref{sec:intro:outline}, where I outline the structure of this work and state my contributions.
 
 \subsection{Protocols and applications}
 
 In the last years, HTS has become an invaluable method of investigation for computational molecular biologists.
-Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at unpreceded single-base resolution.
+Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at single-base resolution.
 For instance, DNA resequencing applications include genotyping and discovery of structural variations, the sequencing of RNA transcripts allows to assess gene expression as well as to analyse non-coding RNAs, epigenetic applications predict gene regulation according to methylation patterns and transcription factor binding-sites activity.
 
 \subsubsection{Whole genome and exome-seq}
 
 \emph{Whole genome sequencing} (WGS, DNA-reseq) allows discovery of genetic variations across the whole genome.
 These may be in the form of single nucleotide variants (SNVs), small insertions or deletions (indels), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
-\emph{Whole exome sequencing} (WES, exome-seq) is a cost-effective yet powerful alternative to WGS.
+\emph{Whole exome sequencing} (WES, exome-seq) is a cost-effective, yet powerful alternative to WGS.
 This protocol consists in the \emph{targeted sequencing} of the \emph{exome}, \ie the protein coding subset of a genome.
 %WES applications are oriented towards clinical settings, \eg towards mendelian disorders and cancer diagnostic.
 
@@ -60,7 +61,7 @@ The process isolates chromatin-protein complexes and sheares them by sonication.
 Subsequently, immunoprecipitation with a protein-specific antibody pulls down genomic DNA sequences bound by a specific protein.
 These DNA sequences are finally sequenced by HTS.
 ChIP-seq is used to study the mechanisms of gene regulation.
-Through this sequencing protocol it is possible to determine global methylation patterns, identify transcription factor binding sites, histone modifications, chromatin remodelling proteins.
+Through this sequencing protocol it is possible to determine global methylation patterns, identify transcription factor binding sites, histone modifications, and chromatin remodelling proteins.
 
 \subsection{Analysis pipelines}
 
@@ -79,7 +80,7 @@ The tertiary stage characterizes features of the donor genome specific to the se
 \subsubsection{Primary analysis}
 
 Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
-The base caller processes instrumental signals and assigns a base to each peak, \ie A, C, G, T, or N.
+The base caller processes instrument signals and assigns a base to each peak, \ie A, C, G, T, or N.
 The software assigns a quality value to each called base, estimating the probability of a base calling error.
 On early generation instruments, users could provide their own base calling tool.
 Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instrument.
@@ -98,10 +99,10 @@ The knowledge of a \emph{reference genome}, highly similar to the donor, simplif
 The reads are simply aligned to the reference, tolerating a few base pair errors.
 It is worth mentioning that some combinations of plans A and B have been proposed \citep{Li2012}.
 
-Plan B is always preferred in resequencing projects, as it is more computationally viable than plan A and directly provides a way to assess genetic variation \wrt a reference genome.
+Plan B is always preferred in resequencing projects, as it is computationally more viable than plan A and directly provides a way to assess genetic variation \wrt a reference genome.
 In this manuscript, I follow only plan B and present methods that work within this specific plan.
-Nonetheless, many of the algorithmic components that I expose in the first part of this manuscript are ubiquitous in bioinformatics, thus applicable, if not already applied, to plan A.
-According to plan B, the secondary analysis step consists of three tasks: \emph{quality control}, \emph{read mapping}, and \emph{pile up}.
+Nonetheless, many of the algorithmic components that I intriduce in the first part of this manuscript are ubiquitous in bioinformatics, thus applicable, if not already applied, to plan A.
+According to plan B, the secondary analysis step consists of three tasks: \emph{quality control}, \emph{read mapping}, and \emph{consensus alignment}.
 
 \emph{Quality control} (Q/C) checks the quality of raw reads.
 Reads produced by current HTS technologies contain sequencing artefacts, in form of single miscalled bases or stretches of oligonucleotides.
@@ -114,7 +115,7 @@ Approximate matching accounts for two kinds of errors:
 residual sequencing artefacts not removed by Q/C, and small genetic variations in the donor genome to which reads belong.
 Consequently, a read mapper must take into account errors when mapping reads.
 
-Mapped reads, often stored in de-facto standard BAM files \citep{Li2009a}, are \emph{piled up} in order to construct a \emph{consensus sequence} of the donor genome.
+Mapped reads, often stored in de-facto standard BAM files \citep{Li2009a}, are sorted by genomic coordinate and eventually multiply aligned in order to construct a \emph{consensus sequence} of the donor genome.
 The height of the pileup denotes the sequencing depth at each locus in the donor genome, thus the average height corresponds to the average sequencing coverage;
 higher depth implies more confidence in the consensus sequence of the donor genome and thus more accuracy in tertiary analysis.
 
@@ -125,7 +126,7 @@ This pipeline stage groups a wide range of analyses specific to the sequencing a
 In some pipelines, downstream analysis performs data mining over aggregated data coming from multiple samples.
 
 Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
-The result of \emph{variant calling} is usually a VFC file annotating the variations of the donor genome.
+The result of \emph{variant calling} is a set of variations characterizing the donor genome, usually stored in de-facto standard VFC files.
 Subsequently, \emph{genome-wide association studies} (GWAS) associate genetic variants with phenotypic traits by examining \emph{single-nucleotide polymorphisms} (SNPs), variants relatively common among individuals of the same population.
 
 In RNA-seq, tertiary analysis consists of computing transcripts abundance by measuring \emph{reads per kilobase per million mapped reads} (RPKM) \citep{Mortazavi2008}.
@@ -143,8 +144,11 @@ Efficiency is mandatory to keep the pace of sequencing technologies, exponential
 Accuracy is required to enable downstream data analysis at single-base resolution.
 The ingenuity of state of the art approximate string matching methods is crucial for the design and implementation of efficient and accurate read mapping programs.
 
-The contributions of this work are of purely practical interest, nonetheless I follow a practical yet rigorous approach.
-I subdivide this work in two parts: the former part exposes \emph{practical} approximate string matching methods, while the latter one describes the engineering and evaluation of two read mapping programs developed by myself.
+The contributions of this work are of purely practical interest, nonetheless I follow a rigorous approach.
+I subdivide this work in two parts.
+part I covers practical approximate string matching methods, whose interest is beyond HTS applications.
+part II describes the application of such methods to engineer two HTS read mapping programs developed by myself.
+In the two following sections, I describe the contents of part I and II.
 
 \subsection{Approximate string matching}
 
@@ -154,7 +158,7 @@ In particular, in section \ref{sub:introindex}, I introduce the concept of full-
 
 In chapter 3, I cover \emph{indexed methods} for exact and approximate string matching.
 First, I describe some classic full-text indices (suffix arrays and $q$-gram indices) and succinct full-text indices (uncompressed FM-index variants).
-Afterwards, I expose generic string matching algorithms, working on any of these data structures, and provide their experimental evaluation.
+Afterwards, I introduce generic string matching algorithms, working on any of these data structures, and provide their experimental evaluation.
 To the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
 In addition, my implementation of all these algorithms and data structures is publicly available in source form within the \CC library SeqAn \citep{Doering2008}.
 
@@ -169,11 +173,11 @@ From the latter one:
 \emph{gapped $q$-grams} \citep{Burkhardt2001},
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 Again, to the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
-In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads to the formulation of APX and FPRAS (fully polynomial-time randomized approximation scheme) algorithms  answering some combinatorially hard filter design questions.
+In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads to the formulation of approximable (APX) and fully polynomial-time randomized approximation scheme (FPRAS) algorithms answering some combinatorially hard filter design questions.
 
 \subsection{Read mapping}
 
-In chapter 5, I finally return to read mapping. Before diving into the plethora of tools proposed during the last years, I give a quick overview of market-leading HTS technologies and expose the \emph{de facto} standard analysis paradigms adopted to analyze the deluge of data produced by such instruments.
+In chapter 5, I return to read mapping. Before diving into the plethora of tools published during the last years, I give a quick overview of market-leading HTS technologies and introduce the \emph{de facto} standard analysis paradigms adopted to analyze the data produced by such instruments.
 By reviewing some recent works \citep{Derrien2012,Lee2012}, I try to delineate which are the limits of these HTS technologies and data analysis paradigms.
 Finally, I give an overview of the most popular read mappers.
 In the last two chapters, I consider these popular programs in the evaluation of my own tools, Masai \citep{Siragusa2013} and Yara \citep{Siragusa2014}.
