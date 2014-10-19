@@ -9,24 +9,23 @@ Yara works with Illumina or Ion Torrent reads, supports paired-end and mate-pair
 \section{Engineering}
 \label{sec:yara:eng}
 
-\subsection{Ad-hoc filtration}
-\label{sec:yara:eng:adhoc}
+\subsection{Adaptive filtration}
+\label{sec:yara:eng:adaptive}
 
 Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
 Read mappers like RazerS\,3 \citep{Weese2012} and mrFast \citep{Ahmadi2012} are designed around na\"ive filtration with exact seeds.
 This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
 Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
 whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
-This filtration method speeds up Masai by an order of magnitude but is still rough:
+This filtration method speeds up Masai by an order of magnitude but has some drawbacks:
 it needs external parametrization, lacks flexibility and is suboptimal in practice.
 
-Yara applies an ad-hoc filtration scheme \emph{per read}.
-Under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical mapping, most reads produce very few verifications and are easily mappable, while few other reads are problematic and often not even confidently mappable to one single location.
+Yara applies an adaptive filtration scheme \emph{per read} because, under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical human genome resequencing, most reads produce very few verifications and are easily mappable, while few other reads are problematic and often not even confidently mappable to one single location.
 Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
-An ad-hoc filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
-Yara thus automatically chooses an ad-hoc filtration scheme per read, without requiring manual parameterization by the user.
+An adaptive filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
+Yara thus automatically chooses an adaptive filtration scheme per read, without requiring manual parameterization by the user.
 
-Ad-hoc filtration works as follows.
+Adaptive filtration works as follows.
 Yara initially applies filtration with exact seeds to all reads.
 The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
 This decision depends on fine-tuned internal verification thresholds.
@@ -39,7 +38,7 @@ Thus, Yara starts with the quickest filtration scheme and becomes more specific 
 %Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
 %The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
 
-\subsection{Stratified filtration}
+\subsection{Stratified mapping}
 \label{sec:yara:eng:strata}
 
 All-mapping methods consider a set of relevant mapping locations per read.
@@ -50,6 +49,8 @@ On the one hand a very low threshold leaves a consistent fraction of the reads u
 In practice, at 5\,\%, error rate, Illumina reads map on average to hundreds of mapping locations on the human genome.
 It is questionable whether all these locations are relevant for the downstream analysis.
 Thus, a finer definition of all-mapping relevance is necessary in practice.
+
+%\subsubsection{Stratified mapping}
 
 Stratification of mapping locations yields an equally sound yet practical definition of all-mapping under the edit distance.
 The $e$-stratum
@@ -74,6 +75,8 @@ S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+l, k\})
 within a \emph{relative} error threshold $l$ to be relevant.
 %Note that $l \ll k$.
 
+\subsubsection{Efficient filtration by strata}
+
 Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping.
 Obviously, the most straightforward way to achieve stratified all-mapping consists into performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
 For instance, RazerS\,3 implements this method and gets no speedup.
@@ -93,9 +96,11 @@ The proof is analogous to that one given in section~\ref{sec:seeds-apx}.
 Let $k=5$ be the absolute threshold, and $l=0$ be the relative threshold, restricting relevant locations to co-optimal ones.
 A read $r$ maps at distance 1, \ie $|S(r,0)| = 0$ and $|S(r,1)| > 0$, thus $e^* = 1$.
 Given the filtration scheme $\mathbb{k}=(1,1,1)$, any subset full-sensitive up to distance $\min \,\{ e^*+l, k\} = 1$ finds all relevant mapping locations.
-Full-sensitive subsets of $\mathbb{k}$ are: $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$.
+All full-sensitive subsets of $\mathbb{k}$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
 Thus, the verification of all candidates, either produced by \emph{any} two exact seeds or by one 1-approximate seed, yields all mapping locations in the $1$-stratum of $r$.
 \end{example}
+
+\subsubsection{Greedy verification strategy}
 
 In addition, Yara implements a simple greedy strategy to minimize the number of verifications necessary to find all relevant stratified mapping locations.
 As candidate locations can be verified in any order, Yara chooses an ordering of seeds producing the minimum number of verifications.
@@ -106,7 +111,7 @@ Yara performs best-mapping by means of stratified filtration.
 Best-mapping requires one primary mapping location along with its confidence.
 Under the edit distance, without any further assumptions, any co-optimal location is equally likely to be correct.
 Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates its mapping quality using all found mapping locations (see section~\ref{sec:yara:eng:qualities}).
-Thanks to this method, Yara in best-mapping is an order of magnitude faster than in conventional all-mapping.
+Thanks to this method, Yara in best-mapping is an order of magnitude faster than in all-mapping.
 
 % Yara uses the best strata
 %(i) to compute precise mapping qualities
@@ -137,15 +142,15 @@ Yara uses an efficient FM-index specialization for the DNA alphabet, based on in
 This interleaved FM-index exhibits a fourfold speedup over the first FM-index implementation bundled with Masai.
 Surprisingly, the interleaved FM-index is also faster than any other index, both in exact and approximate search (see section~\ref{sec:index:algo}).
 Moreover, this index consumes only 1.23 bytes per base pair with a SA sampled at 10\,\%, thus its memory footprint for the human genome is 3.7~GB.
-Under these terms, no indexing space-time trade-off holds: the FM-index always provides the most convenient suffix trie implementation.
+Under these terms, there is no space-time indexing trade-off: the FM-index always provides the most convenient suffix trie implementation.
 
 Yara does not use multiple search algorithms of section~\ref{sec:index:algo:multimismatch} to search seeds on the FM-index.
-These algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
+Indeed, these algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
 Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
 Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
 Conversely, using backward search, the traversal becomes more expensive as it proceeds deeper in the trie; traversal downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
 Multiple backtracking factorizes the traversal of top nodes, thus it pays off with forward search rather than with backward search.
-Using the FM-index, it is always faster to search exact queries in a na\"ive way and approximate queries after sorting them in lexicographical order (see section~\ref{sec:index:algo}).
+As shown in section~\ref{sec:index:algo}, on the FM-index it is always faster to search exact queries in a na\"ive way and approximate queries after sorting them in lexicographical order.
 
 %Yara implements fine-grained parallelism.
 %It would be possible to stream over reads to parallelize computation per read.
