@@ -58,11 +58,24 @@
 \renewcommand{\topfraction}{.99}
 \renewcommand{\bottomfraction}{.99}
 
-% --- Itemize spacing ---
+% --- Itemize/Enumerate spacing ---
+
+%\setlist{nolistsep}
+%\setlist{noitemsep}
+%\setlist{noitemskip}
+%\setlist{noparsep}
 
 \let\olditemize\itemize
 \renewcommand{\itemize}{
   \olditemize
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}
+
+\let\oldenumerate\enumerate
+\renewcommand{\enumerate}{
+  \oldenumerate
   \setlength{\itemsep}{0pt}
   \setlength{\parskip}{0pt}
   \setlength{\parsep}{0pt}
