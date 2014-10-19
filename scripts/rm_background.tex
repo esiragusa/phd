@@ -46,7 +46,7 @@ The tool encodes the probability $\epsilon_i$ of miscalling the $i$-th base in a
 Q_i = -10 \log_{10} \epsilon_i.
 \end{eqnarray}
 Since then, this method has been unanimously accepted.
-All sequencing technologies complement reads with base quality scores in Phred-scale.
+All sequencing technologies complement DNA reads with base quality scores, in Phred-scale or similar.
 
 % =============================================================================
 
@@ -54,13 +54,13 @@ All sequencing technologies complement reads with base quality scores in Phred-s
 \label{sec:paradigms}
 
 The goal of secondary analysis is to reconstruct the original sequence of the donor genome.
-The \emph{reference-guided} assembly plan assumes a prior knowledge of a reference genome similar to the donor.
+The \emph{reference-guided} assembly plan assumes prior knowledge of a reference genome similar to the donor.
 Reads are thus mapped (\ie aligned) to the reference genome \wrt a given scoring scheme and threshold.
 The scoring scheme accounts for eventual genomic variation, as well as for any sequencing artefacts.
-An alignment of optimal score for a read implies its \emph{original location} on the reference genome.
+Under these assumptions, an alignment of optimal score for a read implies its \emph{original location} on the reference genome.
 Conversely, no alignment within the score threshold implies too many sequencing errors, too much genetic variation, or sample contamination.
 %A pile-up of the reads aligned at their mapping locations thus provides a consensus alignment of the donor genome.
-A problem arises in presence of co-optimal or close sub-optimal alignments: the read cannot be mapped confidently.
+A problem arises in presence of co-optimal or close sub-optimal alignments: the read cannot be mapped confidently to one single location.
 
 The problem of confidently mapping high-throughput sequencing reads comes from the non-random nature of genomic sequences.
 Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{Wolfe1997,Dehal2005} or large-scale segmental duplications in chromosomes \citep{Bailey2001,Samonte2002}, transposition of repetitive elements as short tandem repeats (microsatellites) \citep{Wang1994a,Wooster1994} and interspersed nuclear elements (LINE, SINE) \citep{Smit1996}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{Meyne1990}.
@@ -79,7 +79,7 @@ According to \citeauthor{Treangen2011}, common strategies to deal with multi-rea
 \item to randomly pick one best mapping location,
 \item to consider all or up to $k$ best mapping locations within a given distance threshold.
 \end{inparaenum}
-A \emph{de facto} standard strategy, combining strategies i and ii, emerged over the last years.
+A \emph{de facto} standard strategy, combining strategies (i) and (ii), emerged over the last years.
 The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:paradigms:mapqual}).
 Subsequently, downstream analysis tools apply a mapping quality score cutoff to discard reads not mapping confidently to any location.
 The other popular strategy adopted by analysis tools is to consider all mapping locations within an edit distance threshold.
@@ -93,8 +93,8 @@ Read mapping and variant calling are indeed tightly coupled steps within referen
 
 \subsection{Best-mapping}
 As said, best-mapping methods rely on one single mapping location per read.
-In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticate heuristics to speed up the search.
-Best-mappers complement any mapping location with its mapping quality.
+In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticated heuristics to speed up the search.
+Best-mappers annotate any mapping location with its mapping quality.
 Subsequently, in order to maximize precision, variant calling tools decide whether to consider or discard reads not mapping confidently to any location.
 The GATK~\citep{DePristo2011} and Samtools~\citep{Li2009a} are popular best-mapping tools to call small variants.
 In section~\ref{sec:mappability}, I discuss how this paradigm systematically discards reads belonging some critical genomic regions, thus is limited to the analysis of \emph{high mappability} regions.
@@ -102,7 +102,7 @@ In section~\ref{sec:mappability}, I discuss how this paradigm systematically dis
 \subsubsection{Mapping quality score}
 \label{sec:paradigms:mapqual}
 
-Mapping quality has been introduced in \citep{Li2008}.
+Mapping quality has been introduced in the tool MAQ \citep{Li2008}.
 The study considers short 30--40~bp reads, produced by early Illumina/Solexa and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
 Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
 
@@ -149,15 +149,15 @@ On the one hand, this computation is practically infeasible.
 On the other hand, sub-optimal locations not close to the optimum one contribute very little to the sum in equation~\ref{eq:mapprob}.
 Therefore, read mapping programs approximate equation~\ref{eq:mapprob} using only the mapping locations they repute relevant.
 
-Mapping quality has been initially used in \citep{Li2008} and \citep{Li2009} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
+Mapping quality has been initially used in MAQ \citep{Li2008} and BWA \citep{Li2009} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
 Since then, this method has been widely accepted.
 Nowadays, mapping quality is computed by best-mappers and used by almost all variant calling tools \eg the Genome Analysis ToolKit (GATK) \citep{DePristo2011}.
 
-Despite their wide adoption, some important objections can be moved against mapping quality scores.
+Despite their wide adoption, some important objections can be raised against mapping quality scores.
 First, this score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
 In other words, mapping quality considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the probability of any location in equation~\ref{eq:mapprob} dilutes in presence of a large number of co-optimal or close sub-optimal mapping locations.
-Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates in a shallow measure of uniqueness.
+Third, mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates into a shallow measure of uniqueness.
 
 \subsection{All-mapping}
 All-mapping analysis methods consider a comprehensive set of locations per read.
@@ -172,7 +172,7 @@ A practical challenge of all-mapping is represented by reporting and handling hu
 \section{Limits of high-throughput sequencing}
 \label{sec:mappability}
 
-Due to repetitive elements, a non-ignorable fraction of high-throughput sequencing reads cannot be mapped confidently.
+A fraction of high-throughput sequencing reads cannot be mapped confidently due to repetitive elements.
 Which regions of a model organism's genome cannot be resequenced confidently by a high-throughput sequencing technology?
 And how accurate is downstream analysis on these low confidence regions?
 Two recent studies \citep{Derrien2012, Lee2012} answer these questions.
@@ -186,13 +186,13 @@ The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
 The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-Unique mappability determines which fraction of a genome can be analyzed according to strategy i (\ie discarding non-unique reads, see section \ref{sec:paradigms}).
+Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \citep{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:paradigms}).
 \citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole human, mouse, fly, and worm genomes.
 Mimicking typical Illumina read mapping setups, they consider $q$-grams of length 36, 50 and 75~bp, and Hamming distance 2.
 They find out that about 30~\% of the whole human genome is not unique \wrt $(36,2)$-mappability.
 At $(75,2)$-mappability, 17~\% of the human genome is not yet unique.
-This last result is quite optimistic, as typical mapping setups call for 3--4 edit distance errors in order to map a significant fraction of the reads.
-Table \ref{tab:mappability} shows some results extrapolated from \citep{Derrien2012}.
+This last result is slightly optimistic, as typical mapping setups call for up to 3--4 edit distance errors in order to map a significant fraction of the reads.
+Table \ref{tab:mappability} shows some results obtained from \citep{Derrien2012}.
 
 %The uniqueome plays an important role in ChIP-seq experiments.
 %It is common practice \citep{?} to rely on short (36~bp) reads and discard the non-unique ones.
@@ -203,7 +203,7 @@ Table \ref{tab:mappability} shows some results extrapolated from \citep{Derrien2
 
 \begin{table}[h]
 \begin{center}
-\caption[Mappability of model genomes]{Mappability of model genomes. Data extrapolated from \citep{Derrien2012}.}
+\caption[Mappability of model genomes]{Mappability of model genomes. Data obtained from \citep{Derrien2012}.}
 \sffamily
 \input{tables/table_mappability}
 \label{tab:mappability}
@@ -215,13 +215,13 @@ They define \emph{pileup mappability} $P^q_k$ at position $i$ as the average map
 \begin{eqnarray}
 P^q_k(i) = 1/q \sum_{j=i}^{i+1}{M^q_k(j)}.
 \end{eqnarray}
-\citeauthor{Derrien2012} find out in their own resequencing studies that \emph{low pileup-mappability regions are more prone to show a high value of heterozygosity than those with high mappability} \citep{Derrien2012}.
-Variant callers ideally call a locus heterozygous whenever its consensus alignment column, consisting of piled up reads, contains two distinct bases.
+\citeauthor{Derrien2012} find out in their own resequencing studies that \emph{``low pileup-mappability regions are more prone to show a high value of heterozygosity than those with high mappability''} \citep{Derrien2012}.
+Ideally, variant calling tools call a locus as heterozygous whenever the consensus alignment column at that locus contains two distinct bases.
 This situation tends to arise more frequently whenever the consensus alignment contains reads originating from similar yet distinct regions.
 
 \subsection{Genome mappability score}
 
-Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy for a specific sequencing technology.
+Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappabbility, estimates single-locus resequencing accuracy for a specific sequencing technology.
 Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see section~\ref{sec:paradigms:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
 Subsequently, they derive the average mapping probability of any read spanning a location $l$ of a reference genome $g$ as:
 %\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider equation~\ref{eq:gms} instead.}
@@ -229,7 +229,7 @@ Subsequently, they derive the average mapping probability of any read spanning a
 \label{eq:gms}
 p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}
 \end{eqnarray}
-which in Phread-scale becomes:
+which in Phred-scale becomes:
 \begin{eqnarray}
 Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}.
 \end{eqnarray}
@@ -243,11 +243,11 @@ They first simulate reads from all genomic locations, having length and error pr
 Subsequently, they compute mapping quality scores by mapping all simulated reads with the best-mapper BWA \citep{Li2009}.
 Then, as just explained, they compute GMS at any location by averaging the quality scores.
 Finally, they define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \leq 10$ and \emph{high GMS} otherwise.
-Table \ref{tab:gms} shows the performance of various sequencing technologies on the whole human genome (data extrapolated from \citep{Lee2012}).
+Table \ref{tab:gms} shows the performance of various sequencing technologies on the whole human genome (data obtained from \citep{Lee2012}).
 
 \begin{table}[h]
 \begin{center}
-\caption[Human genome mappability score]{Human genome mappability score of various sequencing technologies. Data extrapolated from \citep{Lee2012}.}
+\caption[Human genome mappability score]{Human genome mappability score of various sequencing technologies. Data obtained from \citep{Lee2012}.}
 \sffamily
 \input{tables/table_gms}
 \label{tab:gms}
@@ -256,8 +256,8 @@ Table \ref{tab:gms} shows the performance of various sequencing technologies on 
 
 \citeauthor{Lee2012} measure variant calling accuracy by GMS for the popular combination of best-mapping tools BWA and SAMtools \citep{Li2009a}.
 They simulate an Illumina-like resequencing study and feed it to such analysis pipeline.
-They find out that at $30\,\times$ sequencing coverage accuracy tends to 100~\% in high GMS regions, while it levels off to 25~\% in low GMS regions.
-Their analysis \emph{shows that most SNP detection errors are false negatives, and most of the missing variations are in regions with low GMS scores} \citep{Lee2012}.
+They find out that, at $30\,\times$ sequencing coverage, accuracy approaches 100~\% in high GMS regions, while it levels off to 25~\% in low GMS regions.
+Their analysis \emph{``shows that most SNP detection errors are false negatives, and most of the missing variations are in regions with low GMS scores''} \citep{Lee2012}.
 These are the limits of the \emph{de facto} standard best-mapping paradigm for the analysis of high-throughput sequencing data.
 
 % =============================================================================
@@ -281,7 +281,7 @@ In the light of the above consideration, the most important feature of a read ma
 Most read mappers are specifically designed to fit one paradigm, while others are versatile enough to work well in both cases.
 
 The rest of this section presents most popular read mapping tools.
-Among them, BWA \citep{Li2009,Li2010a}, Bowtie \citep{Langmead2009,Langmead2012} and Soap \citep{Li2009b} are prominent tools designed for best-mapping, while mr(s)Fast \citep{Alkan2009,Hach2010}, RazerS \citep{Weese2009,Weese2012}, SHRiMP \citep{Rumble2009,David2011} are designed for all-mapping.
+Among them, BWA \citep{Li2009}, Bowtie \citep{Langmead2009} and Bowtie~2\citep{Langmead2012}, and Soap \citep{Li2009b} are prominent tools designed for best-mapping, while mr(s)Fast \citep{Alkan2009,Hach2010}, RazerS \citep{Weese2009,Weese2012}, SHRiMP \citep{Rumble2009,David2011} are designed for all-mapping.
 Grosso modo, most prominent best-mappers recursively enumerate substrings on a suffix/prefix tree of the reference genome via backtracking algorithms.
 Backtracking alone is impractical as its time complexity grows exponentially with the number of errors considered, hence best-mappers apply heuristics to reduce and prioritize enumeration.
 Conversely, all-mappers are based on filtering algorithms for approximate string matching.
@@ -294,7 +294,7 @@ Table~\ref{tab:mappers} gives an overview of all these tools.
 
 % -----------------------------------------------------------------------------
 
-\subsection{Bowtie}
+\subsection{Bowtie and Bowtie~2}
 \label{background:mappers:bowtie}
 
 Bowtie \citep{Langmead2009} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation short Illumina/Solexa and ABI/SOLiD reads.
@@ -325,12 +325,12 @@ BWA performs paired-end alignments by trying to anchor both paired-end reads and
 Consequently, the program in paired-end mode aligns reads at a slower rate than in single-end mode.
 The program is not fully multi-threaded, therefore it scales poorly on modern multi-core machines.
 
-BWA-SW \citep{Li2010a} is designed to map Roche/454 reads, which have an average length of 400~bp.
-It is an heuristic version of BWT-SW, designed to report a few good local alignments.
-This variant of BWA adopts a double indexing strategy: it indexes all substrings of one read in a DAWG.
-It performs Smith-Waterman of all read substrings directly on the FM-index, by backtracking as soon as no viable alignment can be obtained.
-As in the first BWA, the traversal proceeds in a greedy fashion.
-In addition, BWA-SW implements some seeding heuristics to limit backtracking and jump in the reference genome to verify candidate locations whenever this becomes favorable.
+%BWA-SW \citep{Li2010a} is designed to map Roche/454 reads, which have an average length of 400~bp.
+%It is an heuristic version of BWT-SW, designed to report a few good local alignments.
+%This variant of BWA adopts a double indexing strategy: it indexes all substrings of one read in a DAWG.
+%It performs Smith-Waterman of all read substrings directly on the FM-index, by backtracking as soon as no viable alignment can be obtained.
+%As in the first BWA, the traversal proceeds in a greedy fashion.
+%In addition, BWA-SW implements some seeding heuristics to limit backtracking and jump in the reference genome to verify candidate locations whenever this becomes favorable.
 
 % -----------------------------------------------------------------------------
 
@@ -350,7 +350,7 @@ SHRiMP~2 TODO.
 
 % -----------------------------------------------------------------------------
 
-\subsection{RazerS}
+\subsection{RazerS and RazerS~3}
 \label{background:mappers:razers}
 
 RazerS \citep{Weese2009} has been designed to report all mapping locations within a fixed Hamming or edit distance error rate.
@@ -370,7 +370,7 @@ Moreover, these programs exhibit an high memory footprint as they remember the m
 
 % -----------------------------------------------------------------------------
 
-\subsection{mr(s)Fast}
+\subsection{mrFast and mrsFast}
 \label{background:mappers:mrsfast}
 
 The tools mrsFast \citep{Hach2010} and mrFast \citep{Ahmadi2012} are designed to map Illumina/Solexa reads.
@@ -378,7 +378,7 @@ They report all mapping locations within a fixed absolute number errors, respect
 Similarly to RazerS~3, these two programs implement full-sensitive filtration using exact seeds (section \ref{sec:filtering:exact}).
 Their peculiarity is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
 In addition, mrsFast computes the edit distance between one read and one mapping location in the reference genome with an antidiagonal-wise vectorial dynamic programming algorithm, implemented using SIMD instructions.
-These tools perform only all-mapping, lack multi-threading support, contain various bugs, only accept reads of fixed length and produce files of impractical size.
+These tools perform only all-mapping, produce files of impractical size and lack multi-threading support.
 
 % -----------------------------------------------------------------------------
 
@@ -388,9 +388,9 @@ These tools perform only all-mapping, lack multi-threading support, contain vari
 The GEM mapper \citep{MarcoSola2012} is a flexible read aligner for Illumina/Solexa and Ion Torrent reads.
 It is  and can be configured either as an all-mapper, as a best/unique-mapper, or to search by strata.
 GEM implements full-sensitive filtration with approximate seeds (see section \ref{sec:seeds-apx}).
-The program indexes the reference genome with an FM-index, tries to find an optimal filtration scheme per read, and verifies candidate locations using Myers' algorithm.
+The program indexes the reference genome with an FM-index, tries to find an optimal filtration scheme per read, and verifies candidate locations using Myers' algorithm \cite{Myers1999}.
 GEM maps paired-reads in two ways: either it maps both ends independently and then combines them, or maps one end and then verifies the other end using an online method.
-Unfortunately, the tool lacks direct SAM output, it is not open source, and provides many obscure parameters.
+Unfortunately, the tool is not open source and provides obscure parameterization.
 
 % -----------------------------------------------------------------------------
 
