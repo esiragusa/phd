@@ -103,7 +103,7 @@ In section~\ref{sec:mappability}, I discuss how this paradigm systematically dis
 \label{sec:paradigms:mapqual}
 
 Mapping quality has been introduced in the tool MAQ \citep{Li2008}.
-The study considers short 30--40~bp reads, produced by early Illumina/Solexa and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
+The study considers short 30--40~bp reads, produced by early Illumina and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
 Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
 
 The argument of \citeauthor{Li2008} is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
@@ -221,7 +221,7 @@ This situation tends to arise more frequently whenever the consensus alignment c
 
 \subsection{Genome mappability score}
 
-Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappabbility, estimates single-locus resequencing accuracy for a specific sequencing technology.
+Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy for a specific sequencing technology.
 Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see section~\ref{sec:paradigms:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
 Subsequently, they derive the average mapping probability of any read spanning a location $l$ of a reference genome $g$ as:
 %\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider equation~\ref{eq:gms} instead.}
@@ -297,14 +297,14 @@ Table~\ref{tab:mappers} gives an overview of all these tools.
 \subsection{Bowtie and Bowtie~2}
 \label{background:mappers:bowtie}
 
-Bowtie \citep{Langmead2009} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation short Illumina/Solexa and ABI/SOLiD reads.
+Bowtie \citep{Langmead2009} is a mapper designed to have a small memory footprint and quickly report a few good mapping locations for early generation short Illumina and ABI/SOLiD reads.
 The tool achieves the former goal by indexing the reference genome with an FM-index and the latter one by performing a greedy backtracking on it.
 The greedy top-down traversal visits first the subtree yielding the least number of mismatches and stops after having found a candidate (not guaranteed to be optimal when $k>1$).
 In addition, Bowtie speeds up backtracking by applying \emph{case pruning} \citep{Maekinen2010}, a simple application of the pigeonhole principle.
 However, this technique is mostly suited for $k=1$ and requires the index of the forward and reverse reference genome.
 Bowtie can be configured to search by strata, but the search time increases significantly while the traversal still misses a large fraction of the search space due to seeding heuristics.
 
-Bowtie~2 \citep{Langmead2012} has been designed to quickly report a couple of mapping locations for longer Illumina/Solexa, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
+Bowtie~2 \citep{Langmead2012} has been designed to quickly report a couple of mapping locations for longer Illumina, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
 This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
 Bowtie~2 randomly chooses candidate locations, to avoid uncompressing large suffix array intervals and executing many DP instances.
 The tool verifies candidate locations using a striped vectorial dynamic programming algorithm by \citep{Farrar2007}, implemented using SIMD instructions.
@@ -316,7 +316,7 @@ Bowtie~2 can be configured to report semi-global or local alignments, scored usi
 \subsection{BWA}
 \label{background:mappers:bwa}
 
-BWA \citep{Li2009} is designed to map Illumina/Solexa reads and report a few best semi-global alignments.
+BWA \citep{Li2009} is designed to map Illumina reads and report a few best semi-global alignments.
 The program backtracks the FM-index of the reference genome with a \emph{greedy breadth-first search}.
 The tool ranks nodes to be visited by edit distance score: the best node is popped from a priority queue and visited, its children are then inserted again in the queue.
 The traversal considers indels using a more involved 9-fold recursion.
@@ -337,7 +337,7 @@ The program is not fully multi-threaded, therefore it scales poorly on modern mu
 \subsection{Soap}
 \label{background:mappers:soap}
 
-Soap~2 \citep{Li2009b} has been designed to produce a very quick but shallow mapping of short Illumina/Solexa reads, up to 2 mismatches and without indels.
+Soap~2 \citep{Li2009b} has been designed to produce a very quick but shallow mapping of short Illumina reads, up to 2 mismatches and without indels.
 The tool performs backtracking using the so-called bi-directional (or 2-way) BWT \citep{Belazzougui2013}.
 Soap~2 supports paired-end mapping but at a slower alignment rate, it lacks native output in the \emph{de-facto} standard SAM format, and it is not open source.
 
@@ -373,7 +373,7 @@ Moreover, these programs exhibit an high memory footprint as they remember the m
 \subsection{mrFast and mrsFast}
 \label{background:mappers:mrsfast}
 
-The tools mrsFast \citep{Hach2010} and mrFast \citep{Ahmadi2012} are designed to map Illumina/Solexa reads.
+The tools mrsFast \citep{Hach2010} and mrFast \citep{Ahmadi2012} are designed to map Illumina reads.
 They report all mapping locations within a fixed absolute number errors, respectively under the edit and Hamming distance.
 Similarly to RazerS~3, these two programs implement full-sensitive filtration using exact seeds (section \ref{sec:filtering:exact}).
 Their peculiarity is a cache-oblivious strategy to mitigate the high cost of verifying clusters of candidate locations.
@@ -385,7 +385,7 @@ These tools perform only all-mapping, produce files of impractical size and lack
 \subsection{GEM}
 \label{background:mappers:gem}
 
-The GEM mapper \citep{MarcoSola2012} is a flexible read aligner for Illumina/Solexa and Ion Torrent reads.
+The GEM mapper \citep{MarcoSola2012} is a flexible read aligner for Illumina and Ion Torrent reads.
 It is  and can be configured either as an all-mapper, as a best/unique-mapper, or to search by strata.
 GEM implements full-sensitive filtration with approximate seeds (see section \ref{sec:seeds-apx}).
 The program indexes the reference genome with an FM-index, tries to find an optimal filtration scheme per read, and verifies candidate locations using Myers' algorithm \cite{Myers1999}.

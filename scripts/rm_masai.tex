@@ -1,10 +1,10 @@
 \chapter{Masai}
 \label{sec:masai}
 
-This chapter presents my first attempt to engineer an efficient all-mapper for Illumina/Solexa reads.
+This chapter presents the first efficient of an efficient all-mapper for Illumina reads.
 When I started this project, in October 2011, the fastest all-mappers (mrFast and RazerS~3) were two order of magnitude slower than popular best-mappers (Bowtie and BWA).
 On the one hand, such all-mappers employ filtration based on exact seeds, which is fine for short reference genomes but becomes too weak for mammal genomes; clearly, a stronger filtration method would had been beneficial.
-On the other hand, such best-mappers are based on heuristic backtracking, which is inadequate to map longer Illumina/Solexa reads.
+On the other hand, such best-mappers are based on heuristic backtracking, which is inadequate to map longer Illumina reads.
 
 After a thorough literature review, I came out with a novel read mapping method combining seed-based filtration with backtracking, published \citep{Siragusa2013} in the peer-reviewed journal \emph{Nucleic Acids Research}.
 My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
@@ -33,10 +33,10 @@ The tool gives to users the possibility to choose among various indices (see sec
 Similarly to all read mappers relying on an index of the reference genome, the tool indexes the reference genome only once, stores it on disk and reuses it for all subsequent read mapping jobs.
 
 At mapping time, Masai requires two parameters to be provided: a maximum number of errors per read and a minimum seed length.
-Default parameters work well for actual Illumina reads, otherwise the user has to parametrize adequately the tool for optimal performance.
+Default parameters work well for actual Illumina reads, otherwise the user has to adequately parametrize the tool for optimal performance.
 Nonetheless, independently of the chosen parameterization, filtration is guaranteed to be quasi full-sensitive (see section~\ref{masai:engineering:seeding}).
 
-Masai partitions all reads (and their reverse complements) in non-overlapping seeds and indexes them in a conceptual \emph{trie}.
+Masai partitions all reads (and their reverse complements) into non-overlapping seeds and indexes them in a conceptual \emph{trie}.
 Using the \emph{multiple backtracking} algorithm of section~\ref{sec:index:algo:multimismatch}, the tool backtracks simultaneously all indexed seeds in the suffix trie of the reference genome.
 The program verifies all candidate locations, reported by the multiple backtracking algorithm, performing seed extension with a banded version of \emph{Myers bit-vector algorithm} \citep{Myers1999} (details in section~\ref{masai:engineering:extension}).
 
@@ -55,9 +55,9 @@ For instance, RazerS~3 \citep{Weese2012} went back to filtration with exact seed
 Nonetheless, I wanted to improve filtration specificity of exact seeds, as the runtime of RazerS~3 on mammal genomes became dominated by verifications.
 I knew that to improve filtration specificity I had to increase the seed length.
 
-While reviewing past literature in the field of approximate string matching, I rediscovered the works of \citeauthor{Myers1994}, \citeauthor{Navarro2000} on approximate seeds, obtaining stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
-Their idea is to partition the pattern into less non-overlapping seeds, which obviously can be longer than exact seeds but have to be searched approximately.
-First, I slightly improved the filtration lemma of \citep{Navarro2000} (see section~\ref{sec:seeds-apx}).
+While reviewing past literature in the field of approximate string matching, I rediscovered the works of \cite{Myers1994} and \cite{Navarro2000} on approximate seeds, obtaining stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
+Their idea is to partition the pattern into fewer non-overlapping seeds, which obviously can be longer than exact seeds but have to be searched approximately.
+First, I slightly improved the filtration lemma of \citep{Navarro2000} to use approximate seeds with variable thresholds (see section~\ref{sec:seeds-apx}).
 Then, as discussed in section~\ref{sec:seeds-apx}, I chose to parameterize Masai's filter by the seed length rather than by the number of seeds.
 Indeed, the minimum seed length provides a direct estimate of the expected number of filtration specificity in terms of candidate locations.
 The resulting filter is thus flexible: by increasing the seed length, filtration becomes more specific at the expense of a higher filtration time.
@@ -68,9 +68,9 @@ Conversely, on larger genomes (\eg mammalian genomes) 1-approximate seeds outper
 
 Following \citep{Navarro2000}, I decided to find approximate seeds by backtracking the suffix trie of the reference genome.
 In section~\ref{masai:engineering:index}, I recall the engineering work I did to implement efficient backtracking of approximate seeds.
-For simplicity, I opted to find approximate seeds only under the Hamming distance.
+In order to achieve faster filtration, I opted to find approximate seeds only under the Hamming distance.
 For this reason, when resorting to approximate seeds, Masai does not attain strict full-sensitivity under the edit distance.
-Nonetheless, such implementation detail sacrifices less than 1\% sensitivity (see section~\ref{masai:evaluation}).
+Nonetheless, such implementation choice sacrifices only 0.1\% sensitivity (see section~\ref{masai:evaluation}).
 
 \subsubsection{Best-mapping}
 
@@ -85,8 +85,8 @@ The reader is thus referred to the next chapter (section~\ref{sec:yara:eng}) for
 \subsection{Indexing}
 \label{masai:engineering:index}
 
-Within the SeqAn library, I initially disposed of only two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
-To improve the efficiency of Masai, I implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various flavours of the full-text minute index (FM-index) \citep{Ferragina2001}.
+Initially, the SeqAn library provided me with only two indices capable of simulating a top-down suffix trie traversal: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich1999}.
+To improve the efficiency of Masai, I implemented a generic top-down traversal for some additional indices, namely the suffix array (SA) \citep{Manber1990}, the $q$-gram index, and various specializations of the full-text minute index (FM-index) \citep{Ferragina2001}.
 Below I discuss the performance of these indices within Masai, while I refer the reader to chapter~\ref{chr:index} for their extensive explanation.
 
 \subsubsection{Indexing the reference genome}
@@ -94,7 +94,7 @@ Below I discuss the performance of these indices within Masai, while I refer the
 I initially chose the ESA over the LST because of better construction times.
 Indeed, the ESA provides a linear time construction algorithm (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while the LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
 Apart from that, both ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
-At this point, Masai constructed a suffix trie for the human reference genome (GRCh38) in about 1.5~hours, consuming 39~GB of memory.
+Thus, Masai constructed the ESA of the human reference genome (GRCh38) in about 1.5~hours, consuming 39~GB of memory.
 %(see figure~\ref{fig:index:construction}).
 
 At this point, Masai required high-end hardware to process large reference genomes.
@@ -109,11 +109,11 @@ Yet, the $q$-gram index did not bring significant speedup to the application;
 indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with the multiple backtracking algorithm.
 
 Finally, I explored additional space-time trade-offs.
-I started implementing\footnote{Thanks to the master's thesis of Jochen Singer.} a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
+Building on the work of \citep{Singer2013}, I implemented a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
 This initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%.
 Thus the memory footprint of the index went down to 4.5~GB, but Masai became almost twice as slow (see table~\ref{tab:masai:indices}).
 
-In definitive, I preferred the SA as it provides a good compromise between query speed and memory consumption.
+To sum up, I preferred the SA as it provides a good compromise between query speed and memory consumption.
 Nevertheless, Masai leaves to the user the possibility of choosing among the aforementioned data structures.
 Table \ref{tab:masai:indices} summarizes the runtime of the program with various indices.
 
@@ -124,11 +124,11 @@ These algorithms search simultaneously many exact or approximate seeds, achievin
 As this multiple string matching algorithm requires a trie of the seeds, I also engineered an efficient trie implementation.
 
 It was straightforward to reuse SeqAn's suffix trie implementations, presented in chapter \ref{chr:index}, to emulate tries.
-It goes without saying that the easiest way to implement a trie is by means of a partial SA:
+The easiest way to implement a trie is by means of a partial SA:
 I index only the first suffix of each seed in the collection and construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the number of seeds; then, the top-down traversal based on binary search still works.
 I adapted the LST in an analogous way: I fill the partial SA as above and then apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the trie in linear time.
 
-Quicksorting the SA turned out to be faster than radix sorting the LST but, within Masai, the more involved LST data structure payed off at query time (see section~\ref{sec:index:algo:traversal}).
+Building the SA via quicksort turned out to be faster than building the LST via radix sort but, within Masai, the more involved LST data structure payed off in terms of query time (see section~\ref{sec:index:algo:traversal}).
 Indeed, the LST stores all trie nodes and thus provides node traversal in constant time, while the SA explicitly stores only the leaves and then derives internal nodes via binary search.
 As the memory footprint of the trie is negligible within this application, I chose the LST to perform multiple backtracking of approximate seeds.
 
@@ -145,16 +145,16 @@ Truncation is only a minor concern: at depth $q$ the search continues separately
 To verify candidate locations reported by the filtration algorithm, Masai employs a banded version of Myers bit-vector algorithm \citep{Myers1999}.
 Myers' algorithm is an efficient DP alignment algorithm \citep{Needleman1970} for edit distance. 
 Instead of computing DP cells one after another, this algorithm encodes the whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
-Within SeqAn, I disposed of a bit-parallel version that computes only a diagonal band of the DP matrix, faster and more specific than the original algorithm by Myers.
+SeqAn provides a bit-parallel version that computes only a diagonal band of the DP matrix, faster and more specific than the original algorithm by Myers.
 More details can be found in section~\ref{asm:filter:verification}.
 
-RazerS~3~\citep{Weese2012} already used Myers' algorithm.
+RazerS~3~\citep{Weese2012} already uses Myers' algorithm.
 However, RazerS~3 performs one semi-global alignment to verify a parallelogram surrounding any seed occurrence.
 Conversely, Masai performs two global alignments on both ends of any seed occurrence.
 Given a seed occurring with $e$ errors, the tool first performs seed extension on the left side within an error threshold of $k - e$ errors.
 Only if the seed extension on the left side succeeds, Masai performs a seed extension on the right side within the remaining error threshold.
 Moreover, the tool first computes the longest common prefix on each side of the seed extension and let the global alignment algorithm start from the first mismatching positions.
-This approach is up to two times faster than the one implemented by RazerS~3.
+This approach is up to two times faster than the one implemented by RazerS~3 (data not shown).
 
 % -----------------------------------------------------------------------------
 
@@ -188,17 +188,17 @@ For a more fair and thorough comparison, I also consider BWA and Bowtie\,2 in al
 To this extent, I parametrized these tools to be highly sensitive and output all found mapping locations.
 Since BWA and Bowtie\,2 were not designed to be used in this way, they spent much more time than proper all-mappers, \ie up to 3~hours in a run compared to several minutes.
 However, the aim of this experiment is to investigate read mapping sensitivity, therefore I do not report any running times.
-Table~\ref{tab:Rabema} shows the results on \emph{H.~sapiens}.
+Table~\ref{tab:masai:rabema} shows the results on \emph{H.~sapiens}.
 
 \subsubsection{Best-mapping}
-Masai shows the best recall values, not loosing more than 3.3\,\% recall on edit distance 5.
-Conversely, recall values of BWA and Bowtie\,2 drop significantly with increasing edit distance and loose up to 15.4\,\% and 11.5\,\% on edit distance 5.
+Masai shows the best recall values, not loosing more than 2.3\,\% recall on edit distance 5.
+Conversely, the recall values of BWA and Bowtie\,2 drop significantly with increasing edit distance and loose up to 15.4\,\% and 11.5\,\% on edit distance 5.
 As expected, Soap\,2 turns out to be inadequate for mapping reads of length 100\,bp at this error rates.
 Precision values have less variance than recall values. Masai shows the best precision values with 97.8\,\%, followed by Soap\,2 with 97.7\,\%, and BWA with 97.5\,\%. Interestingly, Bowtie\,2 shows the worst precision values, loosing up to 5.6\,\% on edit distance 5.
 
 \subsubsection{All-mapping}
 As expected, RazerS\,3 shows full-sensitivity.
-Instead, mrFAST looses a minimal percentage of mapping locations.
+In contrast, mrFAST looses a minimal percentage of mapping locations.
 Overall, Masai does not loose more than 0.1\,\% of all mapping locations.
 In particular, Masai is full-sensitive for low-error locations and looses only a small percentage of high-error locations, \ie its loss is limited to 0.1\,\% and 1.4\,\% of mapping locations at edit distance 4 and 5.
 
@@ -206,7 +206,7 @@ Conversely, BWA and Bowtie\,2 miss 35\,\% and 45\,\% of all mapping locations at
 Likewise, SHRiMP\,2 is not able to enumerate all mapping locations, although its recall values are good.
 Again, Hobbes has the worst performance.
 
-I remark that Masai is not full-sensitive whenever approximate seeds are used, \eg on \emph{H.~sapiens}. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
+As mentioned in section \ref{sec:masai:engineering:seeding}, Masai is not full-sensitive whenever approximate seeds are used, \eg on \emph{H.~sapiens}. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
 %Conversely, it attains full-sensitivity whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~melanogaster (Supplementary Data).
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie in read mapping benchmarks.
 However, these results show that Masai can replace RazerS\,3 or mrFAST in practical all-mapping setups.
@@ -214,7 +214,7 @@ However, these results show that Masai can replace RazerS\,3 or mrFAST in practi
 \begin{table*}[t]
   \caption[Masai results in the Rabema benchmark]
   {
-  \label{tab:Rabema}
+  \label{tab:masai:rabema}
     Rabema benchmark results on $100\,\text{k}\times 100\,\text{bp}$ Illumina-like reads.
     Rabema scores are given in percent (average fraction of edit distance locations reported per read).
     Large numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ errors.
@@ -222,7 +222,7 @@ However, these results show that Masai can replace RazerS\,3 or mrFAST in practi
   \vspace{-3mm}
   \center
   \sffamily
-  \resizebox{0.95\textwidth}{!}
+  \resizebox{\textwidth}{!}
   {
 	\renewcommand{\tabcolsep}{0.8ex}
 	\input{tables/table_masai_rabema}
@@ -241,13 +241,13 @@ For each class, the experiment defines \emph{recall} to be the fraction of reads
 
 I simulated 5 million Illumina-like reads of length $100$\,bp from the whole human genome using Mason.
 I mapped the reads with each tool and measured its sensitivity in each class.
-Table~\ref{tab:Variant} shows the results.
+Table~\ref{tab:masai:variant} shows the results.
 
 \subsubsection{Best-mapping}
 
 Masai shows the highest precision and recall in all best-mapping classes.
 In particular, Masai does not loose more than 3.2\,\% recall in class (4,0), whether Bowtie\,2 and BWA loose respectively 17.5\,\% and 14.9\,\% and Soap\,2 is not able to map any read.
-Recall values of Bowtie\,2, BWA and Soap\,2 are negatively correlated with the amount of genomic variation.
+The recall values of Bowtie\,2, BWA and Soap\,2 are negatively correlated with the amount of genomic variation.
 For instance, in the Rabema benchmark, Bowtie\,2 looses respectively 7.2\,\% and 11.5\,\% of mapping locations at distance 4 and 5, but in class (4,0) of this experiment it looses 17.5\,\% recall.
 A similar trend is observable for BWA and Soap\,2.
 The low performance of Soap\,2 is also due to its limitation to at most 2 mismatches and no support for indels.
@@ -262,14 +262,14 @@ Hobbes has the lowest performance among all-mappers: it appears to have problems
 \begin{table*}[tH!]
   \caption[Masai variant detection results]
   {
-  \label{tab:Variant}
+  \label{tab:masai:variant}
     Variant detection results on $5\,\text{M}\times 100\,\text{bp}$ Illumina-like reads.
     The table shows percentages of found origins (recall) and fraction of unique reads mapped to their origin (precision) classed by reads with $s$ SNPs and $i$ indels $(s,i)$.
   }
   \vspace{-3mm}
   \center
   \sffamily
-  \resizebox{0.8\textwidth}{!}
+  \resizebox{0.85\textwidth}{!}
   {
 	\renewcommand{\tabcolsep}{0.8ex}
 	\input{tables/table_masai_variant}
@@ -289,9 +289,9 @@ I measured running times and peak memory consumptions.
 I cannot measure precision and recall values as real reads have unknown origins.
 Therefore, for this evaluation, I adopt the commonly used measure of percentage of \emph{mapped reads}, \ie the fraction of reads for which the read mapper reports a mapping location.
 However, as some mappers report mapping locations without constraints on the number of errors, I also include Rabema \emph{any-best} scores.
-I recall that the Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie minimal) number of errors;
+As explained in section \ref{masai:evaluation:rabema}, the Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie minimal) number of errors;
 final Rabema any-best scores are normalized by the number of reads.
-Results for \emph{C.~elegans} and \emph{H.~sapiens} are shown in table~\ref{tab:Runtime}.
+Results for \emph{C.~elegans} and \emph{H.~sapiens} are shown in table~\ref{tab:masai:runtime}.
 %Additional results for E.~coli, D.~melanogaster are shown in table.
 
 \subsubsection{Best-mapping}
@@ -315,7 +315,7 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 
 \begin{table*}[t]
   \caption[Masai performance on real data]{
-    \label{tab:Runtime}
+    \label{tab:masai:runtime}
     Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
 	Rabema any-best: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
 	Mapped reads: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
@@ -339,13 +339,13 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 
 This experiment assesses the contribution of approximate seeds and multiple backtracking on runtime results.
 To this intent, I performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
-Table~\ref{tab:Filtration} shows the results.
+Table~\ref{tab:masai:filtration} shows the results.
 Filtration time consists of the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
 Candidates reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
 I report in bold the optimal combination of seeding and backtracking that I used to parameterize Masai.
 
 Since this experiment focuses on filtration, I do not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
-Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:Filtration} from respective Masai all-mapping times of table~\ref{tab:Runtime} and table~\ref{?}.
+Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:masai:filtration} from respective Masai all-mapping times of table~\ref{tab:masai:runtime} and table~\ref{tab:masai:runtime-supp}.
 
 On E.\,coli, D.\,melanogaster and C.\,elegans, approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
 Nevertheless I still prefer exact seeds as filtration dominates the total runtime.
@@ -360,7 +360,7 @@ The combination of the two methods makes Masai an order of magnitude faster than
 \begin{table*}[h]
   \center
   \caption[Masai filtration efficiency results]{
-    \label{tab:Filtration}%
+    \label{tab:masai:filtration}%
     Masai filtration efficiency results for all-mapping.
     Filtration time is given as [min:s] and includes seeds indexing time.
   }
@@ -396,12 +396,29 @@ H.\,sapiens & ERR012100 & \textbf{approximate} & \textbf{multiple} & \textbf{52:
   \vspace{2mm}
 \end{table*}
 
+\subsection{Runtime with different indices}
+\label{masai:evaluation:index}
+
+%\begin{table*}[h]
+%  \center
+%  \caption[Masai runtime with different indices]{
+%    \label{tab:masai:index}%
+%    Masai runtime with different indices.
+%  }
+%  {
+%  \sffamily
+%  \footnotesize
+%  }
+%  \vspace{2mm}
+%\end{table*}
+
+
 \section{Discussion}
 
 Masai consists of three important algorithmic methods: approximate seeds, multiple backtracking and best-mapping filtration.
-Approximate seeds are of paramount importance to obtain very specific yet full-sensitive filtration; their adoption speeds up Masai by one order of magnitude.
+Approximate seeds are of paramount importance to obtain very specific, yet full-sensitive filtration; their adoption speeds up Masai by one order of magnitude.
 Multiple backtracking further speeds up the filtration phase by 3--5 times on a (enhanced) suffix array index; this technique makes Masai twice as fast.
-Best-mapping filtration prioritizes the analysis of optimal mapping locations; because of this method, Masai in best-mapping is an order of magnitude faster than in all-mapping.
+Best-mapping filtration prioritizes the analysis of optimal mapping locations, such that the program can stop whenever it finds one best location; because of this method, Masai in best-mapping is an order of magnitude faster than in all-mapping.
 
 Is the edit distance sufficient to perform best-mapping?
 Both Rabema benchmark and variant detection results show that Masai has constantly better accuracy than other best-mappers relying on more complex scoring schemes.
@@ -424,5 +441,5 @@ The achieved speedup is huge when RazerS~3 is used for best-mapping: in this sce
 Despite these good results, Masai is not being widely used.
 This is mainly because the tool lacks some commonly requested features, including:
 parallelization via multi-threading, low memory footprint, direct support of paired-end or mate-pair protocols, computation of mapping qualities, automatic parameterization.
-Because of my initial inexperience and unclear or wrong goals, I neglected these features while designing the tool.
+Because of my initial inexperience and unclear or wrong design goals, I neglected these features while engineering the tool.
 The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner, a tool fulfilling these requirements.
