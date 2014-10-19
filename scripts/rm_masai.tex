@@ -163,7 +163,7 @@ This approach is up to two times faster than the one implemented by RazerS~3.
 
 In order to evaluate Masai, I propose three experiments: the Rabema benchmark and variant detection on simulated data, and performance on real data.
 This evaluation focuses on the capability of the mappers to retrieve the location of a single read without the help of its paired-end, which can of course disambiguate some mapping locations.
-As references, I use whole genomes of E.~coli (NCBI NC\_000913.2), C.~elegans (WormBase WS195), D.~melanogaster (FlyBase release 5.42), and H.~sapiens (GRCh37.p2).
+As references, I use whole genomes of \emph{E.~coli} (NCBI NC\_000913.2), \emph{C.~elegans} (WormBase WS195), \emph{D.~melanogaster} (FlyBase release 5.42), and \emph{H.~sapiens} (GRCh37.p2).
 
 I compare Masai in best-mapping with Bowtie\,2, BWA and Soap\,2, while in all-mapping with RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
 Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
@@ -188,7 +188,7 @@ For a more fair and thorough comparison, I also consider BWA and Bowtie\,2 in al
 To this extent, I parametrized these tools to be highly sensitive and output all found mapping locations.
 Since BWA and Bowtie\,2 were not designed to be used in this way, they spent much more time than proper all-mappers, \ie up to 3~hours in a run compared to several minutes.
 However, the aim of this experiment is to investigate read mapping sensitivity, therefore I do not report any running times.
-Table~\ref{tab:Rabema} shows the results on H.~sapiens.
+Table~\ref{tab:Rabema} shows the results on \emph{H.~sapiens}.
 
 \subsubsection{Best-mapping}
 Masai shows the best recall values, not loosing more than 3.3\,\% recall on edit distance 5.
@@ -206,7 +206,7 @@ Conversely, BWA and Bowtie\,2 miss 35\,\% and 45\,\% of all mapping locations at
 Likewise, SHRiMP\,2 is not able to enumerate all mapping locations, although its recall values are good.
 Again, Hobbes has the worst performance.
 
-I remark that Masai is not full-sensitive whenever approximate seeds are used, \eg on H.~sapiens. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
+I remark that Masai is not full-sensitive whenever approximate seeds are used, \eg on \emph{H.~sapiens}. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
 %Conversely, it attains full-sensitivity whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~melanogaster (Supplementary Data).
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie in read mapping benchmarks.
 However, these results show that Masai can replace RazerS\,3 or mrFAST in practical all-mapping setups.
@@ -280,7 +280,7 @@ Hobbes has the lowest performance among all-mappers: it appears to have problems
 \label{masai:evaluation:performance}
 
 The last experiment focuses on comparing read mappers performance on real data.
-I mapped the first $10\,\text{M}\times 100\,\text{bp}$ reads from an Illumina lane of E.~coli (ERR022075, Genome Analyzer IIx), D.~melanogaster (SRR497711, HiSeq 2000), C.~elegans (SRR065390, Genome Analyzer II), and H.~sapiens (ERR012100, Genome Analyzer II).
+I mapped the first $10\,\text{M}\times 100\,\text{bp}$ reads from an Illumina lane of \emph{E.~coli} (ERR022075, Genome Analyzer IIx), \emph{D.~melanogaster} (SRR497711, HiSeq 2000), \emph{C.~elegans} (SRR065390, Genome Analyzer II), and \emph{H.~sapiens} (ERR012100, Genome Analyzer II).
 Whenever possible, I configured the tools to map the reads within edit distance 5.
 I measured mapping times on a cluster of nodes with 72\,GB RAM and 2 Intel Xeon X5650 processors running Linux~3.2.0.
 For an accurate running time comparison, I ran the tools using a single thread and used local disks for I/O.
@@ -291,23 +291,23 @@ Therefore, for this evaluation, I adopt the commonly used measure of percentage 
 However, as some mappers report mapping locations without constraints on the number of errors, I also include Rabema \emph{any-best} scores.
 I recall that the Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie minimal) number of errors;
 final Rabema any-best scores are normalized by the number of reads.
-Results for C.~elegans and H.~sapiens are shown in table~\ref{tab:Runtime}.
+Results for \emph{C.~elegans} and \emph{H.~sapiens} are shown in table~\ref{tab:Runtime}.
 %Additional results for E.~coli, D.~melanogaster are shown in table.
 
 \subsubsection{Best-mapping}
-On the C.~elegans dataset, Masai is 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
-On the H.~sapiens dataset, Masai is 2.6 times faster than Bowtie\,2, 3.6 times faster than BWA but 2.1 times slower than Soap\,2.
+On the \emph{C.~elegans} dataset, Masai is 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
+On the \emph{H.~sapiens} dataset, Masai is 2.6 times faster than Bowtie\,2, 3.6 times faster than BWA but 2.1 times slower than Soap\,2.
 On one end, Soap\,2 is not able to map a consistent fraction of reads because of its limitation to 2 mismatches.
 On the other end, Bowtie\,2 reports more mapped reads than Masai but, taking any-best scores into account, it reports less mapping locations than Masai.
 In fact, Bowtie\,2 uses a scoring scheme based on quality values and does not impose a maximal error rate threshold.
-Despite that, Bowtie\,2 misses respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 on the C.~elegans and H.~sapiens datasets.
+Despite that, Bowtie\,2 misses respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 on the \emph{C.~elegans} and \emph{H.~sapiens} datasets.
 
 \subsubsection{All-mapping}
-On the C.~elegans dataset, Masai is 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
+On the \emph{C.~elegans} dataset, Masai is 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
 Hobbes constantly crashes and maps less reads than all other mappers in this category.
-On the H.~sapiens dataset, Masai is 11.9 times faster than RazerS\,3, 14.6 times faster than mrFAST, and 7.6 times faster than Hobbes.
+On the \emph{H.~sapiens} dataset, Masai is 11.9 times faster than RazerS\,3, 14.6 times faster than mrFAST, and 7.6 times faster than Hobbes.
 The current version of Hobbes constantly crashes and maps only half of the reads.
-SHRiMP\,2 is not able to map the H.~sapiens dataset within 4 days.
+SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days.
 Likewise for Bowtie\,2, also SHRiMP\,2 does not impose a maximal error rate threshold and reports more mapped reads than Masai.
 However, its Rabema any-best score is inferior to Masai.
 This could be due to the use of a different scoring scheme where two mismatches cost less than opening a gap.
@@ -320,8 +320,8 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 	Rabema any-best: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
 	Mapped reads: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
 	Remarks:
-    SHRiMP\,2 is not able to map the H.~sapiens dataset within 4 days;
-    Hobbes constantly crashes and is not able to map completely nor the C.~elegans nor the H.~sapiens dataset.
+    SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days;
+    Hobbes constantly crashes and is not able to map completely nor the \emph{C.~elegans} nor the \emph{H.~sapiens} dataset.
   }
 	\vspace{-3mm}
 	\center
