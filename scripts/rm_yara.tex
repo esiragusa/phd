@@ -138,19 +138,16 @@ Yara computes mapping qualities using the number of mapping locations stratified
 
 \subsection{Indexing}
 \label{sec:yara:eng:indexing}
+
 Yara uses an efficient FM-index specialization for the DNA alphabet, based on interleaved rank dictionaries (see section~\ref{sec:index:succinct:rd}).
 This interleaved FM-index exhibits a fourfold speedup over the first FM-index implementation bundled with Masai.
 Surprisingly, the interleaved FM-index is also faster than any other index, both in exact and approximate search (see section~\ref{sec:index:algo}).
 Moreover, this index consumes only 1.23 bytes per base pair with a SA sampled at 10\,\%, thus its memory footprint for the human genome is 3.7~GB.
 Under these terms, there is no space-time indexing trade-off: the FM-index always provides the most convenient suffix trie implementation.
 
-Yara does not use multiple search algorithms of section~\ref{sec:index:algo:multimismatch} to search seeds on the FM-index.
-Indeed, these algorithms work according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
-Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
-Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
-Conversely, using backward search, the traversal becomes more expensive as it proceeds deeper in the trie; traversal downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
-Multiple backtracking factorizes the traversal of top nodes, thus it pays off with forward search rather than with backward search.
+Yara does not use the multiple search algorithms of section~\ref{sec:index:algo:multimismatch} to search seeds on the FM-index.
 As shown in section~\ref{sec:index:algo}, on the FM-index it is always faster to search exact queries in a na\"ive way and approximate queries after sorting them in lexicographical order.
+This fact considerably simplifies a fine-grained parallelization of the tool.
 
 %Yara implements fine-grained parallelism.
 %It would be possible to stream over reads to parallelize computation per read.

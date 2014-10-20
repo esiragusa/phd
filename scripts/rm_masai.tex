@@ -122,11 +122,7 @@ Table \ref{tab:masai:indices} summarizes the runtime of the program with various
 In order to improve index query speed, I designed and implemented the algorithms presented in sections \ref{sec:index:algo:multiexact} and \ref{sec:index:algo:multimismatch}.
 These algorithms search simultaneously many exact or approximate seeds, achieving a speedup of 2--5 times over their conventional counterparts.
 As this multiple string matching algorithm requires a trie of the seeds, I also engineered an efficient trie implementation.
-
-It was straightforward to reuse SeqAn's suffix trie implementations, presented in chapter \ref{chr:index}, to emulate tries.
-The easiest way to implement a trie is by means of a partial SA:
-I index only the first suffix of each seed in the collection and construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the number of seeds; then, the top-down traversal based on binary search still works.
-I adapted the LST in an analogous way: I fill the partial SA as above and then apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the trie in linear time.
+A short explanation can be found in section \ref{sec:index:trie}
 
 Building the SA via quicksort turned out to be faster than building the LST via radix sort but, within Masai, the more involved LST data structure payed off in terms of query time (see section~\ref{sec:index:algo:traversal}).
 Indeed, the LST stores all trie nodes and thus provides node traversal in constant time, while the SA explicitly stores only the leaves and then derives internal nodes via binary search.
@@ -347,13 +343,13 @@ I report in bold the optimal combination of seeding and backtracking that I used
 Since this experiment focuses on filtration, I do not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
 Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:masai:filtration} from respective Masai all-mapping times of table~\ref{tab:masai:runtime} and table~\ref{tab:masai:runtime-supp}.
 
-On E.\,coli, D.\,melanogaster and C.\,elegans, approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
+On \emph{E.~coli}, \emph{D.~melanogaster} and \emph{C.~elegans}, approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
 Nevertheless I still prefer exact seeds as filtration dominates the total runtime.
-Multiple backtracking on exact seeds compared to single backtracking speeds up filtration by 2.9 times on E.\,coli, and 3.8 times on D.\,melanogaster and C.\,elegans.
+Multiple backtracking on exact seeds compared to single backtracking speeds up filtration by 2.9 times on \emph{E.~coli}, and 3.8 times on \emph{D.~melanogaster} and \emph{C.~elegans}.
 Without the contribution of multiple backtracking, Masai would not be faster than RazerS\,3, the second fastest all-mapper.
 
-Approximate seeds become effective on H.\,sapiens, where they reduce the number of candidates by 10.8 times. 
-On H.\,sapiens, seed extensions largely dominate the total runtime, therefore I prefer approximate seeds.
+Approximate seeds become effective on \emph{H.~sapiens}, where they reduce the number of candidates by 10.8 times. 
+On \emph{H.~sapiens}, seed extensions largely dominate the total runtime, therefore I prefer approximate seeds.
 Multiple backtracking on approximate seeds provides a speed-up of 3.2 times over single backtracking.
 The combination of the two methods makes Masai an order of magnitude faster than any other all-mapper.
 

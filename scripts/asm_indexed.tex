@@ -277,6 +277,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 %\end{figure}
 
 \subsection{Suffix tree realizations}
+\label{sec:index:stree}
 
 I briefly introduce two suffix tree realizations from the literature: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich2003}.
 These realizations explicitly implement or implicitly emulate a suffix tree rather than a suffix trie.
@@ -462,6 +463,18 @@ An hybrid traversal can use the directory $D$ up to depth $q$ and later continue
 This hybrid traversal cuts the most expensive binary searches and increases memory locality.
 Furthermore, this traversal becomes useful whenever the SA is too big to fit in main memory and has to reside in external memory.
 
+\subsection{Trie and radix tree realizations}
+\label{sec:index:trie}
+
+Before turning to succinct full-text indices, I briefly describe how I reused some classic text-index implementations to implement also tries and radix trees in the SeqAn library.
+A trie is easily emulated by means of a partial SA.
+I index only the first suffix of each string in the collection and subsequently construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the cardinality of the collections.
+The top-down traversal based on binary search still works as described in section \ref{sec:index:sa}.
+This trie is also extendable by a $q$-gram directory as in section \ref{sec:index:qgram}.
+A radix tree is constructed is an analogous way, starting from the LST of section \ref{chr:index:stree}.
+I fill the LST's partial SA as described above and subsequently apply the \emph{wotd}-algorithm \citep{Giegerich1999} constructs the radix tree in time $\Oh(\sigma n)$.
+
+
 \section{Succinct full-text indices}
 
 The \emph{Burrows-Wheeler transform} (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
@@ -524,7 +537,7 @@ Therefore, various direct BWT construction algorithms working within $o(n \log{\
 \label{fig:lf_psi}
 \ttfamily
 \begin{tabular}{ccccccc}
-$i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & & $s_{A[i]-1}$\\
+$i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
 \midrule
 1 & 2 & 7                        & & \$           & ANANA  & S\\
 2 & 5 & 1                        & & A            & NANAS  & \$\\
@@ -1069,7 +1082,7 @@ Yet, the idea dates back to more than twenty years ago.
 		\Repeat
 			\State {$d \gets \delta(\Call{label}{t}, \Call{value}{p})$}
 			\State \Call{goNext}{$p$}
-			\State \Call{KMismatches}{$t,p,e - d$}
+			\State \Call{KMismatches}{$t,p,k - d$}
 			\State \Call{goPrevious}{$p$}
 		\Until \Call{goRight}{$t$}
 	\EndIf
@@ -1277,6 +1290,12 @@ Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time b
 In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
 Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
 
+This algorithms works according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
+Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
+Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
+Conversely, using backward search, the traversal becomes more expensive as it proceeds deeper in the trie; traversal downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
+Multiple backtracking factorizes the traversal of top nodes, thus it pays off with forward search rather than with backward search.
+
 Figure \ref{fig:query-dna-apx-multi-sa} shows the average runtime of the three approaches on the SA by varying the number of patterns.
 While the average runtime of the single method is constant, both multiple methods clearly benefit from receiving a higher number of patterns.
 In particular, method Multiple is constantly faster than Sorted, and the runtime gap increases with the number of patterns.
@@ -1309,7 +1328,7 @@ Moreover, the speed-up of both multiple methods slowly increases with the number
 			\State {\Call{goDown}{$p$}}
 			\Repeat
 				\State {$d \gets \delta(\Call{label}{t}, \Call{label}{p})$}
-				\State \Call{MultipleKMismatches}{$t,p,e-d$}
+				\State \Call{MultipleKMismatches}{$t,p,k-d$}
 			\Until {\Call{goRight}{$p$}}
 			\State {\Call{goUp}{$p$}}
 		\Until {\Call{goRight}{$t$}}
