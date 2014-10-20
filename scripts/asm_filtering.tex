@@ -232,14 +232,14 @@ Filtration specificity is expected to increase with seed length.
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
 \begin{definition}
-A seeds filtration scheme is an integer vector $\mathbb{k} \in \N_0^s$, where integer $k_i \in \mathbb{k}$ represents the threshold assigned to the $i$-th seed.
+A seeds filtration scheme is an integer vector $\mathbb{k} = (k_1, \dots, k_s)$, where integer $k_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-For a given $k$-differences instance, any filtration scheme $\mathbb{k} = (k_1, \dots, k_s)$, \st
+For a given $k$-differences instance, any filtration scheme $\mathbb{k} = (k_1, \dots, k_s)$ \st
 \begin{eqnarray}
-s + \sum_1^s \mathbb{k} > k
+s + \sum_1^s k_i > k
 \end{eqnarray}
 is full-sensitive.
 \end{lemma}
@@ -301,7 +301,7 @@ Any pair $(q,t)$ solving a $(m,k)$ instance is a full-sensitive $q$-gram filtrat
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams] {Filtration with contiguous $q$-grams.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
