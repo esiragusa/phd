@@ -777,23 +777,26 @@ Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
 \section{Evaluation}
 \label{sec:filtering:evaluation}
 
-In this section, I show the results of an experimental evaluation of the filtration methods exposed so far.
+In this section, I show the results of an experimental evaluation of all filtration methods exposed so far.
 I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $t \geq 1$) and 4 ($q$-Grams, $t \geq 4$).
-For indexed filters, I use the $q$-gram index for $q=10$ (see \ref{sec:index:qgram}).
-As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
-As patterns, I extrapolated $200k$ DNA sequences of length 100 from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
-The plots show always \emph{average} runtimes (or values) per pattern.
+For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
+As edit distance verification algorithm, I use a banded version of the Myers' algorithm \citep{Myers1999}.
+As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~Mbp total length.
+As patterns, I extrapolated $200k$ DNA sequences of length 100~bp from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
 I repeated the experiment for $k$-mismatches and $k$-differences, varying $k$ in the range $[1,10]$.
+I measured the runtime of the filtration phase only, and then of the filtration plus verification phase.
+The plots show always \emph{average} runtimes (or values) per pattern.
 
 \subsection{Runtime}
 
-I measure the runtime of the filtration phase only, and then of the filtration plus verification phase.
-
-On $k$-mismatches, exact seeds are the best scheme for $k \leq 7$, while 1-approximate seeds are better for $k \geq 8$.
-This is mainly due to the filtration speed of exact seeds 
+Figure \ref{fig:filter-runtime-hamming-celegans} shows the results for $k$-mismatches.
+Exact seeds are the best filtration method for $k \leq 7$, mainly due to their superior filtration speed, while 1-approximate seeds are better for $k \geq 8$.
 2-Approximate seeds start to dominate exact seeds only for $k \geq 10$, \ie they provide too strong filtration on this text.
 Both $q$-gram filtration schemes are always slower than 1-approximate seeds.
-It can be seen that enforcing $t \geq 4$ improves the runtime 
+It can be seen that enforcing $t \geq 4$ improves the total runtime for those instances where $t \geq 1$ renders the filter too weak.
+
+Figure \ref{fig:filter-runtime-edit-celegans} shows the results for $k$-differences.
+The more involved edit distance verification slightly fills the gap between exact seeds and contiguous $q$-grams, yet exact seeds continue to be always the fastest alternative.
 
 \begin{figure}[h]
 \begin{center}
@@ -805,7 +808,7 @@ It can be seen that enforcing $t \geq 4$ improves the runtime
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern length is fixed to 100. Dashed lines represent filtration time only.}
+\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Dashed lines represent filtration time only.}
 \label{fig:filter-runtime-edit-celegans}
 \includegraphics{filter_runtime.dna.celegans.edit.100}
 \end{center}
@@ -814,41 +817,48 @@ It can be seen that enforcing $t \geq 4$ improves the runtime
 \subsection{Verification versus filtration}
 
 I plot the runtime ratio of the verification versus the filtration phase.
-
+The ratios for $k$-difference show analogous patterns (data not shown).
 
 
 \begin{figure}[h]
 \begin{center}
-\caption[Ratio on $k$-mismatches]{Ratio on $k$-mismatches. Pattern length is fixed to 100.}
+\caption[Ratio on $k$-mismatches]{Ratio on $k$-mismatches. Pattern lengths are fixed to 100~bp.}
 \label{fig:filter-ratio-hamming-celegans}
 \includegraphics{filter_ratio.dna.celegans.hamming.100}
 \end{center}
 \end{figure}
 
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Ratio on $k$-differences]{Ratio on $k$-differences. Pattern length is fixed to 100.}
+%\label{fig:filter-ratio-edit-celegans}
+%\includegraphics{filter_ratio.dna.celegans.edit.100}
+%\end{center}
+%\end{figure}
+
+\subsection{Positive predictive value}
+
+%Instead of the specificity, I measured the positive predictive value (PPV).
+
+Figure \ref{fig:filter-ppv-hamming-celegans} shows the results for $k$-mismatches.
+As expected, 2-approximate seeds have always the highest PPV, followed by 1-approximate seeds.
+The PPV of contiguous $q$-grams with $t \geq 1$ oscillates around that one of exact seeds.
+In particular, when $t$ approaches $1$, \eg for $k = 9$, the PPV of contiguous $q$-grams stays below that one of exact seeds.
+Enforcing $t \geq 4$ boosts the PPV of contiguous $q$-grams to that one of 1-approximate seeds.
+The PPVs for $k$-difference show analogous patterns (data not shown).
+
 \begin{figure}[h]
 \begin{center}
-\caption[Ratio on $k$-differences]{Ratio on $k$-differences. Pattern length is fixed to 100.}
-\label{fig:filter-ratio-edit-celegans}
-\includegraphics{filter_ratio.dna.celegans.edit.100}
-\end{center}
-\end{figure}
-
-\subsection{Specificity}
-
-I instead measure the positive predictive value (PPV).
-
-\begin{figure}[h]
-\begin{center}
-\caption[Filters specificity on $k$-mismatches]{Filters specificity on $k$-mismatches. Pattern length is fixed to 100.}
+\caption[Filters specificity on $k$-mismatches]{Filters specificity on $k$-mismatches. Pattern lengths are fixed to 100~bp.}
 \label{fig:filter-ppv-hamming-celegans}
 \includegraphics{filter_ppv.dna.celegans.hamming.100}
 \end{center}
 \end{figure}
 
-\begin{figure}[h]
-\begin{center}
-\caption[Filters specificity on $k$-differences]{Filters specificity on $k$-differences. Pattern length is fixed to 100.}
-\label{fig:filter-ppv-edit-celegans}
-\includegraphics{filter_ppv.dna.celegans.edit.100}
-\end{center}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\caption[Filters specificity on $k$-differences]{Filters specificity on $k$-differences. Pattern length is fixed to 100.}
+%\label{fig:filter-ppv-edit-celegans}
+%\includegraphics{filter_ppv.dna.celegans.edit.100}
+%\end{center}
+%\end{figure}
