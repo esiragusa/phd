@@ -940,7 +940,7 @@ As data structures, I consider the suffix array (SA), the $q$-gram index for $q=
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~MB total length.
 As patterns, I use sequences extrapolated from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
 
-The evaluations always report \emph{average} runtimes per pattern, both in single and multiple string matching variants.
+The plots show always \emph{average} runtimes per pattern, both in single and multiple string matching variants.
 Moreover, they consider only traversal times, while they exclude times to locate the patterns in the text by following leaf pointers, \eg uncompressing SA values.
 %The total search time for short pattern is dominated the time to locate the occurrences, yet no practical application needs to locate so many occurrences.
 
