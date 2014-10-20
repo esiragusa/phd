@@ -107,7 +107,7 @@ The study considers short 30--40~bp reads, produced by early Illumina and ABI/SO
 Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
 
 The argument of \citeauthor{Li2008} is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
-The authors claim that: \emph{it is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.}
+The authors claim that \emph{``it is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.''}
 Though, \citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.
 Since base callers output base call probabilities in Phred-scale along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called \emph{mapping quality}, encoding the probability that a read aligns correctly at a mapping location in the reference genome.
 
@@ -273,7 +273,7 @@ The survey primarily considers the application of SNP calling; in the considered
 The survey by \citeauthor{Fonseca2012} instead catalogs read mappers by the features exposed to the user.
 It considers supported input--output formats, rate of errors and variation, number and type (\ie local or semi-global read alignments) of mapping locations reported.
 After this exhaustive catalog, the survey concludes that the choice of a read mapper 
-\emph{involves application-specific requirements such as how well it works in conjunction with downstream analysis tools (\ie variant callers)}.
+\emph{``involves application-specific requirements such as how well it works in conjunction with downstream analysis tools (\ie variant callers)''}.
 
 Read mapping and variant calling are indeed tightly coupled steps within reference-based HTS analysis pipelines.
 As explained above, secondary and tertiary analysis methods are based on one of the two following paradigms: best-mapping and all-mapping.
@@ -307,7 +307,7 @@ Bowtie can be configured to search by strata, but the search time increases sign
 Bowtie~2 \citep{Langmead2012} has been designed to quickly report a couple of mapping locations for longer Illumina, Ion Torrent and Roche/454 reads, usually having lengths in the range from 100~bp to 400~bp.
 This tool uses an heuristic seed-and-extend approach, collecting seeds of fixed length, partially overlapping, and searching them exactly in the reference genome using an FM-index.
 Bowtie~2 randomly chooses candidate locations, to avoid uncompressing large suffix array intervals and executing many DP instances.
-The tool verifies candidate locations using a striped vectorial dynamic programming algorithm by \citep{Farrar2007}, implemented using SIMD instructions.
+The tool verifies candidate locations using a striped vectorial dynamic programming algorithm by \cite{Farrar2007}, implemented using SIMD instructions.
 Bowtie~2 can be configured to report semi-global or local alignments, scored using a tunable affine scoring scheme.
 %However, its heuristic filtration method, independent of the scoring scheme, makes it hard to believe what it promises.
 
