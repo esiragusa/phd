@@ -845,7 +845,28 @@ The ratios for $k$-difference show analogous patterns (data not shown).
 
 \subsection{Positive predictive value}
 
-%Instead of the specificity, I measured the positive predictive value (PPV).
+Instead of measuring filtration specificity, as introduced in section \ref{intro:filtering:spec-sens}, I measure the \emph{positive predictive value} (PPV).
+As shown in table \ref{tab:filter:ppv}, I define \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN) in terms of the number of verifications $V$ triggered by the filtration phase and the number of approximate occurrences $C$ passing the verification phase.
+For a more precise experimental evaluation, $C$ counts as distinct occurrences one single approximate occurrence reported multiple times.
+Therefore, I define the PPV as:
+\begin{eqnarray}
+\frac{|TP_f(t)|}{|TP_f(t)| + |FP_f(t)|} = \frac{C}{V}
+\end{eqnarray}
+
+\begin{table}[t]
+\begin{center}
+\caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V$ counts the number of verifications, $C$ the number of approximate occurrences, and $||T||$ the total length of the text collection. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
+\begin{tabular}{rcc}
+\toprule
+  & Positive & Negative\\
+\midrule
+True & $C$ & $||T|| - C$ \\
+False & $V - C$ & 0		\\
+\bottomrule
+\end{tabular}
+\label{tab:filter:ppv}
+\end{center}
+\end{table}
 
 Figure \ref{fig:filter-ppv-hamming-celegans} shows the results for $k$-mismatches.
 As expected, 2-approximate seeds have always the highest PPV, followed by 1-approximate seeds.
