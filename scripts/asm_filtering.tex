@@ -780,9 +780,11 @@ Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
 In this section, I show the results of an experimental evaluation of all filtration methods exposed so far.
 I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $t \geq 1$) and 4 ($q$-Grams, $t \geq 4$).
 For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
-As edit distance verification algorithm, I use a banded version of the Myers' algorithm \citep{Myers1999}.
+To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999}.
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~Mbp total length.
 As patterns, I extrapolated $200k$ DNA sequences of length 100~bp from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
+
+All experiments run on a desktop computer running Linux~3.10.11, equipped with one Intel\textsuperscript{\textregistered} Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
 I repeated the experiment for $k$-mismatches and $k$-differences, varying $k$ in the range $[1,10]$.
 I measured the runtime of the filtration phase only, and then of the filtration plus verification phase.
 The plots show always \emph{average} runtimes (or values) per pattern.
