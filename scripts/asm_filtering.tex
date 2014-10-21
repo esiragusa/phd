@@ -818,9 +818,14 @@ The more involved edit distance verification slightly fills the gap between exac
 
 \subsection{Verification versus filtration}
 
-I plot the runtime ratio of the verification versus the filtration phase.
+Figure \ref{fig:filter-ratio-hamming-celegans} shows the ratios between the runtimes of the verification and filtration phases of each filtration scheme.
+For $k \leq 6$, all schemes spend more time on filtration rather than verification.
+The weakest scheme, filtration with exact seeds, shows the closest ratio to 1.
+As shown in the runtime plots (figures \ref{fig:filter-runtime-hamming-celegans}-\ref{fig:filter-runtime-edit-celegans}), quick filtration pays off for low error rates.
+Here, a quicker full-text index would be beneficial.
+For $k \geq 7$, contiguous $q$-grams with $t \geq 1$ show the closest ratio to 1, nonetheless the fastest alternative is provided by filtration with 1-approximate seeds, for which only 10\,\% of the runtime goes in verifications.
+Here, a judicious mix of exact and 1-approximate seeds could improve the total runtime.
 The ratios for $k$-difference show analogous patterns (data not shown).
-
 
 \begin{figure}[h]
 \begin{center}
