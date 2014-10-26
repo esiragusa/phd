@@ -3,50 +3,79 @@
 \chapter{Background}
 \label{chr:background}
 
-%In this chapter, I provide the background on read mapping.
-%I first introduce HTS technologies from the standpoint of the bioinformatician who performs secondary analysis.
-%I consider most popular sequencing instruments and mention aspects of the sequencing data that influence secondary analysis, \eg the paired-end and mate-pairs protocols, sequencing artefacts, and base qualities.
-%Afterwards, I give insights on some properties of genomic sequences that make secondary analysis particularly difficult.
-%I discuss how mappability helps to pinpoint genomic regions for which reference-guided assembly is hard.
-%I present two paradigms for reference-guided assembly methods: best-mapping and all-mapping.
-%Subsequently, I give an overview of most popular read mapping tools.
-%I give key algorithmic ideas and relevant engineering solutions adopted by the various tools.
+In this chapter, I provide the reader with background knowledge in the fast-moving field of high-throughput sequencing (HTS) read mapping.
+In section \ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
+Afterwards, in section \ref{sec:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
+In section \ref{sec:mappability}, I review two studies on the hardness of HTS data analysis.
+Finally, in section \ref{sec:background:mappers}, I give an overview of the most popular read mapping tools.
 
 \section{High-throughput sequencing data}
 \label{sec:background:sequencing}
 
-%HTS technologies produce reads shorter than Sanger sequencing.
-%Even worse, reads contain sequencing artefacts.
-%Base qualities annotate single base accuracy.
-%These properties of HTS data have to be taken into account for read mapping.
-
-\subsection{Read sequences}
-
-\subsubsection{Illumina}
-Illumina / Solexa.
-
-\subsubsection{Ion Torrent}
-Life Technologies / Ion Torrent.
-
-\subsubsection{Other technologies}
-
-Roche / 454 Life Sciences.
-
-SOLiD
-%\emph{Applied Biosystems} (ABI) entered the market with its \emph{SOLiD} system, based on parallel sequencing by \emph{stepwise ligation}, reading two bases at a time with a florescent label in order to improve sequencing accuracy.
+As anticipated in section \ref{sec:intro:hts}, actual HTS technologies produce DNA reads which are shorter than Sanger sequencing and more likely to contain systematic sequencing artifacts.
+HTS data does not consist of read sequences only, but includes also base quality scores annotating the quality of the sequencing process.
 
 \subsection{Phred base quality scores}
 \label{sec:background:hts:phred}
 
-Base quality scores have been introduced by the base calling tool Phred \citep{Ewing1998, Ewing1998a} to assess sequencing quality of single bases in capillary reads.
+Base quality scores have been introduced by the base calling tool \emph{Phred} \citep{Ewing1998, Ewing1998a} to assess sequencing quality of single bases in capillary reads.
 Instead of discarding low-quality regions present in capillary reads, Phred output each base and annotates it with the probability that it has been wrongly called.
 The tool encodes the probability $\epsilon_i$ of miscalling the $i$-th base in a read under the form of a base quality $Q_i$ in logarithmic space:
 \begin{eqnarray}
 \label{eq:phred}
 Q_i = -10 \log_{10} \epsilon_i.
 \end{eqnarray}
-Since then, this method has been unanimously accepted.
-All sequencing technologies complement DNA reads with base quality scores, in Phred-scale or similar.
+This method has been unanimously accepted.
+All sequencing technologies complement DNA reads with base quality scores, encoded in Phred-scale or similar.
+
+\subsection{Read sequences}
+
+I consider only sequencing data produced by the most prominent HTS instruments.
+\emph{Illumina} is the actual market leader for HTS instruments, followed by \emph{Life Technologies}'s \emph{Ion Torrent}.
+Some instruments, \eg the \emph{GS} by \emph{454 Life Sciences} or the \emph{SOLiD} by \emph{Applied Biosystems}, became popular around 2006--2010, but are now discontinued.
+Other \emph{third-generation} instruments, like the \emph{single-molecule real-time} sequencing (SMRT) \emph{RS~II} by \emph{Pacific Biosciences}, have great potential but still low impact on the HTS market.
+
+\subsubsection{Illumina}
+
+All Illumina instruments use the \emph{sequencing by synthesis} (SBS) technology \citep{Bentley2008} developed by Solexa.
+In the library preparation phase, the DNA sample is sheared into smaller fragments.
+During the sequencing phase, single-stranded DNA fragments are attached on a slide called \emph{flow cell} and amplified \emph{in situ} using a variant of \emph{polymerase chain reaction} (PCR) called \emph{bridge amplification}.
+Clusters of amplified fragments are then used as templates for multiple cycles of synthetic sequencing with four differentially labeled fluorescent reversible terminator \emph{deoxyribonucleotide triphosphates} (dNTPs).
+In each sequencing cycle, dNTPs are incorporated into the fragments in each cluster, their corresponding fluorescent reversible terminators are imaged by a high-resolution camera, and then dNTPs are cleaved to allow incorporation of the next base.
+
+After the sequencing phase, a base calling software converts all images corresponding to one cluster into one read.
+The software measures the intensities of the four colors imaged during the $i$-th cycle, calls the $i$-th read base, and assigns a base quality score.
+Eventual replication errors, made by DNA polymerase during bridge amplification, result in mixed signal intensities within a cluster, and hence to base calls of lower confidence.
+
+Illumina's SBS technology further allows the sequencing of both ends of each DNA fragment.
+Two kind of libraries are available: \emph{paired-end} libraries, consisting of reads from short-insert 300--600~bp fragments, and \emph{mate pair} libraries, consisting of reads separated by several kilobases.
+The former libraries are adopted for high-resolution genome resequencing, while the latter ones provide accurate \emph{de novo} sequence assembly or detection of large-scale structural variation.
+
+%\emph{Genome Analyzer IIx}, \emph{HiSeq 2000}, \emph{MiSeq}, HiSeq~X 10.
+
+\subsubsection{Ion Torrent}
+
+\emph{Life Technologies}'s \emph{Ion Torrent} instruments use a semiconductor-based technology \citep{Rusk2010}.
+During library preparation, the sheared single-stranded template DNA is embedded into \emph{microwells} on a semiconductor chip with DNA polymerase.
+Microwells are sequentially flooded with unmodified A, C, G or T dNTP.
+The DNA polymerase incorporates the introduced dNTP into the growing strand only if this is complementary to the leading template nucleotide.
+Such polymerization reaction releases an hydrogen ion, which in turn changes the pH of the solution.
+A \emph{ion-sensitive field-effect transistor} (ISFET) in the sequencing instrument measures this pH change.
+Any \emph{homopolymer} in the template causes multiple dNTP to be incorporated in a single cycle and results in a higher pH change, which is not precisely measured by the instrument and thus causes systematic sequencing errors.
+
+%Ion Torrent \emph{Personalized genome machine} (PGM) Ion Torrent \emph{Proton}
+
+
+%\subsubsection{Other technologies}
+
+%454 Life Sciences by Roche.
+
+%ABI/SOLiD by Life Technologies.
+%\emph{Applied Biosystems} (ABI) entered the market with its \emph{SOLiD} system, based on parallel sequencing by \emph{stepwise ligation}, reading two bases at a time with a florescent label in order to improve sequencing accuracy.
+
+%RS~II by Pacific Biosciences uses \emph{single-molecule real-time} sequencing (SMRT).
+%Pacific Biosciences introduced in 2010 a single molecule real time (SMRT) sequencer that enables sequencing a contiguous piece of length Å1500 bp of a single molecule without prior amplification. The fundamental idea is to immobilize DNA polymerase and to film the incorporation of fluorescently labeled nucleotides in real time. As the sequencing is not cycled, the base-calling cannot accurately determine the length of homopolymer runs which must be inferred from signal lengths. However, this new approach permits sequencing reads of length similar to first generation sequencing and promises to detect methylated bases from deviations in the signal length.
+
 
 % =============================================================================
 
@@ -264,6 +293,7 @@ These are the limits of the \emph{de facto} standard best-mapping paradigm for t
 
 
 \section{Popular read mappers}
+\label{sec:background:mappers}
 
 Following the boom of NGS technologies, recent bioinformatics research has produced dozens of tools to perform read mapping.
 Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians to extricate themselves from the jungle of read mapping tools.

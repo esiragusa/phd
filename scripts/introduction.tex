@@ -19,6 +19,7 @@ Nonetheless, their success did not mark the end of the sequencing era but its be
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
+\label{sec:intro:hts}
 
 Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS) or \emph{next-generation sequencing} (NGS).
 In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA in form of 400~bp reads at a throughput of about 20~Mbp/h.
@@ -37,6 +38,7 @@ I first introduce most relevant \emph{applications} of HTS and then explain how 
 The reader familiar with HTS can jump directly to section \ref{sec:intro:outline}, where I outline the structure of this work and state my contributions.
 
 \subsection{Protocols and applications}
+\label{sec:intro:hts:protocols}
 
 In the last years, HTS has become an invaluable method of investigation for computational molecular biologists.
 Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at single-base resolution.
@@ -64,6 +66,7 @@ ChIP-seq is used to study the mechanisms of gene regulation.
 Through this sequencing protocol it is possible to determine global methylation patterns, identify transcription factor binding sites, histone modifications, and chromatin remodelling proteins.
 
 \subsection{Analysis pipelines}
+\label{sec:intro:hts:pipeline}
 
 The analysis of HTS data consists of numerous steps, ranging from the initial instrument specific data processing to the final application specific interpretation of the results.
 It is conventional wisdom to subdivide such data analysis pipelines in three stages of \emph{primary}, \emph{secondary}, and \emph{tertiary} analysis.
@@ -78,6 +81,7 @@ The tertiary stage characterizes features of the donor genome specific to the se
 %\end{figure}
 
 \subsubsection{Primary analysis}
+\label{sec:intro:hts:pipeline:primary}
 
 Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
 The base caller processes instrument signals and assigns a base to each peak, \ie A, C, G, T, or N.
