@@ -948,7 +948,7 @@ Moreover, they consider only traversal times, while they exclude times to locate
 \subsection{Construction}
 \label{sec:index:algo:construction}
 
-Table \ref{tab:index-construction} shows index construction times and index memory consumption for all indices.
+Table \ref{tab:index-construction} shows construction times and memory consumption for all indices.
 The construction of all indices uses the DC7 algorithm \citep{Dementiev2008} in external memory.
 In addition, the construction of the ESA uses the algorithms in \citep{Kasai2001,Abouelhoda2004}, while the FM-WT construction follows \citep{Grossi2003}.
 The construction of the FM-indices adds a 15--18\% additional runtime over the simple SA construction, the $q$-gram index directory construction adds only 3\% runtime, while the more involved ESA's LCP and child tables 36\%.
