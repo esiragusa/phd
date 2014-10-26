@@ -93,9 +93,8 @@ Below I discuss the performance of these indices within Masai, while I refer the
 
 I initially chose the ESA over the LST because of better construction times.
 Indeed, the ESA provides a linear time construction algorithm (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while the LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
+The construction of the ESA of the \emph{H.~sapiens} reference genome (hg19) takes about 1.5~hours and the index consumes 39~GB of memory.% (see table~\ref{tab:index:construction}).
 Apart from that, both ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
-Thus, Masai constructed the ESA of the human reference genome (GRCh38) in about 1.5~hours, consuming 39~GB of memory.
-%(see figure~\ref{fig:index:construction}).
 
 At this point, Masai required high-end hardware to process large reference genomes.
 Therefore, thinking about a space-time trade-off, I designed a generic suffix trie top-down traversal for the SA (see section~\ref{sec:index:sa}).
@@ -109,7 +108,7 @@ Yet, the $q$-gram index did not bring significant speedup to the application;
 indeed, the lookup table turned out to be useful when searching patterns one by one, but not when coupled with the multiple backtracking algorithm.
 
 Finally, I explored additional space-time trade-offs.
-Building on the work of \citep{Singer2013}, I implemented a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
+Starting from the implementation of \citep{Singer2013}, I realized a generalized FM-index based on a wavelet tree~\citep{Grossi2003}.
 This initial FM-index consumed about $1.5$ bytes per base pair with a SA sampling of 10~\%.
 Thus the memory footprint of the index went down to 4.5~GB, but Masai became almost twice as slow (see table~\ref{tab:masai:indices}).
 
@@ -202,7 +201,7 @@ Conversely, BWA and Bowtie\,2 miss 35\,\% and 45\,\% of all mapping locations at
 Likewise, SHRiMP\,2 is not able to enumerate all mapping locations, although its recall values are good.
 Again, Hobbes has the worst performance.
 
-As mentioned in section \ref{sec:masai:engineering:seeding}, Masai is not full-sensitive whenever approximate seeds are used, \eg on \emph{H.~sapiens}. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
+As mentioned in section \ref{masai:engineering:seeding}, Masai is not full-sensitive whenever approximate seeds are used, \eg on \emph{H.~sapiens}. Indeed, Masai loses 0.1\,\% overall sensitivity in respect to RazerS\,3.
 %Conversely, it attains full-sensitivity whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~melanogaster (Supplementary Data).
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie in read mapping benchmarks.
 However, these results show that Masai can replace RazerS\,3 or mrFAST in practical all-mapping setups.
@@ -287,8 +286,7 @@ Therefore, for this evaluation, I adopt the commonly used measure of percentage 
 However, as some mappers report mapping locations without constraints on the number of errors, I also include Rabema \emph{any-best} scores.
 As explained in section \ref{masai:evaluation:rabema}, the Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie minimal) number of errors;
 final Rabema any-best scores are normalized by the number of reads.
-Results for \emph{C.~elegans} and \emph{H.~sapiens} are shown in table~\ref{tab:masai:runtime}.
-%Additional results for E.~coli, D.~melanogaster are shown in table.
+All results are shown in table~\ref{tab:masai:runtime}.
 
 \subsubsection{Best-mapping}
 On the \emph{C.~elegans} dataset, Masai is 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
@@ -312,12 +310,9 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 \begin{table*}[t]
   \caption[Masai performance on real data]{
     \label{tab:masai:runtime}
-    Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.\\
-	Rabema any-best: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
-	Mapped reads: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.\\
-	Remarks:
-    SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days;
-    Hobbes constantly crashes and is not able to map completely nor the \emph{C.~elegans} nor the \emph{H.~sapiens} dataset.
+    Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.
+	Rabema any-best column: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors. Mapped reads column: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
+	Remarks: SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days; Hobbes systematically crashes in all but the \emph{D.~melanogaster} dataset.
   }
 	\vspace{-3mm}
 	\center
@@ -330,18 +325,40 @@ Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapp
 \end{table*}
 
 
+\subsection{Performance with different indices}
+\label{masai:evaluation:index}
+
+Table~\ref{tab:masai:indices} shows the runtime and memory consumption of Masai using different indices.
+As discussed in section~\ref{masai:engineering:index}, Masai/SA is always faster than Masai/ESA, except for all-mapping on the \emph{H.~sapiens} dataset.
+Masai/FM-index shows significantly lower memory consumption only on the \emph{H.~sapiens} dataset, but with a consistent runtime penalty.
+
+\begin{table*}[h]
+  \center
+  \caption[Masai performance with different indices]{
+    \label{tab:masai:indices}%
+    Masai performance with different indices. The lowest runtimes are in bold.
+  }
+  {
+  \sffamily
+  \footnotesize
+  \renewcommand{\tabcolsep}{0.8ex}
+  \input{tables/table_masai_indices}
+  }
+  \vspace{2mm}
+\end{table*}
+
+
 \subsection{Filtration efficiency}
 \label{masai:evaluation:filter}
 
 This experiment assesses the contribution of approximate seeds and multiple backtracking on runtime results.
-To this intent, I performed all-mapping with Masai on each previously considered dataset, this time using either exact or approximate seeds in combination with either single or multiple backtracking.
-Table~\ref{tab:masai:filtration} shows the results.
-Filtration time consists of the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
-Candidates reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
-I report in bold the optimal combination of seeding and backtracking that I used to parameterize Masai.
+To this intent, I perform all-mapping with Masai on all dataset of section~\ref{masai:evaluation:performance}, using either exact or approximate seeds in combination with either single or multiple backtracking.
+As this experiment focuses on filtration efficiency, I do not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, and writing the results.
 
-Since this experiment focuses on filtration, I do not consider the time spent performing seed extensions and I/O, \ie loading the reference genome and its index, loading the reads, writing the results.
-Such time is independent of any combination of seeding or backtracking and can be extrapolated by subtracting bold filtration times of table~\ref{tab:masai:filtration} from respective Masai all-mapping times of table~\ref{tab:masai:runtime} and table~\ref{tab:masai:runtime-supp}.
+Table~\ref{tab:masai:filtration} shows the results.
+Column \emph{time} reports filtration times, \ie the time spent to index the seeds (in case of multiple backtracking) and to perform backtracking.
+Column \emph{candid.} reports the number of candidate locations reported by the filter for which seed extension is subsequently performed.
+In bold, I report the optimal filtering scheme used to parameterize Masai in the experiments of section \ref{masai:evaluation:performance}.
 
 On \emph{E.~coli}, \emph{D.~melanogaster} and \emph{C.~elegans}, approximate seeds reduce the number of candidates respectively by 2.1 times, 9.9 times, and 4.3 times.
 Nevertheless I still prefer exact seeds as filtration dominates the total runtime.
@@ -357,56 +374,18 @@ The combination of the two methods makes Masai an order of magnitude faster than
   \center
   \caption[Masai filtration efficiency results]{
     \label{tab:masai:filtration}%
-    Masai filtration efficiency results for all-mapping.
-    Filtration time is given as [min:s] and includes seeds indexing time.
+    Masai all-mapping filtration efficiency results.
+    Filtering times include seeds indexing times.
+    The best filtering schemes are in bold.
   }
   {
   \sffamily
   \footnotesize
-  \begin{tabular}{llllrr}
-    \toprule
-	organism & dataset & seeding & backtracking & filtration time & candidates\\
-    \midrule
-E.\,coli & ERR022075 & exact & single & 3:55 & 69.17\,M\\
-E.\,coli & ERR022075 & \textbf{exact} & \textbf{multiple} & \textbf{1:20} & \textbf{69.17\,M}\\
-E.\,coli & ERR022075 & approximate & single & 38:42 & 33.08\,M\\
-E.\,coli & ERR022075 & approximate & multiple & 9:00 & 33.08\,M\\
-    \midrule
-D.\,melanogaster & SRR497711 & exact & single & 8:15 & 1020.28\,M\\
-D.\,melanogaster & SRR497711 & \textbf{exact} & \textbf{multiple} & \textbf{2:11} & \textbf{1020.28\,M}\\
-D.\,melanogaster & SRR497711 & approximate & single & 100:18 & 102.78\,M\\
-D.\,melanogaster & SRR497711 & approximate & multiple & 20:48 & 102.78\,M\\
-    \midrule
-C.\,elegans & SRR065390 & exact & single & 8:25 & 1065.70\,M\\
-C.\,elegans & SRR065390 & \textbf{exact} & \textbf{multiple} & \textbf{2:11} & \textbf{1065.70\,M}\\
-C.\,elegans & SRR065390 & approximate & single & 102:02 & 246.65\,M\\
-C.\,elegans & SRR065390 & approximate & multiple & 21:33 & 246.65\,M\\
-	\midrule
-H.\,sapiens & ERR012100 & exact & single & 55:54 & 294943.86\,M\\
-H.\,sapiens & ERR012100 & exact & multiple & 41:52 & 294943.86\,M\\
-H.\,sapiens & ERR012100 & approximate & single & 165:45 & 27396.01\,M\\
-H.\,sapiens & ERR012100 & \textbf{approximate} & \textbf{multiple} & \textbf{52:15} & \textbf{27396.01\,M}\\
-    \bottomrule
-  \end{tabular}
+  \renewcommand{\tabcolsep}{0.8ex}
+  \input{tables/table_masai_filters}
   }
   \vspace{2mm}
 \end{table*}
-
-\subsection{Runtime with different indices}
-\label{masai:evaluation:index}
-
-%\begin{table*}[h]
-%  \center
-%  \caption[Masai runtime with different indices]{
-%    \label{tab:masai:index}%
-%    Masai runtime with different indices.
-%  }
-%  {
-%  \sffamily
-%  \footnotesize
-%  }
-%  \vspace{2mm}
-%\end{table*}
 
 
 \section{Discussion}

@@ -97,9 +97,8 @@ Consequently, the space consumption of suffix arrays for texts shorter than 4~GB
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(n)$ time.
 The space consumption of the GSA is $n \log{cn^*}$ bits, where $n^* = \max{\,n_i}$.
-For instance, the human genome GRCh37 is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
-Thus, the GSA of GRCh37 stores pairs of $1+4$~bytes and fits in 15~GB \citep{Weese2013}.
-% of memory and is constructed in about one hour on a modern computer \citep{Weese2013}.
+For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
+Thus, the GSA of hg19 stores pairs of $1+4$~bytes and fits in 15~GB \citep{Weese2013}.
 
 \begin{figure*}[t!]
 \begin{minipage}[t]{.5\textwidth}
@@ -948,7 +947,7 @@ Moreover, they consider only traversal times, while they exclude times to locate
 \subsection{Construction}
 \label{sec:index:algo:construction}
 
-Table \ref{tab:index-construction} shows construction times and memory consumption for all indices.
+Table \ref{tab:index:construction} shows construction times and memory consumption for all indices.
 The construction of all indices uses the DC7 algorithm \citep{Dementiev2008} in external memory.
 In addition, the construction of the ESA uses the algorithms in \citep{Kasai2001,Abouelhoda2004}, while the FM-WT construction follows \citep{Grossi2003}.
 The construction of the FM-indices adds a 15--18\% additional runtime over the simple SA construction, the $q$-gram index directory construction adds only 3\% runtime, while the more involved ESA's LCP and child tables 36\%.
@@ -960,7 +959,7 @@ For additional information on the SA and ESA construction algorithms and their r
 \caption[Index construction runtime and index memory footprint]{Index construction runtime and index memory footprint.}
 \sffamily
 \input{tables/table_index_construction}
-\label{tab:index-construction}
+\label{tab:index:construction}
 \end{center}
 \end{table}
 
