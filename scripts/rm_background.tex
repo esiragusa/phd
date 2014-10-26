@@ -376,7 +376,7 @@ Soap~2 supports paired-end mapping but at a slower alignment rate, it lacks nati
 \subsection{SHRiMP~2}
 \label{background:mappers:shrimp}
 
-The \emph{SHort Read Mapping Program} (SHRiMP~2) \citep{David2011} is designed for mapping sensitivity and achieves high accuracy at the expense of speed.
+The \emph{SHort Read Mapping Program} (SHRiMP~2) \citep{David2011} is designed to map short Illumina and ABI/SOLiD reads. The tool achieves high accuracy at the expense of speed.
 SHRiMP~2 indices the reference genome using multiple gapped $q$-grams.
 At query time, it projects each read to identify candidate mapping locations, which are verified with the Smith–Waterman algorithm \citep{Smith1981}.
 The SHRiMP~2 project has been recently discontinued.

@@ -1,33 +1,32 @@
 % latex table generated in R 2.15.0 by xtable 1.7-0 package
 % Sun Jul  1 11:47:28 2012
-\begin{tabular}{lccccccccccccccc}
+\begin{tabular}{lcccccccccccccc}
 \toprule 
-& \multicolumn{3}{c}{ sequencer } & & \multicolumn{3}{c}{ paradigm } & & \multicolumn{3}{c}{ alignment } & & \multicolumn{3}{c}{ index }\\
-\cmidrule{2-4} \cmidrule{6-8} \cmidrule{10-12} \cmidrule{14-16}
-& { Illumina } & {Ion}  & { 454 } & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {type} & {optimal} & {method} & \phantom{-} & { type } & { reference } & { reads } \\ 
+& \multicolumn{2}{c}{ sequencer } & & \multicolumn{3}{c}{ paradigm } & & \multicolumn{3}{c}{ alignment } & & \multicolumn{3}{c}{ index }\\
+\cmidrule{2-3} \cmidrule{5-7} \cmidrule{9-11} \cmidrule{13-15}
+& { Illumina } & {Ion}  & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {type} & {optimal} & {method} & \phantom{-} & { type } & { reference } & { reads } \\
 \midrule
-{Bowtie} & short & \xmark & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-{Bowtie~2} & \cmark & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
+{Bowtie} & short & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Bowtie~2} & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
 \\
-{BWA} & \cmark & \xmark & \xmark & & \cmark & \xmark & \xmark & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
-%{BWA-SW} & \xmark & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & backtracking & & FM-index & \cmark & \cmark \\
+{BWA} & \cmark & \xmark & & \cmark & \xmark & \xmark & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
-{Soap~2} & short & \xmark & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Soap~2} & short & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
-{RazerS} & \cmark & \xmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
-{RazerS~3} & \cmark & \xmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
+{RazerS} & \cmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
+{RazerS~3} & \cmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
 \\
-{SHRiMP~2} & \cmark & \cmark & \cmark & & \cmark & \xmark & \cmark & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
+{SHRiMP~2} & \cmark & \cmark & & \cmark & \xmark & \cmark & & local & \xmark & $q$-grams & & $q$-gram index & \cmark & \xmark \\
 \\
-{mrsFast} & short & \xmark & \xmark & & \xmark & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
-{mrFast} & \cmark & \xmark & \xmark & & \xmark & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrsFast} & short & \xmark & & \xmark & \xmark & \cmark & & mismatches & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
+{mrFast} & \cmark & \xmark & & \xmark & \xmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \cmark & \cmark \\
 \\
-{Hobbes~2} & \cmark & \xmark & \xmark & & \xmark & \xmark & \cmark & & indels & \xmark & prefix $q$-grams & & $q$-gram index & \cmark & \xmark \\
+{Hobbes~2} & \cmark & \xmark & & \xmark & \xmark & \cmark & & indels & \xmark & prefix $q$-grams & & $q$-gram index & \cmark & \xmark \\
 \\
-{GEM} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
+{GEM} & \cmark & \cmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
 \\
-{Masai} & \cmark & \xmark & \xmark & & \cmark & \xmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
-{Yara} & \cmark & \cmark & \xmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
+{Masai} & \cmark & \xmark & & \cmark & \xmark & \cmark & & indels & \cmark & apx seeds & & generic & \cmark & \cmark \\
+{Yara} & \cmark & \cmark & & \cmark & \cmark & \cmark & & indels & \cmark & apx seeds & & FM-index & \cmark & \xmark \\
 
 \bottomrule
 \end{tabular}
