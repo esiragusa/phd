@@ -7,112 +7,64 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 
 \section{Definitions}
 
-%I introduce primitive objects of stringology and give basic definitions.
-
-\begin{definition}
-\label{def:alpha}
+I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_1, a_2, \dots , a_{\sigma} \}$ is a finite ordered set of symbols (or characters) $a_i$.
-\end{definition}
-
-\begin{definition}
-\label{def:string}
 A \emph{string} (or word) $s=s_1 s_2 \dots s_n$ over an alphabet $\Sigma$ is a finite sequence of symbols $s_i \in \Sigma$.
-I adopt the notation $s_{i \dots j}$ to denote the subscript symbols $s_i \dots s_j$.
-I denote the length of $s$ by $|s|=n$.
-\end{definition}
+I denote by $s_{i \dots j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|s|=n$ the length of $s$.
+%I often call \emph{$q$-gram} a string of length $q$.
+%I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
+Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^n$ contains all strings of length $n$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
-\begin{definition}
-\label{def:qgram}
-I call \emph{$q$-gram} a string of length $q$.
-\end{definition}
+The definitions of prefix, suffix and substring are immediately derived from concatenation.
+A string $x$ is a \emph{prefix} of another string $y$ iff $x = y_{1 \dots i}$ for some $1 \leq i \leq |y|$, a \emph{suffix} iff $x = y_{i \dots n}$ for some $1 \leq i \leq |y|$, 
+and a \emph{substring} iff $x = y_{i \dots j}$ for some $1 \leq i \leq j \leq |y|$.
+For convenience, often I denote simply by $y_{i \dots}$ the suffix of $y$ beginning at position $i$.
 
-\begin{definition}
-\label{def:epsilon}
-I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
-\end{definition}
-
-\begin{definition}
-Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains the empty string, $\Sigma^n$ contains all strings of length $n$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
-\end{definition}
-
-%\begin{definition}
-%The concatenation operator of two strings is defined as $\cdot : \Sigma^* \times \Sigma^* \rightarrow \Sigma^*$.
-%Given two strings $x \in \Sigma^m$ with $x=x_1 x_2 \dots x_m$ and $y \in \Sigma^n$ with $y=y_1 y_2 \dots y_n$, their concatenation $x \cdot y$ (or simply $xy$) is the string $z \in \Sigma^{m+n}$ consisting of the symbols $x_1 x_2 \dots x_m y_1 y_2 \dots y_n$.
-%\end{definition}
-%The notions of prefix, suffix and substring are derived from concatenation.
-
-\begin{definition}
-A string $x$ is a \emph{prefix} of another string $y$ iff $x = y_{1 \dots i}$ for some $1 \leq i \leq |y|$.
-\end{definition}
-
-\begin{definition}
-A string $x$ is a \emph{suffix} of another string $y$ iff $x = y_{i \dots n}$ for some $1 \leq i \leq |y|$.
-For convenience, I often denote the suffix of $y$ beginning at position $i$ simply as $y_{i \dots}$.
-\end{definition}
-
-\begin{definition} 
-A string $x$ is a \emph{substring} of another string $y$ iff $x = y_{i \dots j}$ for some $1 \leq i \leq j \leq |y|$.
-\end{definition}
-
-\begin{definition}
+The definition of occurrence is fundamental to introduce string matching problems.
 A string $x$ \emph{occurs} in another string $y$ iff it is a substring of $y$.
 Given $x = y_{i \dots j}$, the occurrence of $x$ starts at position $i$ and ends at position $j$ in $y$.
-\end{definition}
-
-%\begin{definition}
-%\label{def:subseq}
-%A \emph{subsequence} is a non-contiguous sequence of symbols of a given string.
-%\end{definition}
-
+Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
 \label{def:delta}
 Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any two distinct $a,b \in \Sigma$ and 0 otherwise.
 \end{definition}
 
+Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
 \begin{definition}
 \label{def:rho}
 Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\rho : \Sigma \rightarrow [1 \dots \sigma]$, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
 \end{definition}
-
-\begin{definition}
-\label{def:lex}
 The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $x,y$ is defined as $x <_{lex} y \iff x_1 < y_1, \text{ or } x_1 = y_1 \text{ and } x_{2 \dots} <_{lex} y_{2 \dots}$.
-\end{definition}
 
-%Often in this manuscript I use the notion of string collection.
-\begin{definition}
-\label{def:colt}
+\emph{Generalized} full-text indices work on string collections.
 A \emph{string collection} is an ordered multiset $\Sc = \{ s^1, s^2, \dots, s^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Sc}=\sum_{i=1}^{c}{|s^i|}$ the total length of the string collection.
-I extend the notation of prefix, suffix and substring also to multisets, \eg $\Sc_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
-\end{definition}
+I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Sc_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
 
-\begin{definition}
-\label{def:dollar}
+To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
+I first introduce special terminator symbols to perform padding.
 I call \emph{terminator} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
-\end{definition}
-
 \begin{definition}
 \label{def:strd}
 Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation of $s$ with a terminator symbol \$.
 \end{definition}
-
 \begin{definition}
 \label{def:coltd}
 Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
-\begin{definition}
-\label{def:array}
+In this manuscript, in addition to strings, I use numerical arrays and matrices.
 An \emph{array} (or table, or vector) $V=v_1 v_2 \dots v_n$ is a finite sequence of numbers $v_i \in \N_0$ (or any subset of $\N_0$).
-I adopt the notation $V[i]$ to denote the subscript element $v_i$.
-\end{definition}
-
-\begin{definition}
-\label{def:matrix}
-A \emph{matrix} $X=x_{1,1} x_{1,2} \dots x_{1,m}$ is a finite two-dimensional sequence of numbers $x_i \in \N_0$ (or any subset of $\N_0$).
-I adopt the notation $X[i,j]$ to denote the subscript element $x_{i,j}$.
-\end{definition}
+I denote by $V[i]$ the subscript element $v_i$.
+A \emph{matrix} $X$, is a rectangular array of numbers $x_{i,j} \in \N_0$ (or any subset of $\N_0$), arranged \st
+$$X=
+\begin{pmatrix}
+  x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
+  x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  x_{m,1} & x_{m,2} & \cdots & x_{m,n}
+\end{pmatrix}$$
+I denote by $X[i,j]$ the subscript element $x_{i,j}$.
 
 \section{Transcripts, alignments and distances}
 
@@ -432,7 +384,7 @@ The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix
 %The suffix trie generalizes to index string collections.
 \begin{definition}
 Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
-Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$ (definition~\ref{def:colt}).
+Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
