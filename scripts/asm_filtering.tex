@@ -89,7 +89,7 @@ Figure~\ref{fig:seeds-ext} shows an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with exact seeds]{Filtration with exact seeds. Pattern $p$ occurs in text $t$ at edit distance 5. Filtration with 6 exact seeds detects this occurrence. In the example, all seeds are covered by one errors, except the third one.}
+\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the example, pattern $p$ occurs in text $t$ at edit distance 5. All seeds, except the third one, are covered by one error.}
 \label{fig:seeds-ext}
 \input{figures/filtration_exact.tikz}
 \end{center}
@@ -210,7 +210,7 @@ Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. Pattern $p$ occurs in text $t$ at edit distance 5. A filtration scheme with thresholds $\mathbb{k} = (1,1,1)$ detects this occurrence. In the example, the left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbb{k} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -253,7 +253,7 @@ For instance, given a pattern of length $m=100$, according to equation~\ref{eq:s
 \end{example}
 
 How to choose a \emph{good} filtration scheme in practice?
-\citeauthor{Myers1994}, \citeauthor{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds of $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+\cite{Myers1994}, \cite{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds of $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 Yet, these results do not necessarily translate into optimal filtration schemes in practice.
 The parameterization depends on the full-text index, the verification algorithm, the statistical properties of the text.
@@ -301,7 +301,7 @@ Any pair $(q,t)$ solving a $(m,k)$ instance is a full-sensitive $q$-gram filtrat
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. All 4-grams, except the two rightmost, are covered by one error.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
@@ -377,7 +377,7 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams.}
+\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. All $Q$-grams, except the three leftmost in the fourth row, are covered by one mismatch.}
 \label{fig:qgrams-gapped}
 \input{figures/filtration_qgrams_gapped.tikz}
 \end{center}
