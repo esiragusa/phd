@@ -85,7 +85,7 @@ It is easy to see that also this method performs redundant computation: the tota
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
 Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $\min \,\{ e^*+l, k\}$.
-Given a filtration scheme $\mathbb{k}=(k_1,\dots,k_s)$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbb{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
+Given a filtration scheme $\mathbf{k}=(k_1,\dots,k_s)$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbf{k^*}=(k^{*}_{1},\dots,k^{*}_{s^*})$ is full-sensitive within distance $\min \,\{ e^*+l, k\}$ if it satisfies
 \begin{eqnarray}
 s^* + \sum_{i=1}^{s^*} k_i^* > \min \,\{ e^*+l, k\}.
 \end{eqnarray}
@@ -95,8 +95,8 @@ The proof is analogous to that one given in section~\ref{sec:seeds-apx}.
 \begin{example}
 Let $k=5$ be the absolute threshold, and $l=0$ be the relative threshold, restricting relevant locations to co-optimal ones.
 A read $r$ maps at distance 1, \ie $|S(r,0)| = 0$ and $|S(r,1)| > 0$, thus $e^* = 1$.
-Given the filtration scheme $\mathbb{k}=(1,1,1)$, any subset full-sensitive up to distance $\min \,\{ e^*+l, k\} = 1$ finds all relevant mapping locations.
-All full-sensitive subsets of $\mathbb{k}$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
+Given the filtration scheme $\mathbf{k}=(1,1,1)$, any subset full-sensitive up to distance $\min \,\{ e^*+l, k\} = 1$ finds all relevant mapping locations.
+All full-sensitive subsets of $\mathbf{k}$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
 Thus, the verification of all candidates, either produced by \emph{any} two exact seeds or by one 1-approximate seed, yields all mapping locations in the $1$-stratum of $r$.
 \end{example}
 

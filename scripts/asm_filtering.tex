@@ -210,7 +210,7 @@ Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbb{k} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{k} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -232,12 +232,12 @@ Filtration specificity is expected to increase with seed length.
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
 \begin{definition}
-A seeds filtration scheme is an integer vector $\mathbb{k} = (k_1, \dots, k_s)$, where integer $k_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
+A seeds filtration scheme is an integer vector $\mathbf{k} = (k_1, \dots, k_s)$, where integer $k_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-Any filtration scheme $\mathbb{k} = (k_1, \dots, k_s)$ \st
+Any filtration scheme $\mathbf{k} = (k_1, \dots, k_s)$ \st
 \begin{eqnarray}
 s + \sum_{i=1}^s k_i > k
 \end{eqnarray}
@@ -412,18 +412,18 @@ Afterwards, I recapitulate known results and present new exact and approximate s
 
 \subsection{Characteristic functions}
 
-I consider any Hamming distance transcript $\sigma$ as a $m$-dimensional vector over $\Bo = \{ 0, 1 \}$.
-Accordingly, I denote by $|\sigma|_0=m - \sum \sigma$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\sigma$ \st $|\sigma|_0 = k$.
+I consider any Hamming distance transcript as a $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
+Accordingly, I denote by $|\mathbf{x}|_0=m - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,t)$.
 
 \begin{definition}
 \label{def:qgram-occ}
-A $Q$-gram \emph{occurs} at position $i$ in a transcript $\sigma$ iff $\forall j \in Q$ $\sigma_{i+j}=1$.
+A $Q$-gram \emph{occurs} at position $i$ in a transcript $\mathbf{x}$ iff $\forall j \in Q$ $x_{i+j}=1$.
 \end{definition}
 
 \begin{definition}
 \label{def:qgram-detection}
-A $(Q,t)$ filtration scheme \emph{detects} $\sigma$ iff the $Q$-gram occurs at least $t$ times in $\sigma$.
+A $(Q,t)$ filtration scheme \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $t$ times in $\mathbf{x}$.
 \end{definition}
 
 \subsubsection{Boolean functions}
@@ -433,19 +433,19 @@ The utility of these functions is manyfold.
 In section \ref{sub:qgram-optimal-threshold}, I use them directly within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Non Detection}.
 In section \ref{sub:qgram-specificity}, I reduce the estimation of filtration sensitivity to a counting problem on boolean functions.
 
-Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\sigma)$ is true iff the $Q$-gram occurs at least one time in a transcript $\sigma$ of length $m$.
+Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\mathbf{x})$ is true iff the $Q$-gram occurs at least one time in a transcript $\mathbf{x}$ of length $m$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
-T_{Q}^{m}(\sigma) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} \sigma_{i+j}
+T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} x_{i+j}
 \end{equation}
-where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\sigma$.
-According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\sigma$ iff $\sigma$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
+where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
+According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all transcripts of length $m$.
 I define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
 \begin{equation}
 \label{eq:family-bool}
-T_{F}^{m}(\sigma) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\sigma)
+T_{F}^{m}(\mathbf{x}) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\mathbf{x})
 \end{equation}
 By definition, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
 Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{minimal}.
@@ -459,23 +459,23 @@ Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_
 I define such \emph{pseudo-boolean function} as
 \begin{equation}
 \label{eq:qgram-pseudo}
-t_{Q}^{m}(\sigma) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q}\sigma_{i+j}
+t_{Q}^{m}(\mathbf{x}) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q} x_{i+j}
 \end{equation}
-Here $t_{Q}^{m}(\sigma)$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\sigma$ of length $m$.
-It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\sigma$, as
+Here $t_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $m$.
+It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 \begin{equation}
 \label{eq:qgram-pseudoneg}
-\bar{t}_{Q}^{m}(\sigma) = m - s(Q) + 1 - t_{Q}^{m}(\sigma)
+\bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
 \end{equation}
 Analogously, I define a pseudo-boolean function for a $Q$-gram family $F$
 \begin{equation}
 \label{eq:family-pseudo}
-t_{F}^{m}(\sigma) = \sum_{Q_i \in F} t_{Q_i}^{m}(\sigma)
+t_{F}^{m}(\mathbf{x}) = \sum_{Q_i \in F} t_{Q_i}^{m}(\mathbf{x})
 \end{equation}
 along with its complementary function
 \begin{equation}
 \label{eq:family-pseudoneg}
-\bar{t}_{F}^{m}(\sigma) = \sum_{Q_i \in F}{(m - s(Q_i) + 1)} - t_{F}^{m}(\sigma)
+\bar{t}_{F}^{m}(\mathbf{x}) = \sum_{Q_i \in F}{(m - s(Q_i) + 1)} - t_{F}^{m}(\mathbf{x})
 \end{equation}
 
 All of the above functions expose important properties which lead to approximate solutions.
@@ -493,7 +493,7 @@ Since super and submodular functions are closed under non-negative linear combin
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance. \\
-{\bf Question}	&	Does it exist a transcript $\sigma \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\sigma)$ is false? \\
+{\bf Question}	&	Does it exist a transcript $\mathbf{x} \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\mathbf{x})$ is false? \\
 \end{tabular}
 \\
 
@@ -518,10 +518,10 @@ This fact motivates me to give ILP or approximate solutions to optimization and 
 Recalling pseudo-boolean function \ref{eq:qgram-pseudo}, I define this problem as the minimization of a linear function subject to submodular constraints
 \begin{equation}
 \begin{array}{ll}
-\min & |\sigma|_0			\\
+\min & |\mathbf{x}|_0			\\
 w.r.t.								\\
-& \sigma \in \Bo^m					\\
-& \bar{t}_{Q}^{m}(\sigma) = 0	\\
+& \mathbf{x} \in \Bo^m					\\
+& \bar{t}_{Q}^{m}(\mathbf{x}) = 0	\\
 \end{array}
 \end{equation}
 
@@ -530,13 +530,13 @@ w.r.t.								\\
 I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001} and solve it with the following ILP
 \begin{equation}
 \begin{array}{ll}
-\min & \sum \bar{\sigma}	\\
+\min & \sum \bar{\mathbf{x}}	\\
 w.r.t.						\\
-& \sigma \in \Bo^m			\\
-& A\sigma \geq b	\\
+& \mathbf{x} \in \Bo^m			\\
+& \mathbf{A}\mathbf{x} \geq \mathbf{b}	\\
 \end{array}
 \end{equation}
-where the value $A_{ij}$ of the coefficient matrix $A$ is defined as
+where the value $A_{ij}$ of the coefficient matrix $\mathbf{A}$ is defined as
 \begin{equation}
 A_{ij} = 
 \left\{
@@ -546,8 +546,8 @@ A_{ij} =
 	\end{array}
 \right.
 \end{equation}
-and $b$ is the unitary vector $\mathbb{1}^{m - s(Q) + 1}$.
-Given the ILP solution $\bar{\sigma}^*$, the minimum distance for which the $Q$-gram is lossy is $k^* = |\sigma^*|_0$.
+and $\mathbf{b}$ is the unitary vector $\mathbf{1}^{m - s(Q) + 1}$.
+Given the ILP solution $\bar{\mathbf{x}}^*$, the minimum distance for which the $Q$-gram is lossy is $k^* = |\mathbf{x}^*|_0$.
 
 \begin{observation}
 Contiguous $q$-grams provide an interesting special case of this ILP.
@@ -558,8 +558,8 @@ Hence the optimal solution of the relaxed LP is also the optimal solution of the
 
 \subsubsection{APX solution}
 
-I adapt the greedy algorithm by \citeauthor{Chvatal1979} to compute an approximate solution to \textsc{Minimum Set Cover}.
-Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a solution with an APX-ratio of $H_{w(Q)}$ \citep{Chvatal1979}.
+I adapt the greedy algorithm by \cite{Chvatal1979} to compute an approximate solution to \textsc{Minimum Set Cover}.
+Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a solution with an APX-ratio of $H_{w(Q)}$.
 
 \begin{figure*}[h]
 \begin{center}
@@ -573,10 +573,10 @@ Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a sol
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$k \gets 0$}
-\State {$\sigma \gets \mathbb{1}^m$}
-\While {$t^m_Q(\sigma) > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\sigma)}{\partial \sigma_j}$}
-	\State {$\sigma_i \gets 0$}
+\State {$\mathbf{x} \gets \mathbf{1}^m$}
+\While {$t^m_Q(\mathbf{x}) > 0$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\mathbf{x})}{\partial x_j}$}
+	\State {$x_i \gets 0$}
 	\State {$k \gets k + 1$}
 \EndWhile
 \State \Return $k$
@@ -605,18 +605,18 @@ Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a sol
 Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define \textsc{Optimal Threshold} as the minimization of a supermodular function subject to linear constraints
 \begin{equation}
 \begin{array}{ll}
-\min & t_{Q}^{m} (\sigma)			\\
+\min & t_{Q}^{m} (\mathbf{x})			\\
 w.r.t.								\\
-& \sigma \in \Bo^m_k				\\
+& \mathbf{x} \in \Bo^m_k				\\
 \end{array}
 \end{equation}
 
 Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudoneg}, I consider the \emph{complementary} \textsc{Optimal Threshold} problem as the maximization of a submodular function subject to linear constraints:
 \begin{equation}
 \begin{array}{ll}
-\max & \bar{t}_{Q}^{m} (\sigma)		\\
+\max & \bar{t}_{Q}^{m} (\mathbf{x})		\\
 w.r.t.								\\
-& \sigma \in \bar{\Bo}^m_k			\\
+& \mathbf{x} \in \bar{\Bo}^m_k			\\
 \end{array}
 \end{equation}
 
@@ -633,9 +633,9 @@ I reduce this problem to \textsc{maximum coverage} \citep{Vazirani2001} and solv
 \begin{array}{ll}
 \max & \sum c_j					\\
 w.r.t.							\\
-& \sigma \in \Bo^m_k			\\
+& \mathbf{x} \in \Bo^m_k			\\
 & c \in \Bo^{m - s(Q) + 1}		\\
-& \sigma_i \geq c_j				\\
+& x_i \geq c_j				\\
 \end{array}
 \end{equation}
 where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
@@ -659,13 +659,13 @@ The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
 \textbf{Output} & integer indicating the maximum lossless threshold\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\sigma \gets \mathbb{1}^m$}
+\State {$\mathbf{x} \gets \mathbf{1}^m$}
 \While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\sigma)}{\partial \sigma_j}$}
-	\State {$\sigma_i \gets 0$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
+	\State {$x_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\sigma)$
+\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
@@ -685,26 +685,26 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 \paragraph{}
 \begin{tabular}{rl}
 {\bf Instance}	&	A filtration scheme $(Q,t)$, a $(m,k)$ instance.\\
-%{\bf Solution}	&	The number of transcripts $\sigma \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
-{\bf Solution}	&	The number of transcripts $\sigma \in \Bo^{m}$ \st $t_{Q}^{m}(\sigma) \geq t$\\
+%{\bf Solution}	&	The number of transcripts $\mathbf{x} \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\mathbf{x}) \geq t$\\
+{\bf Solution}	&	The number of transcripts $\mathbf{x} \in \Bo^{m}$ \st $t_{Q}^{m}(\mathbf{x}) \geq t$\\
 \end{tabular}
 \\
 
 %False positives are true points of the boolean function \ref{eq:qgram-bool} which have weight inferior to $m-k$ and satisfy more than $t$ clauses of $T_{Q}^{m}$.
 %Hence, I define the function $\text{FP}_{k}^{m}$ counting the number of false positives of filter $(Q,t)$ in instance $(m,k)$ as
 %\begin{equation}
-%\text{FP}_{k}^{m}(Q,t) = \sum_{\sigma \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\sigma) \geq t
+%\text{FP}_{k}^{m}(Q,t) = \sum_{\mathbf{x} \in {\bar{\Bo}^{m}_{k}}} t_{Q}^{m}(\mathbf{x}) \geq t
 %\end{equation}
 
 \subsubsection{FPRAS solution}
 
 I am interested in the number of transcripts:
 \begin{equation}
-\text{\#P}^{m}(Q,t) = | \{ \sigma \in \Bo^{m} : t_{Q}^{m}(\sigma) \geq t \} |
+\text{\#P}^{m}(Q,t) = | \{ \mathbf{x} \in \Bo^{m} : t_{Q}^{m}(\mathbf{x}) \geq t \} |
 \end{equation}
 For threshold $t=1$, this number is simply the number of true assignments of $T_{Q}^{m}$:
 \begin{equation}
-\text{\#P}^{m}(Q,1) = | \{ \sigma \in \Bo^{m} : T_{Q}^{m}(\sigma) \} |
+\text{\#P}^{m}(Q,1) = | \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |
 \end{equation}
 \citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001} to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
 This method is known as \emph{importance sampling} \citep{Vazirani2001}.
