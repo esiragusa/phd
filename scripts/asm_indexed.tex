@@ -310,7 +310,7 @@ The idea is to supplement the SA with a so-called $q$-gram directory: an additio
 
 \begin{figure}[b!]
 \begin{center}
-\caption[Example of $q$-gram index]{$2$-Gram index of the string {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=4$ addresses a lookup in $D[4:5]$ that in turn provides the range $[5,6]$ in $A$.}
+\caption[Example of $q$-gram index]{$2$-Gram index of the string {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=4$ addresses two lookups in $D[4]$ and $D[5]$, that in turn provide the range $[5,6]$ in $A$.}
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
