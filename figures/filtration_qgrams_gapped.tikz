@@ -19,15 +19,7 @@
 	\draw[strike] (qgram_\x_\y.north) -- (qgram_\x_\y.south) ;
 }
 \draw[strike] (qgram_21_3.north) -- (qgram_21_3.south) ;
+\draw[strike] (qgram_20_4.north) -- (qgram_20_4.south) ;
 \draw[strike] (qgram_19_5.north) -- (qgram_19_5.south) ;
-
-%\draw[line] (read_1.south)+(0,-1*0.4) -- (transcript_1);
-%\draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
-%\draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
-%\draw[line] (read_4.south)+(0,-4*0.4) -- (transcript_4);
-
-%\draw[line] (qgram_21_5) -- (transcript_25);
-%\draw[line] (qgram_21_4) -- (qgram_20_5);
-%\draw[line] (qgram_21_3) -- (qgram_19_5);
 
 \end{tikzpicture}

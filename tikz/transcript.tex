@@ -137,3 +137,15 @@
 	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_3) (qgram_#1_5)] {};
 	\draw[gap] (qgram_#1_1) -- (qgram_#1_3) ;
 }
+
+\newcommand{\qgramgrev}[3]
+{
+    \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
+    {
+    	\node[n] (qgram_#1_\i) at (0.4*\pos,2.0-0.4*#3) {\phantom{\r}};
+	}
+
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_3)] {};
+	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_5)] {};
+	\draw[gap] (qgram_#1_3) -- (qgram_#1_5) ;
+}
