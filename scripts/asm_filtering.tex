@@ -6,7 +6,7 @@ I consider two classes of filtering methods: those based on \emph{seeds} and tho
 Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters of the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
 Both classes include various combinatorial filtering methods of increasing specificity and complexity, always providing filtration schemes with guarantees on filtration sensitivity.
 
-I consider two seed filtering methods:
+I present two seed filtering methods:
 %\begin{inparaenum}[(i)]
 \emph{exact seeds} \citep{Baeza1992}, and
 \emph{approximate seeds} \citep{Myers1994,Navarro2000}.
@@ -16,7 +16,7 @@ Exact seeds partition the pattern in $k+1$ non-overlapping seeds, to be searched
 Approximate seeds increase specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds, to be searched within a smaller distance threshold.
 %Suffix filters further generalize exact and approximate seeds and yield stronger index based filtration.
 
-I consider the following $q$-gram filtering methods:
+I present the following $q$-gram filtering methods:
 %\begin{inparaenum}[(i)]
 \emph{contiguous $q$-grams} \citep{Jokinen1991},
 \emph{gapped $q$-grams} \citep{Burkhardt2001}, and
@@ -285,19 +285,19 @@ More general filters have been proposed and implemented in \emph{QUASAR} \citep{
 
 \subsection{Principle}
 
-The counting argument of contiguous $q$-gram filters is based on the so-called \emph{$q$-gram similarity measure} $\tau_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
+The counting argument of contiguous $q$-gram filters is based on the so-called \emph{$q$-gram similarity measure} $s_q : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$, defined as the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit distance.
-It gives a lower bound on the $q$-gram similarity $\tau_q(x,y)$ of any two strings $x,y$ within edit distance $k$.
-As for seed filters, the result then easily translates to $k$-differences.
+It gives a lower bound on the $q$-gram similarity $s_q(x,y)$ of any two strings $x,y$ within edit distance $k$.
+As for seed filters, this result then easily translates to $k$-differences.
 
 \begin{lemma}[The $q$-gram lemma] \citep{Jokinen1991}
 \label{lemma:qgrams}
 Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ and $|x| = m$. Then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
 \end{lemma}
-The first part of the threshold function $\tau$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
+The first part of the threshold function $\tau_q$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
 Figure~\ref{fig:qgrams-ext} illustrates.
-The threshold function $\tau$ depends only on parameters $(m,k)$ in addition to $q$, and not on the specific $q$-gram characters.
-Any pair $(q,t)$ solving a $(m,k)$ instance is a full-sensitive $q$-gram filtration scheme.
+Only the positions of errors in the transcript determine which $q$-grams are covered or preserved, while text and pattern characters are irrelevant.
+The threshold function $\tau_q$ of a $q$-gram thus depends only on parameters $(m,k)$.
 
 \begin{figure}[h]
 \begin{center}
@@ -309,13 +309,15 @@ Any pair $(q,t)$ solving a $(m,k)$ instance is a full-sensitive $q$-gram filtrat
 
 \subsection{Filtration schemes}
 
+Any pair $(q,t)$ solving an $(m,k)$ instance is a full-sensitive $q$-gram filtration scheme.
+%Among multiple full-sensitive $q$-gram filtration schemes, which is the best one?
 Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to equation~\ref{eq:seed-len} of seed filters.
+Thus, by substituting $\tau_q(m,k)$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to seed filters (see equation~\ref{eq:seed-len}).
 
 However, the biggest $q$-gram length does not yield always the most specific filtration scheme.
 For instance, a threshold of 1 discards completely the counting argument of lemma~\ref{lemma:qgrams} and makes filtration very unspecific in practice.
-Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length potentially yields a more specific filtration.
+Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length potentially yield more specific filtration.
 Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes for a fixed $(m,k)$ instance.
 
 \begin{example}
@@ -362,10 +364,12 @@ Such don't care positions are immune to mismatches, but not to insertions and de
 Hence, this generalization of contiguous $q$-grams solves $k$-mismatches, but not $k$-differences.
 %Filtration specificity increases either by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity.
 
+%As opposed to contiguous $q$-grams, don't care positions are not affected by mismatches.
+%Thus, any gapped $q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
+
 Gapped $q$-grams rely on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
 A subsequence is a non-contiguous sequence of symbols of a given string.
 Hence, instead of substrings, filtration with gapped $q$-grams counts the number of subsequences of length $q$ common to two strings, whose positions are taken from a fixed set $Q$.
-Figure~\ref{fig:qgrams-gapped} shows an example of gapped $q$-gram.
 The formal definition of gapped $q$-gram follows.
 
 \begin{definition}
@@ -376,6 +380,11 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
 %I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
 
+Figure~\ref{fig:qgrams-gapped} shows an example of gapped $q$-gram.
+As in lemma \ref{lemma:qgrams}, the $Q$-gram threshold $\tau_Q$ depends only on parameters $(m,k)$;
+therefore, I refer to filtration schemes $(Q,t)$ solving $(m,k)$ instances.
+However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but only a lower bound.
+
 \begin{figure}[t]
 \begin{center}
 \caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. All $q$-grams, except the three leftmost in the fourth row, are covered by one mismatch.}
@@ -385,12 +394,15 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 \end{figure}
 
 \cite{Kucherov2005} apply \emph{$q$-gram families} to approximate string matching in order to obtain even more specific filtration schemes.
-A $q$-gram family consist of multiple gapped $q$-grams used in conjunction.
+A $q$-gram family consists of multiple gapped $q$-grams used in conjunction.
 Figure~\ref{fig:qgrams-multiple} shows an example of $q$-gram family.
 
 \begin{definition}
 A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F} = \{ Q_1, \dots, Q_f \}$ of $Q$-grams.
 \end{definition}
+
+%The counting threshold $\tau_{\mathbb{F}}$ is obtained as: 
+%$\tau_{\mathbb{F}}(m,k) = \Sum \tau_Q(m,k)$
 
 \begin{figure}[b]
 \begin{center}
@@ -399,14 +411,6 @@ A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F}
 \input{figures/filtration_qgrams_multiple.tikz}
 \end{center}
 \end{figure}
-
-As in the $q$-gram lemma, the threshold depends only on $Q$ and parameters $m,k$.
-Indeed, the pattern of occurring $q$-grams does not depend on the text or pattern sequences but only on their transcript, \ie on the mismatch positions.
-Therefore, in the following, I refer to gapped $q$-gram filtration schemes $(Q,t)$ solving $(m,k)$ instances.
-As opposed to contiguous $q$-grams, don't care positions are not affected by mismatches.
-Thus, any gapped $q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
-Unfortunately, the $q$-gram lemma (\ref{lemma:qgrams}) does not give anymore a tight threshold, but only a lower bound.
-
 
 Gapped $q$-grams raise hard combinatorial questions:
 \begin{enumerate} %[(i)]
@@ -440,7 +444,7 @@ A $Q$-gram \emph{occurs} at position $i$ in a transcript $\mathbf{x}$ iff $\fora
 
 \begin{definition}
 \label{def:qgram-detection}
-A $(Q,t)$ filtration scheme \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $t$ times in $\mathbf{x}$.
+A filtration scheme $(Q,t)$ \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $t$ times in $\mathbf{x}$.
 \end{definition}
 
 \subsubsection{Boolean functions}
@@ -503,13 +507,13 @@ Since super and submodular functions are closed under non-negative linear combin
 \subsection{Full-sensitivity}
 \label{sub:qgram-full-sensitivity}
 
-%\textsc{Non Detection}~\citep{Nicolas2005} asks the question: does a given $Q$-gram solve a $(m,k)$ instance?
+%\textsc{Non Detection}~\citep{Nicolas2005} asks the question: does a given $Q$-gram solve an $(m,k)$ instance?
 
 \subsubsection{Problem definition}
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance. \\
+{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance. \\
 {\bf Question}	&	Does it exist a transcript $\mathbf{x} \in \Bo^{m}_{k}$ such that $T_{Q}^{m}(\mathbf{x})$ is false? \\
 \end{tabular}
 \\
@@ -614,7 +618,7 @@ Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a sol
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, a $(m,k)$ instance.\\
+{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
 {\bf Solution}	&	The largest integer $t^*$ such that $(Q,t^*)$ solves $(m,k)$.\\
 \end{tabular}
 \\
@@ -701,7 +705,7 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 
 \paragraph{}
 \begin{tabular}{rl}
-{\bf Instance}	&	A filtration scheme $(Q,t)$, a $(m,k)$ instance.\\
+{\bf Instance}	&	A filtration scheme $(Q,t)$, an $(m,k)$ instance.\\
 %{\bf Solution}	&	The number of transcripts $\mathbf{x} \in \bar{\Bo}^{m}_{k}$ \st $t_{Q}^{m}(\mathbf{x}) \geq t$\\
 {\bf Solution}	&	The number of transcripts $\mathbf{x} \in \Bo^{m}$ \st $t_{Q}^{m}(\mathbf{x}) \geq t$\\
 \end{tabular}

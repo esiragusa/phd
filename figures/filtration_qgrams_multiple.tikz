@@ -1,6 +1,6 @@
 \begin{tikzpicture}[font=\normalsize\sffamily]
 
-\transcript{25}{G/M/G, C/M/C, T/M/T, T/M/T, N/R/A, G/M/G, T/M/T, G/M/G, C/M/C, G/R/A, T/M/T, A/M/A, T/M/T, T/M/T, A/R/G, A/M/A, G/M/C, C/M/C, C/M/C, G/R/A, T/M/T, T/M/T, A/R/T, A/M/A, T/M/T}{10}
+\transcript{25}{G/1/G, C/1/C, T/1/T, T/1/T, N/0/A, G/1/G, T/1/T, G/1/G, C/1/C, G/0/A, T/1/T, A/1/A, T/1/T, T/1/T, A/0/G, A/1/A, G/1/C, C/1/C, C/1/C, G/0/A, T/1/T, T/1/T, A/0/T, A/1/A, T/1/T}{10}
 \band{25}
 \seed{1}{25}{1}
 
