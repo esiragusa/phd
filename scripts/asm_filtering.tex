@@ -210,7 +210,7 @@ Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{k} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -232,14 +232,14 @@ Filtration specificity is expected to increase with seed length.
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
 \begin{definition}
-A seeds filtration scheme is an integer vector $\mathbf{k} = (k_1, \dots, k_s)$, where integer $k_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
+A seeds filtration scheme is an integer vector $\mathbf{t} = (t_1, \dots, t_s)$, where integer $t_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-Any filtration scheme $\mathbf{k} = (k_1, \dots, k_s)$ \st
+Any filtration scheme $\mathbf{t} = (t_1, \dots, t_s)$ \st
 \begin{eqnarray}
-s + \sum_{i=1}^s k_i > k
+s + \sum_{i=1}^s t_i > k
 \end{eqnarray}
 is full-sensitive for $k$-differences (and $k$-mismatches).
 \end{lemma}
