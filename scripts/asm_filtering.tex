@@ -89,7 +89,7 @@ Figure~\ref{fig:seeds-ext} shows an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the example, pattern $p$ occurs in text $t$ at edit distance 5. All seeds, except the third one, are covered by one error.}
+\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
 \label{fig:seeds-ext}
 \input{figures/filtration_exact.tikz}
 \end{center}
@@ -210,7 +210,7 @@ Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The left and right seeds are covered by two errors, but the central seed is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered by only one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -301,7 +301,7 @@ The threshold function $\tau_q$ of a $q$-gram thus depends only on parameters $(
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. All 4-grams, except the two rightmost, are covered by one error.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The two grey $q$-grams are preserved.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
@@ -387,7 +387,7 @@ However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but o
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. All $q$-grams, except the three leftmost in the fourth row, are covered by one mismatch.}
+\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The three $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-gapped}
 \input{figures/filtration_qgrams_gapped.tikz}
 \end{center}
@@ -406,7 +406,7 @@ A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F}
 
 \begin{figure}[b]
 \begin{center}
-\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{Q},t) = (\{1, 3, 4, 5\},\{1, 2, 3, 5\},7)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. Seven $q$-grams are not covered by any mismatch.}
+\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{Q},t) = (\{1, 3, 4, 5\},\{1, 2, 3, 5\},7)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
 \input{figures/filtration_qgrams_multiple.tikz}
 \end{center}
