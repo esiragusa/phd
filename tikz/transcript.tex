@@ -41,29 +41,27 @@
 
 \newcommand{\band}[1]
 {
-%	\node[frame] (genome_rect) [transform shape, fit = (genome_1) (genome_#1)] {};
-
 	\draw[line] (genome_1.north west) -- (genome_#1.north east) ;
 	\draw[line] (genome_1.south west) -- (genome_#1.south east) ;
 	\draw[wave] (genome_1.north west) -- (genome_1.south west) ;
 	\draw[wave] (genome_#1.north east) -- (genome_#1.south east) ;
 }
 
+% Now used to draw a frame around the pattern.
 \newcommand{\seed}[3]
 {
 	\ifthenelse{\equal{#3}{0}}
     {
-%    	\draw[strike] (read_#1.west) -- (read_#2.east) ;
-
 	    \begin{pgfonlayer}{background} 
     		\draw[covered] (read_#1.north west) rectangle (read_#2.south east) ;
 		\end{pgfonlayer}
     }
-           
+
 	\node[frame] (read_rect) [transform shape, fit = (read_#1) (read_#2)] {};
 }
 
-\newcommand{\qgram}[3]
+% Contiguous q-gram ####
+\newcommand{\qgram}[4]
 {
 	\pgfmathsetmacro\ypos{0.4*4}
 	
@@ -71,10 +69,17 @@
     {
     	\node[n] (qgram_#1_\i) at (0.4*\pos,\ypos-0.4*#3) {\phantom{\r}};
 	}
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+	\ifthenelse{\equal{#4}{0}}
+    {
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+	}
+    {
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_4)] {};
+	}
 }
 
-\newcommand{\qgrama}[4]
+% Approximate seed
+\newcommand{\qgrama}[5]
 {
 	\pgfmathsetmacro\ypos{0.4}
 
@@ -82,14 +87,22 @@
     {
     	\node[n] (qgram_#1_\i) at (0.4*\pos,\ypos-0.4*#3) {\phantom{\r}};
 	}
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_#4)] {};
+	\ifthenelse{\equal{#5}{0}}
+    {
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_#4)] {};
+	}
+    {
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_#4)] {};
+	}
 }
 
-\newcommand{\qgramo}[3]
+% Exact seed
+\newcommand{\qgramo}[4]
 {
-	\qgrama{#1}{#2}{#3}{4}
+	\qgrama{#1}{#2}{#3}{4}{#4}
 }
 
+% Exact seed spanning an insertion
 \newcommand{\qgrami}[3]
 {
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
@@ -108,6 +121,7 @@
 	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
 }
 
+% Approximate seed spanning an insertion
 \newcommand{\qgramai}[3]
 {
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
@@ -126,26 +140,43 @@
 	\draw[break] (qgram_#1_2.north east) -- (qgram_#1_2.south east) ;
 }
 
-\newcommand{\qgramg}[3]
+% Gapped q-gram ##-#
+\newcommand{\qgramg}[4]
 {
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
     {
     	\node[n] (qgram_#1_\i) at (0.4*\pos,2.0-0.4*#3) {\phantom{\r}};
 	}
 
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1)] {};
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_3) (qgram_#1_5)] {};
+	\ifthenelse{\equal{#4}{0}}
+    {
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1)] {};
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_3) (qgram_#1_5)] {};
+	}
+	{
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_1)] {};
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_3) (qgram_#1_5)] {};
+	}
+	
 	\draw[gap] (qgram_#1_1) -- (qgram_#1_3) ;
 }
 
-\newcommand{\qgramgrev}[3]
+% Gapped q-gram #-###
+\newcommand{\qgramgrev}[4]
 {
     \foreach[count=\i, evaluate=\i as \pos using {(#1-1+\i)}] \r in {#2}
     {
     	\node[n] (qgram_#1_\i) at (0.4*\pos,2.0-0.4*#3) {\phantom{\r}};
 	}
 
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_3)] {};
-	\node[frame] (read_rect) [transform shape, fit = (qgram_#1_5)] {};
+	\ifthenelse{\equal{#4}{0}}
+    {
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_3)] {};
+		\node[frame] (read_rect) [transform shape, fit = (qgram_#1_5)] {};
+	}
+	{
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_1) (qgram_#1_3)] {};
+		\node[frame, fill=LightGray] (read_rect) [transform shape, fit = (qgram_#1_5)] {};
+	}
 	\draw[gap] (qgram_#1_3) -- (qgram_#1_5) ;
 }

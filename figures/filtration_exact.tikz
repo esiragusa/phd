@@ -7,18 +7,23 @@
 \node[left=0.25cm of read_1] {$p$} ;
 \node[left=0.25cm of genome_1] {$t$} ;
 
-\foreach \x in {1,5,9,13,22}
+% Unaffected seeds
+\foreach \x in {9}
 {
-	\qgramo{\x}{$\#$, $\#$, $\#$, $\#$}{1}
+	\qgramo{\x}{$\#$, $\#$, $\#$, $\#$}{1}{1}
+}
+
+% Covered seeds
+\foreach \x in {1,5,13,22}
+{
+	\qgramo{\x}{$\#$, $\#$, $\#$, $\#$}{1}{0}
 }
 \qgrami{17}{$\#$, $ $, $\#$, $\#$, $\#$}{1}
 
+% Strikes over covered seeds
 \draw[strike] (qgram_1_4.north) -- (qgram_1_4.south) ;
 \draw[strike] (qgram_5_3.north) -- (qgram_5_3.south) ;
 \draw[strike] (qgram_13_1.north) -- (qgram_13_1.south) ;
 \draw[strike] (qgram_22_3.north) -- (qgram_22_3.south) ;
-
-%\draw[line] (qgram_17_2.north) -- (qgram_17_2.south) ;
-%\draw[line] (qgram_17_2.north) -- (read_18.south) ;
 
 \end{tikzpicture}

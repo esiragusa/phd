@@ -7,21 +7,21 @@
 \node[left=0.25cm of read_1] {$p$} ;
 \node[left=0.25cm of genome_1] {$t$} ;
 
-\foreach \x in {1,...,22}
+% Unaffected q-grams ###-#
+\foreach \x in {21,22}
 {
 	\pgfmathtruncatemacro{\y}{1+Mod(\x-1,4)}
-	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}
+	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}{1}
 }
 
-%\draw[line] (read_1.south)+(0,-1*0.4) -- (transcript_1);
-%\draw[line] (read_2.south)+(0,-2*0.4) -- (transcript_2);
-%\draw[line] (read_3.south)+(0,-3*0.4) -- (transcript_3);
-%
-%\draw[line] (qgram_20_4.north) -- (qgram_22_2);
-%\draw[line] (read_24.south)+(0,-2*0.4) -- (transcript_24);
-%\draw[line] (read_25.south)+(0,-2*0.4) -- (transcript_25);
-%\draw[line] (qgram_22_4.north) -- (read_25.south);
+% Covered q-grams ###-#
+\foreach \x in {1,...,20}
+{
+	\pgfmathtruncatemacro{\y}{1+Mod(\x-1,4)}
+	\qgram{\x}{$\#$, $\#$, $\#$, $\#$}{\y}{0}
+}
 
+% Strikes over covered q-grams
 \foreach \x in {1,...,20}
 {
 	\pgfmathtruncatemacro{\y}{4-Mod(\x-1,4)}

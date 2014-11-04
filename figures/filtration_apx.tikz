@@ -7,10 +7,14 @@
 \node[left=0.25cm of read_1] {$p$} ;
 \node[left=0.25cm of genome_1] {$t$} ;
 
-\qgrama{1}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
-\qgrama{9}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
+% Unaffected seeds
+\qgrama{9}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}{1}
+
+% Covered seeds
+\qgrama{1}{$\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}{0}
 \qgramai{17}{$\#$, $ $, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$, $\#$}{1}{8}
 
+% Strikes over covered seeds
 \draw[strike] (qgram_1_4.north) -- (qgram_1_4.south) ;
 \draw[strike] (qgram_1_7.north) -- (qgram_1_7.south) ;
 \draw[strike] (qgram_9_5.center)  -- (qgram_9_5.south) ;
