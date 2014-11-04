@@ -296,7 +296,7 @@ Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ an
 The threshold function $\tau_q$ of a $q$-gram depends only on parameters $(m,k)$.
 The first part of the threshold function $\tau_q$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
 Indeed, only the positions of errors in the transcript determine which $q$-grams are covered or preserved, while text and pattern characters are irrelevant.
-Figure~\ref{fig:qgrams-ext} illustrates.
+Figure~\ref{fig:qgrams-ext} exemplifies.
 
 \begin{figure}[h]
 \begin{center}
@@ -391,8 +391,9 @@ However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but o
 \end{center}
 \end{figure}
 
-To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-gram families} for approximate string matching.
-A $q$-gram family consists of \emph{multiple} gapped $q$-grams used in conjunction.
+To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-gram families} (or \emph{multiple gapped $q$-grams}) for approximate string matching.
+Filtration with a $q$-gram family combines a set of multiple distinct gapped $q$-grams in a disjunctive way.
+The generalized counting principle now adds all occurrences of any gapped $q$-gram in the set.
 Figure~\ref{fig:qgrams-multiple} illustrates.
 \begin{definition}
 A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F} = \{ Q_1, \dots, Q_f \}$ of $Q$-grams.
@@ -401,8 +402,9 @@ Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \tau_{\mathbb{F}}(m,k) = \sum_{Q_i \in \mathbb{F}}{\tau_{Q_i}(m,k)}
 \end{eqnarray}
 \end{definition}
+For simplicity, in the remaining of this chapter, I refer only to gapped $q$-grams but intend also $q$-gram families.
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},t) = (\{ \{1, 3, 4, 5\}, \{1, 2, 3, 5\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
@@ -410,7 +412,9 @@ Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \end{center}
 \end{figure}
 
-Gapped $q$-grams raise hard combinatorial questions:
+\subsection{Design questions}
+
+The design of gapped $q$-grams raises hard combinatorial questions:
 \begin{enumerate} %[(i)]
 \item \label{enum:qgram-non-detection} Does a gapped $q$-gram yield any filtration scheme solving an $(m,k)$ instance? 
 \item If the answer to question~\ref{enum:qgram-non-detection} is yes:
@@ -424,10 +428,10 @@ Gapped $q$-grams raise hard combinatorial questions:
 %\item \label{enum:qgram-weight} which is the maximum weight lossless shape?
 \end{enumerate}
 
-Question \ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005},
-the more general question \ref{enum:qgram-non-detection} has been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}, \ref{enum:qgram-fn} and \ref{enum:qgram-fp}.
-With the aim of answering these questions, I first introduce simple characteristic functions to formally define transcripts detected by gapped $q$-grams.
-Afterwards, I recapitulate known results and present new exact and approximate solutions.
+All of the above questions naturally generalize to $q$-gram families.
+Question \ref{enum:qgram-threshold} has been first considered in \citep{Burkhardt2001,Kucherov2005}, the more general question \ref{enum:qgram-non-detection} has been introduced in \citep{Nicolas2005}, while I consider here for the first time questions \ref{enum:qgram-error}, \ref{enum:qgram-fn} and \ref{enum:qgram-fp}.
+In order to formalize the above questions, I introduce simple characteristic functions indicating which transcripts are detected by a gapped $q$-gram.
+Afterwards, I model each question as a combinatorial problem and provide methods to compute exact or approximate solutions.
 
 \subsection{Characteristic functions}
 
@@ -447,9 +451,9 @@ A filtration scheme $(Q,t)$ \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs 
 
 \subsubsection{Boolean functions}
 
-I first introduce boolean functions to characterize the set of transcripts detected by filtration schemes of the form $(Q,1)$ according to definition \ref{def:qgram-detection}.
+I introduce \emph{boolean functions} that characterize the set of transcripts detected by filtration schemes of the form $(Q,1)$.
 The utility of these functions is manyfold.
-In section \ref{sub:qgram-optimal-threshold}, I use them directly within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Non Detection}.
+In section \ref{sub:qgram-optimal-threshold}, I use them within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Non Detection}.
 In section \ref{sub:qgram-specificity}, I reduce the estimation of filtration sensitivity to a counting problem on boolean functions.
 
 Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote a \emph{boolean function} such that $T_{Q}^{m}(\mathbf{x})$ is true iff the $Q$-gram occurs at least one time in a transcript $\mathbf{x}$ of length $m$.
@@ -461,32 +465,38 @@ T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} x_{i+j}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
 According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all transcripts of length $m$.
-I define an analogous boolean function for an $\mathbb{F}$-gram as the disjunction:
+I define an analogous boolean function for an $\mathbb{F}$-gram as the disjunction
 \begin{equation}
 \label{eq:family-bool}
 T_{\mathbb{F}}^{m}(\mathbf{x}) = \bigvee_{Q_i \in \mathbb{F}} T_{Q_i}^{m}(\mathbf{x})
 \end{equation}
-By definition, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
-Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{minimal}.
+
+By construction, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
+Moreover, both functions are \emph{monotone non-decreasing}.
+Recall that a boolean function $f : \mathbb{B}^m \rightarrow \mathbb{B}$ is monotone non-decreasing iff 
+\begin{equation}
+\label{eq:monotone-non-decreasing}
+f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m
+\end{equation}
+Both $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ satisfy the above inequality as they do not contain any predicate in negated form.
+Finally, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{minimal} as all monotone boolean functions in DNF are minimal.
 
 \subsubsection{Pseudo-boolean functions}
 
-I now consider pseudo-boolean functions, corresponding to functions \ref{eq:qgram-bool} and \ref{eq:family-bool}, to associate a filtration threshold to each transcript.
-The following pseudo-boolean functions exhibit the combinatorial properties of super or submodularity, which are important in respect to their optimization.
-
+I now consider \emph{pseudo-boolean functions}, counterparts of functions \ref{eq:qgram-bool} and \ref{eq:family-bool}, that associate a filtration threshold to any transcript.
 Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
 I define such \emph{pseudo-boolean function} as
 \begin{equation}
 \label{eq:qgram-pseudo}
 t_{Q}^{m}(\mathbf{x}) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q} x_{i+j}
 \end{equation}
-Here $t_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $m$.
+Here, $t_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $m$.
 It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 \begin{equation}
 \label{eq:qgram-pseudoneg}
 \bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
 \end{equation}
-Analogously, I define a pseudo-boolean function for an $\mathbb{F}$-gram as:
+Analogously, I define a pseudo-boolean function for an $\mathbb{F}$-gram as
 \begin{equation}
 \label{eq:family-pseudo}
 t_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}} t_{Q_i}^{m}(\mathbf{x})
@@ -497,10 +507,39 @@ along with its complementary function
 \bar{t}_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}}{(m - s(Q_i) + 1)} - t_{\mathbb{F}}^{m}(\mathbf{x})
 \end{equation}
 
-All of the above functions expose important properties which lead to approximate solutions.
-\emph{Nondecreasing monotonicity} of functions $t_{Q}^{m}$ and $t_{\mathbb{F}}^{m}$ follow from nondecreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$. Consequently $\bar{t}_{Q}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are \emph{monotone nonincreasing}.
-From definition~\ref{eq:supermodularity}, function $t_{Q}^{m}$ is \emph{supermodular}, thus it follows that $\bar{t}_{Q}^{m}$ is \emph{submodular}.
-Since super and submodular functions are closed under non-negative linear combination, functions $t_{\mathbb{F}}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are respectively super and submodular.
+The above pseudo-boolean functions have particular properties in respect to monotonicity and modularity.
+The non-decreasing monotonicity of functions $t_{Q}^{m}$ and $t_{\mathbb{F}}^{m}$ immediately follows from the non-decreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$.
+Consequently, the complementary functions $\bar{t}_{Q}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are \emph{monotone nonincreasing}.
+
+\emph{Supermodularity} and \emph{submodularity} are the discrete analogs of concavity and convexity.
+These properties allow to compute in polynomial time approximate solutions to constrained optimization problems.
+A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{R}$ is \emph{supermodular} iff 
+\begin{equation}
+\label{eq:supermodularity}
+f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \wedge \mathbf{z}) + f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m,
+\end{equation}
+or it is \emph{submodular} if $-f$ is supermodular.
+An equivalent definition of supermodularity states that all second order derivatives must be non-negative, \ie
+\begin{equation}
+\label{eq:supermodularity}
+\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^m \text{ and } \forall \, 1 \leq i \leq j \leq m.
+\end{equation}
+This latter definition is evident for $t_{Q}^{m}$, as this function does not contain any negative term.
+Thus, function $t_{Q}^{m}$ is supermodular and $\bar{t}_{Q}^{m}$ is submodular.
+Moreover, since super and submodular functions are closed under non-negative linear combination, functions $t_{\mathbb{F}}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are still super and submodular.
+
+
+%\subsection{Submodular Functions}
+%Let $E$ be a nonempty finite set and $\mathcal{D}$ be a collection of subsets of $E$ which forms a distributive lattice with set union and intersection as the lattice operations join and meet, i.e. $\forall X,Y \in \mathcal{D}$, we have $X \cup Y$, $X \cap Y \in \mathcal{D}$.
+%A set function $f : \mathcal{D} \rightarrow \mathbb{R}$ is submodular on the distributive lattice $\mathcal{D}$ iff $\forall X,Y \in \mathcal{D}$
+%\begin{equation}
+%f(X) + f(Y) \geq f(X \cup Y) + f(X \cap Y)
+%\end{equation}
+%Alternatively, $f$ is submodular iff $\forall X,Y \in \mathcal{D}$ s.t. $X \subseteq Y$ and $\forall e \in E$ s.t. $e \notin Y$
+%\begin{equation}
+%f(X \cup \{e\}) - f(X) \geq f(Y \cup \{e\}) - f(Y)
+%\end{equation}
+
 
 \subsection{Full-sensitivity}
 \label{sub:qgram-full-sensitivity}
@@ -518,8 +557,8 @@ Since super and submodular functions are closed under non-negative linear combin
 
 \subsubsection{Hardness results}
 
-\cite{Nicolas2005} show that \textsc{Non Detection} is \emph{strongly} NP-complete by giving an indirect reduction of \textsc{Exact Cover by 3-Sets} to \textsc{Non Detection}.
-Strong NP-completeness implies that no \emph{FPTAS} nor any \emph{pseudo-polynomial} algorithm for \textsc{Non Detection} exist, under the assumption that $P \neq NP$.
+\cite{Nicolas2005} show that \textsc{Non Detection} is \emph{strongly} NP-complete by performing an indirect reduction of \textsc{Exact Cover by 3-Sets} to \textsc{Non Detection}.
+Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Non Detection} exist, under the assumption that $P \neq NP$.
 This fact motivates me to give ILP or approximate solutions to optimization and counting problems related to \textsc{Non Detection}.
 
 \subsection{Minimum lossy distance}
@@ -572,12 +611,13 @@ Given the ILP solution $\bar{\mathbf{x}}^*$, the minimum distance for which the 
 Contiguous $q$-grams provide an interesting special case of this ILP.
 If $A$ has the \emph{Consecutive Ones Property}, it is \emph{totally unimodular} \citep{Fulkerson1964}.
 The \emph{polytope} defined by a totally unimodular coefficient matrix is \emph{integral}.
-Hence the optimal solution of the relaxed LP is also the optimal solution of the original ILP.
+The optimal solution of the relaxed LP is also the optimal solution of the original ILP.
+Hence, this ILP computes the threshold of a contiguous $q$-gram in polynomial time.
 \end{observation}
 
 \subsubsection{APX solution}
 
-I adapt the greedy algorithm by \cite{Chvatal1979} to compute an approximate solution to \textsc{Minimum Set Cover}.
+I propose the greedy algorithm by \cite{Chvatal1979} to compute an approximate solution to \textsc{Minimum Set Cover}.
 Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a solution with an APX-ratio of $H_{w(Q)}$.
 
 \begin{figure*}[h]
