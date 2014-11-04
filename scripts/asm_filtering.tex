@@ -89,7 +89,7 @@ Figure~\ref{fig:seeds-ext} shows an example.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
+\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
 \label{fig:seeds-ext}
 \input{figures/filtration_exact.tikz}
 \end{center}
@@ -210,7 +210,7 @@ Filtration specificity is expected to increase with seed length.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the example, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered by only one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered by only one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -280,7 +280,7 @@ The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ t
 \label{sec:filtering:qgrams-ext}
 
 $q$-Gram filters rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
-The first $q$-gram counting filter has been proposed in \citep{Jokinen1991}.
+The first $q$-gram counting filter for approximate string matching has been proposed in \citep{Jokinen1991}.
 More general filters have been proposed and implemented in \emph{QUASAR} \citep{Burkhardt1999}, \emph{SWIFT} \citep{Rasmussen2006}, \emph{STELLAR} \citep{Kehr2011}.
 
 \subsection{Principle}
@@ -301,7 +301,7 @@ The threshold function $\tau_q$ of a $q$-gram thus depends only on parameters $(
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The two grey $q$-grams are preserved.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The two grey $q$-grams are preserved.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
@@ -356,16 +356,15 @@ However, this implementation requires more memory, as it must keep the text inde
 \section{Gapped $q$-grams}
 \label{sec:filtering:qgrams-gapped}
 
-The idea of \emph{gapped $q$-grams} \citep{Burkhardt2001} is to lower the correlation between consecutive $q$-grams.
+\emph{Gapped $q$-grams} for approximate string matching have been proposed by \cite{Burkhardt2001}.
+The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
+Indeed, the $q$-gram lemma shows that one single edit distance error affects a cluster of $q$ consecutive $q$-grams.
 The occurrence of any contiguous $q$-gram is strongly correlated to the occurrences of its preceding and following $q$-grams.
-One single edit distance error affects a cluster of $q$ consecutive $q$-grams, as evidenced by the $q$-gram lemma.
-Gapped $q$-grams hence adopt patterns of \emph{don't care positions} to skip characters at fixed positions.
-Such don't care positions are immune to mismatches, but not to insertions and deletions.
-Hence, this generalization of contiguous $q$-grams solves $k$-mismatches, but not $k$-differences.
-%Filtration specificity increases either by raising the filtering threshold or the $q$-gram length, in either cases preserving full-sensitivity.
-
-%As opposed to contiguous $q$-grams, don't care positions are not affected by mismatches.
-%Thus, any gapped $q$-gram potentially yields a higher threshold than the contiguous $q$-gram of same weight.
+To lower this correlation, gapped $q$-grams skip characters at fixed positions using patterns of \emph{don't care positions}.
+In this way, the occurrence of a gapped $q$-gram remain unaffected by any mismatch falling within its don't care positions.
+Filtration specificity increases, because either the $q$-gram threshold or the $q$-gram length can be raised, in either cases preserving full-sensitivity.
+Unfortunately, don't care positions are immune to mismatches, but not to insertions and deletions.
+Therefore, this generalization of contiguous $q$-grams solves $k$-mismatches, but not $k$-differences.
 
 Gapped $q$-grams rely on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
 A subsequence is a non-contiguous sequence of symbols of a given string.
@@ -387,26 +386,26 @@ However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but o
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The three $q$-grams in grey are not covered by any mismatch.}
+\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The three $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-gapped}
 \input{figures/filtration_qgrams_gapped.tikz}
 \end{center}
 \end{figure}
 
-\cite{Kucherov2005} apply \emph{$q$-gram families} to approximate string matching in order to obtain even more specific filtration schemes.
-A $q$-gram family consists of multiple gapped $q$-grams used in conjunction.
-Figure~\ref{fig:qgrams-multiple} shows an example of $q$-gram family.
-
+To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-gram families} for approximate string matching.
+A $q$-gram family consists of \emph{multiple} gapped $q$-grams used in conjunction.
+Figure~\ref{fig:qgrams-multiple} illustrates.
 \begin{definition}
 A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F} = \{ Q_1, \dots, Q_f \}$ of $Q$-grams.
+Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
+\begin{eqnarray}
+\tau_{\mathbb{F}}(m,k) = \sum_{Q_i \in \mathbb{F}}{\tau_{Q_i}(m,k)}
+\end{eqnarray}
 \end{definition}
 
-%The counting threshold $\tau_{\mathbb{F}}$ is obtained as: 
-%$\tau_{\mathbb{F}}(m,k) = \Sum \tau_Q(m,k)$
-
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
-\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{Q},t) = (\{1, 3, 4, 5\},\{1, 2, 3, 5\},7)$ solves instance $(25,5)$. In the example, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
+\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},t) = (\{ \{1, 3, 4, 5\}, \{1, 2, 3, 5\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
 \input{figures/filtration_qgrams_multiple.tikz}
 \end{center}
@@ -433,7 +432,7 @@ Afterwards, I recapitulate known results and present new exact and approximate s
 
 \subsection{Characteristic functions}
 
-I consider any Hamming distance transcript as a $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
+I consider any Hamming distance transcript over $\{ R, M \}$ as a $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
 Accordingly, I denote by $|\mathbf{x}|_0=m - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,t)$.
 
@@ -463,13 +462,13 @@ T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} x_{i+j}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
 According to definition \ref{def:qgram-occ}, filtration scheme $(Q,t)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
 %The seed boolean function $T_{Q}^{m}$ describes the computation performed by the seed automaton $A_Q$ on all transcripts of length $m$.
-I define an analogous boolean function for a $Q$-gram family $F$ as the disjunction
+I define an analogous boolean function for an $\mathbb{F}$-gram as the disjunction:
 \begin{equation}
 \label{eq:family-bool}
-T_{F}^{m}(\mathbf{x}) = \bigvee_{Q_i \in F} T_{Q_i}^{m}(\mathbf{x})
+T_{\mathbb{F}}^{m}(\mathbf{x}) = \bigvee_{Q_i \in \mathbb{F}} T_{Q_i}^{m}(\mathbf{x})
 \end{equation}
-By definition, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
-Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{F}^{m}$ are \emph{minimal}.
+By definition, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{monotone nondecreasing} boolean functions in \emph{disjunctive normal form} (\emph{DNF}).
+Since all monotone boolean functions in DNF are minimal, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{minimal}.
 
 \subsubsection{Pseudo-boolean functions}
 
@@ -488,21 +487,21 @@ It is useful to define the complementary function $\bar{t}_{Q}^{m}$, counting ho
 \label{eq:qgram-pseudoneg}
 \bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
 \end{equation}
-Analogously, I define a pseudo-boolean function for a $Q$-gram family $F$
+Analogously, I define a pseudo-boolean function for an $\mathbb{F}$-gram as:
 \begin{equation}
 \label{eq:family-pseudo}
-t_{F}^{m}(\mathbf{x}) = \sum_{Q_i \in F} t_{Q_i}^{m}(\mathbf{x})
+t_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}} t_{Q_i}^{m}(\mathbf{x})
 \end{equation}
 along with its complementary function
 \begin{equation}
 \label{eq:family-pseudoneg}
-\bar{t}_{F}^{m}(\mathbf{x}) = \sum_{Q_i \in F}{(m - s(Q_i) + 1)} - t_{F}^{m}(\mathbf{x})
+\bar{t}_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}}{(m - s(Q_i) + 1)} - t_{\mathbb{F}}^{m}(\mathbf{x})
 \end{equation}
 
 All of the above functions expose important properties which lead to approximate solutions.
-\emph{Nondecreasing monotonicity} of functions $t_{Q}^{m}$ and $t_{F}^{m}$ follow from nondecreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{F}^{m}$. Consequently $\bar{t}_{Q}^{m}$ and $\bar{t}_{F}^{m}$ are \emph{monotone nonincreasing}.
+\emph{Nondecreasing monotonicity} of functions $t_{Q}^{m}$ and $t_{\mathbb{F}}^{m}$ follow from nondecreasing monotonicity of their boolean counterparts $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$. Consequently $\bar{t}_{Q}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are \emph{monotone nonincreasing}.
 From definition~\ref{eq:supermodularity}, function $t_{Q}^{m}$ is \emph{supermodular}, thus it follows that $\bar{t}_{Q}^{m}$ is \emph{submodular}.
-Since super and submodular functions are closed under non-negative linear combination, functions $t_{F}^{m}$ and $\bar{t}_{F}^{m}$ are respectively super and submodular.
+Since super and submodular functions are closed under non-negative linear combination, functions $t_{\mathbb{F}}^{m}$ and $\bar{t}_{\mathbb{F}}^{m}$ are respectively super and submodular.
 
 \subsection{Full-sensitivity}
 \label{sub:qgram-full-sensitivity}
