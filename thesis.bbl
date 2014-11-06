@@ -51,6 +51,79 @@ Belazzougui, D., Cunial, F., K{\"a}rkk{\"a}inen, J., and M{\"a}kinen, V.
   burrows-wheeler transform.
 \newblock In {\em Algorithms--ESA 2013\/}, pages 133--144. Springer.
 
+\bibitem[Bentley \ea(2008)Bentley, Balasubramanian, Swerdlow, Smith, Milton,
+  Brown, Hall, Evers, Barnes, Bignell, Boutell, Bryant, Carter, Keira~Cheetham,
+  Cox, Ellis, Flatbush, Gormley, Humphray, Irving, Karbelashvili, Kirk, Li,
+  Liu, Maisinger, Murray, Obradovic, Ost, Parkinson, Pratt, Rasolonjatovo,
+  Reed, Rigatti, Rodighiero, Ross, Sabot, Sankar, Scally, Schroth, Smith,
+  Smith, Spiridou, Torrance, Tzonev, Vermaas, Walter, Wu, Zhang, Alam,
+  Anastasi, Aniebo, Bailey, Bancarz, Banerjee, Barbour, Baybayan, Benoit,
+  Benson, Bevis, Black, Boodhun, Brennan, Bridgham, Brown, Brown, Buermann,
+  Bundu, Burrows, Carter, Castillo, Chiara E.~Catenazzi, Chang, Neil~Cooley,
+  Crake, Dada, Diakoumakos, Dominguez-Fernandez, Earnshaw, Egbujor, Elmore,
+  Etchin, Ewan, Fedurco, Fraser, Fuentes~Fajardo, Scott~Furey, George, Gietzen,
+  Goddard, Golda, Granieri, Green, Gustafson, Hansen, Harnish, Haudenschild,
+  Heyer, Hims, Ho, Horgan, Hoschler, Hurwitz, Ivanov, Johnson, James,
+  Huw~Jones, Kang, Kerelska, Kersey, Khrebtukova, Kindwall, Kingsbury,
+  Kokko-Gonzales, Kumar, Laurent, Lawley, Lee, Lee, Liao, Loch, Lok, Luo,
+  Mammen, Martin, McCauley, McNitt, Mehta, Moon, Mullens, Newington, Ning,
+  Ling~Ng, Novo, O'Neill, Osborne, Osnowski, Ostadan, Paraschos, Pickering,
+  Pike, Pike, Chris~Pinkard, Pliskin, Podhasky, Quijano, Raczy, Rae, Rawlings,
+  Chiva~Rodriguez, Roe, Rogers, Rogert~Bacigalupo, Romanov, Romieu, Roth,
+  Rourke, Ruediger, Rusman, Sanches-Kuiper, Schenker, Seoane, Shaw, Shiver,
+  Short, Sizto, Sluis, Smith, Ernest Sohna~Sohna, Spence, Stevens, Sutton,
+  Szajkowski, Tregidgo, Turcatti, Vandevondele, Verhovsky, Virk, Wakelin,
+  Walcott, Wang, Worsley, Yan, Yau, Zuerlein, Rogers, Mullikin, Hurles,
+  McCooke, West, Oaks, Lundberg, Klenerman, Durbin, and Smith]{Bentley2008}
+Bentley, D.~R., Balasubramanian, S., Swerdlow, H.~P., Smith, G.~P., Milton, J.,
+  Brown, C.~G., Hall, K.~P., Evers, D.~J., Barnes, C.~L., Bignell, H.~R.,
+  Boutell, J.~M., Bryant, J., Carter, R.~J., Keira~Cheetham, R., Cox, A.~J.,
+  Ellis, D.~J., Flatbush, M.~R., Gormley, N.~A., Humphray, S.~J., Irving,
+  L.~J., Karbelashvili, M.~S., Kirk, S.~M., Li, H., Liu, X., Maisinger, K.~S.,
+  Murray, L.~J., Obradovic, B., Ost, T., Parkinson, M.~L., Pratt, M.~R.,
+  Rasolonjatovo, I. M.~J., Reed, M.~T., Rigatti, R., Rodighiero, C., Ross,
+  M.~T., Sabot, A., Sankar, S.~V., Scally, A., Schroth, G.~P., Smith, M.~E.,
+  Smith, V.~P., Spiridou, A., Torrance, P.~E., Tzonev, S.~S., Vermaas, E.~H.,
+  Walter, K., Wu, X., Zhang, L., Alam, M.~D., Anastasi, C., Aniebo, I.~C.,
+  Bailey, D. M.~D., Bancarz, I.~R., Banerjee, S., Barbour, S.~G., Baybayan,
+  P.~A., Benoit, V.~A., Benson, K.~F., Bevis, C., Black, P.~J., Boodhun, A.,
+  Brennan, J.~S., Bridgham, J.~A., Brown, R.~C., Brown, A.~A., Buermann, D.~H.,
+  Bundu, A.~A., Burrows, J.~C., Carter, N.~P., Castillo, N., Chiara
+  E.~Catenazzi, M., Chang, S., Neil~Cooley, R., Crake, N.~R., Dada, O.~O.,
+  Diakoumakos, K.~D., Dominguez-Fernandez, B., Earnshaw, D.~J., Egbujor, U.~C.,
+  Elmore, D.~W., Etchin, S.~S., Ewan, M.~R., Fedurco, M., Fraser, L.~J.,
+  Fuentes~Fajardo, K.~V., Scott~Furey, W., George, D., Gietzen, K.~J., Goddard,
+  C.~P., Golda, G.~S., Granieri, P.~A., Green, D.~E., Gustafson, D.~L., Hansen,
+  N.~F., Harnish, K., Haudenschild, C.~D., Heyer, N.~I., Hims, M.~M., Ho,
+  J.~T., Horgan, A.~M., Hoschler, K., Hurwitz, S., Ivanov, D.~V., Johnson,
+  M.~Q., James, T., Huw~Jones, T.~A., Kang, G.-D., Kerelska, T.~H., Kersey,
+  A.~D., Khrebtukova, I., Kindwall, A.~P., Kingsbury, Z., Kokko-Gonzales,
+  P.~I., Kumar, A., Laurent, M.~A., Lawley, C.~T., Lee, S.~E., Lee, X., Liao,
+  A.~K., Loch, J.~A., Lok, M., Luo, S., Mammen, R.~M., Martin, J.~W., McCauley,
+  P.~G., McNitt, P., Mehta, P., Moon, K.~W., Mullens, J.~W., Newington, T.,
+  Ning, Z., Ling~Ng, B., Novo, S.~M., O'Neill, M.~J., Osborne, M.~A., Osnowski,
+  A., Ostadan, O., Paraschos, L.~L., Pickering, L., Pike, A.~C., Pike, A.~C.,
+  Chris~Pinkard, D., Pliskin, D.~P., Podhasky, J., Quijano, V.~J., Raczy, C.,
+  Rae, V.~H., Rawlings, S.~R., Chiva~Rodriguez, A., Roe, P.~M., Rogers, J.,
+  Rogert~Bacigalupo, M.~C., Romanov, N., Romieu, A., Roth, R.~K., Rourke,
+  N.~J., Ruediger, S.~T., Rusman, E., Sanches-Kuiper, R.~M., Schenker, M.~R.,
+  Seoane, J.~M., Shaw, R.~J., Shiver, M.~K., Short, S.~W., Sizto, N.~L., Sluis,
+  J.~P., Smith, M.~A., Ernest Sohna~Sohna, J., Spence, E.~J., Stevens, K.,
+  Sutton, N., Szajkowski, L., Tregidgo, C.~L., Turcatti, G., Vandevondele, S.,
+  Verhovsky, Y., Virk, S.~M., Wakelin, S., Walcott, G.~C., Wang, J., Worsley,
+  G.~J., Yan, J., Yau, L., Zuerlein, M., Rogers, J., Mullikin, J.~C., Hurles,
+  M.~E., McCooke, N.~J., West, J.~S., Oaks, F.~L., Lundberg, P.~L., Klenerman,
+  D., Durbin, R., and Smith, A.~J. (2008).
+\newblock Accurate whole human genome sequencing using reversible terminator
+  chemistry.
+\newblock {\em Nature\/}, {\bf 456}(7218), pages 53--59.
+
+\bibitem[Brown(2008)Brown]{Brown2008}
+Brown, D.~G. (2008).
+\newblock A survey of seeding for sequence alignment.
+\newblock {\em Bioinformatics algorithms: techniques and applications\/}, pages
+  126--152.
+
 \bibitem[Burkhardt and K{\"a}rkk{\"a}inen(2001)Burkhardt and
   K{\"a}rkk{\"a}inen]{Burkhardt2001}
 Burkhardt, S. and K{\"a}rkk{\"a}inen, J. (2001).
@@ -69,6 +142,12 @@ Burkhardt, S., Crauser, A., Ferragina, P., Lenhof, H.-P., Rivals, E., and
 \bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
 Burrows, M. and Wheeler, D.~J. (1994).
 \newblock A block-sorting lossless data compression algorithm.
+
+\bibitem[Califano and Rigoutsos(1993)Califano and Rigoutsos]{Califano1993}
+Califano, A. and Rigoutsos, I. (1993).
+\newblock Flash: A fast look-up algorithm for string homology.
+\newblock In {\em Computer Vision and Pattern Recognition, 1993. Proceedings
+  CVPR'93., 1993 IEEE Computer Society Conference on\/}, pages 353--359. IEEE.
 
 \bibitem[Chinwalla \ea(2002)Chinwalla, Cook, Delehaunty, Fewell, Fulton,
   Fulton, Graves, Hillier, Mardis, McPherson, \ea]{Chinwalla2002}
@@ -254,13 +333,6 @@ Jokinen, P. and Ukkonen, E. (1991).
 \newblock Two algorithms for approxmate string matching in static texts.
 \newblock In {\em Mathematical Foundations of Computer Science 1991\/}, pages
   240--248. Springer.
-
-\bibitem[K{\"a}rkk{\"a}inen and Na(2007)K{\"a}rkk{\"a}inen and
-  Na]{Kaerkkaeinen2007}
-K{\"a}rkk{\"a}inen, J. and Na, J. (2007).
-\newblock Faster filters for approximate string matching.
-\newblock In {\em Workshop on Algorithm Engineering and Experiments
-  (ALENEX07)\/}.
 
 \bibitem[K{\"a}rkk{\"a}inen and Sanders(2003)K{\"a}rkk{\"a}inen and
   Sanders]{Kaerkkaeinen2003}
@@ -534,6 +606,11 @@ Rasmussen, K.~R., Stoye, J., and Myers, E.~W. (2006).
 \newblock Efficient q-gram filters for finding all $\varepsilon$-matches over a
   given length.
 \newblock {\em J. Comput. Biol.}, {\bf 13}(2), pages 296--308.
+
+\bibitem[Rusk(2010)Rusk]{Rusk2010}
+Rusk, N. (2010).
+\newblock Torrents of sequence.
+\newblock {\em Nature Methods\/}, {\bf 8}(1), pages 44--44.
 
 \bibitem[Samonte and Eichler(2002)Samonte and Eichler]{Samonte2002}
 Samonte, R.~V. and Eichler, E.~E. (2002).
