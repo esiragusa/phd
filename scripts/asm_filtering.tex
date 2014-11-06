@@ -22,9 +22,9 @@ I present the following $q$-gram filtering methods:
 \emph{gapped $q$-grams} \citep{Burkhardt2001}, and
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 %\end{inparaenum}
-Contiguous $q$-grams rely on a counting argument to filter out text regions containing less than a given threshold of $q$-gram occurrences.
+Contiguous $q$-grams rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
-Multiple gapped $q$-grams conjunct multiple patterns of don't care positions to further increase specificity.
+Multiple gapped $q$-grams adopt multiple patterns of don't care positions to further increase specificity.
 
 It will become clear through this chapter that seed filters are more practical, flexible, straightforward to design and implement than $q$-gram filters.
 All seed filters provide full-sensitive filtration schemes for the $k$-differences problem, while (multiple) gapped $q$-grams only for $k$-mismatches.
@@ -285,7 +285,7 @@ Filters for more general alignment problems have been proposed and implemented i
 
 \subsection{Principle}
 
-The counting argument of contiguous $q$-gram filters is based on the \emph{$q$-gram similarity measure}, which is defined as the number of substrings of length $q$ common to two given strings.
+The counting argument of contiguous $q$-gram filters is based on \emph{$q$-gram similarity}: the number of substrings of length $q$ common to two given strings.
 The following lemma relates $q$-gram similarity to edit distance, by giving a \emph{lower bound} on the $q$-gram similarity of any two strings $x,y$ within edit distance $k$.
 As for seed filters, this result then easily translates to $k$-differences.
 
@@ -308,20 +308,21 @@ Figure~\ref{fig:qgrams-ext} exemplifies.
 
 \subsection{Filtration schemes}
 
-Any pair $(q,t)$ solving an $(m,k)$ instance is a full-sensitive $q$-gram filtration scheme.
-%Among multiple full-sensitive $q$-gram filtration schemes, which is the best one?
-Which is the biggest $q$-gram length yielding lossless filtration given $m$ and $k$?
+I denote by pair $(q,t)$ the filtration scheme using $q$-grams with threshold $t$.
+According to lemma \ref{lemma:qgrams}, if $t = \tau_q(m,k) \geq 1$, then $(q,t)$ is full-sensitive for any $k$-differences instance where $|p|=m$, thus I say that $(q,t)$ \emph{solves} instance $(m,k)$.
+
+The following question then arises: which is the longest $q$-gram solving instance $(m,k)$?
 In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
 Thus, by substituting $\tau_q(m,k)$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to seed filters (see equation~\ref{eq:seed-len}).
 
-However, the biggest $q$-gram length does not yield always the most specific filtration scheme.
-For instance, a threshold of 1 discards completely the counting argument of lemma~\ref{lemma:qgrams} and makes filtration very unspecific in practice.
-Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length potentially yield more specific filtration.
-Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes for a fixed $(m,k)$ instance.
+However, the longest $q$-gram does not yield always the most specific filtration scheme.
+For instance, a threshold of 1 completely discards the counting argument of lemma~\ref{lemma:qgrams} and makes filtration very unspecific in practice.
+Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length yield more specific filtration.
+Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes solving a given $(m,k)$ instance.
 
 \begin{example}
 \label{ex:qgrams-ext-scheme}
-Given a $(100,4)$ instance, the following $(q,t)$ filtration schemes are full-sensitive:
+The following $(q,t)$ filtration schemes solve $(100,4)$-differences:
 $(20,1)$, $(19,6)$, $(18,11)$.
 %or any their permutation
 \end{example}
@@ -329,7 +330,7 @@ $(20,1)$, $(19,6)$, $(18,11)$.
 %\subsection{Implementation}
 \subsection{Bucketing}
 
-This filtering method requires \emph{bucketing} the text in windows, in order to enforce the counting argument of lemma \ref{lemma:qgrams}.
+Filtration with $q$-grams requires \emph{bucketing} the text in windows, in order to enforce the counting argument of lemma \ref{lemma:qgrams}.
 Buckets are obtained by subdividing the implicit DP matrix in parallelograms and projecting them on the text.
 Figure \ref{fig:swift} illustrates this concept: any approximate occurrence of the pattern in the text spans at most $k$ diagonals and is thus enclosed inside a parallelogram of width $k+1$ \citep{Rasmussen2006}.
 Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $m - k$ and $m + k$.
@@ -344,11 +345,11 @@ The implementations described in \citep{Rasmussen2006, Kehr2011, Weese2009} use 
 \end{figure}
 
 This method lends itself to work in a multiple online fashion rather than offline.
-The filtration stage scans the text and counts how many $q$-grams of the pattern fall into each bucket.
-The verification stage then verifies only parallelograms exceeding threshold $\tau_q(m,k)$.
-As long as the filter scans the text, it is necessary to remember only buckets spanning the patterns' lengths.
+The filtration stage scans the text and counts how many $q$-grams of each pattern fall into each parallelogram bucket.
+As long as the filter proceeds, it remembers only the buckets that span the patterns' lengths.
+The verification stage then verifies only parallelograms exceeding threshold $t$.
 Conversely, the program QUASAR \citep{Burkhardt1999} uses a $q$-gram index of the text to speed up the filtration phase.
-However, this implementation requires more memory, as it must keep the text index in memory and bucket the whole text.
+Such implementation requires more memory, as it must keep the text index in memory and bucket the whole text.
 
 % -----------------------------------------------------------------------------
 
@@ -478,7 +479,7 @@ Recall that a boolean function $f : \mathbb{B}^m \rightarrow \mathbb{B}$ is mono
 \label{eq:monotone-non-decreasing}
 f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m
 \end{equation}
-Both $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ satisfy the above inequality as they do not contain any predicate in negated form.
+Both $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ satisfy the above inequality as they do not contain any literal in negated form.
 Finally, $T_{Q}^{m}$ and $T_{\mathbb{F}}^{m}$ are \emph{minimal} as all monotone boolean functions in DNF are minimal.
 
 \subsubsection{Pseudo-boolean functions}
