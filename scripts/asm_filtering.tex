@@ -356,19 +356,22 @@ Such implementation requires more memory, as it must keep the text index in memo
 \section{Gapped $q$-grams}
 \label{sec:filtering:qgrams-gapped}
 
-\emph{Gapped $q$-grams} for approximate string matching have been proposed by \cite{Burkhardt2001}.
-The idea of \emph{gapped $q$-grams} is to lower the correlation between consecutive $q$-grams.
-Indeed, the $q$-gram lemma shows that one single edit distance error affects a cluster of $q$ consecutive $q$-grams.
-The occurrence of any contiguous $q$-gram is strongly correlated to the occurrences of its preceding and following $q$-grams.
-To lower this correlation, gapped $q$-grams skip characters at fixed positions using patterns of \emph{don't care positions}.
-In this way, the occurrence of a gapped $q$-gram remain unaffected by any mismatch falling within its don't care positions.
-Filtration specificity increases, because either the $q$-gram threshold or the $q$-gram length can be raised, in either cases preserving full-sensitivity.
-Unfortunately, don't care positions are immune to mismatches, but not to insertions and deletions.
-Therefore, this generalization of contiguous $q$-grams solves $k$-mismatches, but not $k$-differences.
+\cite{Califano1993} first introduced gapped $q$-grams in sequence analysis.
+Since then, a surprisingly high number of research papers have been published on this topic (see \cite{Brown2008} for a survey).
+Almost all works focus on lossy filtration for homology search, rather than full-sensitive filtration for approximate string matching.
+Here, I consider gapped $q$-grams only in the context of full-sensitive filtration for $k$-mismatches.
+This case has been first considered by \cite{Burkhardt2001}.
 
-Gapped $q$-grams rely on a generalization of the $q$-gram similarity measure (section~\ref{sec:filtering:qgrams-ext}) to \emph{subsequences}.
-A subsequence is a non-contiguous sequence of symbols of a given string.
-Hence, instead of substrings, filtration with gapped $q$-grams counts the number of subsequences of length $q$ common to two strings, whose positions are taken from a fixed set $Q$.
+\emph{Gapped $q$-grams} generalize contiguous $q$-grams by introducing patterns of \emph{don't care positions} that skip characters at fixed positions.
+Figure \ref{fig:qgrams-ext} shows that one single mismatch (an $R$ in the Hamming distance transcript) affects a cluster of $q$ consecutive $q$-gram occurrences.
+Conversely, as illustrated in figure \ref{fig:qgrams-gapped}, gapped $q$-gram occurrences are not affected by mismatches over don't care positions.
+This fact relaxes the minimum $q$-gram threshold (or length) guaranteeing full-sensitivity and opens the door to more specific filtration schemes.
+%Note that insertions and deletions still affect don't care positions, hence $Q$-grams do not solve $k$-differences.
+%Note how the occurrence of each contiguous $q$-gram is strongly correlated to the preceding and following ones.
+%\emph{gapped $q$-grams} lower the correlation between the occurrences of consecutive $q$-grams.
+
+Gapped $q$-grams are based on a generalization of $q$-gram similarity (section~\ref{sec:filtering:qgrams-ext}) from substrings to \emph{subsequences} (\ie \emph{non-contiguous} sequences of symbols of another string).
+Filtration with gapped $q$-grams thus counts the number of subsequences of length $q$ common to two strings, whose positions are taken from a fixed set $Q$.
 The formal definition of gapped $q$-gram follows.
 
 \begin{definition}
@@ -379,10 +382,10 @@ The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
 %I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
 
-Figure~\ref{fig:qgrams-gapped} shows an example of gapped $q$-gram.
-As in lemma \ref{lemma:qgrams}, the $Q$-gram threshold $\tau_Q$ depends only on parameters $(m,k)$;
-therefore, I refer to filtration schemes $(Q,t)$ solving $(m,k)$ instances.
-However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but only a lower bound.
+Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
+As in lemma \ref{lemma:qgrams}, the $Q$-gram threshold still depends only on parameters $(m,k)$,
+thus I still consider filtration schemes $(Q,t)$ solving $(m,k)$ instances.
+However, contrary to $q$-grams, function $\tau_Q$ now provides only a lower bound to the minimum threshold guaranteeing full-sensitivity.
 
 \begin{figure}[t]
 \begin{center}
@@ -392,7 +395,7 @@ However, lemma \ref{lemma:qgrams} does not give anymore a tight threshold, but o
 \end{center}
 \end{figure}
 
-To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-gram families} (or \emph{multiple gapped $q$-grams}) for approximate string matching.
+To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-gram families} (also known as \emph{multiple gapped $q$-grams}).
 Filtration with a $q$-gram family combines a set of multiple distinct gapped $q$-grams in a disjunctive way.
 The generalized counting principle now adds all occurrences of any gapped $q$-gram in the set.
 Figure~\ref{fig:qgrams-multiple} illustrates.
@@ -562,6 +565,92 @@ Moreover, since super and submodular functions are closed under non-negative lin
 Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Non Detection} exist, under the assumption that $P \neq NP$.
 This fact motivates me to give ILP or approximate solutions to optimization and counting problems related to \textsc{Non Detection}.
 
+\subsection{Optimal threshold}
+\label{sub:qgram-optimal-threshold}
+
+%Which is the highest $Q$-gram threshold $t^*$ that guarantees full-sensitivity for a $()$?
+%This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
+
+\subsubsection{Problem definition}
+
+\paragraph{}
+\begin{tabular}{rl}
+{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
+{\bf Solution}	&	The largest integer $t^*$ such that $(Q,t^*)$ solves $(m,k)$.\\
+\end{tabular}
+\\
+
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define \textsc{Optimal Threshold} as the minimization of a supermodular function subject to linear constraints
+\begin{equation}
+\begin{array}{ll}
+\min & t_{Q}^{m} (\mathbf{x})			\\
+\wrt									\\
+& \mathbf{x} \in \Bo^m_k				\\
+\end{array}
+\end{equation}
+
+Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudoneg}, I consider the \emph{complementary} \textsc{Optimal Threshold} problem as the maximization of a submodular function subject to linear constraints:
+\begin{equation}
+\begin{array}{ll}
+\max & \bar{t}_{Q}^{m} (\mathbf{x})		\\
+\wrt									\\
+& \mathbf{x} \in \bar{\Bo}^m_k			\\
+\end{array}
+\end{equation}
+
+\subsubsection{Previous results}
+
+\textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the span of the $Q$-gram.
+ \cite{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $\Oh(m \cdot k \cdot 2^{s(Q)})$.
+\cite{Kucherov2005} give an extension for $Q$-gram families.
+
+\subsubsection{Exact ILP solution}
+
+I reduce this problem to \textsc{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
+\begin{equation}
+\begin{array}{ll}
+\max & \sum c_j							\\
+\wrt									\\
+& \mathbf{x} \in \Bo^m_k				\\
+& \mathbf{c} \in \Bo^{m - s(Q) + 1}		\\
+& x_i \geq c_j	\quad \quad \forall \, i,j	\\
+\end{array}
+\end{equation}
+where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
+From the ILP solution $c^*$, I derive the exact solution to \textsc{Optimal Threshold} as $t^* = m - s(Q) + 1 - \sum c^*$.
+
+\subsubsection{APX solution}
+
+Algorithm~\ref{alg:qgram-threshold-apx} computes via \emph{gradient descent} an approximate solution to \textsc{Optimal Threshold}.
+This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
+The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
+
+\begin{figure*}[h]
+\begin{center}
+\begin{minipage}[t]{.8\textwidth}
+\begin{algorithm}[H]
+\Algorithm{OptimalThreshold}{$Q,m,k$}
+\begin{tabular}{ll}
+\textbf{Input}  & $Q$ : $Q$-gram sequence\\
+				& $m$ : integer denoting the pattern length\\
+				& $k$ : integer denoting the mismatches threshold\\
+\textbf{Output} & integer indicating the maximum lossless threshold\\
+\end{tabular}
+\begin{algorithmic}[1]
+\State {$\mathbf{x} \gets \mathbf{1}^m$}
+\While {$k > 0$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
+	\State {$x_i \gets 0$}
+	\State {$k \gets k - 1$}
+\EndWhile
+\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
+\end{algorithmic}
+\label{alg:qgram-threshold-apx}
+\end{algorithm}
+\end{minipage}
+\end{center}
+\end{figure*}
+
 \subsection{Minimum lossy distance}
 \label{sub:qgram-min-lossy-distance}
 
@@ -578,8 +667,8 @@ Recalling pseudo-boolean function \ref{eq:qgram-pseudo}, I define this problem a
 \begin{equation}
 \begin{array}{ll}
 \min & |\mathbf{x}|_0			\\
-w.r.t.								\\
-& \mathbf{x} \in \Bo^m					\\
+\wrt							\\
+& \mathbf{x} \in \Bo^m				\\
 & \bar{t}_{Q}^{m}(\mathbf{x}) = 0	\\
 \end{array}
 \end{equation}
@@ -590,7 +679,7 @@ I reduce the problem to \textsc{Minimum Set Cover} \citep{Vazirani2001} and solv
 \begin{equation}
 \begin{array}{ll}
 \min & \sum \bar{\mathbf{x}}	\\
-w.r.t.						\\
+\wrt						\\
 & \mathbf{x} \in \Bo^m			\\
 & \mathbf{A}\mathbf{x} \geq \mathbf{b}	\\
 \end{array}
@@ -642,92 +731,6 @@ Algorithm \ref{alg:qgram-maxdist-apx} computes via \emph{gradient descent} a sol
 \State \Return $k$
 \end{algorithmic}
 \label{alg:qgram-maxdist-apx}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{figure*}
-
-\subsection{Optimal threshold}
-\label{sub:qgram-optimal-threshold}
-
-%Which is the highest $Q$-gram threshold $t^*$ that guarantees full-sensitivity for a $()$?
-%This problem has been introduced in \citep{Burkhardt2001}. %and generalized in \citep{Kucherov2005}.
-
-\subsubsection{Problem definition}
-
-\paragraph{}
-\begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
-{\bf Solution}	&	The largest integer $t^*$ such that $(Q,t^*)$ solves $(m,k)$.\\
-\end{tabular}
-\\
-
-Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudo}, I define \textsc{Optimal Threshold} as the minimization of a supermodular function subject to linear constraints
-\begin{equation}
-\begin{array}{ll}
-\min & t_{Q}^{m} (\mathbf{x})			\\
-w.r.t.								\\
-& \mathbf{x} \in \Bo^m_k				\\
-\end{array}
-\end{equation}
-
-Recalling $Q$-gram pseudo-boolean functions \ref{eq:qgram-pseudoneg}, I consider the \emph{complementary} \textsc{Optimal Threshold} problem as the maximization of a submodular function subject to linear constraints:
-\begin{equation}
-\begin{array}{ll}
-\max & \bar{t}_{Q}^{m} (\mathbf{x})		\\
-w.r.t.								\\
-& \mathbf{x} \in \bar{\Bo}^m_k			\\
-\end{array}
-\end{equation}
-
-\subsubsection{Previous results}
-
-\textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the span of the $Q$-gram.
- \cite{Burkhardt2001} give a DP algorithm computing the optimal threshold in time $\Oh(m \cdot k \cdot 2^{s(Q)})$.
-\cite{Kucherov2005} give an extension for $Q$-gram families.
-
-\subsubsection{Exact ILP solution}
-
-I reduce this problem to \textsc{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
-\begin{equation}
-\begin{array}{ll}
-\max & \sum c_j					\\
-w.r.t.							\\
-& \mathbf{x} \in \Bo^m_k			\\
-& c \in \Bo^{m - s(Q) + 1}		\\
-& x_i \geq c_j				\\
-\end{array}
-\end{equation}
-where variable $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
-From the ILP solution $c^*$, I derive the exact solution to \textsc{Optimal Threshold} as $t^* = m - s(Q) + 1 - \sum c^*$.
-
-\subsubsection{APX solution}
-
-Algorithm~\ref{alg:qgram-threshold-apx} computes via \emph{gradient descent} an approximate solution to \textsc{Optimal Threshold}.
-This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
-The same \emph{absolute error} applies to \textsc{Optimal Threshold}.
-
-\begin{figure*}[h]
-\begin{center}
-\begin{minipage}[t]{.8\textwidth}
-\begin{algorithm}[H]
-\Algorithm{OptimalThreshold}{$Q,m,k$}
-\begin{tabular}{ll}
-\textbf{Input}  & $Q$ : $Q$-gram sequence\\
-				& $m$ : integer denoting the pattern length\\
-				& $k$ : integer denoting the mismatches threshold\\
-\textbf{Output} & integer indicating the maximum lossless threshold\\
-\end{tabular}
-\begin{algorithmic}[1]
-\State {$\mathbf{x} \gets \mathbf{1}^m$}
-\While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
-	\State {$x_i \gets 0$}
-	\State {$k \gets k - 1$}
-\EndWhile
-\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
-\end{algorithmic}
-\label{alg:qgram-threshold-apx}
 \end{algorithm}
 \end{minipage}
 \end{center}
