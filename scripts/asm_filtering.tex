@@ -512,7 +512,7 @@ The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $t=\
 
 \subsubsection{Approximate solution}
 
-Pseudo-boolean function $t_{Q}^{m}$ (equation \ref{eq:qgram-pseudo}) has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
+Pseudo-boolean function $t_{Q}^{m}$ has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
 In particular, supermodularity is the discrete analog of concavity.
 These properties allow to compute approximate solutions to constrained optimization problems in polynomial time.
 A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
@@ -535,14 +535,16 @@ It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequal
 
 Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
 An analogous algorithm for the maximization of a monotone submodular function subject to linear constraints has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
+Algorithm \ref{alg:qgram-threshold-apx} achieves the same \emph{absolute error}, however this does not translate into a relative error, \ie its result is not guaranteed to be within a constant ratio from the optimum.
+This problem involves the minimization of a pseudo-boolean function which is monotone non-decreasing.
+%Thus \textsc{Optimal Threshold} cannot be said to be in APX.
+
 %I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 %\begin{equation}
 %\label{eq:qgram-pseudoneg}
 %\bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
 %\end{equation}
 %Function $\bar{t}_{Q}^{m}$ is monotone non-increasing and submodular.
-The same \emph{absolute error} applies to \textsc{Optimal Threshold}, but not the relative error, thus optimal threshold cannot be said to be in APX.
-
 %I consider the complementary problem, being the maximization of a submodular function subject to linear constraints:
 %{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^m_k$
 
