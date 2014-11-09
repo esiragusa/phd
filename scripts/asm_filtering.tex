@@ -185,7 +185,7 @@ On those texts, uniform seed length often leads to suboptimal filtration.
 \label{sec:seeds-apx}
 
 The simple analysis of section~\ref{sec:filtering:exact:efficiency} shows that filtration specificity is strongly correlated to the seed length.
-Therefore, the crux of designing a stronger filter lies into increasing the seed length while maintaining the full-sensitivity constrains.
+Therefore, the crux of designing a stronger filter lies into increasing the seed length while maintaining the full-sensitivity constraints.
 \citeauthor{Myers1994}, subsequently followed by \citeauthor{Navarro2000}, proposed \emph{approximate seeds} as a practical and effective generalization of exact seeds, yielding stronger filters for $k$-differences.
 The key idea of filtration with approximate seeds is to reduce the approximate search into smaller approximate searches, as opposed to filtration with exact seeds that reduces into smaller exact searches.
 
@@ -432,7 +432,7 @@ This fact motivates me to give integer linear programs (ILPs) and approximate al
 \subsection{Non detection}
 \label{sub:qgram-non-detection}
 
-In order to formally define \textsc{Non Detection}, I introduce a simple characteristic function indicating which transcripts pass through a $Q$-gram filtration scheme.
+I start by modeling the decision problem \textsc{Non Detection} before turning to the optimization problem \textsc{Optimal Threshold}.
 I consider any Hamming distance transcript over $\{ R, M \}$ as an $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
 Accordingly, I denote by $|\mathbf{x}|_0=m - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,t)$.
@@ -486,35 +486,35 @@ The formal definition of \textsc{Optimal Threshold} follows.
 \begin{problem}[\textsc{Optimal Threshold}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
-{\bf Solution}	&	$\min \, t_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \Bo^m_k$
+{\bf Solution}	&	$\min \, t_{Q}^{m}(\mathbf{x})$ subject to $\mathbf{x} \in \Bo^m_k$
 \end{tabular}
 \end{problem}
 
 \subsubsection{Exact solution}
 
-The following ILP solves \textsc{optimal threshold}.
-%I reduce complementary \textsc{optimal threshold} to \textsc{maximum coverage} \citep{Vazirani2001} and solve it with the following ILP
+The following ILP solves \textsc{Optimal Threshold}.
+%The complementary \textsc{optimal threshold} is \textsc{maximum coverage} \citep{Vazirani2001}.
 
 \begin{equation}
-\begin{array}{ll}
-\max & \sum c_j							\\
-\wrt									\\
+\begin{array}{lll}
+\min & \sum \mathbf{t}					\\
+\text{subject to}						\\
+& \mathbf{t} \in \Bo^{m - s(Q) + 1}		\\
 & \mathbf{x} \in \Bo^m_k				\\
-& \mathbf{c} \in \Bo^{m - s(Q) + 1}		\\
-& x_i \geq c_j	\quad \quad \forall \, i,j	\\
+& t_i \geq x_{i+j} 						& \forall \, 1 \leq i \leq m-s(Q)+1 \quad \quad \forall \, j \in Q \\
 \end{array}
 \end{equation}
 
-Vector $\mathbf{x}$ represents the hamming transcript; each $x_i$ is subject to an integer linear constrain \st the hamming distance of $\mathbf{x}$ is within $k$.
-Vector $\mathbf{c}$ represents the function $T_{Q}^{m}$; each $c_j$ indicates the truthfulness of the $j$-th clause in $T_{Q}^{m}$.
-The set of inequalities binds the truthfulness of each clause $c_j$ to its corresponding $x_i$ in the transcript.
-The exact solution to \textsc{Optimal Threshold} is derived as $t^* = m - s(Q) + 1 - \sum c^*$ from the ILP solution $c^*$.
+Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $t_{Q}^{m}$; each $t_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$.
+Vector $\mathbf{x}$ represents any hamming transcript; each $x_j$ is subject to an integer linear constrain \st the hamming distance of $\mathbf{x}$ is within $k$.
+The set of inequalities of the form $t_i \geq x_{i+j}$ binds the satisfiability of each clause $t_i$ to its associated transcript values $x_j$.
+The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $t=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(m,k)$.
 
 \subsubsection{Approximate solution}
 
 Pseudo-boolean function $t_{Q}^{m}$ (equation \ref{eq:qgram-pseudo}) has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
-In particular, supermodularity and submodularity are the discrete analogs of concavity and convexity.
-These properties allow to compute in polynomial time approximate solutions to constrained optimization problems.
+In particular, supermodularity is the discrete analog of concavity.
+These properties allow to compute approximate solutions to constrained optimization problems in polynomial time.
 A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
 \begin{equation}
 \label{eq:monotone-non-decreasing}
@@ -523,55 +523,50 @@ f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \m
 and it is \emph{supermodular} iff 
 \begin{equation}
 \label{eq:supermodularity}
-f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \wedge \mathbf{z}) + f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m.
+f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \vee \mathbf{z}) + f(\mathbf{y} \wedge \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m.
 \end{equation}
 %or, equivalently, if all its second order derivatives are non-negative, \ie
 %\begin{equation}
 %\label{eq:supermodularity-partial}
 %\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^m \text{ and } \forall \, 1 \leq i \leq j \leq m
 %\end{equation}
-It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequalities, as by definition it does not contain any term in negative form (see equation \ref{eq:qgram-pseudo}).
+It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
+\textsc{Optimal Threshold} thus involves the minimization of a monotone supermodular function subject to linear constraints.
 
-\textsc{Optimal Threshold} thus involves the minimization of a supermodular function subject to linear constraints.
 Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
-This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
-The same \emph{absolute error} applies to \textsc{Optimal Threshold}, but not the relative error, thus optimal threshold cannot be said to be in APX.
-
-%I define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
+An analogous algorithm for the maximization of a monotone submodular function subject to linear constraints has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
+%I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 %\begin{equation}
 %\label{eq:qgram-pseudoneg}
 %\bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
 %\end{equation}
-%Consequently, the complementary function $\bar{t}_{Q}^{m}$ is monotone nonincreasing and submodular.
-%
-%I consider the \emph{complementary} \textsc{Optimal Threshold} problem as the maximization of a submodular function subject to linear constraints:
-%\begin{problem}[\textsc{Optimal Threshold}]
-%\begin{tabular}{rl}
-%{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
+%Function $\bar{t}_{Q}^{m}$ is monotone non-increasing and submodular.
+The same \emph{absolute error} applies to \textsc{Optimal Threshold}, but not the relative error, thus optimal threshold cannot be said to be in APX.
+
+%I consider the complementary problem, being the maximization of a submodular function subject to linear constraints:
 %{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^m_k$
-%\end{tabular}
-%\end{problem}
-% $f$ is \emph{submodular} if $-f$ is supermodular.
 
 \begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{OptimalThreshold}{$Q,m,k$}
+\Algorithm{ApproximateThreshold}{$Q,m,k$}
 \begin{tabular}{ll}
 \textbf{Input}  & $Q$ : $Q$-gram sequence\\
 				& $m$ : integer denoting the pattern length\\
-				& $k$ : integer denoting the mismatches threshold\\
-\textbf{Output} & integer indicating the maximum lossless threshold\\
+				& $k$ : integer bounding the number of mismatches\\
+\textbf{Output} & integer indicating the optimal threshold\\
 \end{tabular}
 \begin{algorithmic}[1]
 \State {$\mathbf{x} \gets \mathbf{1}^m$}
 \While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\mathbf{x})}{\partial x_j}$}
+%	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
 	\State {$x_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
+\State \Return $t^m_Q(\mathbf{x})$
+%\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
@@ -602,14 +597,14 @@ Finally, $T_{Q}^{m}$ is \emph{minimal} as all monotone boolean functions in DNF 
 
 For threshold $t=1$, this number is simply the number of true assignments of $T_{Q}^{m}$, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
 \citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001} to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
-This method is known as \emph{importance sampling} \citep{Vazirani2001}.
+%This method is known as \emph{importance sampling} \citep{Vazirani2001}.
 Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
 
 \begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{TranscriptsDetected}{$Q,t,m$}
+\Algorithm{TranscriptsCount}{$Q,t,m$}
 \begin{tabular}{ll}
 \textbf{Input}  & $Q$ : $Q$-gram sequence\\
 				& $t$ : integer denoting the threshold\\
