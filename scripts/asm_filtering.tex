@@ -423,7 +423,7 @@ Therefore, \textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the 
 \cite{Nicolas2005} considered the decision problem \textsc{Non Detection} associated to \textsc{Optimal Threshold}.
 They show that \textsc{Non Detection} is \emph{strongly} NP-complete by performing an indirect reduction from \textsc{Exact Cover by 3-Sets}.
 Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Non Detection} exist, under the assumption that $P \neq NP$.
-This fact motivates me to give integer linear programs (ILPs) or approximate solutions to \textsc{Optimal Threshold}.
+This fact motivates me to give integer linear programs (ILPs) and approximate algorithms for the above problems.
 
 %\cite{Burkhardt2001} considered also question \label{enum:qgram-fp}.
 
@@ -512,24 +512,30 @@ The exact solution to \textsc{Optimal Threshold} is derived as $t^* = m - s(Q) +
 
 \subsubsection{Approximate solution}
 
-Pseudo-boolean function \ref{eq:qgram-pseudo} has particular properties in respect to monotonicity and modularity.
-\emph{Supermodularity} and \emph{submodularity} are the discrete analogs of concavity and convexity.
-These properties allow to compute in polynomial time approximate solutions to optimization problems subject to certain constrains.
+Pseudo-boolean function $t_{Q}^{m}$ (equation \ref{eq:qgram-pseudo}) has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
+In particular, supermodularity and submodularity are the discrete analogs of concavity and convexity.
+These properties allow to compute in polynomial time approximate solutions to constrained optimization problems.
+A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
+\begin{equation}
+\label{eq:monotone-non-decreasing}
+f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m
+\end{equation}
+and it is \emph{supermodular} iff 
+\begin{equation}
+\label{eq:supermodularity}
+f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \wedge \mathbf{z}) + f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m.
+\end{equation}
+%or, equivalently, if all its second order derivatives are non-negative, \ie
+%\begin{equation}
+%\label{eq:supermodularity-partial}
+%\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^m \text{ and } \forall \, 1 \leq i \leq j \leq m
+%\end{equation}
+It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequalities, as by definition it does not contain any term in negative form (see equation \ref{eq:qgram-pseudo}).
 
-A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{R}$ is \emph{supermodular} iff 
-\begin{equation}
-\label{eq:supermodularity}
-f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \wedge \mathbf{z}) + f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m,
-\end{equation}
-or it is \emph{submodular} if $-f$ is supermodular.
-An equivalent definition of supermodularity states that all second order derivatives must be non-negative, \ie
-\begin{equation}
-\label{eq:supermodularity}
-\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^m \text{ and } \forall \, 1 \leq i \leq j \leq m.
-\end{equation}
-This latter definition is evident for $t_{Q}^{m}$, as definition \ref{eq:qgram-pseudo} does not contain any negative term.
-Thus, function $t_{Q}^{m}$ is supermodular.
-The non-decreasing monotonicity of function $t_{Q}^{m}$ immediately follows from the non-decreasing monotonicity of its boolean counterpart $T_{Q}^{m}$.
+\textsc{Optimal Threshold} thus involves the minimization of a supermodular function subject to linear constraints.
+Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
+This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
+The same \emph{absolute error} applies to \textsc{Optimal Threshold}, but not the relative error, thus optimal threshold cannot be said to be in APX.
 
 %I define the complementary function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 %\begin{equation}
@@ -545,11 +551,7 @@ The non-decreasing monotonicity of function $t_{Q}^{m}$ immediately follows from
 %{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^m_k$
 %\end{tabular}
 %\end{problem}
-
-\textsc{Optimal Threshold} involves the minimization of a supermodular function subject to linear constraints.
-Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
-This algorithm has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001} for the complementary \textsc{Optimal Threshold} problem.
-The same \emph{absolute error} applies to \textsc{Optimal Threshold}, but not the relative error, thus optimal threshold cannot be said to be in APX.
+% $f$ is \emph{submodular} if $-f$ is supermodular.
 
 \begin{figure*}[b]
 \begin{center}
@@ -595,12 +597,6 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 \subsubsection{FPRAS solution}
 
 By construction, $T_{Q}^{m}$ is a boolean function in \emph{disjunctive normal form} (\emph{DNF}).
-Moreover, $T_{Q}^{m}$ is \emph{monotone non-decreasing}.
-Recall that a boolean function $f : \mathbb{B}^m \rightarrow \mathbb{B}$ is monotone non-decreasing iff 
-\begin{equation}
-\label{eq:monotone-non-decreasing}
-f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m
-\end{equation}
 Function $T_{Q}^{m}$ satisfies the above inequality as it does not contain any literal in negated form.
 Finally, $T_{Q}^{m}$ is \emph{minimal} as all monotone boolean functions in DNF are minimal.
 
@@ -609,7 +605,7 @@ For threshold $t=1$, this number is simply the number of true assignments of $T_
 This method is known as \emph{importance sampling} \citep{Vazirani2001}.
 Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
 
-\begin{figure*}[t]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
