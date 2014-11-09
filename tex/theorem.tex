@@ -7,11 +7,15 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[chapter]
-%\newtheorem{problem}{Problem}[chapter]
-%\newtheorem*{problem*}{Problem}
+
+\newtheoremstyle{break}
+  {\topsep}{\topsep}%
+  {\itshape}{}%
+  {\bfseries}{}%
+  {\newline}{}%
+  
+\theoremstyle{break}
+\newtheorem{problem}{Problem}[chapter]
 
 \theoremstyle{remark}
 \newtheorem{remark}{Remark}[chapter]
-
-%\theoremstyle{break}
-%\newtheorem{definition}{Definition}[chapter]
