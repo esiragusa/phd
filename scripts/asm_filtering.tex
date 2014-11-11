@@ -307,6 +307,7 @@ Figure~\ref{fig:qgrams-ext} exemplifies.
 \end{figure}
 
 \subsection{Filtration schemes}
+\label{sec:filtering:qgrams-ext:schemes}
 
 I denote by pair $(q,t)$ the filtration scheme counting $q$-grams with threshold $t$.
 According to lemma \ref{lemma:qgrams}, if $t = \tau_q(m,k) \geq 1$, then $(q,t)$ is full-sensitive for any $k$-differences instance where $|p|=m$.
@@ -400,39 +401,55 @@ However, contrary to contiguous $q$-grams, function $\tau_Q$ now gives only a lo
 \end{figure}
 
 
-\subsection{Design problems}
+\subsection{Filtration schemes}
 \label{sub:qgram:design}
 
-The design of $Q$-grams raises hard combinatorial problems.
-Fixed a $Q$-gram:
+Which is the most specific filtration scheme $(Q,t)$ solving a given instance $(m,k)$?
+This question turns out to be surprisingly hard to answer.
+As discussed in section \ref{sec:filtering:qgrams-ext:schemes}, the most specific filtration schemes for contiguous $q$-grams are easily found.
+The choice falls on a few values of $q$ that are close to the maximum and do not yield a threshold too close to $1$.
+Conversely, such choice is non-trivial for $Q$-grams, as the search space of $Q$ is exponentially large in the span $s(Q)$ and a full-sensitivity threshold for arbitrary $Q$-grams is hard to compute.
+In addition, it is not easy to determine which filtration scheme is the most specific one in a set of full-sensitive candidates.
 
+%The design of $Q$-gram filtration schemes raises hard combinatorial problems.
+Given a $Q$-gram, I consider the following problems:
 \begin{table}[h]
 \begin{tabular}{rl}
-\textsc{Non Detection} & Does filtration scheme $(Q,1)$ solve instance $(m,k)$?\\
+\textsc{Full Sensitivity} & Does filtration scheme $(Q,1)$ solve instance $(m,k)$?\\
 \textsc{Optimal Threshold} & Which is the optimal threshold $t^*$ \st $(Q,t^*)$ solves $(m,k)$?\\
-\textsc{Specificity} & Which is the expected specificity of $(Q,t)$?\\
+\textsc{Specificity} & Which is the expected specificity of scheme $(Q,t)$?\\
 \end{tabular}
 \end{table}
 %\label{enum:qgram-distance} Which is the minimum distance $k^*$ for which $(m,k^*)$ is not solved by $(Q,t)$?
 
+\cite{Nicolas2005} considered the decision problem \textsc{Full Sensitivity} associated to \textsc{Optimal Threshold}.
+\textsc{Full Sensitivity} is easy for contiguous $q$-grams, \ie the answer is no iff $\tau_q(m,k) = 0$.
+\citeauthor{Nicolas2005} show, by performing an indirect reduction from \textsc{Exact Cover by 3-Sets}, that \textsc{Full Sensitivity} is \emph{strongly} NP-complete for arbitrary $Q$-grams.
+Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Full Sensitivity} exist, under the assumption that $P \neq NP$.
+
 \cite{Burkhardt2001} first considered the optimization problem \textsc{Optimal Threshold}.
-Function $\tau_q$ from lemma \ref{lemma:qgrams} gives an optimal solution only for contiguous $q$-grams.
-They give a DP algorithm computing the optimal threshold of arbitrary $Q$-grams in time $\Oh(m \cdot k \cdot 2^{s(Q)})$.
-Therefore, \textsc{Optimal Threshold} is fixed-parameter tractable (FPT) in the span of the $Q$-gram.
+They give a DP algorithm solving \textsc{Optimal Threshold} in time $\Oh(m \cdot k \cdot 2^{s(Q)})$ for any $Q$-gram.
+Subsequently, they use their DP algorithm to explore the search space of full-sensitive $Q$-grams for some specific instances of $(m,k)$.
+They reduce the search space using a \emph{branch-and-bound} algorithm based on the observation
+\begin{eqnarray}
+Q_1 \subseteq Q_2 \iff \tau_{Q_1}(m,k) \geq \tau_{Q_2}(m,k).
+\end{eqnarray}
+Finally, \citeauthor{Burkhardt2001} guess the most specific filtration scheme $(Q,t)$ by computing, again via branch-and-bound, the minimum number of characters covered by $t$ distinct $Q$-gram occurrences (\textsc{Minimum Coverage} criterion).
 
-\cite{Nicolas2005} considered the decision problem \textsc{Non Detection} associated to \textsc{Optimal Threshold}.
-They show that \textsc{Non Detection} is \emph{strongly} NP-complete by performing an indirect reduction from \textsc{Exact Cover by 3-Sets}.
-Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Non Detection} exist, under the assumption that $P \neq NP$.
-This fact motivates me to give integer linear programs (ILPs) and approximate algorithms for the above problems.
+I propose alternative algorithms for the design of $Q$-gram filtration schemes.
+I give an \emph{integer linear program} (ILP) that solves exactly \textsc{Optimal Threshold} and is usually much quicker than the DP algorithm from \citep{Burkhardt2001}.
+Afterwards, I give a simple polynomial time \emph{approximation algorithm} for \textsc{Optimal Threshold} usable as an additional search space filter to quickly discard lossy $Q$-grams, or providing good ILP starting points.
+Finally, I propose a randomized algorithm to estimate in polynomial time the specificity of a filtration scheme, instead of using the \textsc{Minimum Coverage} criterion.
 
-%\cite{Burkhardt2001} considered also question \label{enum:qgram-fp}.
+Having said that, I have no practical interest into designing $Q$-gram filtration schemes.
+On the one hand, almost all HTS applications require methods that solve $k$-differences in order to detect indels.
+On the other hand, the experimental evaluation of section \ref{sec:filtering:evaluation} shows that seed filters outperform $Q$-gram filters on practical instances of $k$-mismatch.
+Therefore, I have no need to use these algorithms in practice.
 
-%\item Which $Q$-gram provides the most specific filtration?
-
-\subsection{Non detection}
+\subsection{Full Sensitivity}
 \label{sub:qgram-non-detection}
 
-I start by modeling the decision problem \textsc{Non Detection} before turning to the optimization problem \textsc{Optimal Threshold}.
+I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
 I consider any Hamming distance transcript over $\{ R, M \}$ as an $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
 Accordingly, I denote by $|\mathbf{x}|_0=m - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,t)$.
@@ -456,13 +473,13 @@ T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} x_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
 According to definition \ref{def:qgram-detection}, filtration scheme $(Q,t)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
-The formal definition of \textsc{Non Detection} follows.
+The formal definition of \textsc{Full Sensitivity} follows.
 
 %The utility of these functions is manyfold.
-%In section \ref{sub:qgram-optimal-threshold}, I use them within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Non Detection}.
+%In section \ref{sub:qgram-optimal-threshold}, I use them within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Full Sensitivity}.
 %In section \ref{sub:qgram-specificity}, I reduce the estimation of filtration sensitivity to a counting problem on boolean functions.
 
-\begin{problem}[\textsc{Non Detection}]
+\begin{problem}[\textsc{Full Sensitivity}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance. \\
 {\bf Question}	&	$\exists \, \mathbf{x} \in \Bo^m_k$ \st $T_{Q}^{m}(\mathbf{x}) = 0$? \\
@@ -535,8 +552,9 @@ It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequal
 
 Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
 An analogous algorithm for the maximization of a monotone submodular function subject to linear constraints has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
-Algorithm \ref{alg:qgram-threshold-apx} achieves the same \emph{absolute error}, however this does not translate into a relative error, \ie its result is not guaranteed to be within a constant ratio from the optimum.
-This problem involves the minimization of a pseudo-boolean function which is monotone non-decreasing.
+Algorithm \ref{alg:qgram-threshold-apx} achieves the same \emph{absolute error}, but this result does not translate into a relative error.
+Indeed, pseudo-boolean function $t_{Q}^{m}$ is monotone non-decreasing, thus its unconstrained minimum is $0$.
+Thus the result of algorithm \ref{alg:qgram-threshold-apx} is not guaranteed to be within a constant ratio from the optimum.
 %Thus \textsc{Optimal Threshold} cannot be said to be in APX.
 
 %I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
@@ -580,9 +598,8 @@ This problem involves the minimization of a pseudo-boolean function which is mon
 \subsection{Specificity}
 \label{sub:qgram-specificity}
 
-Which is the expected specificity of a filtration scheme $(Q,t)$?
-Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of a filtration scheme is proportional to the number of detected transcripts.
-Among full-sensitive filtration schemes, one that maximizes the expected specificity is preferable.
+Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of any filtration scheme is proportional to the number of transcripts detected.
+Thus, among multiple full-sensitive filtration schemes, one clearly prefers the one that minimizes the number of transcripts detected.
 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
@@ -591,68 +608,50 @@ Among full-sensitive filtration schemes, one that maximizes the expected specifi
 \end{tabular}
 \end{problem}
 
-\subsubsection{FPRAS solution}
+\subsubsection{Approximate solution}
 
-By construction, $T_{Q}^{m}$ is a boolean function in \emph{disjunctive normal form} (\emph{DNF}).
-Function $T_{Q}^{m}$ satisfies the above inequality as it does not contain any literal in negated form.
-Finally, $T_{Q}^{m}$ is \emph{minimal} as all monotone boolean functions in DNF are minimal.
+I propose a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001} to estimate the number of transcripts detected by a filtration scheme of the type $(Q,1)$.
+This number coincides with the number of true assignments to the boolean function $T_{Q}^{m}$, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
+Boolean function $T_{Q}^{m}$, as defined in equation \ref{eq:qgram-bool}, is in \emph{disjunctive normal form} (\emph{DNF}).
+Counting the number of true assignments to an arbitrary boolean function in DNF is a classic \emph{\#P-complete} problem, that however allows approximability to any degree \citep{Vazirani2001}.
 
-For threshold $t=1$, this number is simply the number of true assignments of $T_{Q}^{m}$, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
-\citeauthor{Karp1989} introduce a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001} to count the number of true assignments of a boolean function in DNF \citep{Karp1989}.
-%This method is known as \emph{importance sampling} \citep{Vazirani2001}.
-Algorithm~\ref{alg:qgram-specificity} works for an arbitrary threshold.
+Algorithm~\ref{alg:qgram-specificity} follows the algorithm in \citep{Karp1989} to estimate the number of true assignments of an arbitrary boolean function in DNF.
 
 \begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{TranscriptsCount}{$Q,t,m$}
+%\Algorithm{CountTranscripts}{$Q,t,m,\epsilon$}
+\Algorithm{CountTranscripts}{$Q,m,\epsilon$}
 \begin{tabular}{ll}
 \textbf{Input}  & $Q$ : $Q$-gram sequence\\
-				& $t$ : integer denoting the threshold\\
+%				& $t$ : integer denoting the threshold\\
 				& $m$ : integer denoting the pattern length\\
+				& $\epsilon$ : real $\in [0,1]$ denoting the approximation factor\\
 \textbf{Output} & integer indicating the number of transcripts detected\\
 \end{tabular}
-%\begin{algorithmic}[1]
-%\State {\Return 0}
-%\end{algorithmic}
+\begin{algorithmic}[1]
+\State $C \gets m+s(Q)+1$
+\State $M \gets C \cdot 2^{m-w(Q)}$
+\State $N \gets 4 \cdot C^2 / \epsilon^2$
+\State $T \gets 0$
+\Repeat
+	\State {$i \gets$ \Call{random}{$C$}}
+	\State {$\mathbf{x} \gets$ \Call{random}{${0,1}^m$}}
+	\ForAll {$j \in Q$}
+		\State {$x_{i+j} \gets 1$}
+	\EndFor
+	\State $T \gets T + t_Q^m(\mathbf{x})$
+\Until {$N$}
+\State \Return $N \cdot M / T$
+\end{algorithmic}
 \label{alg:qgram-specificity}
 \end{algorithm}
 \end{minipage}
 \end{center}
 \end{figure*}
 
-%\subsection{Optimal gapped $q$-grams}
-%
-%Introduced in \citep{Nicolas2005}.
-%
-%\subsubsection{Problem definition}
-%
-%\paragraph{}
-%\begin{tabular}{rl}
-%{\bf Instance}	&	A finite set $S$ of transcripts.\\
-%{\bf Solution}	&	A $Q$-gram that detects all transcripts of $S$.\\
-%{\bf Measure}	&	The weight $w(Q)$ of the $Q$-gram.\\
-%\end{tabular}
-%\\
-%
-%Given a set of transcripts, find the $Q$-gram of maximum weight detecting all transcripts.
-%This applies to the DNA Homology Search Framework as well.
-%%The MWLS is not the optimal seed for approximate string matching filtration nor for sequence homology filtration.
-%%On the one hand the weight is just an estimator of sensibility regardless of threshold, on the other hand filtration speed decreases with increasing weight.
-%
-%\subsubsection{Hardness and inapproximability results}
-%
-%Nicolas et al. \citep{Nicolas2005} perform an approximation preserving reduction from \textsc{Maximum Independent Set}.
-%MWLS is NP-hard and APX-hard within $(|S|)^{0.25 - \epsilon}$ unless $P = NP$.
-%If $S = \Bo^{m}_{k}$, $|S| = \binom{m}{k}$.
-%
-%\subsubsection{Branch-and-bound search}
-%
-%Burkhardt et al. \citep{Burkhardt2001} bounding criterion. If $Q_1 \subseteq Q_2$, then $t_{Q_2}(m,k) \leq t_{Q_1}(m,k)$.
-%Such bounding criterion allows to discard parts of the search space which do not solve the considered $(m,k)$ instance.
-%%The search space of seed families is more dense than the search space of single seeds (i.e. almost all seed families solve a give Non Detection instance). Thus search space pruning would not be as effective.
-
+%Finally, $T_{Q}^{m}$ is \emph{minimal} (definition \ref{}) as all monotone boolean functions in DNF are minimal.
 
 \subsection{Families}
 
