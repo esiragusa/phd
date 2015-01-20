@@ -158,7 +158,7 @@ This fact considerably simplifies a fine-grained parallelization of the tool.
 \section{Evaluation}
 \label{sec:yara:eval}
 
-The evaluation consists of three experiments, using the human genome (GRCh37) as the reference.
+The evaluation consists of three experiments, all using the human reference genome (GRCh37).
 The first experiment assesses all-mapping sensitivity by applying the Rabema benchmark on real data.
 The second experiment evaluates best-mapping accuracy on simulated data.
 The last experiment assesses the performance of best-mappers within a variant calling pipeline applied to real data.
@@ -237,7 +237,7 @@ The simulated data consists of $10\,\text{M}$ Illumina-like $2 \times 100\,\text
 The experiment considers the same simulated reads twice, first as unpaired and then as paired-end including insert size information.
 
 For each tool, the accuracy benchmark counts each read as \emph{correctly mapped} if its \emph{primary} mapping location has been reported within $10\,\text{bp}$ of the simulated location, or \emph{incorrectly mapped} otherwise.
-Subsequently, the benchmark \epmh{stratifies} (\ie sorts) mapped reads by mapping quality, \st reads that each tool estimates to be correctly mapped precede those which are estimated to be incorrectly mapped.
+Subsequently, the benchmark \emph{stratifies} (\ie sorts) mapped reads by mapping quality, \st reads that each tool estimates to be correctly mapped precede those which are estimated to be incorrectly mapped.
 Finally, the benchmark cumulates the counts of correctly and incorrectly mapped reads and plots them as \emph{receiver operating characteristic} (ROC) curves.
 Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accuracy-pe}.
 
@@ -246,7 +246,7 @@ Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accura
 \caption[Yara accuracy results on simulated single-end data]{Yara accuracy results on simulated single-end data.}
 \label{fig:yara:accuracy-se}
 \includegraphics{hiseq_hg19_like_se.accuracy.pdf}
-%\includegraphics{hiseq_hg19_like_se.accuracy.log.pdf}
+\includegraphics{hiseq_hg19_like_se.accuracy.log.pdf}
 \end{center}
 \end{figure}
 
@@ -262,7 +262,7 @@ Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accura
 \caption[Yara accuracy results on simulated paired-end data]{Yara accuracy results on simulated paired-end data.}
 \label{fig:yara:accuracy-pe}
 \includegraphics{hiseq_hg19_like_pe.accuracy.pdf}
-%\includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
+\includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
 \end{center}
 \end{figure}
 
@@ -287,10 +287,19 @@ The output of the evaluation is plotted as ROC curves in figure~\ref{fig:yara:ca
 
 \begin{figure}[t]
 \begin{center}
-\caption[Variant calling accuracy results]{Variant calling accuracy results.}
+\caption[SNPs calling accuracy results]{SNPs calling accuracy results.}
 \label{fig:yara:calling-snps}
 \includegraphics{SRR1611178.snp.pdf}
-%\includegraphics{SRR1611178.snp.log.pdf}
+\includegraphics{SRR1611178.snp.log.pdf}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\caption[INDELs calling accuracy results]{INDELs calling accuracy results.}
+\label{fig:yara:calling-indels}
+\includegraphics{SRR1611178.indel.pdf}
+\includegraphics{SRR1611178.indel.log.pdf}
 \end{center}
 \end{figure}
 
