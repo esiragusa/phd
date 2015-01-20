@@ -158,8 +158,18 @@ This fact considerably simplifies a fine-grained parallelization of the tool.
 \section{Evaluation}
 \label{sec:yara:eval}
 
-The evaluation consists of three experiments: accuracy on simulated data, Rabema benchmark on simulated and real data, and throughput on real data.
-In each experiment, I compare Yara in best-mapping with GEM, Bowtie\,2 and BWA, while in all-mapping with GEM, RazerS\,3, and Hobbes\,2.
+The evaluation consists of three experiments, using the human genome (GRCh37) as the reference.
+The first experiment assesses all-mapping sensitivity by applying the Rabema benchmark on real data.
+The second experiment evaluates best-mapping accuracy on simulated data.
+The last experiment assesses the performance of best-mappers within a variant calling pipeline applied to real data.
+In addition, all above experiments track runtimes and memory consumptions.
+
+%Experiment measure read mapping throughput in \emph{giga base pairs per hour} (Gbp/h).
+%The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
+%Under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+%Runtimes for each tool are measured on de-facto standard input and output formats, \ie they consider the time to produce a compressed BAM file from a gzipped FastQ file.
+
+I compared Yara to the following state-of-the-art tools: Bowtie\,2, BWA, GEM, RazerS\,3, and Hobbes\,2.
 
 \subsection{Experimental setup}
 
@@ -173,83 +183,34 @@ When processing paired-end reads, I provided the tools with appropriate insert s
 
 All tools run on a desktop computer running Linux~3.10.11, equipped with one Intel\textsuperscript{\textregistered} Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
 For maximum throughput, all tools run using eight threads.
-For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, real throughputs might be slightly higher than the measured ones.
+For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, all measured running times might be slightly higher than the actual ones.
 
-\subsubsection{Datasets}
+\subsection{Rabema benchmark on real data}
 
-The reference in all experiments is the human whole genome (GRCh38).
-The simulated data consists of $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{Holtgrewe2010}.
-The mean insert size is \texttt{INS = 175} and the deviation \texttt{ERR = 225}.
-The real data is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
-the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
-This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads, produced by an Illumina HiSeq 2000 instrument.
-BWA reports mean insert size \texttt{INS = 178} and deviation \texttt{ERR = 200}.
-
-\subsection{Accuracy on simulated data}
-
-I introduce an \emph{accuracy benchmark} to measure the accuracy of read mappers in finding the \emph{original} location of simulated reads.
-This benchmark considers for each read only the \emph{first primary mapping location} encountered while scanning the SAM file \citep{Li2009a} produced by each tool;
-this policy mimics the behavior of de-facto standard \emph{best-mapping analysis pipelines}, \eg the GATK \citep{DePristo2011}.
-This accuracy benchmark counts a simulated read as \emph{correctly mapped} if the found mapping location corresponds to its original location,
-it computes the \emph{recall} of each tool as the fraction of correctly mapped reads and the \emph{precision} as the fraction of mapped reads that are correct;
-for a thorough evaluation, it also classes all simulated reads by the \emph{error rate} of their original locations, then computes recall and precision within each error rate class.
-
-I repeated this experiment twice: first providing the simulated reads as unpaired, then as paired-end with additional insert size information.
-Results are shown in table~\ref{tab:yara:accuracy}.
-
-%This experiment is independent of the scoring scheme used by any tool, \eg edit distance or quality based.
-%It does not consider mapping qualities; a mapping quality cutoff tends to lower recall and increase precision of all tools.
-
-%\subsubsection{Single-end mapping}
-%Comment best and all-mappers. All-mappers do not perform better than best-mappers as I consider only one primary mapping location.
-%\subsubsection{Paired-end mapping}
-%Comment the accuracy improvement due to paired-end information.
-
-\begin{table*}[t]
-  \caption[Yara accuracy results]
-  {
-  \label{tab:yara:accuracy}
-    Accuracy results on the human whole genome.
-    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ reads as unpaired; the right panel shows the results of mapping the same reads as paired-end, providing additional insert size information.
-    Big numbers show total scores, while small numbers show marginal scores for the reads at $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
-    }
-  \vspace{-3mm}
-  \center
-  \sffamily
-  \resizebox{0.95\textwidth}{!}
-  {
-	\renewcommand{\tabcolsep}{0.8ex}
-	\input{tables/table_yara_accuracy}
-  }
-\end{table*}
-
-
-\subsection{Rabema benchmark on simulated and real data}
-
-The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.1) measures the sensitivity of read mappers in finding \emph{relevant} mapping locations of simulated or real reads.
-This experiment considers the Rabema benchmark category \emph{all} for all-mappers and \emph{all-best} for best-mappers.
+The first experiment evaluates the sensitivity of all-mapping on real data through the Rabema benchmark.
+The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.1) measures the sensitivity of read mappers in finding \emph{relevant} mapping locations of genomic reads.
+This experiment considers the Rabema benchmark categories \emph{all} and \emph{all-best}.
 In the category all, Rabema counts as relevant, for each read, all mapping locations within a maximal edit distance error rate; in the category all-best it considers just co-optimal mapping locations.
 Rabema computes the \emph{sensitivity} of each tool as the fraction of relevant mapping locations found per read.
-Analogously to the accuracy benchmark, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
+For a thorough evaluation, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
 The benchmark reports percentual scores normalized by the number of reads.
 
-I applied the Rabema benchmark both on simulated and real data, within an error rate of 5\,\%.
-Therefore, I built a Rabema gold standard for each dataset by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
-I provided unpaired reads to each tool as the Rabema benchmark by definition does not consider paired-end reads.
+The data used in this experiment is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
+the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
+This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads produced by an Illumina HiSeq 2000 instrument.
+For practical reasons, in the category \emph{all-best} I consider the first $10\,\text{M}$ reads, while in the category \emph{all} the first $1\,\text{M}$ reads.
+
+I run the Rabema benchmark within an error rate of 5\,\%, as it is sufficient to map almost all reads in the dataset.
+Therefore, I built a Rabema gold standard by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
+Subsequently, I provided unpaired reads to each tool as the Rabema benchmark, by definition, does not consider paired-end reads.
 Results are shown in table~\ref{tab:yara:rabema}.
-
-%Contrarily to the accuracy experiment of section~\label{sec:yara:evaluation:accuracy}, this experiment considers multiple mapping locations per read.
-
-%\subsubsection{Simulated data}
-%\subsubsection{Real data}
 
 \begin{table*}[t]
   \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
-    Rabema benchmark results on the human whole genome.
+    Rabema benchmark results on the human reference genome.
     The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ simulated reads; the right panel shows the results of mapping $1\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ real reads.
-%    Big numbers show total scores in each Rabema category and small numbers show the category scores separately for reads with
     Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
     $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
@@ -264,43 +225,79 @@ Results are shown in table~\ref{tab:yara:rabema}.
 \end{table*}
 
 
-\subsection{Throughput on real data}
+Comment sensitivity.
 
-This experiment complements the sensitivity evaluation on real data provided by the Rabema benchmark.
-The goal of this experiment is to determine if read mappers are able to sustain sequencing throughput of the instrument or constitute a potential bottleneck in the data analysis pipeline.
-This experiment measures read mapping throughput in \emph{giga base pairs per hour} (Gbp/h).
-The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
-Under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+Comment throughput.
 
-For an accurate throughput estimation, best-mappers processed $10\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ reads, while for all-mappers it was sufficient to process $1\,\text{M}$ reads.
-For a fair comparison, best-mappers produced a SAM file as expected by de-facto standard best-mapping pipelines, while all-mappers output a file in native format (SAM for Yara and Hobbes\,2, custom for Gem and RazerS\,3).
+\subsection{Accuracy on simulated data}
 
-%\subsubsection{Single-end mapping}
-%\subsubsection{Paired-end mapping}
+The second experiment evaluates the ability of best-mappers to find the \emph{original} location of simulated reads and assign to them a mapping quality.
+Contrarily to the Rabema benchmark (section~\label{sec:yara:evaluation:rabema}), this experiment relies on simulated data and considers only one mapping location per read.
+The simulated data consists of $10\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{Holtgrewe2010}; the mean insert size is \texttt{INS = 300} and the standard deviation is \texttt{ERR = 20}.
+The experiment considers the same simulated reads twice, first as unpaired and then as paired-end including insert size information.
 
-\begin{table*}[t]
-  \caption[Yara throughput on real data]
-  {
-    \label{tab:yara:throughput}
-    Read mapping throughput on the human whole genome.
-    All tools run using 8 threads on a desktop computer equipped with an Intel Core i7-4770K CPU.
-    The left panel shows the results of mapping $2 \times 100\,\text{bp}$ Illumina HiSeq\,2000 reads as single-end;
-    the right panel shows the results of mapping the same reads as paired-end.
-    The maximum throughput of an Illumina HiSeq\,2500 is $5.56$ Gbp/h.
-  }
-	\vspace{-3mm}
-	\center
-	\sffamily
-%	\resizebox{1.0\textwidth}{!}
-%	{
-		\renewcommand{\tabcolsep}{0.8ex}
-		\input{tables/table_yara_throughput}
-%	}
-\end{table*}
+For each tool, the accuracy benchmark counts each read as \emph{correctly mapped} if its \emph{primary} mapping location has been reported within $10\,\text{bp}$ of the simulated location, or \emph{incorrectly mapped} otherwise.
+Subsequently, the benchmark \epmh{stratifies} (\ie sorts) mapped reads by mapping quality, \st reads that each tool estimates to be correctly mapped precede those which are estimated to be incorrectly mapped.
+Finally, the benchmark cumulates the counts of correctly and incorrectly mapped reads and plots them as \emph{receiver operating characteristic} (ROC) curves.
+Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accuracy-pe}.
 
-%\subsection{Variant calling on real data}
-%This experiments assesses the performance of read mappers on variant calling using real data.
-%I use the GCAT benchmark.
+\begin{figure}[t]
+\begin{center}
+\caption[Yara accuracy results on simulated single-end data]{Yara accuracy results on simulated single-end data.}
+\label{fig:yara:accuracy-se}
+\includegraphics{hiseq_hg19_like_se.accuracy.pdf}
+%\includegraphics{hiseq_hg19_like_se.accuracy.log.pdf}
+\end{center}
+\end{figure}
+
+%\begin{figure}[t]
+%\begin{center}
+%\caption[Yara throughput results on simulated single-end data]{Yara throughput results simulated single-end data.}
+%\label{fig:yara:throughput-se}
+%\end{center}
+%\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+\caption[Yara accuracy results on simulated paired-end data]{Yara accuracy results on simulated paired-end data.}
+\label{fig:yara:accuracy-pe}
+\includegraphics{hiseq_hg19_like_pe.accuracy.pdf}
+%\includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
+\end{center}
+\end{figure}
+
+Comment accuracy.
+
+Comment throughput.
+
+\subsection{Variant calling on real data}
+
+The last experiment assesses the performance of the same variant calling tool applied to the output of various best-mappers.
+The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide polymorphism (SNP) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \cite{Zook2014}.
+Thus, this experiment uses well-characterized datasets to estimate both true-positive and false-negative rates of each best-mapper within variant calling pipelines.
+
+The GIAB consortium provides a set of calls (NIST v2.18) for the pilot genome NA12878.
+Thus, this experiment applies all variant calling pipelines on an exome re-sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
+Such sequencing run, produced by the XXX Institute, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~x.
+
+As variant caller, this experiment adopts the widely used \emph{GATK Unified Genotyper} (UG), which calls both SNVs and INDELs.
+According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} and subsequently compare called variants to the set of trusted variants using the tool \emph{UGene XXX}.
+This last tool counts the number of correct and incorrect variants, stratifies them by variant quality, and reports their cumulated counts.
+The output of the evaluation is plotted as ROC curves in figure~\ref{fig:yara:calling-snps}.
+
+\begin{figure}[t]
+\begin{center}
+\caption[Variant calling accuracy results]{Variant calling accuracy results.}
+\label{fig:yara:calling-snps}
+\includegraphics{SRR1611178.snp.pdf}
+%\includegraphics{SRR1611178.snp.log.pdf}
+\end{center}
+\end{figure}
+
+Comment accuracy.
+
+Comment throughput.
+
 
 % -----------------------------------------------------------------------------
 
