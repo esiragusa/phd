@@ -158,18 +158,20 @@ This fact considerably simplifies a fine-grained parallelization of the tool.
 \section{Evaluation}
 \label{sec:yara:eval}
 
-The evaluation consists of three experiments, all using the human reference genome (GRCh37).
+The evaluation consists of three experiments, all performed on the human reference genome (GRCh37).
 The first experiment assesses all-mapping sensitivity by applying the Rabema benchmark on real data.
 The second experiment evaluates best-mapping accuracy on simulated data.
 The last experiment assesses the performance of best-mappers within a variant calling pipeline applied to real data.
-In addition, all above experiments track runtimes and memory consumptions.
 
-%Experiment measure read mapping throughput in \emph{giga base pairs per hour} (Gbp/h).
-%The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
-%Under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
+All experiments consider also read mapping throughputs and memory consumptions.
+Read mapping throughput is measured in \emph{giga base pairs per hour} (Gbp/h).
+The Illumina HiSeq\,2500 in a six days run produces\footnote{According to the specifications at \url{http://res.illumina.com/documents/products/datasheets/datasheet_hiseq2500.pdf} for high output run mode with dual flow cell.} up to 800~Gbp as $2 \times 100\,\text{bp}$ paired-end reads.
+Under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ Gbp/h.
 %Runtimes for each tool are measured on de-facto standard input and output formats, \ie they consider the time to produce a compressed BAM file from a gzipped FastQ file.
 
-I compared Yara to the following state-of-the-art tools: Bowtie\,2, BWA, GEM, RazerS\,3, and Hobbes\,2.
+In addition to Yara, I consider the following state-of-the-art tools: Bowtie\,2, BWA, GEM, RazerS\,3, and Hobbes\,2.
+Bowtie\,2 and BWA are suited for best-mapping, while RazerS\,3 and Hobbes\,2 for all-mapping.
+GEM, in addition to all-mapping, can be used for best-mapping only to some extent, as it does not compute mapping qualities.
 
 \subsection{Experimental setup}
 
@@ -186,11 +188,12 @@ For maximum throughput, all tools run using eight threads.
 For accurate running time comparisons, I disabled Intel Turbo Boost; therefore, all measured running times might be slightly higher than the actual ones.
 
 \subsection{Rabema benchmark on real data}
+\label{sec:yara:eval:rabema}
 
-The first experiment evaluates the sensitivity of all-mapping on real data through the Rabema benchmark.
-The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.1) measures the sensitivity of read mappers in finding \emph{relevant} mapping locations of genomic reads.
-This experiment considers the Rabema benchmark categories \emph{all} and \emph{all-best}.
-In the category all, Rabema counts as relevant, for each read, all mapping locations within a maximal edit distance error rate; in the category all-best it considers just co-optimal mapping locations.
+The first experiment uses the Rabema benchmark to evaluate all-mappers sensitivity on real data.
+The \emph{Rabema benchmark} \citep{Holtgrewe2011} (v1.2) measures the sensitivity of read mappers in finding \emph{relevant} mapping locations of genomic reads.
+This experiment is subdivided in two categories: \emph{suboptimal} and \emph{co-optimal}.
+In the category suboptimal, Rabema counts as relevant, for each read, all suboptimal mapping locations within a maximal edit distance error rate, \ie all strata; in the category all-best it considers just co-optimal mapping locations, \ie only the best stratum.
 Rabema computes the \emph{sensitivity} of each tool as the fraction of relevant mapping locations found per read.
 For a thorough evaluation, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
 The benchmark reports percentual scores normalized by the number of reads.
@@ -198,19 +201,18 @@ The benchmark reports percentual scores normalized by the number of reads.
 The data used in this experiment is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
 the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
 This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads produced by an Illumina HiSeq 2000 instrument.
-For practical reasons, in the category \emph{all-best} I consider the first $10\,\text{M}$ reads, while in the category \emph{all} the first $1\,\text{M}$ reads.
+For practical reasons, in the category \emph{co-optimal} I consider the first $10\,\text{M}$ reads, while in the category \emph{suboptimal} only the first $1\,\text{M}$ reads.
 
-I run the Rabema benchmark within an error rate of 5\,\%, as it is sufficient to map almost all reads in the dataset.
-Therefore, I built a Rabema gold standard by running RazerS\,3 in full-sensitive mode up to 5\,\% error rate.
-Subsequently, I provided unpaired reads to each tool as the Rabema benchmark, by definition, does not consider paired-end reads.
-Results are shown in table~\ref{tab:yara:rabema}.
+An error rate of 5\,\%, is sufficient to map almost all reads in the dataset.
+Therefore, I built a Rabema gold standard by running RazerS\,3 in full-sensitive mode within 5\,\% error rate.
+Subsequently, I provided the reads as unpaired to each tool, as the Rabema benchmark is not meaningful for paired-end reads.
 
 \begin{table*}[t]
   \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
     Rabema benchmark results.
-    The left panel shows the results of best-mapping $10\,\text{M}$ whole human genome $100\,\text{bp}$ Illumina HiSeq 2000 reads; the right panel shows the results of all-mapping only the first $1\,\text{M}$ reads.
+    The left panel shows the results of finding all co-optimal mapping locations of $10\,\text{M}$ whole human genome $100\,\text{bp}$ Illumina HiSeq 2000 reads; the right panel shows the results of finding all suboptimal mapping locations of only the first $1\,\text{M}$ reads.
     Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
     $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
@@ -225,22 +227,36 @@ Results are shown in table~\ref{tab:yara:rabema}.
   }
 \end{table*}
 
+\subsubsection{Co-optimal mapping locations}
+Results are shown in table~\ref{tab:yara:rabema} (left panel).
+Yara is the most sensitive tool in finding all co-optimal locations; it is full-sensitive up to 3~\% error rate.
+GEM is not full-sensitive even though it claims to be so; it looses 5.6~\% of normalized locations at 5~\% error rate.
+Bowtie~2 and BWA are not designed for this task; indeed, they loose a significant number of co-optimal locations.
+In addition, Yara has the highest throughput, being 1.7 times faster than GEM, 2.3 times faster than Bowtie~2 and 3.2 times faster than BWA.
 
-Comment sensitivity.
-
-Comment throughput.
+\subsubsection{Suboptimal mapping locations}
+Results are shown in table~\ref{tab:yara:rabema}  (right panel).
+RazerS~3 is the only full-sensitive tool in finding all sub-optimal locations.
+Hobbes~2 looses only a few points at 4-5~\% error rate.
+Yara is full-sensitive up to 3~\% error rate, nonetheless it looses only 2.8~\% of normalized locations at 5~\% error rate.
+However, looking at throughputs, Yara is 3.6 times faster than Hobbes~2 and 21.9 times faster than RazerS~3.
+In addition, Yara has a significantly lower memory footprint than its two competitors.
+GEM is again not full-sensitive; it looses more than 50~\% of normalized locations at 5~\% error rate.
+This could be due to a misconfiguration of the tool; nonetheless, I took the same parameterization used in the supplemental material of \citep{MarcoSola2012}.
 
 \subsection{Accuracy on simulated data}
+\label{sec:yara:eval:accuracy}
 
-The second experiment evaluates the ability of best-mappers to find the \emph{original} location of simulated reads and assign to them a mapping quality.
-Contrarily to the Rabema benchmark (section~\label{sec:yara:evaluation:rabema}), this experiment relies on simulated data and considers only one mapping location per read.
-The simulated data consists of $10\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the reference genome using Mason \citep{Holtgrewe2010}; the mean insert size is \texttt{INS = 300} and the standard deviation is \texttt{ERR = 20}.
-The experiment considers the same simulated reads twice, first as unpaired and then as paired-end including insert size information.
+The second experiment evaluates the ability of best-mappers to find the \emph{original} location of simulated reads and to estimate their mapping quality.
+Contrarily to the Rabema benchmark (section~\ref{sec:yara:eval:rabema}), this experiment relies on simulated data and considers only one \emph{primary mapping location} per read.
+I consider only tools suited for this specific task, \ie Bowtie~2 and BWA, in addition to Yara; GEM does not compute mapping qualities, while RazerS~3 and Hobbes~2 are two orders of magnitude slower than Yara, thus I discard them \emph{a priori}.
 
 For each tool, the accuracy benchmark counts each read as \emph{correctly mapped} if its \emph{primary} mapping location has been reported within $10\,\text{bp}$ of the simulated location, or \emph{incorrectly mapped} otherwise.
-Subsequently, the benchmark \emph{stratifies} (\ie sorts) mapped reads by mapping quality, \st reads that each tool estimates to be correctly mapped precede those which are estimated to be incorrectly mapped.
-Finally, the benchmark cumulates the counts of correctly and incorrectly mapped reads and plots them as \emph{receiver operating characteristic} (ROC) curves.
-Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accuracy-pe}.
+Subsequently, the benchmark \emph{stratifies} (\ie sorts) primary mapping locations by mapping quality, \st mapping locations estimated to be correct by the mapper precede those estimated to be incorrect.
+Finally, the benchmark cumulates the counts of correctly and incorrectly mapped locations and plots them as \emph{receiver operating characteristic} (ROC) curves.
+
+The dataset consists of $10\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the human reference genome using Mason \citep{Holtgrewe2010}; the mean insert size is \texttt{INS = 300} and the standard deviation is \texttt{ERR = 20}.
+To assess the improvements due to the knowledge of the insert size, the experiment considers twice the same simulated reads, first as unpaired and then as paired-end including insert size information.
 
 \begin{figure}[t]
 \begin{center}
@@ -248,6 +264,7 @@ Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accura
 \label{fig:yara:accuracy-se}
 \includegraphics{hiseq_hg19_like_se.accuracy.pdf}
 \includegraphics{hiseq_hg19_like_se.accuracy.log.pdf}
+\includegraphics{hiseq_hg19_like_se.default.runtime.pdf}
 \end{center}
 \end{figure}
 
@@ -264,33 +281,46 @@ Results are shown in figures~\ref{fig:yara:accuracy-se} and \ref{fig:yara:accura
 \label{fig:yara:accuracy-pe}
 \includegraphics{hiseq_hg19_like_pe.accuracy.pdf}
 \includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
+\includegraphics{hiseq_hg19_like_pe.default.runtime.pdf}
 \end{center}
 \end{figure}
 
-Comment accuracy.
+\subsubsection{Single-end reads}
+Results are shown in figure~\ref{fig:yara:accuracy-se}.
+The ROC curves in the top panel show incorrect locations on a linear scale, in order to highlight unmappable reads.
+Conversely, to focus on mappable reads, the ROC curves in the bottom panel show incorrect locations on a logarithmic scale.
+From both plots, it is visible that Yara always dominates BWA, which in turn always dominates Bowtie~2.
+
+Comment throughput.
+
+\subsubsection{Paired-end reads}
+Results are shown in figure~\ref{fig:yara:accuracy-pe}.
+Again, the ROC curves in the top panel show incorrect locations on a linear scale, while, those in the bottom panel are on a logarithmic scale.
+Yara still dominates BWA on the most mappable reads; however, compared to single-end reads, BWA on paired-end reads is closer to Yara.
+Bowtie~2 shows the worst accuracy. 
 
 Comment throughput.
 
 \subsection{Variant calling on real data}
+\label{sec:yara:eval:calling}
 
 % http://www.nature.com/nbt/journal/v32/n3/full/nbt.2835.html
 
-The last experiment assesses the performance of the same variant calling tool applied to the output of various best-mappers.
-The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide polymorphism (SNP) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \cite{Zook2014}.
-Thus, this experiment uses well-characterized datasets to estimate both true-positive and false-negative rates of each best-mapper within variant calling pipelines.
+The last experiment uses well-characterized datasets to estimate both true-positive and false-negative rates induced by various mappers within a best-mapping pipeline calling variants on real data.
+Each pipeline consists of one best-mapper, whose output is sorted by genomic position using \emph{samtools}, and subsequently given to the the widely used \emph{GATK Unified Genotyper} (UG) \citep{DePristo2012} to call both SNVs and INDELs.
+The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide variant (SNV) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \citep{Zook2014}.
 
 The GIAB consortium provides a set of calls (NIST v2.18) for the pilot genome NA12878.
-Thus, this experiment applies all variant calling pipelines on an exome re-sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
-Such sequencing run, produced by the XXX Institute, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~x.
+Each pipeline has to calls variants from an exome re-sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
+This run, produced by the XXX Institute, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~X.
 
-As variant caller, this experiment adopts the widely used \emph{GATK Unified Genotyper} (UG), which calls both SNVs and INDELs.
-According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} and subsequently compare called variants to the set of trusted variants using the tool \emph{UGene XXX}.
+According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} and subsequently compares called variants to the set of GIAB trusted variants using the tool \emph{UGene XXX}.
 This last tool counts the number of correct and incorrect variants, stratifies them by variant quality, and reports their cumulated counts.
-The output of the evaluation is plotted as ROC curves in figure~\ref{fig:yara:calling-snps}.
+The output of the evaluation is plotted as ROC curves.
 
 \begin{figure}[t]
 \begin{center}
-\caption[SNPs calling accuracy results]{SNPs calling accuracy results.}
+\caption[SNPs calling accuracy results]{SNVs calling accuracy results.}
 \label{fig:yara:calling-snps}
 \includegraphics{SRR1611178.snp.pdf}
 \includegraphics{SRR1611178.snp.log.pdf}
@@ -306,8 +336,30 @@ The output of the evaluation is plotted as ROC curves in figure~\ref{fig:yara:ca
 \end{center}
 \end{figure}
 
-Comment accuracy.
+\begin{figure}[t]
+\begin{center}
+\caption[Throughput results]{Throughput results.}
+\label{fig:yara:throughput}
+\includegraphics{SRR1611178.default.runtime.pdf}
+\end{center}
+\end{figure}
 
+
+\subsubsection{SNVs calling}
+Figure~\ref{fig:yara:calling-snps} shows the SNVs calling accuracy results.
+The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to low-quality calls.
+Conversely, to focus on high-quality calls, the ROC curves in the bottom panel show incorrect SNVs on a logarithmic scale.
+From the top curves is evident that Yara induces up to 3 times fewer incorrect SNVs than BWA, while
+from the bottom curves is clear that Yara induces a significantly higher number of high-quality calls.
+The poor performance of GEM is interesting, as the tool does not annotate mapping locations with qualities.
+
+\subsubsection{INDELs calling}
+Figure~\ref{fig:yara:calling-indels} shows the INDELs calling accuracy results.
+Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
+Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it performs local alignments rather than semi-global alignments.
+Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
+
+\subsubsection{Throughput}
 Comment throughput.
 
 
