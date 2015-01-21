@@ -2,46 +2,18 @@
 \label{sec:yara}
 
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
-Yara works with Illumina or Ion Torrent reads, supports paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
+Yara works with Illumina or Ion Torrent reads, supports both paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
 
 % -----------------------------------------------------------------------------
 
 \section{Engineering}
 \label{sec:yara:eng}
 
-\subsection{Adaptive filtration}
-\label{sec:yara:eng:adaptive}
-
-Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
-Read mappers like RazerS\,3 \citep{Weese2012} and mrFast \citep{Ahmadi2012} are designed around na\"ive filtration with exact seeds.
-This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
-Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
-whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
-This filtration method speeds up Masai by an order of magnitude but has some drawbacks:
-it needs external parametrization, lacks flexibility and is suboptimal in practice.
-
-Yara applies an adaptive filtration scheme \emph{per read} because, under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical human genome resequencing, most reads produce very few verifications and are easily mappable, while few other reads are problematic and often not even confidently mappable to one single location.
-Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
-An adaptive filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
-Yara thus automatically chooses an adaptive filtration scheme per read, without requiring manual parameterization by the user.
-
-Adaptive filtration works as follows.
-Yara initially applies filtration with exact seeds to all reads.
-The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
-This decision depends on fine-tuned internal verification thresholds.
-Under standard Illumina setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
-Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.
-
-%For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
-%under these terms, a single read produces an average of 15000 verifications, and the verification phase takes 99\,\% of the runtime.
-%On the same mapping setup, this method produces 3 $1$--approximate seeds of length 33\,bp; thus a single read produces 1400 verifications on average.
-%Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
-%The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
-
 \subsection{Stratified mapping}
 \label{sec:yara:eng:strata}
 
-All-mapping methods consider a set of relevant mapping locations per read.
+Yara follows the concept of stratified all-mapping.
+The all-mapping methods discussed so far consider a set of relevant mapping locations per read.
 Yet, this definition leaves open what relevant means.
 In all-mapping under the edit distance, the user defines relevant mapping locations by imposing a distance threshold.
 Despite being sound, this definition does not work well in practice.
@@ -55,22 +27,22 @@ Thus, a finer definition of all-mapping relevance is necessary in practice.
 Stratification of mapping locations yields an equally sound yet practical definition of all-mapping under the edit distance.
 The $e$-stratum
 \begin{eqnarray}
-S(r,e) = \{ (i,j,e) : d_E(g_{i \dots j},r) = e\}
+S_e = \{ (i,j,e) : d_E(g_{i \dots j},r) = e\}
 \end{eqnarray}
 denotes the set of all mapping locations of a read $r$ at edit distance $e$ from the reference genome $g$.
 According to the above definition, conventional all-mapping under the edit distance defines the set
 \begin{eqnarray}
-S(r,0) \cup S(r,1) \cup \dots \cup S(r,k)
+S^* = S_0 \cup S_1 \cup \dots \cup S_k
 \end{eqnarray}
 as relevant mapping locations within an \emph{absolute} error threshold $k$.
 Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or sub-optimal up to a certain degree.
 Formally, if the distance of any optimal mapping location for read $r$ is
 \begin{eqnarray}
-e^* = \min \,\{ e \in [0,k] : S(r,e) \neq \emptyset \}
+e^* = \min \,\{ e \in [0,k] : S_e \neq \emptyset \}
 \end{eqnarray}
 stratified all-mapping considers mapping locations
 \begin{eqnarray}
-S(r,e^*) \cup \dots \cup S(r,\min \,\{ e^*+l, k\})
+S^l = S_{e^*} \cup \dots \cup S_{\min \,\{ e^*+l, k\}}
 \end{eqnarray}
 within a \emph{relative} error threshold $l$ to be relevant.
 %Note that $l \ll k$.
@@ -113,28 +85,36 @@ Under the edit distance, without any further assumptions, any co-optimal locatio
 Thus, Yara performs stratified all-mapping with a relative threshold $l=0$, picks one random co-optimal location, and subsequently estimates its mapping quality using all found mapping locations (see section~\ref{sec:yara:eng:qualities}).
 Thanks to this method, Yara in best-mapping is an order of magnitude faster than in all-mapping.
 
-% Yara uses the best strata
-%(i) to compute precise mapping qualities
-%(ii) to perform paired-end mapping.
+%Yara uses mapping strata to compute precise mapping qualities and to perform paired-end mapping.
 
+\subsection{Adaptive filtration}
+\label{sec:yara:eng:adaptive}
 
-\subsection{Paired-end and mate-pair protocols}
-\label{sec:yara:eng:pairs}
-Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
-Reads are sequenced in pairs from both ends of the same insert.
-Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
-Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
-Nonetheless, a read mapper should report equally important unpaired mapping locations, as the lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
+Specific yet rapid filtration is fundamental in the design of an efficient read mapping tool.
+Read mappers like RazerS\,3 \citep{Weese2012} and mrFast \citep{Ahmadi2012} are designed around na\"ive filtration with exact seeds.
+This filtration method is always very quick, however it is not specific enough on long, repetitive reference genomes like the human genome.
+Masai \citep{Siragusa2013} circumvents this problem by enforcing a minimum seed length,
+whose optimal value must be tuned for a specific reference genome, and eventually resorting to approximate seeds in order to guarantee full-sensitivity.
+This filtration method speeds up Masai by an order of magnitude but has some drawbacks:
+it needs external parametrization, lacks flexibility and is suboptimal in practice.
 
-In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and reports all relevant mapping locations per read.
-However, in addition to the single-end workflow, Yara implements a finer strategy to choose primary mapping locations.
-For any reads pair, among all pairs of co-optimal mapping locations, the tool selects the one with minimal deviation from the expected insert size.
-Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
+Yara applies an adaptive filtration scheme \emph{per read} because, under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical human genome resequencing, most reads produce very few verifications and are easily mappable, while few other reads are problematic and often not even confidently mappable to one single location.
+Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice.
+An adaptive filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity.
+Yara thus automatically chooses an adaptive filtration scheme per read, without requiring manual parameterization by the user.
 
-\subsection{Mapping qualities}
-\label{sec:yara:eng:qualities}
-Yara computes mapping qualities using the number of mapping locations stratified by error rate.
-%Mapping quality for the paired-end and mate-pair protocols.
+Adaptive filtration works as follows.
+Yara initially applies filtration with exact seeds to all reads.
+The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme.
+This decision depends on fine-tuned internal verification thresholds.
+Under standard Illumina setups, exact seeds provide efficient filtration for up to 70--80\,\% of the reads; on the remaining reads, a filtration scheme using $1$-- or $2$--approximate seeds works better.
+Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.
+
+%For instance, when mapping 100\,bp Illumina reads on the human genome within 5\,\% error rate, filtration with exact seeds produces 6 exact seeds of length 16\,bp;
+%under these terms, a single read produces an average of 15000 verifications, and the verification phase takes 99\,\% of the runtime.
+%On the same mapping setup, this method produces 3 $1$--approximate seeds of length 33\,bp; thus a single read produces 1400 verifications on average.
+%Under this setup, Masai in all-mapping still spends about 20\,\% of its runtime in filtration and the remaining 80\,\% in verification.
+%The next stronger filter produces 2 $2$--approximate seeds of length 50\,bp.
 
 \subsection{Indexing}
 \label{sec:yara:eng:indexing}
@@ -152,6 +132,105 @@ This fact considerably simplifies a fine-grained parallelization of the tool.
 %Yara implements fine-grained parallelism.
 %It would be possible to stream over reads to parallelize computation per read.
 %However, the tool processes batches of reads.
+
+
+\subsection{Paired-end and mate-pair protocols}
+\label{sec:yara:eng:pairs}
+Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
+Reads are sequenced in pairs from both ends of the same insert.
+Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
+Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
+Nonetheless, a read mapper should report equally important unpaired mapping locations, as the lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
+
+In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and reports all relevant mapping locations per read.
+However, in addition to the single-end workflow, Yara implements a finer strategy to choose primary mapping locations.
+For any reads pair, among all pairs of co-optimal mapping locations, the tool selects the one with minimal deviation from the expected insert size.
+Since Yara outputs all relevant mapping locations, the choice of primary locations can be always corrected a posteriori.
+
+\subsection{Mapping qualities}
+\label{sec:yara:eng:qualities}
+Yara computes accurate mapping qualities using the number of found mapping locations stratified by error rate.
+In section~\ref{sec:yara:eng:strata} I defined the set $S$ of all relevant mapping locations as
+\begin{eqnarray}
+S = \bigcup_{e=0}^{k} S_e.
+\end{eqnarray}
+I now denote by $z_e$ the number of mapping locations in the stratum $S_e$, \ie $z_e=|S_e|$;
+I associate to $S$ a canonical partition function $Z$
+\begin{eqnarray}
+\label{eq:yara:mqual:partition}
+Z = \sum_{e=0}^{k} z_e w(e),
+\end{eqnarray}
+where the function $w : \N \rightarrow \R$ assigns a weight to each (sub)optimal stratum.
+
+\subsubsection{Single-end reads}
+
+For a fixed single-end read, I denote with $C$ a random variable assuming the value of its correct mapping location, and I assume that
+\begin{eqnarray}
+\Pr[C \in S] = 1.
+\end{eqnarray}
+I estimate the probability of $C$ being part of the stratum $S_e$ as
+\begin{eqnarray}
+\label{eq:yara:mqual:se:stratum}
+\Pr[C \in S_e] = \frac{1}{Z} \cdot z_e w(e)
+\end{eqnarray}
+and the probability of $C$ being equal to any found mapping location $(i,j,e)$ as
+\begin{eqnarray}
+\label{eq:yara:mqual:se:location}
+\Pr[C = (i,j,e)] = \frac{1}{Z} \cdot w(e).
+\end{eqnarray}
+
+%In practice, I define $w$ as:
+%\begin{eqnarray}
+%w(e) = ...
+%\end{eqnarray}
+
+Hence, equation~\ref{eq:yara:mqual:se:location} gives the probability $p$ that a random mapping location drawn from any stratum is correct.
+Such probability $p$ is further encoded as the mapping quality $Q=-10 \log_{10}(1-p)$.
+
+\subsubsection{Paired-end reads}
+
+A paired-end read whose mate is unmapped is treated as a single-end read, thus the above probabilities still hold.
+Given a read end, I denote by $S'_e$ the $e$-stratum of its mate, by $Z'$ the canonical partition function of its mate as in equation~\ref{eq:yara:mqual:partition}, and by $C'$ its correct mapping location.
+I partition each stratum $S_e$ in two subsets $S^P_e$ and $S^I_e$, where $S^P_e$ contains all mapping locations in $S_e$ being properly paired to some mapping location in $S'$, and $S^I_e = S^P_e \setminus S_e$.
+I distinguish the cases of a read end having some properly paired mapping location or not.
+
+If a read end has no properly paired mapping location, $S^I_e = S_e$.
+I estimate the probability of $C$ being equal to any found mapping location $(i,j,e)$ as
+\begin{eqnarray}
+\Pr[C = (i,j,e) | S^P_e = \emptyset] = \Pr[C = (i,j,e)] \cdot \Pr[C' \not{\in} S'_{e'}]
+\end{eqnarray}
+and since
+\begin{eqnarray}
+\Pr[C' \not{\in} S'_{e'}] = 1 - \frac{1}{Z'} \cdot z_{e'} w(e'),
+\end{eqnarray}
+it follows that
+\begin{eqnarray}
+\label{eq:yara:mqual:pe:location}
+\Pr[C = (i,j,e) | S^P_e = \emptyset] = \frac{1}{Z} \cdot w(e) - \frac{1}{ZZ'} \cdot z_{e'} w(e) w(e').
+\end{eqnarray}
+
+Now I consider the case of a read end having some properly paired mapping location.
+In this case, Yara picks a random location from $S^P_e$, under the assumption that any location in $S^P_e$ is more likely to be correct than those in $S^I_e$.
+Therefore, I assign different weights to $S^P_e$ and $S^I_e$.
+I assume that
+\begin{eqnarray}
+\Pr[C \in S^P] = \Pr[C' \in S^{P'}_{e'}] = p'
+\end{eqnarray}
+and 
+\begin{eqnarray}
+\Pr[C \in S^I] = 1 - p'.
+\end{eqnarray}
+Hence the probability of $C$ being part of the properly paired locations in stratum $S_e$ is
+\begin{eqnarray}
+\label{eq:yara:mqual:se:stratum}
+\Pr[C \in S^P_e] = \frac{p' z^p_e w(e)}{p' * Z^P + (1-p') * Z^I}
+\end{eqnarray}
+and the probability that any of these locations is correct as
+\begin{eqnarray}
+\label{eq:yara:mqual:se:location}
+\Pr[C = (i,j,e) \in S^P_e] = \frac{p' w(e)}{p' * Z^P + (1-p') * Z^I}.
+\end{eqnarray}
+
 
 % -----------------------------------------------------------------------------
 
