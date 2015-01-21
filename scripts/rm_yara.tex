@@ -209,8 +209,8 @@ Results are shown in table~\ref{tab:yara:rabema}.
   \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
-    Rabema benchmark results on the human reference genome.
-    The left panel shows the results of mapping $1\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ simulated reads; the right panel shows the results of mapping $1\,\text{M}$ Illumina $2 \times 100\,\text{bp}$ real reads.
+    Rabema benchmark results.
+    The left panel shows the results of best-mapping $10\,\text{M}$ whole human genome $100\,\text{bp}$ Illumina HiSeq 2000 reads; the right panel shows the results of all-mapping only the first $1\,\text{M}$ reads.
     Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
     $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
@@ -220,7 +220,8 @@ Results are shown in table~\ref{tab:yara:rabema}.
   \resizebox{0.95\textwidth}{!}
   {
 	\renewcommand{\tabcolsep}{0.8ex}
-	\input{tables/table_yara_rabema}
+	\input{tables/table_yara_rabema_opt}
+	\input{tables/table_yara_rabema_sub}
   }
 \end{table*}
 
@@ -271,6 +272,8 @@ Comment accuracy.
 Comment throughput.
 
 \subsection{Variant calling on real data}
+
+% http://www.nature.com/nbt/journal/v32/n3/full/nbt.2835.html
 
 The last experiment assesses the performance of the same variant calling tool applied to the output of various best-mappers.
 The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide polymorphism (SNP) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \cite{Zook2014}.

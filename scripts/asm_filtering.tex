@@ -636,13 +636,13 @@ Algorithm~\ref{alg:qgram-specificity} follows the algorithm in \citep{Karp1989} 
 \State $N \gets 4 \cdot C^2 / \epsilon^2$
 \State $T \gets 0$
 \Repeat
-	\State {$i \gets$ \Call{random}{$C$}}
-	\State {$\mathbf{x} \gets$ \Call{random}{${0,1}^m$}}
+	\State {$i \gets$ \Call{random}{$\{ 1 \dots C \}$}}
+	\State {$\mathbf{x} \gets$ \Call{random}{$\{0,1\}^m$}}
 	\ForAll {$j \in Q$}
 		\State {$x_{i+j} \gets 1$}
 	\EndFor
 	\State $T \gets T + t_Q^m(\mathbf{x})$
-\Until {$N$}
+\Until {$N$ times}
 \State \Return $N \cdot M / T$
 \end{algorithmic}
 \label{alg:qgram-specificity}
