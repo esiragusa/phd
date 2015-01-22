@@ -2,7 +2,7 @@
 \label{sec:yara}
 
 \emph{Yara} (\emph{Y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is an exhaustive, non-heuristic read mapper, capable of quickly reporting all stratified mapping locations within a given error rate.
-Yara works with Illumina or Ion Torrent reads, supports both paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
+Yara works with Illumina reads, supports both paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
 
 % -----------------------------------------------------------------------------
 
@@ -50,9 +50,9 @@ within a \emph{relative} error threshold $l$ to be relevant.
 \subsubsection{Efficient filtration by strata}
 
 Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping.
-Obviously, the most straightforward way to achieve stratified all-mapping consists into performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
+Obviously, the most straightforward way to achieve stratified all-mapping consists of performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
 For instance, RazerS\,3 implements this method and gets no speedup.
-Another na\"ive method consists into applying up to $k$ rounds of conventional all-mapping, using filtration schemes for thresholds going from $0$ to $\min \,\{ e^*+l, k\}$.
+Another na\"ive method consists of performing up to $k$ rounds of conventional all-mapping, using filtration schemes with thresholds incrementing from $0$ to $\min \,\{ e^*+l, k\}$.
 It is easy to see that also this method performs redundant computation: the total work for any read that maps at distance greater or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
@@ -75,7 +75,7 @@ Thus, the verification of all candidates, either produced by \emph{any} two exac
 \subsubsection{Greedy verification strategy}
 
 In addition, Yara implements a simple greedy strategy to minimize the number of verifications necessary to find all relevant stratified mapping locations.
-As candidate locations can be verified in any order, Yara chooses an ordering of seeds producing the minimum number of verifications.
+As candidate locations can be verified in any order, Yara chooses an ordering of the seeds that minimizes the expected number of verifications.
 The tool first finds all seeds and ranks them by number of candidate locations produced.
 Then it processes all candidate locations, from the least to the most frequent seed, until it explores $l$ strata from the first non-empty one, or until it attains the absolute distance threshold $k$.
 
@@ -161,6 +161,8 @@ I associate to $S$ a canonical partition function $Z$
 Z = \sum_{e=0}^{k} z_e w(e),
 \end{eqnarray}
 where the function $w : \N \rightarrow \R$ assigns a weight to each (sub)optimal stratum.
+The function $w$ expresses how well edit distance correlates to the distance of correct mapping locations.
+If all correct mapping locations occur at minimum edit distance $e^*$, then $w(e^*) = 1$ and $w(e) = 0$ for all $e > e^*$.
 
 \subsubsection{Single-end reads}
 
@@ -277,7 +279,7 @@ Rabema computes the \emph{sensitivity} of each tool as the fraction of relevant 
 For a thorough evaluation, Rabema classes mapping locations by their \emph{error rate}, then computes sensitivity within each error rate class.
 The benchmark reports percentual scores normalized by the number of reads.
 
-The data used in this experiment is a publicly released sequencing run (SRA/ENA id: ERR161544) by the Beijing Genome Institute;
+The data used in this experiment is a publicly released sequencing run (SRA/ENA id: ERR161544) at the Beijing Genome Institute;
 the genomic DNA used in this study came from an anonymous male Han Chinese individual who has no known genetic diseases.
 This dataset consists of $2 \times 100\,\text{bp}$ whole genome sequencing reads produced by an Illumina HiSeq 2000 instrument.
 For practical reasons, in the category \emph{co-optimal} I consider the first $10\,\text{M}$ reads, while in the category \emph{suboptimal} only the first $1\,\text{M}$ reads.
@@ -386,14 +388,14 @@ Comment throughput.
 % http://www.nature.com/nbt/journal/v32/n3/full/nbt.2835.html
 
 The last experiment uses well-characterized datasets to estimate both true-positive and false-negative rates induced by various mappers within a best-mapping pipeline calling variants on real data.
-Each pipeline consists of one best-mapper, whose output is sorted by genomic position using \emph{samtools}, and subsequently given to the the widely used \emph{GATK Unified Genotyper} (UG) \citep{DePristo2012} to call both SNVs and INDELs.
+Each pipeline consists of one best-mapper, whose output is sorted by genomic position using \emph{Samtools} \citep{Li2009}, and subsequently given to the the widely used \emph{GATK Unified Genotyper} (UG) \citep{DePristo2011} to call both SNVs and INDELs.
 The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide variant (SNV) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \citep{Zook2014}.
 
 The GIAB consortium provides a set of calls (NIST v2.18) for the pilot genome NA12878.
-Each pipeline has to calls variants from an exome re-sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
-This run, produced by the XXX Institute, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~X.
+Each pipeline has to calls variants from a whole exome sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
+This run, produced at the Icahn School of Medicine at Mount Sinai \citep{Linderman2014}, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~X.
 
-According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} and subsequently compares called variants to the set of GIAB trusted variants using the tool \emph{UGene XXX}.
+According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} \citep{Danecek2011} and subsequently compares called variants to the set of GIAB trusted variants using the tool \emph{USeq VCFComparator} \citep{Nix2008}.
 This last tool counts the number of correct and incorrect variants, stratifies them by variant quality, and reports their cumulated counts.
 The output of the evaluation is plotted as ROC curves.
 
@@ -426,16 +428,16 @@ The output of the evaluation is plotted as ROC curves.
 
 \subsubsection{SNVs calling}
 Figure~\ref{fig:yara:calling-snps} shows the SNVs calling accuracy results.
-The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to low-quality calls.
+The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to highlight low-quality calls.
 Conversely, to focus on high-quality calls, the ROC curves in the bottom panel show incorrect SNVs on a logarithmic scale.
 From the top curves is evident that Yara induces up to 3 times fewer incorrect SNVs than BWA, while
-from the bottom curves is clear that Yara induces a significantly higher number of high-quality calls.
-The poor performance of GEM is interesting, as the tool does not annotate mapping locations with qualities.
+from the bottom curves is clear that Yara induces a significantly higher rate of high-quality calls.
+The poor performance of GEM could be partially due to the fact that it does not annotate mapping locations with qualities.
 
 \subsubsection{INDELs calling}
 Figure~\ref{fig:yara:calling-indels} shows the INDELs calling accuracy results.
 Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
-Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it performs local alignments rather than semi-global alignments.
+Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it computes local alignments rather than semi-global alignments.
 Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
 
 \subsubsection{Throughput}
@@ -444,6 +446,7 @@ Comment throughput.
 
 % -----------------------------------------------------------------------------
 
-%\section{Discussion}
+\section{Discussion}
+Todo.
 
 %Yara does not consider local alignments and chimeric reads.

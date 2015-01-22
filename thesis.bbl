@@ -157,12 +157,6 @@ Chinwalla, A.~T., Cook, L.~L., Delehaunty, K.~D., Fewell, G.~A., Fulton, L.~A.,
 \newblock Initial sequencing and comparative analysis of the mouse genome.
 \newblock {\em Nature\/}, {\bf 420}(6915), pages 520--562.
 
-\bibitem[Chvatal(1979)Chvatal]{Chvatal1979}
-Chvatal, V. (1979).
-\newblock A greedy heuristic for the set-covering problem.
-\newblock {\em Mathematics of operations research\/}, {\bf 4}(3), pages
-  233--235.
-
 \bibitem[Consortium(2001)Consortium]{Consortium2001}
 Consortium, I. H. G.~S. (2001).
 \newblock Initial sequencing and analysis of the human genome.
@@ -174,6 +168,13 @@ Crochemore, M., Grossi, R., K{\"a}rkk{\"a}inen, J., and Landau, G.~M. (2013).
 \newblock A constant-space comparison-based algorithm for computing the
   burrows--wheeler transform.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 74--82. Springer.
+
+\bibitem[Danecek \ea(2011)Danecek, Auton, Abecasis, Albers, Banks, DePristo,
+  Handsaker, Lunter, Marth, Sherry, \ea]{Danecek2011}
+Danecek, P., Auton, A., Abecasis, G., Albers, C.~A., Banks, E., DePristo,
+  M.~A., Handsaker, R.~E., Lunter, G., Marth, G.~T., Sherry, S.~T., \ea (2011).
+\newblock The variant call format and vcftools.
+\newblock {\em Bioinformatics\/}, {\bf 27}(15), pages 2156--2158.
 
 \bibitem[David \ea(2011)David, Dzamba, Lister, Ilie, and Brudno]{David2011}
 David, M., Dzamba, M., Lister, D., Ilie, L., and Brudno, M. (2011).
@@ -439,6 +440,14 @@ Li, R., Yu, C., Li, Y., Lam, T.-W., Yiu, S.-M., Kristiansen, K., and Wang, J.
 \newblock {SOAP2}: an improved ultrafast tool for short read alignment.
 \newblock {\em Bioinformatics\/}, {\bf 25}(15), pages 1966--1967.
 
+\bibitem[Linderman \ea(2014)Linderman, Brandt, Edelmann, Jabado, Kasai,
+  Kornreich, Mahajan, Shah, Kasarskis, and Schadt]{Linderman2014}
+Linderman, M.~D., Brandt, T., Edelmann, L., Jabado, O., Kasai, Y., Kornreich,
+  R., Mahajan, M., Shah, H., Kasarskis, A., and Schadt, E.~E. (2014).
+\newblock Analytical validation of whole exome and whole genome sequencing for
+  clinical applications.
+\newblock {\em BMC medical genomics\/}, {\bf 7}(1), page~20.
+
 \bibitem[Maier and Storer(1977)Maier and Storer]{Maier1977}
 Maier, D. and Storer, J.~A. (1977).
 \newblock A note on the complexity of the superstring problem.
@@ -594,6 +603,12 @@ Needleman, S.~B. and Wunsch, C.~D. (1970).
 Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
 \newblock In {\em Combinatorial Pattern Matching\/}, pages 144--155. Springer.
+
+\bibitem[Nix \ea(2008)Nix, Courdy, and Boucher]{Nix2008}
+Nix, D.~A., Courdy, S.~J., and Boucher, K.~M. (2008).
+\newblock Empirical methods for controlling false positives and estimating
+  confidence in chip-seq peaks.
+\newblock {\em BMC bioinformatics\/}, {\bf 9}(1), page 523.
 
 \bibitem[Pevzner \ea(2001)Pevzner, Tang, and Waterman]{Pevzner2001}
 Pevzner, P.~A., Tang, H., and Waterman, M.~S. (2001).
@@ -816,5 +831,13 @@ Wooster, R., Cleton-Jansen, A.-M., Collins, N., Mangion, J., Cornelis, R.,
 \newblock Instability of short tandem repeats (microsatellites) in human
   cancers.
 \newblock {\em Nature genetics\/}, {\bf 6}(2), pages 152--156.
+
+\bibitem[Zook \ea(2014)Zook, Chapman, Wang, Mittelman, Hofmann, Hide, and
+  Salit]{Zook2014}
+Zook, J.~M., Chapman, B., Wang, J., Mittelman, D., Hofmann, O., Hide, W., and
+  Salit, M. (2014).
+\newblock Integrating human sequence data sets provides a resource of benchmark
+  snp and indel genotype calls.
+\newblock {\em Nature biotechnology\/}.
 
 \end{thebibliography}
