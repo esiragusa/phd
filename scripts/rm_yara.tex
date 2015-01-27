@@ -432,15 +432,18 @@ The output of the evaluation is plotted as ROC curves.
 
 \subsubsection{SNVs calling}
 Figure~\ref{fig:yara:calling-snps} shows the SNVs calling accuracy results.
-The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to highlight low-quality calls.
-Conversely, to focus on high-quality calls, the ROC curves in the bottom panel show incorrect SNVs on a logarithmic scale.
-From the top curves is evident that Yara induces up to 3 times fewer incorrect SNVs than BWA, while
-from the bottom curves is clear that Yara induces a significantly higher rate of high-quality calls.
+The ROC curve show incorrect SNVs on a logarithmic scale, to highlight high-quality calls.
+The plot shows that Yara induces a significantly higher rate of high-quality calls and up to 3 times less incorrect SNVs than BWA.
+%The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to highlight low-quality calls.
+%Conversely, to focus on high-quality calls, the ROC curves in the bottom panel show incorrect SNVs on a logarithmic scale.
+%From the top curves is evident that Yara induces up to 3 times fewer incorrect SNVs than BWA, while
+%from the bottom curves is clear that Yara induces a significantly higher rate of high-quality calls.
 The poor performance of GEM could be partially due to the fact that it does not annotate mapping locations with qualities.
 
 \subsubsection{INDELs calling}
 Figure~\ref{fig:yara:calling-indels} shows the INDELs calling accuracy results.
-Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
+Again, the ROC curves show incorrect INDELs on a logarithmic scale.
+%Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
 Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it computes local alignments rather than semi-global alignments.
 Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
 
@@ -472,6 +475,7 @@ Compared to simulated WGS data (section~\ref{sec:yara:eval:accuracy}), all tools
 % -----------------------------------------------------------------------------
 
 \section{Discussion}
-Todo.
 
-%Yara does not consider local alignments and chimeric reads.
+Yara's mapping quality model for paired-end reads could be improved.
+
+Yara does not compute local alignments, which could be useful in INDEL calling.
