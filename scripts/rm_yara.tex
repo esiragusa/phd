@@ -292,8 +292,8 @@ Subsequently, I provided the reads as unpaired to each tool, as the Rabema bench
   \caption[Yara results in the Rabema benchmark]
   {
   \label{tab:yara:rabema}
-    Rabema benchmark results.
-    The left panel shows the results of finding all co-optimal mapping locations of $10\,\text{M}$ whole human genome $100\,\text{bp}$ Illumina HiSeq 2000 reads; the right panel shows the results of finding all suboptimal mapping locations of only the first $1\,\text{M}$ reads.
+    Rabema benchmark results on whole human genome $100\,\text{bp}$ Illumina HiSeq 2000 reads (SRA/ENA id: ERR161544).
+    The left panel shows the results of finding all co-optimal mapping locations of the first $10\,\text{M}$ reads; the right panel shows the results of finding all suboptimal mapping locations of only the first $1\,\text{M}$ reads.
     Big numbers show total Rabema scores, while small numbers show marginal scores for the mapping locations at
     $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1}&\mbox{\tiny 2}\\\mbox{\tiny 3}&\mbox{\tiny 4}&\mbox{\tiny 5}\end{smallmatrix}\bigr)$ \% error rate.
     }
@@ -339,34 +339,17 @@ Finally, the benchmark cumulates the counts of correctly and incorrectly mapped 
 The dataset consists of $10\,\text{M}$ Illumina-like $2 \times 100\,\text{bp}$ paired-end reads, simulated from the human reference genome using Mason \citep{Holtgrewe2010}; the mean insert size is \texttt{INS = 300} and the standard deviation is \texttt{ERR = 20}.
 To assess the improvements due to the knowledge of the insert size, the experiment considers twice the same simulated reads, first as unpaired and then as paired-end including insert size information.
 
+\subsubsection{Single-end reads}
+
 \begin{figure}[t]
 \begin{center}
-\caption[Yara accuracy results on simulated single-end data]{Yara accuracy results on simulated single-end data.}
+\caption[Yara accuracy results on Illumina-like single-end reads]{Accuracy results on $100\,\text{bp}$ Illumina-like single-end reads.}
 \label{fig:yara:accuracy-se}
-\includegraphics{hiseq_hg19_like_se.accuracy.pdf}
+%\includegraphics{hiseq_hg19_like_se.accuracy.pdf}
 \includegraphics{hiseq_hg19_like_se.accuracy.log.pdf}
-\includegraphics{hiseq_hg19_like_se.default.runtime.pdf}
 \end{center}
 \end{figure}
 
-%\begin{figure}[t]
-%\begin{center}
-%\caption[Yara throughput results on simulated single-end data]{Yara throughput results simulated single-end data.}
-%\label{fig:yara:throughput-se}
-%\end{center}
-%\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-\caption[Yara accuracy results on simulated paired-end data]{Yara accuracy results on simulated paired-end data.}
-\label{fig:yara:accuracy-pe}
-\includegraphics{hiseq_hg19_like_pe.accuracy.pdf}
-\includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
-\includegraphics{hiseq_hg19_like_pe.default.runtime.pdf}
-\end{center} 
-\end{figure}
-
-\subsubsection{Single-end reads}
 Results are shown in figure~\ref{fig:yara:accuracy-se}.
 The ROC curves in the top panel show incorrect locations on a linear scale, in order to highlight unmappable reads.
 Conversely, to focus on mappable reads, the ROC curves in the bottom panel show incorrect locations on a logarithmic scale.
@@ -374,13 +357,43 @@ From both plots, it is visible that Yara always dominates BWA, which in turn alw
 
 Comment throughput.
 
+\begin{table}[b]
+\begin{center}
+\caption[Yara throughput results on Illumina-like single-end reads]{Throughput results on $100\,\text{bp}$ Illumina-like single-end reads.}
+\sffamily
+\input{tables/hiseq_hg19_like_se.default.runtime}
+\label{tab:yara:throughput-se}
+\end{center}
+\end{table}
+
 \subsubsection{Paired-end reads}
+
+\begin{figure}[t]
+\begin{center}
+\caption[Yara accuracy results on Illumina-like paired-end reads]{Accuracy results on $2 \times 100\,\text{bp}$ Illumina-like paired-end reads.}
+\label{fig:yara:accuracy-pe}
+%\includegraphics{hiseq_hg19_like_pe.accuracy.pdf}
+\includegraphics{hiseq_hg19_like_pe.accuracy.log.pdf}
+\end{center} 
+\end{figure}
+
 Results are shown in figure~\ref{fig:yara:accuracy-pe}.
 Again, the ROC curves in the top panel show incorrect locations on a linear scale, while, those in the bottom panel are on a logarithmic scale.
 Yara still dominates BWA on the most mappable reads; however, compared to single-end reads, BWA on paired-end reads is closer to Yara.
 Bowtie~2 shows the worst accuracy. 
 
 Comment throughput.
+
+\begin{table}[b]
+\begin{center}
+\caption[Yara throughput results on Illumina-like paired-end reads]{Throughput results on $2 \times 100\,\text{bp}$ Illumina-like paired-end reads.}
+\sffamily
+\input{tables/hiseq_hg19_like_pe.default.runtime}
+\label{tab:yara:throughput-pe}
+\end{center}
+\end{table}
+
+
 
 \subsection{Variant calling on real data}
 \label{sec:yara:eval:calling}
@@ -392,8 +405,8 @@ Each pipeline consists of one best-mapper, whose output is sorted by genomic pos
 The evaluation consists of comparing the variants called by each pipeline to a set of high-confidence, single-nucleotide variant (SNV) and INDEL calls provided by the \emph{Genome in a Bottle} (GIAB) consortium \citep{Zook2014}.
 
 The GIAB consortium provides a set of calls (NIST v2.18) for the pilot genome NA12878.
-Each pipeline has to calls variants from a whole exome sequencing (SRA/ENA id: SRR1611178) of the same NA12878 individual.
-This run, produced at the Icahn School of Medicine at Mount Sinai \citep{Linderman2014}, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150$~X.
+Each pipeline has to calls variants from a whole exome sequencing (WES) run of the same NA12878 individual (SRA/ENA id: SRR1611178).
+This run, produced at the Icahn School of Medicine at Mount Sinai \citep{Linderman2014}, consists of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads and has a mean coverage of $150\, \times$.
 
 According to the GIAB guidelines, the evaluation first decomposes complex variants using the tool \emph{vcfallelicprimitives} \citep{Danecek2011} and subsequently compares called variants to the set of GIAB trusted variants using the tool \emph{USeq VCFComparator} \citep{Nix2008}.
 This last tool counts the number of correct and incorrect variants, stratifies them by variant quality, and reports their cumulated counts.
@@ -401,27 +414,10 @@ The output of the evaluation is plotted as ROC curves.
 
 \begin{figure}[t]
 \begin{center}
-\caption[SNPs calling accuracy results]{SNVs calling accuracy results.}
+\caption[Yara SNVs calling accuracy results]{SNVs calling accuracy results on a $150\, \times$ coverage WES run consisting of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads (SRA/ENA id: SRR1611178).}
 \label{fig:yara:calling-snps}
-\includegraphics{SRR1611178.snp.pdf}
+%\includegraphics{SRR1611178.snp.pdf}
 \includegraphics{SRR1611178.snp.log.pdf}
-\end{center}
-\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-\caption[INDELs calling accuracy results]{INDELs calling accuracy results.}
-\label{fig:yara:calling-indels}
-\includegraphics{SRR1611178.indel.pdf}
-\includegraphics{SRR1611178.indel.log.pdf}
-\end{center}
-\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-\caption[Throughput results]{Throughput results.}
-\label{fig:yara:throughput}
-\includegraphics{SRR1611178.default.runtime.pdf}
 \end{center}
 \end{figure}
 
@@ -440,8 +436,26 @@ Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, 
 Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it computes local alignments rather than semi-global alignments.
 Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
 
+\begin{figure}[t]
+\begin{center}
+\caption[Yara INDELs calling accuracy results]{INDELs calling accuracy results on a $150\, \times$ coverage WES run consisting of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads (SRA/ENA id: SRR1611178).}
+\label{fig:yara:calling-indels}
+%\includegraphics{SRR1611178.indel.pdf}
+\includegraphics{SRR1611178.indel.log.pdf}
+\end{center}
+\end{figure}
+
 \subsubsection{Throughput}
 Comment throughput.
+
+\begin{table}[b]
+\begin{center}
+\caption[Yara throughput results on SRR1611178]{Throughput results on a $150\, \times$ coverage WES run consisting of $2 \times 100\,\text{bp}$ Illumina HiSeq 2000 reads (SRA/ENA id: SRR1611178).}
+\sffamily
+\input{tables/SRR1611178.default.runtime}
+\label{fig:yara:throughput}
+\end{center}
+\end{table}
 
 
 % -----------------------------------------------------------------------------
