@@ -2,7 +2,7 @@
 \label{chr:index}
 
 Suffix trees are elegant data structures but they are rarely used in practice.
-Although suffix trees provides theoretically optimal construction and query time, their high space consumption prohibits practical applicability to large string collections.
+Although suffix trees provides theoretically optimal construction and query time, their high space consumption prohibits practical indexing of large string collections.
 A practical study on suffix trees by \cite{Kurtz1999} reports that efficient implementations achieve sizes between $12n$ and $20n$ bytes per character.
 For instance, two years before completing the sequencing of the human genome, \citeauthor{Kurtz1999} conjectured the resources required for computing the suffix tree for the complete human genome (consisting of about $3 \cdot 10^9$~bp) in 45.31~GB of memory and nine hours of CPU time, and concluded that \emph{``it seems feasible to compute the suffix tree for the entire human genome on some computers''}.
 
@@ -15,7 +15,7 @@ Over the last years, significant effort has been devoted to the engineering of m
 In particular, much research has been done into designing succinct (or even compressed) data structures providing efficient query times using space proportional to that of the uncompressed (or compressed) input.
 Thanks to these advances, a succinct index of the human genome consumes as little as 3.5~GB of memory and often even improves query time over classic indices.
 
-In this chapter, I introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently succinct full-text indices (uncompressed FM-index variants).
+In this chapter, I introduce some classic full-text indices (suffix arrays and $q$-gram indices) and subsequently succinct full-text indices (uncompressed variants of the FM-index).
 Afterwards, I introduce generic string matching algorithms that work on any of these data structures, and at the same time provide their experimental evaluation.
 My implementation of all these algorithms and data structures is publicly available in source form within the \CC library SeqAn \citep{Doering2008}.
 
@@ -27,7 +27,7 @@ My implementation of all these algorithms and data structures is publicly availa
 The key idea of the suffix array (SA) \citep{Manber1990} is that most information explicitly encoded in a suffix trie is superfluous for string matching.
 The explicit representation of suffix trie's internal nodes and outgoing edges can be omitted.
 Leaves pointing to the sorted suffixes are sufficient to perform exact string matching or even top-down traversals.
-Indeed, on the SA, any path from the root to an internal node is computed on the fly via binary search over the leaves.
+On the SA, any path from the root to an internal node is computed on the fly via binary search over the leaves.
 In this way, an additional logarithmic time complexity is paid to reduce space consumption by a linear factor.
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
@@ -97,8 +97,10 @@ Consequently, the space consumption of suffix arrays for texts shorter than 4~GB
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(n)$ time.
 The space consumption of the GSA is $n \log{cn^*}$ bits, where $n^* = \max{\,n_i}$.
-For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
-Thus, the GSA of hg19 stores pairs of $1+4$~bytes and fits in 15~GB \citep{Weese2013}.
+For instance, for collections consisting of not more than 256 texts shorter than 4~GB, a pair of $1+4$~bytes suffices to encode any suffix position.
+
+%For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
+%Thus, the GSA of hg19 stores pairs of $1+4$~bytes and fits in 15~GB \citep{Weese2013}.
 
 \begin{figure*}[t!]
 \begin{minipage}[t]{.5\textwidth}
@@ -159,7 +161,7 @@ Any suffix trie node is univocally identified by an interval of the suffix array
 Thus, while traversing the trie, I maintain the interval $[l,r]$ associated to the current node.
 In addition, I also remember the depth $d$ of the current node.
 The root node is represented by the interval $[1,n]$ containing the whole suffix array.
-The edge label entering any internal node at depth $d$ is defined by the $d$-th symbol in any suffix $\Sc_{A[i]}$ with $i \in [l,r]$.
+The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Sc_{A[i]}$ with $i \in [l,r]$.
 Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing edges labeled by terminator symbols.
 The occurrences below any node correspond by definition to the interval $[l,r]$ of $A$.
 Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
@@ -228,7 +230,7 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 \end{figure*}
 
 Binary search is the key to implement function \textsc{goDown} a symbol.
-Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{n})$ binary search steps the position in $A$ of the left and right interval corresponding to the child node following the edge labeled by a given symbol $c$.
+Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{n})$ binary search steps the position in $A$ of the left and right intervals corresponding to the child node that is reached by going down the edge labeled by a given symbol $c$.
 Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, hence I define $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
 
 \begin{figure*}[b!]
@@ -256,13 +258,14 @@ Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involv
 \end{center}
 \end{figure*}
 
-Algorithms~\ref{alg:sa-godown} and \ref{alg:sa-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} to exhibit a time complexity independent of the alphabet size $\sigma$.
-Indeed, the time complexity of \textsc{goDown} and \textsc{goRight} is $\Oh(\log{n})$, as they rely on a single call of \textsc{R}.
-In this way, the time complexity of exact string matching algorithm~\ref{alg:st-exact} is $\Oh(m \log{n})$.
+Algorithms~\ref{alg:sa-godown} and \ref{alg:sa-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} with a time complexity independent of the alphabet size $\sigma$.
+As they rely on a single call of \textsc{R}, their time complexity is $\Oh(\log{n})$.
+In this way, the SA supports exact string matching (see algorithm~\ref{alg:st-exact}) in $\Oh(m \log{n})$ time.
 
-Note that the suffix array can be binary searched spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
-However, the worst case runtime of algorithm~\ref{alg:st-exact} remains $\Oh(m \log{n})$, as each step of the binary search now requires a full lexicographical comparison between the pattern and any suffix of the text, which takes $\Oh(m)$ time in the worst case.
+Note that the suffix array can be binary searched by spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
+Nonetheless, the worst case runtime of algorithm~\ref{alg:st-exact} stays $\Oh(m \log{n})$, as each step of the binary search requires a full lexicographical comparison between the pattern and any suffix of the text, which takes $\Oh(m)$ time in the worst case.
 As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Sc_{A[i] \dots}$, $\Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
+
 Alternatively, the \emph{average case} runtime is reduced to $\Oh(m + \log{n})$, without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table \citep{Weese2013}.
 %Thus I replace algorithm~\ref{alg:st-exact} by algorithm~\ref{alg:sa-exact}.
@@ -280,7 +283,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 
 I briefly introduce two suffix tree realizations from the literature: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich2003}.
 These realizations explicitly implement or implicitly emulate a suffix tree rather than a suffix trie.
-The algorithms of section \ref{sec:index:algo} work on tries, yet any tree can be easily traversed as a trie.
+The string matching algorithms of section \ref{sec:index:algo} work on tries, yet any tree can be easily traversed as a trie.
 %Here, I only show how to adapt the traversal of any tree as a trie.
 The implementation of these data structures within SeqAn, equally generalized to multiple sequence, is due to \citeauthor{Weese2013}.
 Hence, for an extensive illustration, the reader is invited to consult \citep{Weese2013}.
@@ -305,8 +308,8 @@ The construction of the full LST takes $\Oh(n^2 + \sigma n)$ time in the worst c
 \subsection{$q$-Gram index}
 \label{sec:index:qgram}
 
-The logarithmic factor introduced by the SA is removed by restricting the traversal of the idealized suffix trie to a maximum depth $q$.
-The idea is to supplement the SA with a so-called $q$-gram directory: an additional array $D$ of $\Sigma^q + 1$ integers, storing the suffix array ranges computed by algorithm~\ref{alg:sa-lower} for any possible word of length $q$.
+If the traversal of the idealized suffix trie can be bounded to a maximum depth $q$, the logarithmic factor paid by using the SA vanishes.
+The idea is to supplement the SA with a so-called $q$-gram directory: an additional array $D$ of $\Sigma^q + 1$ integers, storing the SA ranges computed by algorithm~\ref{alg:sa-lower} for any possible word of length $q$.
 
 \begin{figure}[b!]
 \begin{center}
@@ -447,8 +450,8 @@ In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} a
 %\end{minipage}
 %\end{center}
 
-If the top-down traversal is bounded to a maximum depth $q$, the directory $D$ alone suffices.
-The suffix array $A$ is accessed only to locate text locations pointed by the leaves.
+The directory $D$ alone is sufficient for top-down traversals bounded to a maximum depth $q$;
+the suffix array $A$ is accessed only to locate text locations pointed by the leaves.
 In this case, the total ordering of the text suffixes in the SA can be relaxed to prefixes of length $q$.
 This gives a twofold advantage, as one can
 \begin{inparaenum}[(i)]
@@ -457,7 +460,7 @@ This gives a twofold advantage, as one can
 \end{inparaenum}
 The latter property allows to compress the SA bucket-wise \eg using Elias $\delta$ encoding \citep{Elias1975} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
 
-The $q$-gram index is still useful even if the traversal needs to go below depth $q$.
+The directory $D$ is still usable even if the traversal needs to go below depth $q$.
 An hybrid traversal can use the directory $D$ up to depth $q$ and later continue with binary searches on the suffix array $A$.
 This hybrid traversal cuts the most expensive binary searches and increases memory locality.
 Furthermore, this traversal becomes useful whenever the SA is too big to fit in main memory and has to reside in external memory.
@@ -465,13 +468,13 @@ Furthermore, this traversal becomes useful whenever the SA is too big to fit in 
 \subsection{Trie and radix tree realizations}
 \label{sec:index:trie}
 
-Before turning to succinct full-text indices, I briefly describe how I reused some classic text-index implementations to implement also tries and radix trees in the SeqAn library.
+Before turning to succinct full-text indices, I briefly describe how I reused the text-indices just exposed to implement also tries and radix trees in the SeqAn library.
 A trie is easily emulated by means of a partial SA.
-I index only the first suffix of each string in the collection and subsequently construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the cardinality of the collections.
+I index only the first suffix of each string in the collection and subsequently construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the cardinality of the string collection.
 The top-down traversal based on binary search still works as described in section \ref{sec:index:sa}.
 This trie is also extendable by a $q$-gram directory as in section \ref{sec:index:qgram}.
-A radix tree is constructed is an analogous way, starting from the LST of section \ref{chr:index:stree}.
-I fill the LST's partial SA as described above and subsequently apply the \emph{wotd}-algorithm \citep{Giegerich1999} constructs the radix tree in time $\Oh(\sigma n)$.
+A radix tree is constructed in an analogous way, starting from the LST of section \ref{sec:index:lst}.
+I fill the LST's partial SA as described above and subsequently apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the radix tree in time $\Oh(\sigma n)$.
 
 
 \section{Succinct full-text indices}
@@ -479,16 +482,18 @@ I fill the LST's partial SA as described above and subsequently apply the \emph{
 The \emph{Burrows-Wheeler transform} (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 The transformed string exposes two important properties: \emph{reversibility} and \emph{compressibility}.
 The former property allows to reconstruct the original string from its BWT, while the latter property makes the transformed string more amenable to compression.
-Because of these two properties, the BWT is a fundamental method for text compression, practically used in the bzip2 tool \citep{Seward1996}.
+Because of these two properties, the BWT is a fundamental method for text compression.
+%and is practically used in the bzip2 tool \citep{Seward1996}.
 
-More recently, \citeauthor{Ferragina2000} have proposed the BWT as a method for full-text indexing.
+Some years after its introduction, \citeauthor{Ferragina2000} proposed the BWT as a method for full-text indexing.
 They show in \citep{Ferragina2000} that the BWT alone allows to perform exact string matching and engineer in \citep{Ferragina2001} a compressed full-text index called FM-index.
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular bioinformatics tools \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the following, I give the fundamental ideas behind the BWT.
-Subsequently, I discuss my succinct FM-index implementations covering strings and string collections.
+Subsequently, I discuss my generalized FM-index implementation covering strings and string collections.
 
 \subsection{Burrows-Wheeler transform}
+\label{sec:index:bwt}
 
 Let $s$ be a padded string (definition~\ref{def:strd}) of length $n$ over an alphabet $\Sigma$.
 In the following, consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = s_{n}$ and $s_{n+i} = s_i$ for any $i \in \N$.
@@ -555,10 +560,10 @@ $i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
 
 \subsubsection{Inversion}
 
-I now describe how to invert the BWT to reconstruct the original text.
+I now describe how to invert the BWT to reconstruct the original string.
 For convenience, I denote the first column $s_{A[i]}$ by $f$ and the last column $s_{A[i] - 1}$ by $l$.
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
-To this intent, I introduce two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
+To this intent, I define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
 Figure~\ref{fig:lf_psi} illustrates.
 I define the iterated $\Psi$ as
 \begin{eqnarray}
@@ -613,7 +618,7 @@ The character $s^i$ is recovered by starting at the position of $\$^i$ and follo
 \subsubsection{Permutation LF}
 
 Permutation $LF$ is conceptual: it is not necessary to encode it explicitly.
-Luckily, it is possible to deduce it from the BWT, with the help of some additional character counts.
+Luckily, it is possible to deduce it from the BWT with the help of some additional character counts.
 This is possible due to two simple observations on the cyclic shifts matrix.
 
 \begin{observation}
@@ -628,7 +633,7 @@ For all characters $c \in \Sigma$, the $i$-th occurrence of $c$ in $f$ correspon
 \end{observation}
 
 These observation are evident, indeed $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:lf_psi}).
-Given the two above observations, \citeauthor{Ferragina2000} define the permutation $LF$ as:
+Given the two above observations, \cite{Ferragina2000} define the permutation $LF$ as:
 \begin{eqnarray}
 LF(i) = C(l_i) + Occ(l_i, i)
 \end{eqnarray}
@@ -648,7 +653,7 @@ Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\r
 \end{definition}
 
 The key idea of RDs is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.
-By doing so, \citeauthor{Jacobson1989} shows how to answer rank queries in constant time (on the RAM model) using $n+o(n)$ bits for an input binary string of $n$ bits \citep{Jacobson1989}.
+By doing so, \cite{Jacobson1989} shows how to answer rank queries in constant time (on the RAM model) using $n+o(n)$ bits for an input binary string of $n$ bits.
 Here, I cover only the most practical succinct RDs and discuss some implementation aspects, crucial to obtain practical efficiency.
 I first consider the binary alphabet $\mathbb{B} = \{ 0, 1 \}$ and subsequently the case of an arbitrary alphabet.
 
@@ -667,15 +672,15 @@ The $j$-th entry of $R$ provides a summary of the number of occurrences of the b
 $R$ summarizes only $\rank_1$, as $\rank_0(s, i) = i - \rank_1(s, i)$.
 Therefore, the rank query is rewritten as:
 \begin{eqnarray}
-\rank_1(s,i) = R[\xfloor{i/b}] + \rank_1(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i \imod{b})
+\rank_1(s,i) = R[\xfloor{i/b}] + \rank_1(s_{\xfloor{i/b} \dots \xfloor{i/b}+b}, \, i \imod{b}).
 \end{eqnarray}
-and answered in time $\Oh(b)$ by 
+The query is answered in time $\Oh(b)$ by 
 \begin{inparaenum}[(i)]
 \item \label{itm:fetch} fetching the rank summary from $R$ in constant time and
 \item \label{itm:count} counting the number of occurrences of the bit 1 within a block of $\Oh(b)$ bits.
 \end{inparaenum}
 Figure \ref{fig:rd1} illustrates.
-\citeauthor{Jacobson1989} poses $b=\log{n}$ in order to answer step (\ref{itm:count}) in time $\Oh(1)$ with the four-Russians tabulation technique \citep{Arlazarov1975}.
+\citeauthor{Jacobson1989} poses $b=\log{n}$ in order to answer step (\ref{itm:count}) in time $\Oh(1)$ with the four-Russians tabulation technique \citep{Arlazarov1970}.
 As the array $R$ stores $\xfloor{n/\log{n}}$ positions and each position in $s$ requires $\log{n}$ bits, $R$ consumes $n$ bits.
 Thus, the binary one-level RD consumes $2n$ bits.
 
@@ -740,7 +745,7 @@ $i$	& $s_i$	& $R[\xfloor{i/2}]$ & $R^2[\xfloor{i/4}]$\\
 \end{center}
 \end{figure}
 
-A binary \emph{two-levels} RD squeezes space consumption to $n+o(n)$ bits.
+A binary \emph{two-levels} RD squeezes space consumption down to $n+o(n)$ bits.
 The idea is to add another array $R^2$ summarizing the ranks on $b^2$ bits boundaries and let the initial array $R$ store only local positions within the corresponding blocks defined by $R^2$.
 Accordingly, the rank query becomes:
 \begin{eqnarray}
@@ -761,9 +766,9 @@ Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbol
 \subsubsection{Small alphabets}
 
 The extension of binary RDs to arbitrary alphabets is easy.
-Here, I show how to extend the one-level RD.
 However, the space consumption of such RD has a linear dependency in the alphabet size.
 This fact renders such extension appealing only for small alphabets, \eg $\Sigma_{\text{DNA}}$.
+Here, I show how to extend the one-level RD.
 
 Consider an input string $s$ of length $n$ over $\Sigma$, thus consisting of $n \log{\sigma}$ bits.
 As in the binary case, this one-level RD partitions $s$ in blocks of $b$ symbols.
@@ -804,7 +809,7 @@ $i$	& $s_i$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \,
 \subsubsection{Wavelet tree}
 
 \citeauthor{Grossi2003} propose a \emph{hierarchical} RD, called the \emph{wavelet tree} (WT), to mitigate the factor $\sigma$ affecting the RD just exposed.
-This tree data structure recursively partitions the alphabet $\Sigma$ in balanced subsets and accordingly decomposes the input string in \emph{subsequences} containing symbols from one subset.
+This tree data structure recursively partitions the alphabet $\Sigma$ in balanced subsets and therefore decomposes the input string in \emph{subsequences} containing symbols from one subset.
 Any tree node represents one alphabet partition and its associated subsequence.
 I first give the formal definition of WT and then discuss how to answer rank queries.
 
@@ -844,15 +849,15 @@ At the same time, the WT does not need to store the original input string $s$ of
 \subsection{FM-index}
 \label{sub:fmtrie}
 
-I now turn to the problem of implementing a full-text index based on the permutation $LF$.
+I now come back to the problem of implementing a full-text index based on the permutation $LF$.
 %This is possible because of the relationship between the cyclic shifts matrix and the suffix array.
 First, I show how to emulate a top-down traversal of the suffix trie, which is sufficient to count the number of occurrences of any substring in the original text.
-Later, I focus on how to represent the leaves, which are necessary to locate occurrences in the original text.
+Later, I focus on how to represent the leaves of the suffix trie, which are necessary to locate occurrences in the original text.
 
 \subsubsection{Top-down traversal}
 
-Given a padded string collection $\Sc$, its associated permutation $LF$ recovers substrings of $\bar{\Sc}$, \ie substrings of $\Sc$ in \emph{backward} direction.
-Nonetheless, the top-down traversal needs to recover substrings of $\Sc$ in \emph{forward} direction, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
+Given a padded string collection $\Sc$, as shown in section \ref{sec:index:bwt}, its associated permutation $LF$ recovers substrings of $\bar{\Sc}$, \ie substrings of $\Sc$ in \emph{backward} direction.
+Nonetheless, the top-down traversal needs to recover the substrings of $\Sc$ in \emph{forward} direction, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
 Therefore, I consider the BWT of $\bar{\Sc}$, such that $LF$ recovers any substring of $\Sc$.
 To encode $LF$, I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, either multi-levels or wavelet tree.
 In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
@@ -882,11 +887,11 @@ LF(b) &=& C(l_b) + Occ(l_b, b)\\
 	  &=& C(c) + Occ(c, b_v - 1) + 1
 \end{array}
 \end{eqnarray}
-and analogously $LF(e)$ becomes $C(c) + Occ(c, e_v)$.
+and analogously $LF(e)$ becomes $C(c) + Occ(c, e_v)$ \cite{Ferragina2000}.
 
-Algorithm \ref{alg:fm-godownc} implements operation \textsc{goDown} a symbol.
+Algorithm \ref{alg:fm-godownc} implements the operation \textsc{goDown} a symbol.
 This algorithm computes two values of permutation $LF$ and thus runs in time $\Oh(1)$.
-Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright} running in time $\Oh(\sigma)$.
+Conversely, \textsc{goDown} and \textsc{goRight} are provided by the generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright} running in time $\Oh(\sigma)$.
 
 % This is backward search. The traversal computes the interval.
 
@@ -918,7 +923,7 @@ Conversely, \textsc{goDown} and \textsc{goRight} are provided by generic algorit
 \subsubsection{Sampled suffix array}
 
 The suffix array $A$ is required to locate occurrences, yet it is not appealing to maintain the whole array.
-As proposed by \citeauthor{Ferragina2000}, I maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
+As proposed by \cite{Ferragina2000}, I maintain a \emph{sampled} suffix array $A^{\epsilon}$ containing positions sampled at regular intervals in the input string.
 In order to determine if and where I sampled any $A[i]$ in $A^{\epsilon}$, I maintain a binary rank dictionary $S$ of length $n$: if $S[i]=1$, then I sampled $A[i]$ in $A^{\epsilon}[rank_1(S,i)]$.
 I obtain any $A[i]$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $A^{\epsilon}$, and then $A[i] = A[LF^j(i)] + j$.
 
@@ -929,19 +934,20 @@ The rank dictionary $S$ consumes $n+o(n)$ extra space, independently of the samp
 \section{Algorithms}
 \label{sec:index:algo}
 
-In this section, I give generic string matching algorithms that use the traversal operations of section \ref{sub:introindex} and are thus valid for any of the data structures presented so far.
+In this section, I give string matching algorithms that use the generic suffix trie traversal operations defined in section \ref{sub:introindex}.
+Thus the following algorithms can be applied to all of the suffix trie implementations presented so far.
 I first consider a simple algorithm performing a top-down traversal bounded by depth.
 Then, I present algorithms for exact string matching and $k$-mismatches.% and $k$-differences.
 I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
-At the same time, I show the results of an experimental evaluation of each of these algorithms on various suffix trie implementations.
+At the same time, I show the results of an experimental evaluation of all of these algorithms on various suffix trie implementations.
 
 As data structures, I consider the suffix array (SA), the $q$-gram index with $q=12$ (q-Gram), the FM-index with a two-levels DNA rank dictionary (FM-TL), the FM-index with a wavelet tree composed of two-levels binary rank dictionaries (FM-WT).
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~Mbp total length.
-As patterns, I use sequences extrapolated from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
+As patterns, I use sequences extrapolated from an Illumina sequencing run (SRA/ENA id: SRR065390).
 
 All experiments run on a desktop computer running Linux~3.10.11, equipped with one Intel\textsuperscript{\textregistered} Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
 The plots show always \emph{average} runtimes per pattern, both in single and multiple string matching variants.
-Moreover, they consider only traversal times, while they exclude times to locate the patterns in the text by following leaf pointers, \eg uncompressing SA values.
+Moreover, they consider only traversal times, while they exclude the time to locate the patterns in the text by following leaf pointers, \eg uncompressing SA values.
 %The total search time for short pattern is dominated the time to locate the occurrences, yet no practical application needs to locate so many occurrences.
 
 \subsection{Construction}
@@ -954,9 +960,9 @@ The construction of the FM-indices adds a 15--18\% additional runtime over the s
 As expected, the FM-TL and FM-WT are the most compact data structures, while the ESA is the most space inefficient one.
 For additional information on the SA and ESA construction algorithms and their runtimes, refer to \citep{Weese2013}.
 
-\begin{table}[h]
+\begin{table}[b]
 \begin{center}
-\caption[Index construction runtime and index memory footprint]{Index construction runtime and index memory footprint.}
+\caption[Index construction times and memory footprints]{Index construction times and memory footprints.}
 \sffamily
 \input{tables/table_index_construction}
 \label{tab:index:construction}
@@ -968,7 +974,7 @@ For additional information on the SA and ESA construction algorithms and their r
 
 Before turning to proper string matching algorithms, I present a simple algorithm that helps to comprehend subsequent backtracking algorithms.
 Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in depth-first order.
-The traversal is bounded, \ie it stops after visiting any node at depth $d$.
+The traversal is bounded, \ie after reaching the nodes at depth $d$ it stops going down and goes right instead.
 
 The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first glimpse on what are the practical performances of various suffix trie implementations.
 As expected, the WT FM-index is always slower than the TL FM-index.
@@ -980,7 +986,7 @@ The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index 
 Below depth 12, the ESA (which is a tree) becomes significantly faster than all other trie indices.
 Conversely, the FM-indices (which are based on backward search) become up to two order of magnitude slower than the ESA.
 
-\begin{figure*}[h]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
@@ -1004,9 +1010,9 @@ Conversely, the FM-indices (which are based on backward search) become up to two
 \end{center}
 \end{figure*}
 
-\begin{figure}[h!]
+\begin{figure}[b]
 \begin{center}
-\caption[Top-down traversal runtime]{Runtime of top-down traversal of various suffix trie implementations.}
+\caption[Top-down traversal runtime]{Runtime of the bounded top-down traversal of various suffix trie implementations.}
 \label{fig:visit-dna}
 \includegraphics{visit.dna.celegans.pdf}
 \end{center}
@@ -1032,7 +1038,7 @@ Concerning FM-indices, the WT variant is almost twice as slow as the TL variant,
 Summing up, the TL FM-index is the fastest index to match exact patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
 %Surprisingly, there is no clear time-memory tradeoff.
 
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1056,7 +1062,7 @@ Summing up, the TL FM-index is the fastest index to match exact patterns within 
 \end{center}
 \end{figure*}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Exact string matching runtime]{Runtime of exact string matching on various suffix trie implementations.}
 \label{fig:query-dna-exact}
@@ -1080,7 +1086,7 @@ The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen
 Recently, various popular bioinformatics tools, \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, adopted variations of this method in conjunction with an FM-index.
 Yet, the idea dates back to more than twenty years ago.
 
-\begin{figure*}[h!]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1113,14 +1119,6 @@ Yet, the idea dates back to more than twenty years ago.
 \end{center}
 \end{figure*}
 
-Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
-If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
-Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
-
-%The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
-%According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
-
 \begin{figure}[b]
 \begin{center}
 \caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
@@ -1128,6 +1126,14 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 \includegraphics{query.dna.celegans.1.pdf}
 \end{center}
 \end{figure}
+
+Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
+If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+
+%The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
+%According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
 
 %\begin{figure}[h]
 %\begin{center}
@@ -1244,6 +1250,11 @@ However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\mathcal{T}$ and 
 The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports the occurrences pointed by all the leaves beneath the current node in $\mathcal{T}$.
 %If the collection $\mathbb{P}$ contains two equal strings, some leaf of $\mathcal{P}$ points to more than one pattern.
 
+The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
+Figure~\ref{fig:query-dna-exact-multi} shows the results.
+These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
+%For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, ESA and SA.
+
 \begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -1273,11 +1284,6 @@ The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports
 \end{center}
 \end{figure*}
 
-The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
-Figure~\ref{fig:query-dna-exact-multi} shows the results.
-These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
-%For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, ESA and SA.
-
 \begin{figure}[b]
 \begin{center}
 \caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. Pattern length is fixed to 15. Preprocessing times are shown in black.}
@@ -1291,7 +1297,7 @@ The same trick does not yield a significant speed-up on FM-indices nor on the $q
 
 Algorithm~\ref{alg:st-exact-multi} (histogram Multiple) further reduces the traversal time.
 Nonetheless, its runtime is dominated by the additional preprocessing time paid to construct the trie of the patterns.
-This algorithm becomes more useful within the multiple $k$-mismatches algorithm.
+This algorithm becomes more useful as a primitive within the multiple $k$-mismatches algorithm.
 
 \subsection{Multiple $k$-mismatches}
 \label{sec:index:algo:multimismatch}
