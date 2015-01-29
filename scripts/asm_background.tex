@@ -18,10 +18,10 @@ Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the 
 The definitions of prefix, suffix and substring are immediately derived from concatenation.
 A string $x$ is a \emph{prefix} of another string $y$ iff $x = y_{1 \dots i}$ for some $1 \leq i \leq |y|$, a \emph{suffix} iff $x = y_{i \dots n}$ for some $1 \leq i \leq |y|$, 
 and a \emph{substring} iff $x = y_{i \dots j}$ for some $1 \leq i \leq j \leq |y|$.
-For convenience, often I denote simply by $y_{i \dots}$ the suffix of $y$ beginning at position $i$.
+For convenience, often I denote the suffix of $y$ beginning at position $i$ simply by $y_{i \dots}$.
 
-The definition of occurrence is fundamental to introduce string matching problems.
-A string $x$ \emph{occurs} in another string $y$ iff it is a substring of $y$.
+The definition of \emph{occurrence} is fundamental in string matching.
+A string $x$ occurs in a string $y$ iff $x$ is a substring of $y$.
 Given $x = y_{i \dots j}$, the occurrence of $x$ starts at position $i$ and ends at position $j$ in $y$.
 Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
@@ -68,9 +68,9 @@ I denote by $X[i,j]$ the subscript element $x_{i,j}$.
 
 \section{Transcripts, alignments and distances}
 
-I now define basic edit operations to transform one string into another.
+I now define the basic edit operations to transform one string into another.
 Given two strings $x,y$ of equal length $n$, the string $x$ is easily transformed into the string $y$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq n$.
-If the two strings have different lengths, some symbols from $x$ must be necessarily inserted or deleted in order to obtain $y$.
+However, if the two strings have different lengths, some symbols from $x$ must be necessarily inserted or deleted in order to obtain $y$.
 This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
@@ -79,8 +79,8 @@ This fact motivates the following definition of \emph{edit transcript}.
 \end{definition}
 
 An \emph{alignment} is an alternative way of visualizing a transformation between strings.
-While an edit transcript provides an explicit sequence of edit operations transforming one string into another, an alignment explicitly relates pairs of symbols from the two strings.
-Nonetheless, some symbols in one string are not related to any symbol in the other string, \ie when some symbols are inserted or removed.
+While an edit transcript is an explicit sequence of edit operations that transform one string into another, an alignment is an explicit relationship between pairs of symbols from the two strings.
+Nonetheless, when some symbols are inserted or removed, some symbols in one string are not related to any symbol in the other string.
 For this reason, it is necessary to introduce an additional gap symbol $-$, not being part of the string alphabet $\Sigma$.
 The definition of alignment follows.
 Figure~\ref{fig:edit-transcript} shows an example of edit transcript with its associated alignment.
@@ -180,7 +180,7 @@ d_E(x_{1 \dots i-1},y_{1 \dots j-1})&+&\delta(x_i, y_j)
 \end{eqnarray}
 where the function $\delta$ indicates whether the characters $x_i$, $x_j$ match or mismatch (see definition \ref{def:delta}).
 
-\begin{figure*}[b!]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.9\textwidth}
 \begin{algorithm}[H]
@@ -240,7 +240,7 @@ Nonetheless, the definition of distance functions between strings lends to a mor
 \citep{Galil1988}
 Given a text $t$, a pattern $p$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $p$ into $t$ within distance $k$.
 \end{definition}
-The approximate string matching problem under the Hamming distance is commonly referred as the \emph{$k$-mismatches} problem and under the edit distance as the \emph{$k$-differences} problem.
+The approximate string matching problem under the Hamming distance is commonly called the \emph{$k$-mismatches} problem, while under the edit distance is called the \emph{$k$-differences} problem.
 Figure \ref{fig:edit-occurrence} shows an example of occurrence for $k$-differences.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < m$ as a pattern trivially occurs at any position in the text if all its $m$ characters are substituted.
 Frequently, the problem's input respects the condition $k \ll m \ll n$.
@@ -248,7 +248,7 @@ Frequently, the problem's input respects the condition $k \ll m \ll n$.
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = k/m$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{center}
 \caption[Example of occurrence for $k$-differences]{Example of occurrence for $k$-differences. Pattern $p$ occurs in text $t$ at edit distance 3, \ie with a 19~\% error rate.
 The alignment between $p$ and any substring of $t$ is called semi-global, as opposed to the global alignment of two complete strings.
@@ -299,7 +299,7 @@ The DP algorithm~\ref{alg:dp-edit} to compute the edit distance between two stri
 Since an approximate occurrence of the pattern can start (and end) anywhere in the text, the problem involves computing the edit distance between the pattern and \emph{any substring} of the text.
 Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
 
-\begin{figure*}[h]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.9\textwidth}
 \begin{algorithm}[H]
@@ -362,8 +362,8 @@ Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\r
 %To this intent,
 I now introduce \emph{suffix tries}, idealized data structures to index full texts.
 I define a set of generic operations to traverse them in a top-down fashion.
-In chapter~\ref{chr:index}, I introduce various data structures replacing suffix tries in practice.
-The generic traversal operations here introduced lead to the formulation of generic algorithms that solve string matching problems on any of these data structures.
+In chapter~\ref{chr:index}, I introduce various data structures replacing suffix tries in practical implementations.
+Thanks to these generic traversal operations, I later formulate generic string matching algorithms that are independent of the practical suffix trie implementations.
 
 \subsubsection{Trie}
 
@@ -371,7 +371,7 @@ Consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) consistin
 Note that padding is necessary to ensure that no string $s^i \in \Sc$ is a prefix of another string $s^j \in \Sc$.
 \begin{definition}
 The \emph{trie} $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
-The edge entering any node of $\Si$ is labeled with a symbol in $\Sigma$, while the edge entering any leaf of $\Si$ is labeled with a terminator symbol.
+Any edge entering a node of $\Si$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\Si$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
@@ -385,18 +385,11 @@ The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix
 %The suffix trie generalizes to index string collections.
 \begin{definition}
 Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
-Thus each path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
+Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
-Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
-The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
-However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
-This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
-For this reason, in the remainder of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
-%I remark that all given algorithms can be generalized to work on trees.
-
-\begin{figure}[h]
+\begin{figure}[b]
 \caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree of the string {\ttfamily ANANAS\$} .}
 \label{fig:stree}
 \begin{subfigure}{.5\textwidth}
@@ -411,7 +404,14 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 \end{subfigure}
 \end{figure}
 
-\begin{figure}[h]
+Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
+The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
+However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
+This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
+For this reason, in the remainder of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
+%I remark that all given algorithms can be generalized to work on trees.
+
+\begin{figure}[t]
 \caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
@@ -422,6 +422,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 \subsubsection{Top-down traversal}
 
 I define a set of generic operations to traverse tries in a top-down fashion.
+Note that the following traversal operations do not walk over edges labeled terminator symbols, as these symbols are not necessary in string matching applications.
 Given a trie $\Ti$, I define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
 \begin{itemize}
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
@@ -442,7 +443,7 @@ Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc
 Algorithms \ref{alg:st-godown} and \ref{alg:st-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} using \textsc{goDown} a symbol and \textsc{goUp}, although with a worst-case time complexity of $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, I consider various data structures to implement suffix tries, I show how to implement these operations and give their complexities.
 
-\begin{figure*}[h]
+\begin{figure*}[t]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\Tn$}
@@ -473,7 +474,7 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\NotB \Call{isRoot}{$\Tn$}}
-	\While {$c \gets \text{next}_{lex}{\Sigma,\Call{label}{\Tn}}$}
+	\While {$c \gets \text{next}_{lex}{\Call{label}{\Tn}}$}
 		\State {$\Call{goUp}{x}$}
 		\If {$\Call{goDown}{x, c}$}
 			\State \Return \True
@@ -493,10 +494,10 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \subsection{Filtering methods}
 \label{sec:intro:filtering}
 
-Filtering methods work in two stages: the \emph{filtration stage} discards portions of the text unlikely or unable to contain an occurrence of the pattern, subsequently the \emph{verification stage} checks the remaining portions.
+Filtering methods work in two stages: the \emph{filtration stage} discards portions of the text unlikely or unable to contain an occurrence of the pattern; subsequently the \emph{verification stage} checks the remaining portions.
 The filtration stage proceeds online by scanning the text or alternatively offline using an index of the text.
 The verification stage uses a conventional method, \eg the online dynamic programming method or some variation of it.
-The crux of filtering methods is thus to accurately and efficiently classify text portions as containing or not an occurrence of the pattern.
+The crux of filtering methods is thus to accurately and efficiently classify text portions as containing or not some occurrence of the pattern.
 
 \subsubsection{Specificity and sensitivity}
 \label{intro:filtering:spec-sens}
@@ -505,7 +506,7 @@ Any filtering method is thus a binary classification method.
 Any text location is \emph{true} if it coincides with the beginning of an occurrence of the pattern and \emph{false} if it does not.
 The outcome of the classification method is \emph{positive} for text locations filtered in and \emph{negative} for locations filtered out.
 Therefore, as shown in table \ref{tab:filter:accuracy}, any text location belongs either to the set of \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN).
-Standard \emph{specificity} and \emph{sensitivity} measure the accuracy of filtering methods.
+Thus, standard \emph{specificity} and \emph{sensitivity} measure the accuracy of filtering methods.
 The specificity of a filter $f$ on a text $t$ is defined as:
 \begin{eqnarray}
 \frac{|TN_f(t)|}{|TN_f(t)| + |FP_f(t)|}
@@ -524,7 +525,7 @@ Many practical applications, \eg read mapping, do not require strictly lossless 
 Nonetheless, a predictable or controlled lossy filter helps to interpret the results and insure their quality.
 For this reason, I focus on criteria yielding filters which are lossless or lossy in a predictable fashion.
 
-\begin{table}[h]
+\begin{table}[b]
 \begin{center}
 \caption[Classification of text locations by filtering methods]{Classification of text locations by filtering methods.}
 \begin{tabular}{ccc}
@@ -543,9 +544,9 @@ No & False positive (FP) & True negative (TN) \\
 
 The total runtime of a filtering method is given by the sum of the runtimes of its filtration and verification stages.
 Filtration specificity determines how much time is spent in the verification stage.
-Clearly, the number of false positives must be low to keep verification time small.
+Clearly, to keep verification time small, the number of false positives must be low.
 Nonetheless, the filtration stage must also run in a reasonable amount of time.
-Hence, an efficient filtering method balances its runtime between filtration and verification.
+Hence, the runtime of an efficient filtering method is usually balanced between filtration and verification time.
 In any way, no filtering method can be efficient when the number of true positive locations approaches the text length.
 %No filtering method is effective unless $|TP_f(t)| \ll |t|$.
 
@@ -553,7 +554,8 @@ Filtering methods for string matching work under the assumption that patterns oc
 For $k$-differences, the occurrence probability is a function of the error rate $\epsilon$ and the alphabet size $\sigma$, and can be computed or estimated under the assumption of the text being generated by a specific random source.
 Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $1/\sigma$, \cite{Navarro2001a} experimentally finds that $\epsilon < 1 - 1 / \sqrt{\sigma}$ is a tight upper bound on the error rate which ensures few occurrences and for which filtering algorithms are effective.
 For higher error rates, non-filtering methods, either online or offline, work better.
-On the one hand, the filtration efficiency bound for the DNA alphabet is 50 \% error rate, while on the other hand HTS read mapping applications require a range of 3 to 10 \% error rate.
+
+On the one hand, 50 \% error rate marks the filtration efficiency bound for the DNA alphabet, while on the other hand HTS read mapping applications require error rates in a range from 3 to 10 \%.
 According to the above considerations, filtering methods are expected to be very efficient in HTS applications.
 
 \subsubsection{Seeds versus $q$-grams}
@@ -564,7 +566,7 @@ In practice, one specific criterion might be more convenient for one variant of 
 The combinatorial criterion underlying a filter is of paramount importance as it provides guarantees on filtration sensitivity.
 
 In chapter \ref{sec:filter}, I consider two classes of combinatorial filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
-Filters in the former class partition the pattern into \emph{non-overlapping} factors called seeds.
-Application of the pigeonhole principle yields full-sensitive partitioning strategies.
-Instead, filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Simple counting lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary conditions for an approximate occurrence of the pattern.
+Filters in the former class partition the pattern into \emph{non-overlapping} factors called seeds;
+application of the pigeonhole principle yields full-sensitive partitioning strategies.
+Instead, filters in the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams;
+simple counting lemmata give lower bounds on the number of $q$-grams that must be present in a narrow window of the text, as necessary conditions for an approximate occurrence of the pattern.
