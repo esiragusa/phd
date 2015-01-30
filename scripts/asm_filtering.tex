@@ -4,7 +4,7 @@
 In this chapter, I present various filtering methods for approximate string matching.
 I consider two classes of filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
 Filters of the former class partition the pattern into \emph{non-overlapping} factors called seeds, while filters of the latter class consider all \emph{overlapping} substrings of the pattern having length $q$, the so-called $q$-grams.
-Both classes include various combinatorial filtering methods of increasing specificity and complexity, always providing filtration schemes with guarantees on filtration sensitivity.
+Both classes include various combinatorial filtering methods of increasing specificity and complexity; all methods provide filtration schemes with guarantees on filtration sensitivity.
 
 I present two seed filtering methods:
 %\begin{inparaenum}[(i)]
@@ -12,8 +12,8 @@ I present two seed filtering methods:
 \emph{approximate seeds} \citep{Myers1994,Navarro2000}.
 %\emph{suffix filters} \citep{Kaerkkaeinen2007}.
 %\end{inparaenum}
-Exact seeds partition the pattern in $k+1$ non-overlapping seeds, to be searched exactly.
-Approximate seeds increase specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds, to be searched within a smaller distance threshold.
+Exact seeds partition the pattern in $k+1$ non-overlapping seeds to be searched exactly in the text.
+Approximate seeds increase filtration specificity by factorizing the pattern in less than $k+1$ non-overlapping seeds to be searched within a distance threshold smaller than $k$.
 %Suffix filters further generalize exact and approximate seeds and yield stronger index based filtration.
 
 I present the following $q$-gram filtering methods:
@@ -24,7 +24,7 @@ I present the following $q$-gram filtering methods:
 %\end{inparaenum}
 Contiguous $q$-grams rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 Gapped $q$-grams introduce \emph{don't care positions} to lower the correlation between occurrences of consecutive $q$-grams.
-Multiple gapped $q$-grams adopt multiple patterns of don't care positions to further increase specificity.
+Multiple gapped $q$-grams adopt multiple patterns of don't care positions to further increase filtration specificity.
 
 It will become clear through this chapter that seed filters are more practical, flexible, straightforward to design and implement than $q$-gram filters.
 All seed filters provide full-sensitive filtration schemes for the $k$-differences problem, while (multiple) gapped $q$-grams only for $k$-mismatches.
@@ -87,17 +87,17 @@ It is immediate to see that any edit distance error can cover at most one seed.
 Therefore, at least one seed of $y$ will not be covered by any seed and hence occur as a factor of $x$.
 Figure~\ref{fig:seeds-ext} shows an example.
 
-\begin{figure}[h]
+This filtering method reduces the approximate search into multiple smaller exact searches.
+It solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds in the text, and verifying a text window around each occurrence of any seed in the text.
+As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text within distance $k$ from the pattern, this method finds all approximate occurrences of the pattern in the text.
+
+\begin{figure}[b]
 \begin{center}
 \caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
 \label{fig:seeds-ext}
 \input{figures/filtration_exact.tikz}
 \end{center}
 \end{figure}
-
-This filtering method reduces the approximate search into multiple smaller exact searches.
-It solves $k$-differences by partitioning the pattern into $k+1$ seeds, searching all seeds in the text, and verifying a text window around each occurrence of any seed in the text.
-As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text within distance $k$ from the pattern, this method finds all approximate occurrences of the pattern in the text.
 
 %\subsection{Implementation}
 %\subsubsection{Filtration step}
@@ -132,21 +132,21 @@ As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text w
 \subsection{Efficiency}
 \label{sec:filtering:exact:efficiency}
 
-The efficiency of filtration with exact seeds clearly depends on the number of verifications produced, as filtration time is always $\Oh(m)$.
-Thus, how many verifications does this filtering method trigger?
+The efficiency of this method strongly depends on the number of verifications.
+% filtration time is always $\Oh(m)$.
 It is straightforward to derive the expected number of verifications under the assumption of the text being generated according to the uniform Bernoulli model.
 I introduce the random variable $C$, counting the number of occurrences of a word in a text.
 The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
 \begin{eqnarray}
-\text{Pr}(C > 0) = \frac{1}{\sigma^q}
+\Pr[C > 0] = \frac{1}{\sigma^q}
 \end{eqnarray}
 thus the expected number of occurrences of a seed of length $q$ in a text of length $n$ is
 \begin{eqnarray}
-E[C] = \sum_{i=1}^{n-q+1}{\text{Pr}(C > 0)} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
+E[C] = \sum_{i=1}^{n-q+1}{\Pr[C > 0]} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
 \end{eqnarray}
 
 Lemma~\ref{lemma:exact-seeds} requires to partition the pattern into $k+1$ seeds but leaves the freedom to choose their length.
-This leads to the problem of finding an optimal pattern partitioning to minimize the expected number of verifications.
+This leads to the problem of finding an optimal pattern partitioning that minimizes the expected number of verifications.
 I fix\footnote{For simplicity I ignore that some seed could have length $\left \lceil \frac{m}{k+1} \right \rceil$.} the length of all seeds to be
 \begin{eqnarray}
 \label{eq:seed-len}
@@ -185,9 +185,9 @@ On those texts, uniform seed length often leads to suboptimal filtration.
 \label{sec:seeds-apx}
 
 The simple analysis of section~\ref{sec:filtering:exact:efficiency} shows that filtration specificity is strongly correlated to the seed length.
-Therefore, the crux of designing a stronger filter lies into increasing the seed length while maintaining the full-sensitivity constraints.
-\citeauthor{Myers1994}, subsequently followed by \citeauthor{Navarro2000}, proposed \emph{approximate seeds} as a practical and effective generalization of exact seeds, yielding stronger filters for $k$-differences.
-The key idea of filtration with approximate seeds is to reduce the approximate search into smaller approximate searches, as opposed to filtration with exact seeds that reduces into smaller exact searches.
+Therefore, the crux of designing a stronger filter lies into increasing the seed length while respecting full-sensitivity constraints.
+\cite{Myers1994}, subsequently followed by \cite{Navarro2000}, proposed \emph{approximate seeds} as a practical and effective generalization of exact seeds that yield stronger filters for $k$-differences.
+The key idea of filtration with approximate seeds is to reduce the approximate search into smaller approximate searches, as opposed to filtration with exact seeds that reduces the approximate search into smaller exact searches.
 
 \subsection{Principle}
 
@@ -202,15 +202,9 @@ If $y$ is partitioned \wlogs into $s$ non-overlapping seeds \st $1 \leq s \leq k
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
 
-Approximate seeds provide filtration of variable specificity.
-The fastest but weakest filtration is given by $s=k+1$, while the most specific filtration is obtained for $s=1$ \ie perfect filtration without any verification step.
-Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
-Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
-Filtration specificity is expected to increase with seed length.
-
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered by only one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -228,6 +222,12 @@ Filtration specificity is expected to increase with seed length.
 %\end{lemma}
 
 \subsection{Filtration schemes}
+
+Approximate seeds provide filtration schemes of variable specificity.
+The fastest but weakest filtration scheme is given by $s=k+1$, while the most specific filtration is obtained for $s=1$ \ie perfect filtration scheme without any verification step.
+Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
+Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
+Filtration specificity is expected to increase with seed length.
 
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
@@ -253,7 +253,7 @@ For instance, given a pattern of length $m=100$, according to equation~\ref{eq:s
 \end{example}
 
 How to choose a \emph{good} filtration scheme in practice?
-\cite{Myers1994}, \cite{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds of $\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+Both \cite{Myers1994} and \cite{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds $s=\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 Yet, these results do not necessarily translate into optimal filtration schemes in practice.
 The parameterization depends on the full-text index, the verification algorithm, the statistical properties of the text.
@@ -300,7 +300,7 @@ Figure~\ref{fig:qgrams-ext} exemplifies.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The two grey $q$-grams are preserved.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. In this worst-case positioning of the errors, the two grey $q$-grams are preserved.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
@@ -309,7 +309,7 @@ Figure~\ref{fig:qgrams-ext} exemplifies.
 \subsection{Filtration schemes}
 \label{sec:filtering:qgrams-ext:schemes}
 
-I denote by pair $(q,t)$ the filtration scheme counting $q$-grams with threshold $t$.
+I denote by a pair $(q,t)$ the filtration scheme counting $q$-grams with threshold $t$.
 According to lemma \ref{lemma:qgrams}, if $t = \tau_q(m,k) \geq 1$, then $(q,t)$ is full-sensitive for any $k$-differences instance where $|p|=m$.
 In this case, I say that $(q,t)$ \emph{solves} instance $(m,k)$.
 
@@ -332,7 +332,7 @@ $(20,1)$, $(19,6)$, $(18,11)$.
 %\subsection{Implementation}
 \subsection{Bucketing}
 
-Filtration with $q$-grams requires \emph{bucketing} the text in windows, in order to enforce the counting argument of lemma \ref{lemma:qgrams}.
+Filtration with $q$-grams requires \emph{bucketing} the text in windows, in order to apply the counting argument of lemma \ref{lemma:qgrams}.
 Buckets are obtained by subdividing the implicit DP matrix in parallelograms and projecting them on the text.
 Figure \ref{fig:swift} illustrates this concept: any approximate occurrence of the pattern in the text spans at most $k$ diagonals and is thus enclosed inside a parallelogram of width $k+1$ \citep{Rasmussen2006}.
 Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $m - k$ and $m + k$.
@@ -348,10 +348,10 @@ The implementations described in \citep{Rasmussen2006, Kehr2011, Weese2009} use 
 
 This method lends itself to work in a multiple online fashion rather than offline.
 The filtration stage scans the text and counts how many $q$-grams of each pattern fall into each parallelogram bucket.
-As long as the filter proceeds, it remembers only the buckets that span the patterns' lengths.
-The verification stage then verifies only parallelograms exceeding threshold $t$.
+As long as the filter scans the text, it remembers only the buckets that span the patterns' lengths.
+The verification stage then verifies only those parallelograms exceeding threshold $t$.
 Conversely, the program QUASAR \citep{Burkhardt1999} uses a $q$-gram index of the text to speed up the filtration phase.
-Such implementation requires more memory, as it must keep the text index in memory and bucket the whole text.
+Such implementation requires more memory, as it must bucket the whole text and keep the text index in memory.
 
 % -----------------------------------------------------------------------------
 
@@ -366,9 +366,9 @@ This case has been first considered by \cite{Burkhardt2001}.
 
 \subsection{Principle}
 
-Gapped $q$-grams generalize contiguous $q$-grams by introducing \emph{don't care positions} to skip the comparison of some text and pattern characters.
-Figure \ref{fig:qgrams-ext} shows that one single error in a transcript affects a cluster of $q$ consecutive $q$-gram occurrences.
-Conversely, as illustrated in figure \ref{fig:qgrams-gapped}, no mismatch affects any gapped $q$-gram occurrence skipping those positions.
+Gapped $q$-grams introduce fixed \emph{don't care positions} where text and pattern characters are ignored.
+A comparison between figures \ref{fig:qgrams-ext} and \ref{fig:qgrams-gapped} illustrates the advantage of such don't care positions.
+While in figure \ref{fig:qgrams-ext} an error in a transcript affects (at most) a cluster of $q$ consecutive $q$-gram occurrences, in figure \ref{fig:qgrams-gapped} a mismatch does not affect those gapped $q$-gram occurrences that ignore its position.
 This fact relaxes the full-sensitivity threshold and opens the door to more specific filtration schemes for $k$-mismatches.
 %Note that insertions and deletions still affect don't care positions, hence $Q$-grams do not solve $k$-differences.
 %Note how the occurrence of each contiguous $q$-gram is strongly correlated to the preceding and following ones.
@@ -430,7 +430,7 @@ Strong NP-completeness implies that no \emph{fully polynomial-time approximation
 \cite{Burkhardt2001} first considered the optimization problem \textsc{Optimal Threshold}.
 They give a DP algorithm solving \textsc{Optimal Threshold} in time $\Oh(m \cdot k \cdot 2^{s(Q)})$ for any $Q$-gram.
 Subsequently, they use their DP algorithm to explore the search space of full-sensitive $Q$-grams for some specific instances of $(m,k)$.
-They reduce the search space using a \emph{branch-and-bound} algorithm based on the observation
+They reduce the search space using a \emph{branch-and-bound} algorithm based on the observation that:
 \begin{eqnarray}
 Q_1 \subseteq Q_2 \iff \tau_{Q_1}(m,k) \geq \tau_{Q_2}(m,k).
 \end{eqnarray}
@@ -444,9 +444,9 @@ Finally, I propose a randomized algorithm to estimate in polynomial time the spe
 Having said that, I have no practical interest into designing $Q$-gram filtration schemes.
 On the one hand, almost all HTS applications require methods that solve $k$-differences in order to detect indels.
 On the other hand, the experimental evaluation of section \ref{sec:filtering:evaluation} shows that seed filters outperform $Q$-gram filters on practical instances of $k$-mismatch.
-Therefore, I have no need to use these algorithms in practice.
+Therefore, I do not use these algorithms in practice.
 
-\subsection{Full Sensitivity}
+\subsection{Full sensitivity}
 \label{sub:qgram-non-detection}
 
 I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
@@ -675,7 +675,7 @@ Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \end{center}
 \end{figure}
 
-All design problems introduced in section \ref{sub:qgram:design} naturally generalize to $q$-gram families.
+All design problems introduced in section \ref{sub:qgram:design} and their solutions in sections \ref{sub:qgram-optimal-threshold}-\ref{sub:qgram-specificity} naturally generalize to $q$-gram families.
 I define a boolean function for an $\mathbb{F}$-gram as the disjunction
 \begin{equation}
 \label{eq:family-bool}
@@ -702,15 +702,15 @@ Function $t_{\mathbb{F}}^{m}$ is still supermodular, because all supermodular fu
 \section{Evaluation}
 \label{sec:filtering:evaluation}
 
-In this section, I show the results of an experimental evaluation of all filtration methods exposed so far.
+In this section, I show the results of an experimental evaluation of the filtration methods exposed so far.
 I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $t \geq 1$) and 4 ($q$-Grams, $t \geq 4$).
 For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
-To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999}.
-As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~Mbp total length.
+To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999} by \citep{Weese2012}.
+As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of 100~Mbp total length.
 As patterns, I extrapolated $200k$ DNA sequences of length 100~bp from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
 
 All experiments run on a desktop computer running Linux~3.10.11, equipped with one Intel\textsuperscript{\textregistered} Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
-I repeated the experiment for $k$-mismatches and $k$-differences, varying $k$ in the range $[1,10]$.
+I repeated the experiments for $k$-mismatches and $k$-differences, varying $k$ in the range $[1,10]$.
 I measured the runtime of the filtration phase only, and then of the filtration plus verification phase.
 The plots show always \emph{average} runtimes (or values) per pattern.
 
@@ -719,15 +719,15 @@ The plots show always \emph{average} runtimes (or values) per pattern.
 Figure \ref{fig:filter-runtime-hamming-celegans} shows the results for $k$-mismatches.
 Exact seeds are the best filtration method for $k \leq 7$, mainly due to their superior filtration speed, while 1-approximate seeds are better for $k \geq 8$.
 2-Approximate seeds start to dominate exact seeds only for $k \geq 10$, \ie they provide too strong filtration on this text.
-Both $q$-gram filtration schemes are always slower than 1-approximate seeds.
-It can be seen that enforcing $t \geq 4$ improves the total runtime for those instances where $t \geq 1$ renders the filter too weak.
+Both $q$-gram filtration schemes are always slower than 1-approximate seeds;
+it can be seen that enforcing $t \geq 4$ improves the total runtime for those instances where $t \geq 1$ renders the filter too weak.
 
 Figure \ref{fig:filter-runtime-edit-celegans} shows the results for $k$-differences.
 The more involved edit distance verification slightly fills the gap between exact seeds and contiguous $q$-grams, yet exact seeds continue to be always the fastest alternative.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern length is fixed to 100. Dashed lines represent filtration time only.}
+\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern length is fixed to 100. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
 \label{fig:filter-runtime-hamming-celegans}
 \includegraphics{filter_runtime.dna.celegans.hamming.100}
 \end{center}
@@ -741,7 +741,7 @@ The more involved edit distance verification slightly fills the gap between exac
 \end{center}
 \end{figure}
 
-\subsection{Verification versus filtration}
+\subsection{Verification versus filtration time}
 
 Figure \ref{fig:filter-ratio-hamming-celegans} shows the ratios between the runtimes of the verification and filtration phases of each filtration scheme.
 For $k \leq 6$, all schemes spend more time on filtration rather than verification.
@@ -771,7 +771,7 @@ The ratios for $k$-difference show analogous patterns (data not shown).
 \subsection{Positive predictive value}
 
 Instead of measuring filtration specificity, as introduced in section \ref{intro:filtering:spec-sens}, I measure the \emph{positive predictive value} (PPV).
-As shown in table \ref{tab:filter:ppv}, I define \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN) in terms of the number of verifications $V_f(t)$ triggered by the filtration phase and the number of approximate occurrences $C(t)$ of the pattern in the text.
+As shown in table \ref{tab:filter:ppv}, I define \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN) in terms of the number of verifications $V_f(t)$ produced in the filtration phase and the number of approximate occurrences $C(t)$ of the pattern in the text.
 Therefore, I define the PPV as:
 \begin{eqnarray}
 \frac{|TP_f(t)|}{|TP_f(t)| + |FP_f(t)|} = \frac{C(t)}{V_f(t)}
@@ -779,12 +779,12 @@ Therefore, I define the PPV as:
 
 \begin{table}[t]
 \begin{center}
-\caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(t)$ counts the number of verifications, $C(t)$ the number of approximate occurrences, and $||t||$ the total length of the text collection. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
+\caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(t)$ counts the number of verifications, $C(t)$ the number of approximate occurrences, and $|t|$ the text length. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
 \begin{tabular}{rcc}
 \toprule
   & Positive & Negative\\
 \midrule
-True & $C(t)$ & $||t|| - C(t)$ \\
+True & $C(t)$ & $|t| - C(t)$ \\
 False & $V_f(t) - C(t)$ & 0		\\
 \bottomrule
 \end{tabular}

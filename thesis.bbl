@@ -25,6 +25,13 @@ Apostolico, A. (1985).
 \newblock The myriad virtues of subword trees.
 \newblock In {\em Combinatorial algorithms on words\/}, pages 85--96. Springer.
 
+\bibitem[Arlazarov \ea(1970)Arlazarov, Dinic, Kronrod, and
+  Faradzev]{Arlazarov1970}
+Arlazarov, V., Dinic, E., Kronrod, M., and Faradzev, I. (1970).
+\newblock On economical construction of the transitive closure of a directed
+  graph.
+\newblock {\em Dokl. Akad. Nauk.}, {\bf 11}, page 194.
+
 \bibitem[Baeza-Yates and Perleberg(1992)Baeza-Yates and Perleberg]{Baeza1992}
 Baeza-Yates, R.~A. and Perleberg, C.~H. (1992).
 \newblock Fast and practical approximate string matching.
@@ -142,6 +149,7 @@ Burkhardt, S., Crauser, A., Ferragina, P., Lenhof, H.-P., Rivals, E., and
 \bibitem[Burrows and Wheeler(1994)Burrows and Wheeler]{Burrows1994}
 Burrows, M. and Wheeler, D.~J. (1994).
 \newblock A block-sorting lossless data compression algorithm.
+\newblock Technical Report 124, Digital SRC Research Report.
 
 \bibitem[Califano and Rigoutsos(1993)Califano and Rigoutsos]{Califano1993}
 Califano, A. and Rigoutsos, I. (1993).
@@ -642,11 +650,6 @@ Sch{\"u}rmann, K.-B. and Stoye, J. (2007).
 \newblock An incomplex algorithm for fast suffix array construction.
 \newblock {\em Software: Practice and Experience\/}, {\bf 37}(3), pages
   309--329.
-
-\bibitem[Seward(1996)Seward]{Seward1996}
-Seward, J. (1996).
-\newblock bzip2 and libbzip2.
-\newblock {\em avaliable at http://www. bzip. org\/}.
 
 \bibitem[Simola and Kim(2011)Simola and Kim]{Simola2011}
 Simola, D.~F. and Kim, J. (2011).
