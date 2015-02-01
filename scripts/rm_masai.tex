@@ -19,7 +19,7 @@ Lastly, Masai implements also a quicker best-mapping method, though without mapp
 In the evaluation section, I extensively compare Masai with popular read mappers, both on simulated and real datasets.
 Compared to the all-mappers mrFast and RazerS~3, Masai is an order of magnitude faster and has comparable sensitivity.
 In addition, Masai in best-mapping is 2--4 times faster and more accurate than Bowtie\,2 \citep{Langmead2012} and BWA \citep{Li2009}.
-Finally, I discuss the limitations of Masai that led me to engineer Yara, yet another read aligner.
+Finally, I discuss the limitations of Masai that led me to engineer yet another read aligner.
 
 % -----------------------------------------------------------------------------
 
@@ -420,6 +420,6 @@ The achieved speedup is huge when RazerS~3 is used for best-mapping: in this sce
 
 Despite these good results, Masai is not being widely used.
 This is mainly because the tool lacks some commonly requested features, including:
-parallelization via multi-threading, low memory footprint, direct support of paired-end or mate-pair protocols, computation of mapping qualities, automatic parameterization.
-Because of my initial inexperience and unclear or wrong design goals, I neglected these features while engineering the tool.
-The next chapter introduces \emph{Yara}, \emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner, a tool fulfilling these requirements.
+direct support of the paired-end and mate-pair protocols, computation of mapping qualities, parallelization via multi-threading, low memory footprint, and automatic parameterization.
+Because of my initial inexperience and unclear or wrong design goals, I neglected these features while engineering Masai.
+The next chapter introduces \emph{Yara}, a tool implementing these features.

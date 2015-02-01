@@ -3,10 +3,12 @@
 \chapter{Background}
 \label{chr:background}
 
-In this chapter, I provide the reader with background knowledge in the fast-moving field of high-throughput sequencing (HTS) read mapping.
+In this chapter, I provide the reader with background knowledge in the fast-moving field of high-throughput sequencing (HTS).
+It goes without saying that the reader familiar with HTS can skip this chapter.
 In section \ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
-Afterwards, in section \ref{sec:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
-In section \ref{sec:mappability}, I review two studies on the hardness of HTS data analysis.
+Afterwards, in section \ref{sec:background:analisys}, I explain how standard HTS data \emph{analysis pipelines} are structured;
+in particular, in section \ref{sec:background:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
+In section \ref{sec:mappability}, I review two studies on the limits of HTS data analysis.
 Finally, in section \ref{sec:background:mappers}, I give an overview of the most popular read mapping tools.
 
 \section{High-throughput sequencing data}
@@ -14,19 +16,6 @@ Finally, in section \ref{sec:background:mappers}, I give an overview of the most
 
 As anticipated in section \ref{sec:intro:hts}, actual HTS technologies produce DNA reads which are shorter than Sanger sequencing and more likely to contain systematic sequencing artefacts.
 HTS data does not consist of read sequences only, but includes also base quality scores annotating the quality of the sequencing process.
-
-\subsection{Phred base quality scores}
-\label{sec:background:hts:phred}
-
-Base quality scores have been introduced by the base calling tool \emph{Phred} \citep{Ewing1998, Ewing1998a} to assess sequencing quality of single bases in capillary reads.
-Instead of discarding low-quality regions present in capillary reads, Phred output each base and annotates it with the probability that it has been wrongly called.
-The tool encodes the probability $\epsilon_i$ of miscalling the $i$-th base in a read under the form of a base quality $Q_i$ in logarithmic space:
-\begin{eqnarray}
-\label{eq:phred}
-Q_i = -10 \log_{10} \epsilon_i.
-\end{eqnarray}
-This method has been unanimously accepted.
-All sequencing technologies complement DNA reads with base quality scores, encoded in Phred-scale or similar.
 
 \subsection{Read sequences}
 
@@ -65,7 +54,6 @@ Any \emph{homopolymer} in the template causes multiple dNTP to be incorporated i
 
 %Ion Torrent \emph{Personalized genome machine} (PGM) Ion Torrent \emph{Proton}
 
-
 %\subsubsection{Other technologies}
 
 %454 Life Sciences by Roche.
@@ -76,11 +64,94 @@ Any \emph{homopolymer} in the template causes multiple dNTP to be incorporated i
 %RS~II by Pacific Biosciences uses \emph{single-molecule real-time} sequencing (SMRT).
 %Pacific Biosciences introduced in 2010 a single molecule real time (SMRT) sequencer that enables sequencing a contiguous piece of length Å1500 bp of a single molecule without prior amplification. The fundamental idea is to immobilize DNA polymerase and to film the incorporation of fluorescently labeled nucleotides in real time. As the sequencing is not cycled, the base-calling cannot accurately determine the length of homopolymer runs which must be inferred from signal lengths. However, this new approach permits sequencing reads of length similar to first generation sequencing and promises to detect methylated bases from deviations in the signal length.
 
+\subsection{Phred base quality scores}
+\label{sec:background:hts:phred}
+
+Base quality scores have been introduced by the base calling tool \emph{Phred} \citep{Ewing1998, Ewing1998a} to assess sequencing quality of single bases in capillary reads.
+Instead of discarding low-quality regions present in capillary reads, Phred output each base and annotates it with the probability that it has been wrongly called.
+The tool encodes the probability $\epsilon_i$ of miscalling the $i$-th base in a read under the form of a base quality $Q_i$ in logarithmic space:
+\begin{eqnarray}
+\label{eq:phred}
+Q_i = -10 \log_{10} \epsilon_i.
+\end{eqnarray}
+This method has been unanimously accepted.
+All sequencing technologies complement DNA reads with base quality scores, encoded in Phred-scale or similar.
+
 
 % =============================================================================
 
-\section{Data analysis paradigms}
-\label{sec:paradigms}
+\section{High-throughput sequencing data analysis}
+\label{sec:background:analisys}
+
+\subsection{Data analysis pipelines}
+\label{sec:background:pipeline}
+
+The analysis of HTS data consists of numerous steps, ranging from the initial instrument-specific data processing to the final application-specific interpretation of the results.
+It is conventional wisdom to subdivide such data analysis pipelines in three stages of analysis.
+The \emph{primary stage} of analysis consists of instrument specific steps for the generation, collection, and processing of raw sequencing signals.
+The \emph{secondary stage} applies sequence analysis methods to the raw sequencing data in order to reconstruct the original sequence of the donor genome.
+The \emph{tertiary stage} characterizes application-specific features of the donor genome and then provides interpretations, \eg in whole exome sequencing (WES) it consists of calling genetic variations and predicting their phatogenicity.
+Below, I give more 
+
+\subsubsection{Primary analysis}
+\label{sec:background:pipeline:primary}
+
+Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
+The base calling software converts raw sequencing signals into bases, \ie A, C, G, T, or N if the signal is unclear.
+The software assigns a quality value to each called base, estimating the probability of a base calling error.
+On early generation instruments, users could provide their own base calling tool.
+Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instrument.
+The result of primary analysis is a standard \emph{FASTQ} file containing DNA read sequences and their associated quality scores in \emph{Phred} format (see section \ref{sec:background:hts:phred}).
+
+\subsubsection{Secondary analysis}
+
+Secondary analysis aims at reconstructing the original sequence of the donor genome from its HTS reads.
+There are two main \emph{plans} to reassemble the original genome: \begin{inparaenum}[(A)]
+\item \emph{de novo} assembly, and
+\item \emph{reference-guided} assembly (commonly called \emph{read mapping}).
+\end{inparaenum}
+\emph{De novo} assembly is very involved as it essentially requires finding a \emph{shortest common superstring} (SCS) of the reads, which is a NP-complete problem \citep{Maier1977,Gallant1980,Turner1989}.
+Computational methods in plan A first scaffold the reads by performing \emph{overlap alignments} \citep{Myers2005} or equivalently by constructing \emph{de Bruijn graphs} \citep{Pevzner2001}.
+The knowledge of a \emph{reference genome}, highly similar to the donor, simplifies the problem and opens the door to plan B.
+The reads are simply aligned to the reference, tolerating a few base pair errors.
+It is worth mentioning that plans A and B can be combined, \eg as proposed by \cite{Li2012}.
+
+Plan B is always preferred in resequencing projects, as it is computationally more viable than plan A and directly provides a way to assess genetic variation \wrt a reference genome.
+In this work, I consider only plan B and present methods that work within this specific plan.
+Nonetheless, many of the algorithmic components that I introduced in the first part of this manuscript are ubiquitous in bioinformatics, thus applicable, if not already applied, to plan A.
+According to plan B, the secondary analysis stage consists of three steps: \emph{quality control}, \emph{read mapping}, and \emph{consensus alignment}.
+
+In the \emph{quality control} (Q/C) step, the quality of raw reads is checked.
+Reads produced by current HTS technologies contain sequencing artefacts in form of single bases or stretches of miscalled oligonucleotides.
+In order to circumvent this problem, various techniques have been developed, ranging from the simple \emph{trimming} of low quality read stretches to sophisticated methods of \emph{read error correction} \citep{Weese2013a}.
+Sometimes, Q/C is simply omitted.
+
+In the \emph{read mapping} step, the reads are aligned to the reference genome.
+Read mapping tools adopt state of the art \emph{approximate string matching} methods to efficiently analyze the deluge of data produced by HTS instruments.
+Approximate matching accounts for two kinds of errors:
+residual sequencing artefacts not removed by Q/C and small genetic variations in the donor genome.
+Consequently, a read mapper must take into account these errors when aligning the reads.
+
+Mapped reads, often stored in de-facto standard BAM files \citep{Li2009a}, are sorted by genomic coordinate and eventually multiply aligned in order to construct a \emph{consensus sequence} of the donor genome.
+The height of the pileup denotes the sequencing depth or coverage at each locus in the donor genome;
+%, thus the average height corresponds to the average sequencing coverage;
+higher coverage implies more confidence in the consensus sequence of the donor genome and thus more accuracy in the tertiary analysis stage.
+
+\subsubsection{Tertiary analysis}
+
+Tertiary analysis aims at interpreting the information provided by the secondary analysis stage.
+This pipeline stage groups a wide range of analyses specific to the sequencing application.
+In some pipelines, downstream analysis aggregates data coming from multiple samples.
+
+Within DNA resequencing, \emph{genotyping} consists of determining the variations between the donor and the reference genome.
+The result of \emph{variant calling} is a set of variations characterizing the donor genome, usually stored in de-facto standard VCF files.
+Subsequently, \emph{genome-wide association studies} (GWAS) associate genetic variants with phenotypic traits by examining \emph{single-nucleotide polymorphisms} (SNPs), variants relatively common among individuals of the same population.
+
+In RNA-seq, tertiary analysis consists of computing transcripts abundance by measuring \emph{reads per kilobase per million mapped reads} (RPKM) \citep{Mortazavi2008}; subsequently, relative gene expression is determined by comparing multiple RNA samples.
+In ChIP-seq, this stage consists of calling peaks in correspondence of mapped reads, determining which peaks identify feasible transcription factor binding sites, then interesting sites affecting gene regulation.
+
+\subsection{Secondary analysis paradigms}
+\label{sec:background:paradigms}
 
 The goal of secondary analysis is to reconstruct the original sequence of the donor genome.
 The \emph{reference-guided} assembly plan assumes prior knowledge of a reference genome which is close the donor genome.
@@ -109,7 +180,7 @@ According to \cite{Treangen2011}, common strategies to deal with multi-reads are
 \item to consider all or up to $k$ best mapping locations within a given distance threshold.
 \end{inparaenum}
 A \emph{de facto} standard strategy, combining strategies (i) and (ii), emerged over the last years.
-The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:paradigms:mapqual}).
+The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:background:paradigms:mapqual}).
 Subsequently, downstream analysis tools apply a mapping quality score cutoff to discard reads not mapping confidently to any location.
 The other popular strategy adopted by analysis tools is to consider all mapping locations within an edit distance threshold.
 In this case, it is not clear whether downstream analysis tools consider equally all mapping locations regardless of their distance.
@@ -129,7 +200,7 @@ The GATK~\citep{DePristo2011} and Samtools~\citep{Li2009a} are popular best-mapp
 In section~\ref{sec:mappability}, I discuss how this paradigm systematically fails on reads belonging some critical genomic regions, thus is limited to the analysis of \emph{high mappability} regions.
 
 \subsubsection{Mapping quality score}
-\label{sec:paradigms:mapqual}
+\label{sec:background:paradigms:mapqual}
 
 Mapping quality has been introduced in the tool MAQ \citep{Li2008}.
 The study considers short 30--40~bp reads, produced by early Illumina and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
@@ -215,7 +286,7 @@ The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
 The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \citep{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:paradigms}).
+Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \citep{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:background:paradigms}).
 \citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole human, mouse, fly, and worm genomes.
 Mimicking typical Illumina read mapping setups, they consider $q$-grams of length 36, 50 and 75~bp, and Hamming distance 2.
 They find out that about 30~\% of the whole human genome is not unique \wrt $(36,2)$-mappability.
@@ -251,20 +322,20 @@ This situation tends to arise more frequently whenever the consensus alignment c
 \subsection{Genome mappability score}
 
 Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy for a specific sequencing technology.
-Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see section~\ref{sec:paradigms:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
+Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see section~\ref{sec:background:paradigms:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
 Subsequently, they derive the average mapping probability of any read spanning a location $l$ of a reference genome $g$ as:
 %\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider equation~\ref{eq:gms} instead.}
 \begin{eqnarray}
 \label{eq:gms}
-p(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{p(l|g,r)}{|\mathcal{R}(l)|}}
+\Pr[l|g] = \sum_{r \in \mathcal{R}(l)}{\frac{\Pr[l|g,r]}{|\mathcal{R}(l)|}}
 \end{eqnarray}
 which in Phred-scale becomes:
 \begin{eqnarray}
-Q(l|g) = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-\frac{Q(l|g,r)}{10}}}{|\mathcal{R}(l)|}}.
+Q[l|g] = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-Q[l|g,r]/10}}{|\mathcal{R}(l)|}}.
 \end{eqnarray}
 Thus, fixed a genomic sequence $g$, they define the genome mappability score $\text{GMS}(l)$ in percentual value:
 \begin{eqnarray}
-\text{GMS}(l) = 100 \, Q(l|g)
+\text{GMS}(l) = 100 \, Q[l|g]
 \end{eqnarray}
 
 \citeauthor{Lee2012} proceed as follow to compute GMS.
@@ -274,7 +345,7 @@ Then, as just explained, they compute GMS at any location by averaging the quali
 Finally, they define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \leq 10$ and \emph{high GMS} otherwise.
 Table \ref{tab:gms} shows the performance of various sequencing technologies on the whole human genome (data obtained from \citep{Lee2012}).
 
-\begin{table}[h]
+\begin{table}[t]
 \begin{center}
 \caption[Human genome mappability score]{Human genome mappability score of various sequencing technologies. Data obtained from \citep{Lee2012}.}
 \sffamily
