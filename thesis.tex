@@ -145,7 +145,7 @@
 
 \lowertitleback{
 \selectlanguage{ngerman}
-Datum des Disputation: \emph{\textbf{XX.XX.2014}}\\[1ex]
+Datum des Disputation: \emph{\textbf{XX.XX.2015}}\\[1ex]
 Gutachter:\\
 \emph{\textbf{Prof. Dr. Knut Reinert}, Freie Universit"at Berlin, Deutschland}\\
 \emph{\textbf{Prof. Dr. Raffaele Giancarlo}, Universit\`a degli Studi di Palermo, Italien}\\
@@ -153,31 +153,26 @@ Gutachter:\\
 }
 \date{Berlin 2014}
 
-\ifthenelse{\boolean{noskeleton}}{}{
 \maketitle
 \clearemptydoublepage
-}
 
 % Initialize page counter.
-\ifthenelse{\boolean{noskeleton}}{}{\setcounter{page}{5}}
+\setcounter{page}{5}
 
 
 % === Abstract =========================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{
 \include{scripts/abstract_en}
-%\include{scripts/abstract_de}
+\include{scripts/abstract_de}
 \clearemptydoublepage
-}
 
 % === Acknowledgments ==================================================================
 
-%\ifthenelse{\boolean{noskeleton}}{}{\include{scripts/acknowledgments}}
+\include{scripts/acknowledgments}
+\clearemptydoublepage
 
 % === Quote ============================================================================
 
-%\ifthenelse{\boolean{noskeleton}}{}
-%{
 %{
 %	\centering
 %	\null\vspace{\stretch{1}}
@@ -190,18 +185,14 @@ Gutachter:\\
 %	\par
 %}
 %\clearemptydoublepage
-%}
 
 % === Table of Contents ================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}
-{
 \setcounter{secnumdepth}{2}
 \setcounter{tocdepth}{2}
 
 {\small \tableofcontents}
 \clearemptydoublepage
-}
 
 \mainmatter
 
@@ -211,31 +202,31 @@ Gutachter:\\
 
 % === Approximate String Matching ======================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{\part{Approximate string matching}}
+\part{Approximate string matching}
 \label{part:asm}
 
 \include{scripts/asm_background}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 \include{scripts/asm_indexed}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 \include{scripts/asm_filtering}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 % === Read Mapping =====================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{\part{Read mapping}}
+\part{Read mapping}
 \label{part:rm}
 
 \include{scripts/rm_background}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 \include{scripts/rm_masai}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 \include{scripts/rm_yara}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 
 
 % === Appendix =========================================================================
@@ -243,39 +234,32 @@ Gutachter:\\
 \appendix
 
 %\include{scripts/appendix_related}
-\ifthenelse{\boolean{noskeleton}}{}{\clearemptydoublepage}
+\clearemptydoublepage
 \include{scripts/appendix_param}
 
 % === Curriculum Vitae ==================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{
-
+%\ifthenelse{\boolean{noskeleton}}{}{
 %\addtocontents{toc}{\protect\contentsline{chapter}{Curriculum Vitae}{\thepage}}
-
-%leerzeile (trick, geht vielleicht eleganter)
-%\addtocontents{toc}{\protect\contentsline{part}{}{}}
-
 %\include{scripts/appendix_cv}
 %\include{scripts/appendix_nocv}
+%}
 
-}
+\include{scripts/appendix_cv}
+\clearemptydoublepage
 
 % === Declaration =======================================================================
 
-\ifthenelse{\boolean{noskeleton}}{}{\include{scripts/appendix_declaration}}
-
+\include{scripts/appendix_declaration}
+\clearemptydoublepage
 
 % === Bibiliography ==========================================================================
 
-%\ifthenelse{\boolean{noskeleton}}{}{
 \bibliographystyle{natbib}
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{thesis}
-%}
 
 % === Lists ==================================================================================
-
-\ifthenelse{\boolean{noskeleton}}{}{
 
 \listoffigures
 \clearemptydoublepage
@@ -293,7 +277,5 @@ Gutachter:\\
 %\addtocontents{toc}{\protect\contentsline{chapter}{Index}{\thepage}}
 \addcontentsline{toc}{chapter}{Index}
 \printindex
-
-}
 
 \end{document}
