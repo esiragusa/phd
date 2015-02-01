@@ -181,9 +181,13 @@ According to \cite{Treangen2011}, common strategies to deal with multi-reads are
 \end{inparaenum}
 A \emph{de facto} standard strategy, combining strategies (i) and (ii), emerged over the last years.
 The read mapper randomly picks one best mapping location and complements it with its \emph{mapping quality}, \ie the probability of the mapping location being correct (see section~\ref{sec:background:paradigms:mapqual}).
-Subsequently, downstream analysis tools apply a mapping quality score cutoff to discard reads not mapping confidently to any location.
+Subsequently, downstream analysis tools either 
+\begin{inparaenum}[(a)]
+\item apply a mapping quality score cutoff to discard reads not mapping confidently to any location, or
+\item annotate in turn their results with quality scores.
+\end{inparaenum}
 The other popular strategy adopted by analysis tools is to consider all mapping locations within an edit distance threshold.
-In this case, it is not clear whether downstream analysis tools consider equally all mapping locations regardless of their distance.
+In this case, it is not clear whether downstream analysis tools consider all mapping locations equal regardless of their distance.
 
 In the light of these facts, I define two broad paradigms for the secondary and tertiary analysis of HTS data: \emph{best-mapping} and \emph{all-mapping}.
 The best-mapping paradigm considers a single mapping location per read along with its confidence, while the all-mapping paradigm considers a comprehensive set of mapping locations per read.
@@ -205,16 +209,21 @@ In section~\ref{sec:mappability}, I discuss how this paradigm systematically fai
 Mapping quality has been introduced in the tool MAQ \citep{Li2008}.
 The study considers short 30--40~bp reads, produced by early Illumina and ABI/SOLiD sequencing technologies, whose sequencing error rates were quite high.
 Given the short lengths and high error rates, a significant fraction of such reads can be aligned to multiple mapping locations, even considering only co-optimal Hamming distance locations.
-Since base callers output base call probabilities in Phred-scale along with the reads, \cite{Li2008} propose a novel probabilistic scoring scheme called \emph{mapping quality}, encoding the probability that a read aligns correctly at a mapping location in the reference genome.
+Since base callers output base call probabilities in Phred-scale along with the reads, \citeauthor{Li2008} propose a novel probabilistic scoring scheme called \emph{mapping quality}, encoding the probability that a read aligns correctly at a mapping location in the reference genome.
 
-The argument of \citeauthor{Li2008} is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
-The authors claim that \emph{``it is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.''}
-Though, \citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.
+%The argument of \cite{Li2008} is that the Hamming distance is not an adequate scoring scheme to guess the correct mapping location of many reads.
+%Though, \citeauthor{Li2008} do not show in their study what is the effect of relying on mapping quality rather than on mapping uniqueness.
+%Mapping quality scores have been initially used in MAQ \citep{Li2008} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
+Mapping quality scores offer a way to prioritize the results produced in downstream data analyses.
+\cite{Li2008} write that \emph{``it is possible to act conservatively by discarding reads that map ambiguously at some level, but this leaves no information in the repetitive regions and it also discards data, reducing coverage in an uneven fashion, which may complicate the calculation of coverage.''}
+For instance, the \emph{GATK HaplotypeCaller} \citep{DePristo2011} annotates its variant calls with qualities whose value depends on mapping qualities, rather than removing data by applying a hard mapping quality cutoff.
+Below, I define the mapping quality score as done in \citep{Li2008}.
 
 Fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$. Consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
 The base calling error $\epsilon_i$ from equation \ref{eq:phred} represents the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
 The probability $\Pr[r_i | g_{l+i-1}]$ of observing the base $r_i$ given the donor genome base $g_{l+i-1}$, is:
 \begin{eqnarray}
+\label{eq:baseprob}
 \Pr[r_i | g_{l+i-1}] = \left\{
 \begin{array}{ll}
 1-\epsilon_i                  & \text{ if } g_{l+i-1} = r_i\\
@@ -228,7 +237,7 @@ and assuming \iid base calling errors, it follows that the probability $\Pr[r | 
 \Pr[r | g, l] = \prod_{i=1}^{|r|}{\Pr[r_i | g_{l+i-1}]}.
 \end{eqnarray}
 
-By applying Bayes' theorem, \citeauthor{Li2008} derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
+By applying Bayes' theorem, \cite{Li2008} derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
 Assuming uniform coverage, each location $l \in [1, |g| - |r| + 1]$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $p(l)$ is simply:
 \begin{eqnarray}
 \Pr[l] = \frac{1}{|g| - |r| + 1}
@@ -249,15 +258,11 @@ On the one hand, this computation is practically infeasible.
 On the other hand, sub-optimal locations not close to the optimum one contribute very little to the sum in equation~\ref{eq:mapprob}.
 Therefore, read mapping programs approximate equation~\ref{eq:mapprob} using only the mapping locations they repute relevant.
 
-Mapping quality has been initially used in MAQ \citep{Li2008} and BWA \citep{Li2009} to maximize variant calling confidence by discarding reads whose best mapping location is below a given mapping quality threshold.
-Since then, this method has been widely accepted.
-Nowadays, mapping quality is computed by best-mappers and used by almost all variant calling tools \eg the Genome Analysis ToolKit (GATK) \citep{DePristo2011}.
-
-Some objections can be raised against this definition of mapping quality scores.
-First, this score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
-In other words, mapping quality considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
+Some objections can be raised against the above definition of mapping quality scores.
+First, the score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
+In other words, equation~\ref{eq:baseprob} considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
 Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the probability of any location in equation~\ref{eq:mapprob} dilutes in presence of a large number of co-optimal or close sub-optimal mapping locations.
-Third, this definition of mapping quality tends to become less relevant as base calls improve, due to advances of sequencing technologies, and thus degenerates into a shallow measure of uniqueness.
+Therefore, in chapter \ref{sec:yara}, I give an alternative definition of mapping quality.
 
 \subsection{All-mapping}
 All-mapping analysis methods consider a comprehensive set of locations per read.
