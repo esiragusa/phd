@@ -93,7 +93,7 @@ Below I discuss the performance of these indices within Masai, while I refer the
 
 I initially chose the ESA over the LST because of better construction times.
 Indeed, the ESA provides a linear time construction algorithm (an adaptation of the DC7 algorithm \citep{Dementiev2008} to multiple sequences \citep{Weese2013} for the generalized SA, followed by the algorithms proposed in \citep{Kasai2001,Abouelhoda2004}), while the LST construction algorithm takes quadratic time (using the radix sort based \emph{wotd}-algorithm \citep{Giegerich1999}).
-The construction of the ESA of the \emph{H.~sapiens} reference genome (hg19) takes about 1.5~hours and the index consumes 39~GB of memory.% (see table~\ref{tab:index:construction}).
+The construction of the ESA of the \emph{H.~sapiens} reference genome (GRCh37) takes about 1.5~hours and the index consumes 39~GB of memory.% (see table~\ref{tab:index:construction}).
 Apart from that, both ESA and LST implementations require $13$ bytes per base pair and exhibit comparable query speed.
 
 At this point, Masai required high-end hardware to process large reference genomes.
