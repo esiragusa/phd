@@ -1,39 +1,40 @@
 \chapter{Introduction}
 
 The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
-In February 2001, the three billion dollars publicly funded \emph{Human Genome Project} (HGP) published the first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
+In February 2001, the three billion dollars publicly funded \emph{Human Genome Project} (HGP) published a first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
 Concurrently, the privately funded company \emph{Celera Genomics} published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
-Other international sequencing consortiums, analogous to the HGP, contributed to characterize the entire genomes of several other model organisms, including mouse \citep{Chinwalla2002}, nematode worms \citep{Sulston1992} and yeasts.
-In addition, Celera Genomics carried on the sequencing of fruit fly \citep{Myers2000} and mouse \citep{Mural2002}.
-%The knowledge of these entire genomics sequences paved the way to a myriad of computational biology studies.
-
 The application of efficient computational methods has been crucial for the accomplishment of these projects.
-Whole genome sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
-Because of such technological limitation, sequencing of whole genomes had to be coupled with the \emph{shotgun} approach.
-Shotgun sequencing consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
-Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
-%In order to produce a contiguous assembly, DNA sequences must be read with a manyfold \emph{coverage} \citep{Lander1988}.
-At the pace of Sanger sequencing, it took years and hundreds of million dollars for these projects to complete.
-Nonetheless, their success did not mark the end of the sequencing era but its beginning.
+
+%Other international sequencing consortiums, analogous to the HGP, contributed to characterize the entire genomes of several other model organisms, including mouse \citep{Chinwalla2002}, nematode worms \citep{Sulston1992} and yeasts.
+%In addition, Celera Genomics carried on the sequencing of fruit fly \citep{Myers2000} and mouse \citep{Mural2002}.
+%The knowledge of the entire genomic sequence paved the way to a myriad of computational studies.
+
+These sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
+Because of such technological limitation, the sequencing of a whole genome had to be coupled with the \emph{shotgun} approach, 
+which consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
+The whole human genome finally had to be reassembled from its sequencing reads using computational methods.
+%Then, it is left up to \emph{bioinformatics} to reassemble these reads and produce a holistic representation of the original genome.
+
 
 % -----------------------------------------------------------------------------
 
 \section{High-throughput sequencing}
 \label{sec:intro:hts}
 
+The success of these projects did not mark the end of the sequencing era, but rather its beginning.
 Since then, sequencing technology steadily improved and evolved into what is now called \emph{high-throughput sequencing} (HTS) or \emph{next-generation sequencing} (NGS).
 In 2004, \emph{454 Life Science} commercialized the \emph{Genome Sequencer FLX}, an instrument based on large-scale parallel \emph{pyrosequencing}, capable of sequencing DNA in form of 400~bp reads at a throughput of about 20~Mbp/h.
 High-throughput sequencing was born.
 
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
-The instrument produced reads as short as 30~bp with lower accuracy than Sanger sequencing but at very high-throughput: it allowed \emph{resequencing} a human genome in three months for about \$100,000.
+The instrument produced reads as short as 30~bp with lower accuracy than Sanger sequencing but at very high-throughput: it allowed \emph{resequencing} a whole human genome in three months for about \$100,000.
 Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
 At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing in less than three days the sequencing of many whole human genomes at \$1,000 each.
 
-%\subsection{Applications}
+\subsection{Applications}
 %\label{sec:intro:hts:protocols}
 
-In the last years, HTS has become an invaluable method of investigation for computational molecular biologists.
+In the last few years, HTS has become an invaluable method of investigation for computational molecular biologists.
 Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at single-base resolution.
 %For instance, DNA resequencing applications include genotyping and discovery of structural variations, the sequencing of RNA transcripts allows to assess gene expression as well as to analyse non-coding RNAs, epigenetic applications predict gene regulation according to methylation patterns and transcription factor binding-sites activity.
 

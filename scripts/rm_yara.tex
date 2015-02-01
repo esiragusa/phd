@@ -137,10 +137,10 @@ This fact considerably simplifies the implementation and allows its fine-grained
 \subsection{Paired-end and mate-pair protocols}
 \label{sec:yara:eng:pairs}
 Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments.
-Reads are sequenced in pairs from both ends of the same DNA fragment (called \emph{insert}).
-Properly paired reads are expected to map within the insert size adopted in the sequencing protocol.
-Thus, the added information of an expected insert size allows a read mapper to map read pairs to their original locations more confidently than in the single-end protocol.
-Nonetheless, a read mapper should report equally important unpaired mapping locations, as the lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
+As reads are sequenced in pairs from the two ends of the same DNA fragment, they are expected to map closely in the reference genome.
+The added information of an expected DNA insert size allows to disambiguate the original location of read pairs more confidently than in the single-end protocol.
+Nonetheless, the lack of any proper pair of mapping locations signals a potential structural variation, \eg a long indel or an inversion.
+Therefore, a read mapper should report equally important unpaired mapping locations.
 
 In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and reports all relevant mapping locations per read.
 However, in addition to the single-end workflow, Yara implements a finer strategy to choose primary mapping locations.
