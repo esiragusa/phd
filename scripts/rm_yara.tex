@@ -1,7 +1,7 @@
 \chapter{Yara}
 \label{sec:yara}
 
-\emph{Yara} (\emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is a non-heuristic read mapper capable of quickly reporting all co-optimal or sub-optimal mapping locations within a given error rate.
+\emph{Yara} (\emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is a non-heuristic read mapper capable of quickly reporting all co-optimal or suboptimal mapping locations within a given error rate.
 Yara works with Illumina or Ion Torrent reads, supports both paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
 
 % -----------------------------------------------------------------------------
@@ -9,7 +9,7 @@ Yara works with Illumina or Ion Torrent reads, supports both paired-end and mate
 \section{Engineering}
 \label{sec:yara:eng}
 
-\subsection{Stratified mapping}
+\subsection{Stratified mapping}suboptimal
 \label{sec:yara:eng:strata}
 
 Yara is based on the concept of \emph{stratified all-mapping}.
@@ -35,7 +35,7 @@ According to the above definition, conventional all-mapping under the edit dista
 S = S_0 \cup S_1 \cup \dots \cup S_k
 \end{eqnarray}
 as relevant mapping locations within an \emph{absolute} error threshold $k$.
-Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or sub-optimal up to a certain degree $s$.
+Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or suboptimal up to a certain degree $s$.
 Formally, if the distance of any optimal mapping location for read $r$ is
 \begin{eqnarray}
 e^* = \min \,\{ e \in [0,k-s] : S_e \neq \emptyset \}
@@ -44,7 +44,7 @@ stratified all-mapping considers mapping locations
 \begin{eqnarray}
 S = S_{e^*} \cup \dots \cup S_{e^*+s\}}
 \end{eqnarray}
-within a \emph{relative} sub-optimality error threshold $s$ to be relevant.
+within a \emph{relative} suboptimality error threshold $s$ to be relevant.
 %Note that $l \ll k$.
 
 \subsubsection{Efficient filtration by strata}
@@ -317,7 +317,7 @@ In addition, Yara has the highest throughput, being 1.7 times faster than GEM, 2
 
 \subsubsection{Suboptimal mapping locations}
 Results are shown in table~\ref{tab:yara:rabema}  (right panel).
-RazerS~3 is the only full-sensitive tool in finding all sub-optimal locations.
+RazerS~3 is the only full-sensitive tool in finding all suboptimal locations.
 Hobbes~2 looses only a few points at 4-5~\% error rate.
 Yara is full-sensitive up to 3~\% error rate, nonetheless it looses only 2.8~\% of normalized locations at 5~\% error rate.
 However, looking at throughputs, Yara is 3.6 times faster than Hobbes~2 and 21.9 times faster than RazerS~3.

@@ -12,16 +12,15 @@ The ingenuity of approximate string matching methods is crucial to design effici
 
 In the first part of this thesis, I cover practical indexed and filtering methods for exact and approximate string matching.
 I present state of the art algorithms and data structures, give their pseudocode and discuss their implementation.
-Furthermore, I provide all implementations within SeqAn, the generic \CC template library for sequence analysis, which is freely available under \url{http://www.seqan.de/}.
+Furthermore, I provide all implementations within \emph{SeqAn}, the generic \CC template library for sequence analysis, which is freely available under \url{http://www.seqan.de/}.
 Subsequently, I experimentally evaluate all implemented methods, with the aim of guiding the engineering of new sequence alignment software.
 To the best of my knowledge, this is the first work providing a comprehensive exposition, implementation and evaluation of such methods.
 
 In the second part of this thesis, I turn to the engineering and evaluation of read mapping tools.
-First, I present a novel method to find all mapping locations per read within a user-defined error rate.
-This method is published in the peer-reviewed journal Nucleic Acids Research and packaged in a open source tool nicknamed Masai.
-Afterwards, I present a refined method to greedily find all stratified read mapping locations up to a user-defined rate of suboptimality.
-This method, packaged in a tool called Yara, provides a more practical, yet sound solution to the read mapping problem.
-Extensive evaluation, both on simulated and real datasets, shows that Masai and Yara have better speed and accuracy than de-facto standard read mapping tools.
-
+First, I present a novel method to find all mapping locations per read within a user-defined error rate;
+this method is published in the peer-reviewed journal \emph{Nucleic Acids Research} and packaged in a open source tool nicknamed \emph{Masai}.
+Afterwards, I generalize this method to quickly report all co-optimal or suboptimal mapping locations per read within a user-defined error rate;
+this method, packaged in a tool called \emph{Yara}, provides a more practical, yet sound solution to the read mapping problem.
+Extensive evaluations, both on simulated and real datasets, show that Yara has better speed and accuracy than \emph{de-facto} standard read mapping tools.
 
 \newpage

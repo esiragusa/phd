@@ -5,7 +5,7 @@
 
 In this chapter, I provide the reader with background knowledge in the fast-moving field of high-throughput sequencing (HTS).
 It goes without saying that the reader familiar with HTS can skip this chapter.
-In section \ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
+In section suboptimal\ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
 Afterwards, in section \ref{sec:background:analisys}, I explain how standard HTS data \emph{analysis pipelines} are structured;
 in particular, in section \ref{sec:background:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
 In section \ref{sec:mappability}, I review two studies on the limits of HTS data analysis.
@@ -160,7 +160,7 @@ The scoring scheme accounts for eventual genomic variation, as well as for any s
 Under these assumptions, an alignment of optimal score for a read implies its \emph{original location} on the reference genome.
 Conversely, no alignment within the score threshold implies too many sequencing errors, too much genetic variation, or sample contamination.
 %A pile-up of the reads aligned at their mapping locations thus provides a consensus alignment of the donor genome.
-A problem arises in presence of co-optimal or close sub-optimal alignments: the read cannot be mapped confidently to one single location.
+A problem arises in presence of co-optimal or close suboptimal alignments: the read cannot be mapped confidently to one single location.
 
 The problem of confidently mapping high-throughput sequencing reads comes from the non-random nature of genomic sequences.
 Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{Wolfe1997,Dehal2005} or large-scale segmental duplications in chromosomes \citep{Bailey2001,Samonte2002}, transposition of repetitive elements as short tandem repeats (microsatellites) \citep{Wang1994a,Wooster1994} and interspersed nuclear elements (LINE, SINE) \citep{Smit1996}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{Meyne1990}.
@@ -255,13 +255,13 @@ Q[l|g,r] = -10 \log_{10}(1 - \Pr[l|g,r]).
 
 Computing the exact mapping quality as in equation~\ref{eq:mapqual} requires aligning each read to all positions in the reference genome.
 On the one hand, this computation is practically infeasible.
-On the other hand, sub-optimal locations not close to the optimum one contribute very little to the sum in equation~\ref{eq:mapprob}.
+On the other hand, suboptimal locations not close to the optimum one contribute very little to the sum in equation~\ref{eq:mapprob}.
 Therefore, read mapping programs approximate equation~\ref{eq:mapprob} using only the mapping locations they repute relevant.
 
 Some objections can be raised against the above definition of mapping quality scores.
 First, the score is derived under the unlikely assumption of the reference genome being equal to the donor genome.
 In other words, equation~\ref{eq:baseprob} considers only errors due to base miscalls and disregards genetic variation; thus the risk is to prefer mapping locations supported by known low base qualities rather than by true but unknown SNVs.
-Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the probability of any location in equation~\ref{eq:mapprob} dilutes in presence of a large number of co-optimal or close sub-optimal mapping locations.
+Second, mapping quality is nonetheless strongly correlated to mapping uniqueness, as discussed in section~\ref{sec:mappability}; it is easy to see that the probability of any location in equation~\ref{eq:mapprob} dilutes in presence of a large number of co-optimal or close suboptimal mapping locations.
 Therefore, in chapter \ref{sec:yara}, I give an alternative definition of mapping quality.
 
 \subsection{All-mapping}
@@ -396,7 +396,7 @@ They quickly determine, often with the help of an index, locations of the refere
 Their efficiency is bound to filtration specificity and thus deteriorates with increasing error rates and genome lengths.
 GEM \citep{MarcoSola2012} tries to fit both best and all-mapping paradigms.
 It speeds up best-mapping by stratifying mapping locations by edit distance and prioritizing filtration accordingly.
-Finally, Masai \citep{Siragusa2013} and Yara \citep{Siragusa2014} are read mapping programs developed by myself.
+Finally, Masai \citep{Siragusa2013} and Yara \citep{Siragusa2015} are read mapping programs developed by myself.
 %I initially designed Masai for the all-mapping paradigm and later Yara for both best and all-mapping.
 I present the engineering and evaluation of these tools in chapters \ref{sec:masai} and \ref{sec:yara}.
 

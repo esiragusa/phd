@@ -7,6 +7,7 @@
 \input{tex/fonts}
 \input{tex/macros}
 \input{tex/theorem}
+\usepackage{pdfpages}
 
 % === Tikz =====================================================================
 
@@ -246,6 +247,8 @@ Gutachter:\\
 %}
 
 \include{scripts/appendix_cv}
+%\includepdf[pages=-,pagecommand={}]{CV.pdf}
+%\includegraphics[scale=0.9]{CV.pdf}
 \clearemptydoublepage
 
 % === Declaration =======================================================================
@@ -265,8 +268,8 @@ Gutachter:\\
 \clearemptydoublepage
 \listoftables
 \clearemptydoublepage
-\listofalgorithms
-\clearemptydoublepage
+%\listofalgorithms
+%\clearemptydoublepage
 
 %\markboth{List of Notations \hfill}{List of Notations \hfill}
 %\listofnotations
@@ -274,7 +277,6 @@ Gutachter:\\
 
 \clearemptydoublepage
 \raggedright
-%\addtocontents{toc}{\protect\contentsline{chapter}{Index}{\thepage}}
 \addcontentsline{toc}{chapter}{Index}
 \printindex
 
