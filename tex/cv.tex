@@ -1,3 +1,7 @@
+
+\usepackage{bibentry}
+\nobibliography*
+
 %----------------------------------------------------------------------------------------
 
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -17,5 +21,13 @@
 \newcommand{\cventry}[4]{
 \begin{tabular}{R{2.5cm} p{\textwidth-3cm}}
 \textbf{#1} & \textbf{#2}, \textit{#3}. {\small #4}.
+\end{tabular}
+}
+
+%----------------------------------------------------------------------------------------
+
+\newcommand{\cvtext}[1]{
+\begin{tabular}{p{\textwidth}}
+#1
 \end{tabular}
 }
