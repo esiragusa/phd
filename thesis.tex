@@ -7,7 +7,7 @@
 \input{tex/fonts}
 \input{tex/macros}
 \input{tex/theorem}
-\usepackage{pdfpages}
+\input{tex/cv}
 
 % === Tikz =====================================================================
 
@@ -240,15 +240,7 @@ Gutachter:\\
 
 % === Curriculum Vitae ==================================================================
 
-%\ifthenelse{\boolean{noskeleton}}{}{
-%\addtocontents{toc}{\protect\contentsline{chapter}{Curriculum Vitae}{\thepage}}
-%\include{scripts/appendix_cv}
-%\include{scripts/appendix_nocv}
-%}
-
 \include{scripts/appendix_cv}
-%\includepdf[pages=-,pagecommand={}]{CV.pdf}
-%\includegraphics[scale=0.9]{CV.pdf}
 \clearemptydoublepage
 
 % === Declaration =======================================================================
