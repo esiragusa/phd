@@ -165,8 +165,8 @@ In order to evaluate Masai, I propose three experiments:
 This evaluation focuses on the capability of the mappers to retrieve the location of a single read without the help of its paired-end, which can of course disambiguate some mapping locations.
 As references, I use whole genomes of \emph{E.~coli} (NCBI NC\_000913.2), \emph{C.~elegans} (WormBase WS195), \emph{D.~melanogaster} (FlyBase release 5.42), and \emph{H.~sapiens} (GRCh37.p2).
 
-I compare Masai in best-mapping with Bowtie\,2, BWA and Soap\,2, while in all-mapping with RazerS\,3, Hobbes, mrFAST and SHRiMP\,2.
-Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values, while Masai, RazerS\,3, Hobbes and mrFAST use edit distance.
+I compare Masai in all-mapping with RazerS\,3, Hobbes, mrFAST and SHRiMP\,2, while in best-mapping with Bowtie\,2, BWA and Soap\,2.
+Masai, RazerS\,3, Hobbes and mrFAST use edit distance, while Bowtie\,2, BWA, Soap\,2 and SHRiMP\,2 rely on scoring schemes taking into account base quality values.
 When relevant, I configured some read mappers with the appropriate absolute number of errors (Masai, mrFAST, Hobbes, Soap\,2) or error rate (RazerS\,3).
 In section \ref{sup:masai:param}, I give the exact parameterization of the read mappers considered in this evaluation.
 
@@ -174,8 +174,8 @@ In section \ref{sup:masai:param}, I give the exact parameterization of the read 
 \label{masai:evaluation:rabema}
 
 I first consider the Rabema benchmark~\citep{Holtgrewe2011} (v1.1) for a thorough evaluation and comparison of read mapping sensitivity.
-The benchmark contains the categories \emph{all}, \emph{all-best}, \emph{any-best}, \emph{precision}, and \emph{recall}.
-In the categories all, all-best and any-best, a read mapper has to find all, all of the best, or any of the best edit distance locations for each read.
+I consider the benchmark categories \emph{all} and \emph{best}, in addition to \emph{precision} and \emph{recall}.
+In the categories all and best, a read mapper has to find for each read respectively all or one of the best edit distance mapping locations.
 The categories precision and recall require a read mapper to find the \emph{original} location of each simulated read, which is a measure independent of the used scoring model, \eg edit distance or quality based.
 A simulated read is mapped \emph{correctly} if the mapper reports its original location, 
 and it is mapped \emph{uniquely} if the mapper reports only one location.
@@ -189,12 +189,6 @@ To this extent, I parametrized these tools to be highly sensitive and output all
 Since BWA and Bowtie\,2 were not designed to be used in this way, they spent much more time than proper all-mappers, \ie up to 3~hours in a run compared to several minutes.
 However, the aim of this experiment is to investigate read mapping sensitivity, therefore I do not report any running times.
 Table~\ref{tab:masai:rabema} shows the results on \emph{H.~sapiens}.
-
-\subsubsection{Best-mapping}
-Masai shows the best recall values, not loosing more than 2.3\,\% recall on edit distance 5.
-Conversely, the recall values of BWA and Bowtie\,2 drop significantly with increasing edit distance and loose up to 15.4\,\% and 11.5\,\% on edit distance 5.
-As expected, Soap\,2 turns out to be inadequate for mapping reads of length 100\,bp at this error rates.
-Precision values have less variance than recall values. Masai shows the best precision values with 97.8\,\%, followed by Soap\,2 with 97.7\,\%, and BWA with 97.5\,\%. Interestingly, Bowtie\,2 shows the worst precision values, loosing up to 5.6\,\% on edit distance 5.
 
 \subsubsection{All-mapping}
 As expected, RazerS\,3 shows full-sensitivity.
@@ -210,6 +204,12 @@ As mentioned in section \ref{masai:engineering:seeding}, Masai is not full-sensi
 %Conversely, it attains full-sensitivity whenever exact seeds are used, \eg on E.~coli, C.~elegans and D.~melanogaster (Supplementary Data).
 In general, RazerS\,3 should be used when full-sensitivity is required, \ie in read mapping benchmarks.
 However, these results show that Masai can replace RazerS\,3 or mrFAST in practical all-mapping setups.
+
+\subsubsection{Best-mapping}
+Masai shows the best recall values, not loosing more than 2.3\,\% recall on edit distance 5.
+Conversely, the recall values of BWA and Bowtie\,2 drop significantly with increasing edit distance and loose up to 15.4\,\% and 11.5\,\% on edit distance 5.
+As expected, Soap\,2 turns out to be inadequate for mapping reads of length 100\,bp at this error rates.
+Precision values have less variance than recall values. Masai shows the best precision values with 97.8\,\%, followed by Soap\,2 with 97.7\,\%, and BWA with 97.5\,\%. Interestingly, Bowtie\,2 shows the worst precision values, loosing up to 5.6\,\% on edit distance 5.
 
 \begin{table*}[t]
   \caption[Masai results in the Rabema benchmark]
@@ -244,6 +244,13 @@ I simulated 5 million Illumina-like reads of length $100$\,bp from the whole hum
 I mapped the reads with each tool and measured its sensitivity in each class.
 Table~\ref{tab:masai:variant} shows the results.
 
+\subsubsection{All-mapping}
+
+Looking at all-mapping results, Masai shows 100\,\% precision and recall in all classes, except for classes (2,0) and (1,1) where it looses only 0.1\,\% and 0.7\,\% recall.
+Masai is therefore roughly comparable to the full-sensitive read mappers RazerS\,3 and mrFAST.
+SHRiMP\,2 shows 100\,\% precision in all classes but looses between 0.3\,\% and 0.8\,\% recall in each class.
+Hobbes has the lowest performance among all-mappers: it appears to have problems with indels, indeed it looses 9.5\,\% recall in class (0,3).
+
 \subsubsection{Best-mapping}
 
 Masai shows the highest precision and recall in all best-mapping classes.
@@ -252,13 +259,6 @@ The recall values of Bowtie\,2, BWA and Soap\,2 are negatively correlated with t
 For instance, in the Rabema benchmark, Bowtie\,2 looses respectively 7.2\,\% and 11.5\,\% of mapping locations at distance 4 and 5, but in class (4,0) of this experiment it looses 17.5\,\% recall.
 A similar trend is observable for BWA and Soap\,2.
 The low performance of Soap\,2 is also due to its limitation to at most 2 mismatches and no support for indels.
-
-\subsubsection{All-mapping}
-
-Looking at all-mapping results, Masai shows 100\,\% precision and recall in all classes, except for classes (2,0) and (1,1) where it looses only 0.1\,\% and 0.7\,\% recall.
-Masai is therefore roughly comparable to the full-sensitive read mappers RazerS\,3 and mrFAST.
-SHRiMP\,2 shows 100\,\% precision in all classes but looses between 0.3\,\% and 0.8\,\% recall in each class.
-Hobbes has the lowest performance among all-mappers: it appears to have problems with indels, indeed it looses 9.5\,\% recall in class (0,3).
 
 \begin{table*}[tH!]
   \caption[Masai variant detection results]
@@ -289,36 +289,41 @@ For an accurate running time comparison, I ran the tools using a single thread a
 I measured running times and peak memory consumptions.
 
 I cannot measure precision and recall values as real reads have unknown origins.
-Therefore, for this evaluation, I adopt the commonly used measure of percentage of \emph{mapped reads}, \ie the fraction of reads for which the read mapper reports a mapping location.
-However, as some mappers report mapping locations without constraints on the number of errors, I also include Rabema \emph{any-best} scores.
-As explained in section \ref{masai:evaluation:rabema}, the Rabema any-best benchmark assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie minimal) number of errors;
-final Rabema any-best scores are normalized by the number of reads.
+%Therefore, for this evaluation, I adopt the commonly used measure of percentage of \emph{mapped reads}, \ie the fraction of reads for which the read mapper reports a mapping location.
+%However, as some mappers report mapping locations without constraints on the number of errors, 
+Therefore, for this evaluation, I count also the Rabema \emph{best} locations.
+As explained in section \ref{masai:evaluation:rabema}, the Rabema best category assigns a point for a read if the mapper reports at least one mapping location with the optimal (\ie best) number of errors;
+final Rabema best scores are normalized by the number of reads.
 All results are shown in table~\ref{tab:masai:runtime}.
 
-\subsubsection{Best-mapping}
-On the \emph{C.~elegans} dataset, Masai is 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
-On the \emph{H.~sapiens} dataset, Masai is 2.6 times faster than Bowtie\,2, 3.6 times faster than BWA but 2.1 times slower than Soap\,2.
-On one end, Soap\,2 is not able to map a consistent fraction of reads because of its limitation to 2 mismatches.
-On the other end, Bowtie\,2 reports more mapped reads than Masai but, taking any-best scores into account, it reports less mapping locations than Masai.
-In fact, Bowtie\,2 uses a scoring scheme based on quality values and does not impose a maximal error rate threshold.
-Despite that, Bowtie\,2 misses respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 on the \emph{C.~elegans} and \emph{H.~sapiens} datasets.
-
 \subsubsection{All-mapping}
-On the \emph{C.~elegans} dataset, Masai is 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
-Hobbes constantly crashes and maps less reads than all other mappers in this category.
 On the \emph{H.~sapiens} dataset, Masai is 11.9 times faster than RazerS\,3, 14.6 times faster than mrFAST, and 7.6 times faster than Hobbes.
 The current version of Hobbes constantly crashes and maps only half of the reads.
 SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days.
-Likewise for Bowtie\,2, also SHRiMP\,2 does not impose a maximal error rate threshold and reports more mapped reads than Masai.
-However, its Rabema any-best score is inferior to Masai.
-This could be due to the use of a different scoring scheme where two mismatches cost less than opening a gap.
-Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapping locations at distance 0.
+On the \emph{C.~elegans} dataset, Masai is 2.0 times faster than RazerS\,3, 10.9 times faster than Hobbes, 6.3 times faster than mrFAST and 50.1 times faster than SHRiMP\,2.
+Hobbes constantly crashes and maps less reads than all other mappers in this category.
+
+%Likewise for Bowtie\,2, also SHRiMP\,2 does not impose a maximal error rate threshold and reports more mapped reads than Masai.
+%Also SHRiMP\,2 Rabema best score is inferior to Masai.
+%This could be due to the use of a different scoring scheme where two mismatches cost less than opening a gap.
+%Anyway, this hypothesis does not explain why SHRiMP\,2 does not report some mapping locations at distance 0.
+
+\subsubsection{Best-mapping}
+On the \emph{H.~sapiens} dataset, Masai is 2.6 times faster than Bowtie\,2, 3.6 times faster than BWA but 2.1 times slower than Soap\,2.
+On the \emph{C.~elegans} dataset, Masai is 7.7 times faster than Bowtie\,2, 8.2 times faster than BWA and 1.5 times faster than Soap\,2.
+%On one end, 
+Soap\,2 is not able to map a consistent fraction of reads because of its limitation to 2 mismatches.
+%On the other end, Bowtie\,2 reports more mapped reads than Masai but, taking best scores into account, it reports less mapping locations than Masai.
+%In fact, Bowtie\,2 uses a scoring scheme based on quality values and does not impose a maximal error rate threshold.
+%Despite that, 
+Bowtie\,2 misses respectively 22.0\,\% and 20.7\,\% of reads mappable at edit distance 5 on the \emph{C.~elegans} and \emph{H.~sapiens} datasets.
 
 \begin{table*}[t]
   \caption[Masai performance on real data]{
     \label{tab:masai:runtime}
     Performance on real data using $10\,\text{M}\times 100\,\text{bp}$ Illumina reads.
-	Rabema any-best column: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors. Mapped reads column: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
+	Rabema best column: in large are shown the percentage of reads mapped with the minimal number of errors (up to 5\%) and in small the percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
+%	Mapped reads column: in large are shown the percentage of mapped reads and in small the cumulative percentage of reads that were mapped with $\bigl(\begin{smallmatrix}\mbox{\tiny 0}&\mbox{\tiny 1\%}&\mbox{\tiny 2\%}\\\mbox{\tiny 3\%}&\mbox{\tiny 4\%}&\mbox{\tiny 5\%}\end{smallmatrix}\bigr)$ errors.
 	Remarks: SHRiMP\,2 is not able to map the \emph{H.~sapiens} dataset within 4 days; Hobbes systematically crashes in all but the \emph{D.~melanogaster} dataset.
   }
 	\vspace{-3mm}
@@ -406,14 +411,14 @@ In addition, Masai implements a best-mapping method that finds one optimal mappi
 
 Is the edit distance sufficient to perform best-mapping?
 Both Rabema benchmark and variant detection results show that Masai has constantly better accuracy than other best-mappers relying on more complex scoring schemes.
-In particular, the Rabema benchmark results show that Rabema any-best values are tightly bound to recall values.
+In particular, the Rabema benchmark results show that Rabema best values are tightly bound to recall scores.
 Hence, the edit distance is a pertinent and adequate scoring scheme for best-mapping.
 Vice versa, best-mappers using scoring schemes based on quality values show a generalized and substantial loss of mapping accuracy.
 This is likely due to the heuristics on which these tools rely.
 To sum up, it is better to stick to edit distance and guarantee full-sensitivity rather than to adopt an involved scoring scheme and explore the alignment space heuristically, hence partially.
 
 How many mapping locations do heuristic best-mappers miss?
-By looking at precision and recall values on simulated data, or at Rabema any-best values on real data, it can be deduced that Bowtie\,2, BWA and Soap\,2 miss up to 20\,\% of reads mappable at 5\,\% error rate.
+By looking at precision and recall values on simulated data, or at Rabema best values on real data, it can be deduced that Bowtie\,2, BWA and Soap\,2 miss up to 20\,\% of reads mappable at 5\,\% error rate.
 Yet, it is not evident how these results affects variant calling pipelines.
 
 Summing up, Masai in all-mapping is an order of magnitude faster and thus a valid alternative to tools like RazerS~3 and mrFast.
