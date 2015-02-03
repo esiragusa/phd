@@ -2,16 +2,16 @@
 % Sun Jul  1 11:47:28 2012
 \begin{tabular}{lcccccccccccccc}
 \toprule 
-& \multicolumn{2}{c}{ sequencer } & & \multicolumn{3}{c}{ paradigm } & & \multicolumn{3}{c}{ alignment } & & \multicolumn{3}{c}{ index }\\
+& \multicolumn{2}{c}{ Sequencer } & & \multicolumn{3}{c}{ Paradigm } & & \multicolumn{3}{c}{ Alignment } & & \multicolumn{3}{c}{ Index }\\
 \cmidrule{2-3} \cmidrule{5-7} \cmidrule{9-11} \cmidrule{13-15}
-& { Illumina } & {Ion}  & \phantom{-} & { best } & { strata } & { all } & \phantom{-} & {type} & {optimal} & {method} & \phantom{-} & { type } & { reference } & { reads } \\
+& { Illumina } & {Ion}  & \phantom{-} & { Best } & { Strata } & { All } & \phantom{-} & {Type} & {Optimal} & {Method} & \phantom{-} & { Type } & { Reference } & { Reads } \\
 \midrule
 {Bowtie} & short & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 {Bowtie~2} & \cmark & \cmark & & \cmark & \xmark & \xmark & & local & \xmark & exact seeds & & FM-index & \cmark & \xmark \\
 \\
 {BWA} & \cmark & \xmark & & \cmark & \xmark & \xmark & & indels & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
-{Soap~2} & short & \xmark & & \cmark & \cmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
+{Soap~2} & short & \xmark & & \cmark & \xmark & \xmark & & mismatches & \xmark & backtracking & & FM-index & \cmark & \xmark \\
 \\
 {RazerS} & \cmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & $q$-grams & & $q$-gram index & \xmark & \cmark \\
 {RazerS~3} & \cmark & \xmark & & \xmark & \cmark & \cmark & & indels & \cmark & exact seeds & & $q$-gram index & \xmark & \cmark \\
