@@ -3,13 +3,22 @@
 \setcounter{secnumdepth}{0} % Suppress section numbering
 \setlength\parindent{0pt} % Stop paragraph indentation
 
+\vspace{-5mm}
+
+\begin{minipage}{0.6\textwidth}
 \section*{Personal information}
 \cvline{Name}{Enrico Siragusa}
 \cvline{Date of birth}{28 March 1985}
 \cvline{Citizenship}{Italian}
-\cvline{Address}{Meininger Str. 10, 10823 Berlin, Germany}
+\cvline{Address}{Meininger Str. 10}
+\cvline{}{10823 Berlin, Germany}
 \cvline{Mobile phone}{ +49 (0)160 5168591}
 \cvline{Email address}{\href{mailto:enrico.siragusa@fu-berlin.de}{enrico.siragusa@fu-berlin.de}}
+\end{minipage}%
+\begin{minipage}{0.4\textwidth}
+\vspace{5mm}
+\flushright{\doublebox{\includegraphics[height=100pt]{figures/enrico}}\hspace{1.5cm}}
+\end{minipage}
 
 \section*{Education}
 \cventry{2010--now}{PhD in Bioinformatics}{Free University of Berlin}{IMPRS for Computational Biology and Scientific Computing}
@@ -19,18 +28,19 @@
 \cventry{2003--2006}{BSc in Computer Science}{Palermo University}{Grade {\guillemotleft}110/110 cum Laude{\guillemotright}}
 
 \section*{Professional experience}
-\cventry{Apr-Jul 2013}{CUDA Software Engineer}{NVIDIA Research}{}
+\cventry{2014--now}{Bioinformatics Researcher}{Berlin Institute of Health}{Berlin, Germany}
+\cventry{Apr--Jul 2013}{CUDA Software Engineer}{NVIDIA Research}{Berlin, Germany}
 %\cvline{}{\footnotesize I designed a novel technique for cross-architecture C\texttt{++} generic programming and applied it to accelerate the SeqAn library on the NVIDIA Tesla architecture. I implemented efficient approximate string matching algorithms on the FM-index.}
-\cventry{2009--2010}{Software Developer}{EffiCity}{9, rue Faubourg Poissonni\`ere, 75009, Paris, France}
+\cventry{2009--2010}{Software Developer}{EffiCity}{Paris, France}
 %\cvline{}{\footnotesize Engineering and optimization of relational, non-relational, and geographical databases.}
-\cventry{2007--2008}{Software Developer}{eoRezo}{14, rue Lincoln, 75008, Paris, France}
+\cventry{2007--2008}{Software Developer}{eoRezo}{Paris, France}
 %\cvline{}{\footnotesize Development of high-performance web-services, web-caches, and messaging infrastructures.}
 
 \section*{Teaching experience}
-\cvline{WS 2011}{Data Structures and Algorithms for Bioinformatics. Practical lectures and lab. \textit{FU Berlin, 19700}.}
+\cvline{WS 2011}{Data Structures and Algorithms for Bioinformatics --- practical lectures and lab. \textit{FU Berlin, 19700}.}
 \cvline{SS 2010}{Project Management with SeqAn. \textit{FU Berlin, 19588a}.}
 
-\section*{Summer Schools}
+\section*{Summer schools}
 \cvline{Aug 2013}{Otto Warburg Summer School on NGS and its Impact on Genetics.}
 \cvline{Sep 2011}{Otto Warburg Summer School on Evolutionary Genomics.}
 
@@ -49,7 +59,7 @@
 \cvline{German}{Intermediate}
 
 \section*{Transferable skills}
-\cvtext{\emph{Workshops provided by the Dahlem Research School.}}
+\subsection{\emph{Workshops provided by the Dahlem Research School}}
 \cvtext{Scientific writing in the life sciences. Teaching and learning at university level. Advanced scientific presentation. Confident speaking with impact. Speed reading.}
 
 \section*{Presentations and talks}
