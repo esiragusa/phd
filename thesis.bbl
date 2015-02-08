@@ -157,14 +157,6 @@ Califano, A. and Rigoutsos, I. (1993).
 \newblock In {\em Computer Vision and Pattern Recognition, 1993. Proceedings
   CVPR'93., 1993 IEEE Computer Society Conference on\/}, pages 353--359. IEEE.
 
-\bibitem[Chinwalla \ea(2002)Chinwalla, Cook, Delehaunty, Fewell, Fulton,
-  Fulton, Graves, Hillier, Mardis, McPherson, \ea]{Chinwalla2002}
-Chinwalla, A.~T., Cook, L.~L., Delehaunty, K.~D., Fewell, G.~A., Fulton, L.~A.,
-  Fulton, R.~S., Graves, T.~A., Hillier, L.~W., Mardis, E.~R., McPherson,
-  J.~D., \ea (2002).
-\newblock Initial sequencing and comparative analysis of the mouse genome.
-\newblock {\em Nature\/}, {\bf 420}(6915), pages 520--562.
-
 \bibitem[Consortium(2001)Consortium]{Consortium2001}
 Consortium, I. H. G.~S. (2001).
 \newblock Initial sequencing and analysis of the human genome.
@@ -277,6 +269,12 @@ Gallant, J., Maier, D., and Astorer, J. (1980).
 \newblock On finding minimal length superstrings.
 \newblock {\em Journal of Computer and System Sciences\/}, {\bf 20}(1), pages
   50--58.
+
+\bibitem[Giancarlo \ea(2007)Giancarlo, Siragusa, Siragusa, and
+  Utro]{Giancarlo2007}
+Giancarlo, R., Siragusa, A., Siragusa, E., and Utro, F. (2007).
+\newblock A basic analysis toolkit for biological sequences.
+\newblock {\em Algorithms for Molecular Biology\/}, {\bf 2}(1), page~10.
 
 \bibitem[Giegerich \ea(1999)Giegerich, Kurtz, and Stoye]{Giegerich1999}
 Giegerich, R., Kurtz, S., and Stoye, J. (1999).
@@ -500,57 +498,6 @@ Mortazavi, A., Williams, B., McCue, K., Schaeffer, L., and Wold, B. (2008).
 \newblock Mapping and quantifying mammalian transcriptomes by {RNA-seq}.
 \newblock {\em Nat. Methods\/}, {\bf 5}(7), pages 621--628.
 
-\bibitem[Mural \ea(2002)Mural, Adams, Myers, Smith, Miklos, Wides, Halpern, Li,
-  Sutton, Nadeau, Salzberg, Holt, Kodira, Lu, Chen, Deng, Evangelista, Gan,
-  Heiman, Li, Li, Merkulov, Milshina, Naik, Qi, Shue, Wang, Wang, Wang, Yan,
-  Ye, Yooseph, Zhao, Zheng, Zhu, Biddick, Bolanos, Delcher, Dew, Fasulo,
-  Flanigan, Huson, Kravitz, Miller, Mobarry, Reinert, Remington, Zhang, Zheng,
-  Nusskern, Lai, Lei, Zhong, Yao, Guan, Ji, Gu, Wang, Zhong, Xiao, Chiang,
-  Yandell, Wortman, Amanatides, Hladun, Pratts, Johnson, Dodson, Woodford,
-  Evans, Gropman, Rusch, Venter, Wang, Smith, Houck, Tompkins, Haynes, Jacob,
-  Chin, Allen, Dahlke, Sanders, Li, Liu, Levitsky, Majoros, Chen, Xia, Lopez,
-  Donnelly, Newman, Glodek, Kraft, Nodell, Ali, An, Baldwin-Pitts, Beeson, Cai,
-  Carnes, Carver, Caulk, Center, Chen, Cheng, Coyne, Crowder, Danaher,
-  Davenport, Desilets, Dietz, Doup, Dullaghan, Ferriera, Fosler, Gire,
-  Gluecksmann, Gocayne, Gray, Hart, Haynes, Hoover, Howland, Ibegwam, Jalali,
-  Johns, Kline, Ma, MacCawley, Magoon, Mann, May, McIntosh, Mehta, Moy, Moy,
-  Murphy, Murphy, Nelson, Nuri, Parker, Prudhomme, Puri, Qureshi, Raley,
-  Reardon, Regier, Rogers, Romblad, Schutz, Scott, Scott, Sitter, Smallwood,
-  Sprague, Stewart, Strong, Suh, Sylvester, Thomas, Tint, Tsonis, Wang,
-  Williams, Williams, Windsor, Wolfe, Wu, Zaveri, Chaturvedi, Gabrielian, Ke,
-  Sun, Subramanian, Venter, Pfannkoch, Barnstead, and Stephenson]{Mural2002}
-Mural, R., Adams, M., Myers, E., Smith, H., Miklos, G., Wides, R., Halpern, A.,
-  Li, P., Sutton, G., Nadeau, J., Salzberg, S., Holt, R., Kodira, C., Lu, F.,
-  Chen, L., Deng, Z., Evangelista, C., Gan, W., Heiman, T., Li, J., Li, Z.,
-  Merkulov, G., Milshina, N., Naik, A., Qi, R., Shue, B., Wang, A., Wang, J.,
-  Wang, X., Yan, X., Ye, J., Yooseph, S., Zhao, Q., Zheng, L., Zhu, S.,
-  Biddick, K., Bolanos, R., Delcher, A., Dew, I., Fasulo, D., Flanigan, M.,
-  Huson, D., Kravitz, S., Miller, J., Mobarry, C., Reinert, K., Remington, K.,
-  Zhang, Q., Zheng, X., Nusskern, D., Lai, Z., Lei, Y., Zhong, W., Yao, A.,
-  Guan, P., Ji, R., Gu, Z., Wang, Z., Zhong, F., Xiao, C., Chiang, C., Yandell,
-  M., Wortman, J., Amanatides, P., Hladun, S., Pratts, E., Johnson, J., Dodson,
-  K., Woodford, K., Evans, C., Gropman, B., Rusch, D., Venter, E., Wang, M.,
-  Smith, T., Houck, J., Tompkins, D., Haynes, C., Jacob, D., Chin, S., Allen,
-  D., Dahlke, C., Sanders, R., Li, K., Liu, X., Levitsky, A., Majoros, W.,
-  Chen, Q., Xia, A., Lopez, J., Donnelly, M., Newman, M., Glodek, A., Kraft,
-  C., Nodell, M., Ali, F., An, H., Baldwin-Pitts, D., Beeson, K., Cai, S.,
-  Carnes, M., Carver, A., Caulk, P., Center, A., Chen, Y., Cheng, M., Coyne,
-  M., Crowder, M., Danaher, S., Davenport, L., Desilets, R., Dietz, S., Doup,
-  L., Dullaghan, P., Ferriera, S., Fosler, C., Gire, H., Gluecksmann, A.,
-  Gocayne, J., Gray, J., Hart, B., Haynes, J., Hoover, J., Howland, T.,
-  Ibegwam, C., Jalali, M., Johns, D., Kline, L., Ma, D., MacCawley, S., Magoon,
-  A., Mann, F., May, D., McIntosh, T., Mehta, S., Moy, L., Moy, M., Murphy, B.,
-  Murphy, S., Nelson, K., Nuri, Z., Parker, K., Prudhomme, A., Puri, V.,
-  Qureshi, H., Raley, J., Reardon, M., Regier, M., Rogers, Y., Romblad, D.,
-  Schutz, J., Scott, J., Scott, R., Sitter, C., Smallwood, M., Sprague, A.,
-  Stewart, E., Strong, R., Suh, E., Sylvester, K., Thomas, R., Tint, N.,
-  Tsonis, C., Wang, G., Williams, M., Williams, S., Windsor, S., Wolfe, K., Wu,
-  M., Zaveri, J., Chaturvedi, K., Gabrielian, A., Ke, Z., Sun, J., Subramanian,
-  G., Venter, J., Pfannkoch, C., Barnstead, M., and Stephenson, L. (2002).
-\newblock A comparison of whole-genome shotgun-derived mouse chromosome 16 and
-  the human genome.
-\newblock {\em Science\/}, {\bf 296}(5573), pages 1661--71.
-
 \bibitem[Myers(1994)Myers]{Myers1994}
 Myers, E.~W. (1994).
 \newblock A sublinear algorithm for approximate keyword searching.
@@ -560,19 +507,6 @@ Myers, E.~W. (1994).
 Myers, E.~W. (2005).
 \newblock The fragment assembly string graph.
 \newblock {\em Bioinformatics\/}, {\bf 21}(suppl 2), pages ii79--ii85.
-
-\bibitem[Myers \ea(2000)Myers, Sutton, Delcher, Dew, Fasulo, Flanigan, Kravitz,
-  Mobarry, Reinert, Remington, Anson, Bolanos, Chou, Jordan, Halpern, Lonardi,
-  Beasley, Brandon, Chen, Dunn, Lai, Liang, Nusskern, Zhan, Zhang, Zheng,
-  Rubin, Adams, and Venter]{Myers2000}
-Myers, E.~W., Sutton, G.~G., Delcher, A.~L., Dew, I.~M., Fasulo, D.~P.,
-  Flanigan, M.~J., Kravitz, S.~A., Mobarry, C.~M., Reinert, K.~H., Remington,
-  K.~A., Anson, E.~L., Bolanos, R.~A., Chou, H.~H., Jordan, C.~M., Halpern,
-  A.~L., Lonardi, S., Beasley, E.~M., Brandon, R.~C., Chen, L., Dunn, P.~J.,
-  Lai, Z., Liang, Y., Nusskern, D.~R., Zhan, M., Zhang, Q., Zheng, X., Rubin,
-  G.~M., Adams, M.~D., and Venter, J.~C. (2000).
-\newblock A whole-genome assembly of {D}rosophila.
-\newblock {\em Science\/}, {\bf 287}, pages 2196--2204.
 
 \bibitem[Myers(1999)Myers]{Myers1999}
 Myers, G. (1999).
@@ -657,11 +591,39 @@ Simola, D.~F. and Kim, J. (2011).
   reads.
 \newblock {\em Genome Biol\/}, {\bf 12}(6), page R55.
 
-\bibitem[Siragusa \ea(2013)Siragusa, Weese, and Reinert]{Siragusa2013}
-Siragusa, E., Weese, D., and Reinert, K. (2013).
+\bibitem[Singer(2013)Singer]{Singer2012}
+Singer, J. (2013).
+\newblock {\em A Wavelet Tree Based FM-Index for Biological Sequences in
+  SeqAn\/}.
+\newblock Master's thesis, Freie Universit{\"a}t Berlin.
+
+\bibitem[Siragusa \ea(2013a)Siragusa, Weese, and Reinert]{Siragusa2013}
+Siragusa, E., Weese, D., and Reinert, K. (2013a).
 \newblock Fast and accurate read mapping with approximate seeds and multiple
   backtracking.
 \newblock {\em Nucleic Acids Res.}
+
+\bibitem[Siragusa \ea(2013b)Siragusa, Weese, and Reinert]{Siragusa2013b}
+Siragusa, E., Weese, D., and Reinert, K. (2013b).
+\newblock Scalable string similarity search/join with approximate seeds and
+  multiple backtracking.
+\newblock In {\em Proceedings of the Joint EDBT/ICDT 2013 Workshops\/}, pages
+  370--374. ACM.
+
+\bibitem[Siragusa \ea(2015)Siragusa, Weese, and Reinert]{Siragusa2015}
+Siragusa, E., Weese, D., and Reinert, K. (2015).
+\newblock Yara: well-defined alignment of high-throughput sequencing reads.
+\newblock {\em To appear.}
+
+\bibitem[Smedley \ea(tted)Smedley, Jacobson, J{\"a}ger, K{\"o}hler, Holtgrewe,
+  Schubach, Siragusa, Zemojtel, Buske, Bone, Haendel, and
+  Robinson]{Siragusa2015b}
+Smedley, D., Jacobson, J., J{\"a}ger, M., K{\"o}hler, S., Holtgrewe, M.,
+  Schubach, M., Siragusa, E., Zemojtel, T., Buske, O., Bone, W., Haendel, M.,
+  and Robinson, P.~N. (submitted).
+\newblock Next-generation diagnostics and disease gene discovery with the
+  exomiser.
+\newblock {\em Nat. Protoc.}
 
 \bibitem[Smit(1996)Smit]{Smit1996}
 Smit, A.~F. (1996).
@@ -673,13 +635,6 @@ Smit, A.~F. (1996).
 Smith, T.~F. and Waterman, M.~S. (1981).
 \newblock {Identification of Common Molecular Subsequences}.
 \newblock {\em J. Mol. Biol.}, {\bf 147}, pages 195--197.
-
-\bibitem[Sulston \ea(1992)Sulston, Du, Thomas, Wilson, Hillier, Staden,
-  Halloran, Green, Thierry-Mieg, Qiu, \ea]{Sulston1992}
-Sulston, J., Du, Z., Thomas, K., Wilson, R., Hillier, L., Staden, R., Halloran,
-  N., Green, P., Thierry-Mieg, J., Qiu, L., \ea (1992).
-\newblock The c. elegans genome sequencing project: a beginning.
-\newblock {\em Nature\/}, {\bf 356}(6364), pages 37--41.
 
 \bibitem[Treangen and Salzberg(2011)Treangen and Salzberg]{Treangen2011}
 Treangen, T.~J. and Salzberg, S.~L. (2011).
@@ -781,6 +736,13 @@ Venter, J.~C., Adams, M.~D., Myers, E.~W., Li, P.~W., Mural, R.~J., Sutton,
   (2001).
 \newblock The sequence of the human genome.
 \newblock {\em Science\/}, {\bf 291}, pages 1304--1351.
+
+\bibitem[Wandelt \ea(2014)Wandelt, Deng, Gerdjikov, Mishra, Mitankin, Patil,
+  Siragusa, Tiskin, Wang, Wang, \ea]{Wandelt2014}
+Wandelt, S., Deng, D., Gerdjikov, S., Mishra, S., Mitankin, P., Patil, M.,
+  Siragusa, E., Tiskin, A., Wang, W., Wang, J., \ea (2014).
+\newblock State-of-the-art in string similarity search and join.
+\newblock {\em ACM SIGMOD Record\/}, {\bf 43}(1), pages 64--76.
 
 \bibitem[Wang \ea(1994)Wang, Weber, Zhong, and Tanksley]{Wang1994a}
 Wang, Z., Weber, J.~L., Zhong, G., and Tanksley, S. (1994).
