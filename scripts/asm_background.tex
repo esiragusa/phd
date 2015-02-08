@@ -157,7 +157,7 @@ While the Hamming distance between any two strings of length $n$ is easily compu
 
 \section{Edit distance computation}
 
-The edit distance between two strings is efficiently computed via \emph{dynamic programming} (DP).
+The edit distance between two strings is efficiently computed via \emph{dynamic programming} (DP) \citep{Needleman1970}.
 %Below, I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 Let $x,y$ be two strings of length $n \geq m$.
 The edit distance $d_E(x_{1 \dots i},y_{1 \dots j})$ between any their prefixes $x_{1 \dots i}$ and $y_{1 \dots j}$ is defined recursively.
@@ -214,14 +214,9 @@ The sole edit distance without any alignment can be computed in space $\Oh(m)$; 
 An optimal alignment can be computed in time $\Oh(m + n)$ via \emph{traceback} on the table $D$;
 the traceback starts in the cell $D[m,n]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[m,n]$.
 
-%\begin{figure}[h]
-%\begin{center}
-%\caption[Example of DP table]{DP table representing the computation of the edit distance $d_E(x_{1..5}, y_{1..4})$.}
-%\label{fig:edit-dp}
-%\input{figures/dp_edit.tikz}
-%\end{center}
-%\end{figure}
-
+If no alignment at all is needed, there is a more efficient solution to the edit distance problem.
+Myers' algorithm \citep{Myers1999}, instead of computing DP cells one after another, encodes one whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
+The time complexity of Myers' algorithm is $\Oh(nm/b)$, where $b$ is the processor's bit-width, \eg 64 on modern processors.
 
 % === Overview of existing methods ===
 

@@ -477,5 +477,22 @@ Compared to simulated WGS data (section~\ref{sec:yara:eval:accuracy}), all tools
 
 \section{Discussion}
 
-Yara does not compute local alignments, which could be useful in INDEL calling.
-Yara's mapping quality model for paired-end reads could be improved.
+Stratified all-mapping is a well-defined and practical method for read mapping.
+The knowledge of mapping strata allows to accurately compute mapping qualities and pair read ends.
+To show the advantages of this method in real applications, I considered the genotyping of a human individual.
+Nonetheless, other HTS applications would equally benefit from this method.
+
+One such application is metagenomics classification:
+HTS reads coming from DNA samples recovered from \eg soil or water are screened against a database consisting of bacterial reference genomes.
+The presence of several homologous genomes lowers the mappability of the database and requires the knowledge of multiple mapping locations per read.
+Actual read mappers are much slower or not sensitive enough for this task.
+
+Another similar application is the resolution of alternative loci in the new human reference genome (GRCh38).
+This task could be simply performed by inferring the most likely alternative locus, \eg from the density of mapped reads, and then re-assigning multi-reads to that locus.
+With de-facto standard mappers BWA and Bowtie~2, multi-reads would have to be re-mapped.
+
+Yara already provides a very efficient implementation of stratified all-mapping.
+Yet, the tool can be still sped up significantly.
+The verification time can be drastically reduced: David Weese and me vectorized the banded Myers' algorithm such that it verifies multiple patterns simultaneously; a prototypical implementation on a modern processor (256~bit AVX instructions) shows a speed-up of 4--6 times over the conventional algorithm.
+The filtration time can be almost halved by indexing both the forward and reverse complemented strands of the reference genome; this would be paid with a total memory footprint of about 8GB, which is nonetheless acceptable.
+

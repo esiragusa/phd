@@ -10,7 +10,7 @@ After a thorough literature review, I came out with a novel read mapping method 
 My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
 Masai is part of the SeqAn library, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
 
-In the engineering section, I expose Masai's indexing, filtration and verification methods for all-mapping.
+In the engineering section, I explain Masai's indexing, filtration and verification methods for all-mapping.
 In particular, the filtration method is based on approximate seeds: by employing approximate seeds instead of exact seeds, the tool obtains stronger, non-heuristic and quasi full-sensitive filtration for mammal reference genomes.
 Masai find approximate seeds by backtracking the index of the reference genome.
 The tool speeds up the backtracking phase by searching all seeds simultaneously, with the help of an additional index and the multiple backtracking algorithm.
@@ -137,18 +137,13 @@ Truncation is only a minor concern: at depth $q$ the search continues separately
 \subsection{Verification}
 \label{masai:engineering:extension}
 
-To verify candidate locations reported by the filtration algorithm, Masai employs a banded version of Myers bit-vector algorithm \citep{Myers1999}.
-Myers' algorithm is an efficient DP alignment algorithm \citep{Needleman1970} for edit distance. 
-Instead of computing DP cells one after another, this algorithm encodes the whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
-SeqAn provides a bit-parallel version that computes only a diagonal band of the DP matrix, faster and more specific than the original algorithm by Myers.
-%More details can be found in section~\ref{asm:filter:verification}.
-
-RazerS~3~\citep{Weese2012} already uses Myers' algorithm.
-However, RazerS~3 performs one semi-global alignment to verify a parallelogram surrounding any seed occurrence.
-Conversely, Masai performs two global alignments on both ends of any seed occurrence.
-Given a seed occurring with $e$ errors, the tool first performs seed extension on the left side within an error threshold of $k - e$ errors.
-Only if the seed extension on the left side succeeds, Masai performs a seed extension on the right side within the remaining error threshold.
-Moreover, the tool first computes the longest common prefix on each side of the seed extension and let the global alignment algorithm start from the first mismatching positions.
+To verify candidate locations reported by the filtration algorithm, Masai employs a banded version of Myers bit-vector algorithm \citep{Myers1999} implemented for the tool RazerS~3 by \citeauthor{Weese2012} and available in the SeqAn library.
+This banded version computes only a diagonal band of the DP matrix and is thus faster than the original algorithm by Myers.
+However, Masai uses this algorithm in a different way than RazerS~3.
+While RazerS~3 performs one semi-global alignment to verify one parallelogram surrounding any seed occurrence, Masai performs two global alignments on both ends of any seed occurrence.
+Given a seed occurring with $e$ errors, Masai first performs seed extension on the left side within an error threshold of $k - e$ errors.
+Only if the seed extension on the left side succeeds, the tool performs a seed extension on the right side within the remaining error threshold.
+Moreover, the tool first computes the \emph{longest common prefix} on each side of the seed and lets the global alignment algorithm start from the first mismatching positions.
 This approach is up to two times faster than the one implemented by RazerS~3 (data not shown).
 
 % -----------------------------------------------------------------------------
@@ -345,7 +340,7 @@ Table~\ref{tab:masai:indices} shows the runtime and memory consumption of Masai 
 As discussed in section~\ref{masai:engineering:index}, Masai/SA is always faster than Masai/ESA, except for all-mapping on the \emph{H.~sapiens} dataset.
 Masai/FM-index shows significantly lower memory consumption only on the \emph{H.~sapiens} dataset, but with a consistent runtime penalty.
 
-\begin{table*}[h]
+\begin{table*}[t]
   \center
   \caption[Masai performance with different indices]{
     \label{tab:masai:indices}%
@@ -383,7 +378,7 @@ On \emph{H.~sapiens}, seed extensions largely dominate the total runtime, theref
 Multiple backtracking on approximate seeds provides a speed-up of 3.2 times over single backtracking.
 The combination of the two methods makes Masai an order of magnitude faster than any other all-mapper.
 
-\begin{table*}[h]
+\begin{table*}[b]
   \center
   \caption[Masai filtration efficiency results]{
     \label{tab:masai:filtration}%
