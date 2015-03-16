@@ -275,9 +275,9 @@ Nonetheless, filtering methods are just opportunistic combinations of native onl
 
 In this manuscript, I often consider \emph{multiple} string matching problems, \ie variants in which many patterns are given at once, instead of \emph{single} problems where patterns are given one by one in an online fashion.
 Obviously, any method for the single case can solve the multiple case and vice versa.
-However, it is clear that multiple methods have an advantage over single methods.
-For instance, multiple online methods are allowed to preprocess all patterns and then scan the text only once, while single online methods have to scan the text every time a pattern is given.
-Thus, provided multiple patterns at once, multiple string matching methods are more appealing than single methods.
+However, it is clear that methods for multiple string matching have advantages over methods for single string matching.
+For instance, online methods for multiple string matching are allowed to preprocess all patterns and then scan the text only once, while online methods for single string matching have to scan the text every time a pattern is given.
+Thus, in general, methods for multiple string matching are more appealing than methods for single string matching.
 
 In the remainder of this section, I give a quick overview of the fundamental algorithms and data structures adopted by classic string matching methods.
 This overview serves as an introduction to the indexed and filtering methods presented in the next two chapters.
@@ -401,7 +401,7 @@ Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dot
 
 Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
-However, the suffix tree comes with the restriction that internal nodes must have more than one child and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
+However, the suffix tree comes with the restriction that internal nodes are branching, \ie they must have more than one child, and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
 This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.
 For this reason, in the remainder of this manuscript, I consider \wlogs always suffix tries instead of suffix trees.
 %I remark that all given algorithms can be generalized to work on trees.

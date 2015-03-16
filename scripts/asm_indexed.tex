@@ -460,7 +460,7 @@ This gives a twofold advantage, as one can
 \end{inparaenum}
 The latter property allows to compress the SA bucket-wise \eg using Elias $\delta$ encoding \citep{Elias1975} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
 
-The directory $D$ is still usable even if the traversal needs to go below depth $q$.
+The directory $D$ is still usable, even if the traversal needs to go below depth $q$.
 An hybrid traversal can use the directory $D$ up to depth $q$ and later continue with binary searches on the suffix array $A$.
 This hybrid traversal cuts the most expensive binary searches and increases memory locality.
 Furthermore, this traversal becomes useful whenever the SA is too big to fit in main memory and has to reside in external memory.
@@ -468,9 +468,9 @@ Furthermore, this traversal becomes useful whenever the SA is too big to fit in 
 \subsection{Trie and radix tree realizations}
 \label{sec:index:trie}
 
-Before turning to succinct full-text indices, I briefly describe how I reused the text-indices just exposed to implement also tries and radix trees in the SeqAn library.
+Before turning to succinct full-text indices, I briefly describe how I reused the text-indices just exposed to implement tries and radix trees in the SeqAn library.
 A trie is easily emulated by means of a partial SA.
-I index only the first suffix of each string in the collection and subsequently construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the cardinality of the string collection.
+I index only the first suffix of each string in the collection and subsequently construct the SA-based trie via quicksort in time $\Oh(n \log n)$, where $n$ is the total length of the string collection.
 The top-down traversal based on binary search still works as described in section \ref{sec:index:sa}.
 This trie is also extendable by a $q$-gram directory as in section \ref{sec:index:qgram}.
 A radix tree is constructed in an analogous way, starting from the LST of section \ref{sec:index:lst}.
@@ -480,13 +480,13 @@ I fill the LST's partial SA as described above and subsequently apply the \emph{
 \section{Succinct full-text indices}
 
 The \emph{Burrows-Wheeler transform} (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
-The transformed string exposes two important properties: \emph{reversibility} and \emph{compressibility}.
-The former property allows to reconstruct the original string from its BWT, while the latter property makes the transformed string more amenable to compression.
+Such transformation exposes two important properties: it is \emph{reversible} and it tends to produce \emph{runs of equal characters}.
+The former property allows to recover the original string from its BWT alone, while the latter property makes the transformed string more amenable to compression.
 Because of these two properties, the BWT is a fundamental method for text compression.
 %and is practically used in the bzip2 tool \citep{Seward1996}.
 
-Some years after its introduction, \citeauthor{Ferragina2000} proposed the BWT as a method for full-text indexing.
-They show in \citep{Ferragina2000} that the BWT alone allows to perform exact string matching and engineer in \citep{Ferragina2001} a compressed full-text index called FM-index.
+Some years after its introduction, \citeauthor{Ferragina2000} proposed the BWT for full-text indexing.
+They show in \citep{Ferragina2000} that the BWT allows to perform exact string matching and engineer in \citep{Ferragina2001} a compressed full-text index called FM-index.
 Over the last years, the FM-index has been widely employed under different re-implementations by many popular bioinformatics tools \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences.
 
 In the following, I give the fundamental ideas behind the BWT.
@@ -686,7 +686,7 @@ Thus, the binary one-level RD consumes $2n$ bits.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $s=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$; in the example, $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 8}, 1) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $s=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(s, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(s, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 8}, 1) = 3$.}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -758,8 +758,8 @@ By posing $b=\log{n}$ as above, it follows $\Oh(\frac{n}{\log{n}})$ bits for $R^
 Hence, the binary two-levels RD consumes $n + o(n)$ bits.
 
 I implemented generic \emph{multi-levels} RDs, where the block size $b$ is a template parameter adjustable at compile time.
-Whenever the input string is smaller than 4~GB, I employ the one-level RD with $b = 32$ bits or the two-level RD with $b = 16$ bits and $b^2 = 32$ bits;
-otherwise, I employ the two-levels RD with $b = 32$ bits and $b^2 = 64$ bits, or the three-levels RD with $b = 16$ bits, $b^2 = 32$ bits and $b^3 = 64$ bits.
+Typically, the input string is smaller than 4~GB, thus I employ the one-level RD with $b = 32$ bits or the two-level RD with $b = 16$ bits and $b^2 = 32$ bits;
+otherwise, for longer strings, I employ the two-levels RD with $b = 32$ bits and $b^2 = 64$ bits, or the three-levels RD with $b = 16$ bits, $b^2 = 32$ bits and $b^3 = 64$ bits.
 In order to reduce the number of cache misses, the succinct representation of the input string is \emph{interleaved} with the lowest level summaries array $R$.
 Moreover, I use the SSE~4.2 popcnt instruction \citep{Intel2011} to count symbols within a block in time $\Oh(b/w)$, where $w$ is the total SSE register width (on modern processors $w=256$ bits).
 
@@ -1029,7 +1029,7 @@ If the search ends up in a node $\Tn$, then each leaf $\Ln_i$ below $\Tn$ points
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
 Figure \ref{fig:query-dna-exact} shows the results of the experimental evaluation of algorithm~\ref{alg:st-exact}.
-On forward indices the search time becomes constant for patterns of length above 15, \ie when the index becomes sparse.
+On forward indices the search time becomes practically constant for patterns of length above 15, \ie when the index becomes sparse.
 Conversely, on backward (FM) indices the search time is linear in the pattern length. 
 The SA alone is at least 20\,\% slower than the $q$-gram index, hence never competitive.
 In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
