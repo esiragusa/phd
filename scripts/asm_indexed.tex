@@ -28,7 +28,7 @@ The key idea of the suffix array (SA) \citep{Manber1990} is that most informatio
 The explicit representation of suffix trie's internal nodes and outgoing edges can be omitted.
 Leaves pointing to the sorted suffixes are sufficient to perform exact string matching or even top-down traversals.
 On the SA, any path from the root to an internal node is computed on the fly via binary search over the leaves.
-In this way, an additional logarithmic time complexity is paid to reduce space consumption by a linear factor.
+In this way, an additional logarithmic time complexity is paid to reduce space consumption by a constant factor.
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
