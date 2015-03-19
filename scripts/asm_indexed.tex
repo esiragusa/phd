@@ -961,7 +961,7 @@ For additional information on the SA and ESA construction algorithms and their r
 On the chosen text, the practical runtime of the \emph{wotd} algorithm (LST) is in line with that one of the \emph{DC7} algorithm (SA). The construction of the $q$-gram index directory adds only 3\% runtime over the plain SA construction, the FM-indices adds a 15--18\% additional runtime, while the more involved ESA's LCP and child tables add 36\% overhead.
 As expected, the FM-TL and FM-WT are the most compact data structures, while the LST followed by the ESA are the most space inefficient ones.
 
-\begin{table}[b]
+\begin{table}[t]
 \begin{center}
 \caption[Index construction times and memory footprints]{Index construction times and memory footprints.}
 \sffamily
@@ -1032,12 +1032,10 @@ If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in l
 Figure \ref{fig:query-dna-exact} shows the results of the experimental evaluation of algorithm~\ref{alg:st-exact}.
 On forward indices (LST, ESA, SA and $q$-gram index) the search time becomes practically constant for patterns of length above 15, \ie when the tree becomes sparse.
 Conversely, on backward (FM) indices the practical search time stays linear in the pattern length. 
+
+The ESA and LST are never faster than the $q$-gram index despite their higher memory consumption.
 The SA alone is at least 20\,\% slower than the $q$-gram index, hence never competitive.
 In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
-The ESA is never faster than the $q$-gram index despite its higher memory consumption.
-Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, as the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
-Summing up, the TL FM-index is the fastest index to match exact patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
-%Surprisingly, there is no clear time-memory tradeoff.
 
 \begin{figure*}[t]
 \begin{center}
@@ -1071,6 +1069,10 @@ Summing up, the TL FM-index is the fastest index to match exact patterns within 
 \end{center}
 \end{figure}
 
+
+Concerning FM-indices, the WT variant is almost twice as slow as the TL variant, as the WT-based rank dictionary performs twice the number of random memory accesses than the levels rank dictionary.
+Summing up, the TL FM-index is the fastest index to match exact patterns within length 30, while the $q$-gram index is the fastest for patterns above length 30.
+
 %\begin{figure}[h]
 %\begin{center}
 %\caption[Exact string matching on a suffix trie]{Exact string matching on a suffix trie. The pattern NA is searched exactly in the text ANANAS\$.}
@@ -1086,6 +1088,19 @@ I now give an algorithm that solves $k$-mismatches by backtracking a generic suf
 The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen1993}.
 Recently, various popular bioinformatics tools, \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, adopted variations of this method in conjunction with an FM-index.
 Yet, the idea dates back to more than twenty years ago.
+
+Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
+While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
+If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+
+\begin{figure}[b]
+\begin{center}
+\caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
+\label{fig:query-dna-apx}
+\includegraphics{query.dna.celegans.1.pdf}
+\end{center}
+\end{figure}
 
 \begin{figure*}[t]
 \begin{center}
@@ -1119,19 +1134,6 @@ Yet, the idea dates back to more than twenty years ago.
 \end{minipage}
 \end{center}
 \end{figure*}
-
-\begin{figure}[b]
-\begin{center}
-\caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
-\label{fig:query-dna-apx}
-\includegraphics{query.dna.celegans.1.pdf}
-\end{center}
-\end{figure}
-
-Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
-While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
-If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
-Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
 
 %The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $n$.
 %According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $n$.
@@ -1254,11 +1256,6 @@ However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\mathcal{T}$ and 
 The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports the occurrences pointed by all the leaves beneath the current node in $\mathcal{T}$.
 %If the collection $\mathbb{P}$ contains two equal strings, some leaf of $\mathcal{P}$ points to more than one pattern.
 
-The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
-Figure~\ref{fig:query-dna-exact-multi} shows the results.
-These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
-%For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, ESA and SA.
-
 \begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -1296,6 +1293,11 @@ These three methods ran on 10~M patterns of length 30: runtimes shown in figure 
 \end{center}
 \end{figure}
 
+The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
+Figure~\ref{fig:query-dna-exact-multi} shows the results.
+These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
+%For instance, the indices ranked by query speed are: TL FM-index, WT FM-index, $q$-gram index, ESA and SA.
+
 Figure \ref{fig:query-dna-exact-multi} shows that a simple lexicographical sort of the patterns (histogram Sorted) speeds up algorithm \ref{alg:st-exact} on the SA and ESA by a factor of 2.
 The same trick does not yield a significant speed-up on FM-indices nor on the $q$-gram index, as the $q$-gram directory already provides a cache local access pattern.
 
@@ -1309,34 +1311,7 @@ This algorithm becomes more useful as a primitive within the multiple $k$-mismat
 Algorithm \ref{alg:st-hamming-multi} is the straightforward generalization of algorithm \ref{alg:st-exact-multi} to $k$-mismatches.
 The algorithm receives a collection of patterns $\mathbb{P}$ and performs backtracking on $\mathcal{T}$ as in algorithm  \ref{alg:st-hamming}, this time using the associated trie $\mathcal{P}$.
 
-The experimental evaluation compares algorithm~\ref{alg:st-hamming-multi} (Multiple) with algorithm~\ref{alg:st-hamming} processing patterns in random order (Single) and in lexicographic order (Sorted).
-All three methods ran on 10~M patterns of length 30, with $k$ fixed to 1.
-Thus, runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
-
-Algorithm \ref{alg:st-hamming} on lexicographically sorted patterns (histogram Sorted) is faster by a factor of 2 or more, on all indices.
-The time to sort the patterns becomes insignificant compared to the traversal time.
-Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor of 4--5 on LST, ESA, and SA.
-Thus, the time to construct the trie of the patterns is easily justified.
-In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
-Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
-
-This algorithms works according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
-Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
-Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
-Conversely, using backward search, the traversal becomes more expensive as it proceeds deeper in the trie; traversal downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
-Multiple backtracking factorizes the traversal of top nodes, thus it pays off with forward search rather than with backward search.
-
-Figure \ref{fig:query-dna-apx-multi-sa} shows the average runtime of the three approaches on the SA by varying the number of patterns.
-While the average runtime of the single method is constant, both multiple methods clearly benefit from receiving a higher number of patterns.
-In particular, method Multiple is constantly faster than Sorted, and the runtime gap increases with the number of patterns.
-The speed-up of multiple methods slowly decreases, though there is still some space of improvement with more than 10~M patterns.
-
-Figure \ref{fig:query-dna-apx-multi-fmtl} presents the same evaluation of figure \ref{fig:query-dna-apx-multi-sa}, but for the TL FM-index.
-Multiple methods exhibit again decreasing average runtimes by number of patterns.
-However, here method Sorted is constantly faster than Multiple, but the runtime gap decreases with the number of patterns.
-Moreover, the speed-up of both multiple methods slowly increases with the number of patterns instead of decreasing.
-
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1371,13 +1346,40 @@ Moreover, the speed-up of both multiple methods slowly increases with the number
 \end{center}
 \end{figure*}
 
-\begin{figure}[t]
+The experimental evaluation compares algorithm~\ref{alg:st-hamming-multi} (Multiple) with algorithm~\ref{alg:st-hamming} processing patterns in random order (Single) and in lexicographic order (Sorted).
+All three methods ran on 10~M patterns of length 30, with $k$ fixed to 1.
+Thus, runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
+
+\begin{figure}[b]
 \begin{center}
 \caption[Multiple $k$-mismatches runtime]{Runtime of multiple $1$-mismatch on various suffix trie implementations. Pattern length is fixed to 30. Preprocessing times are shown in black.}
 \label{fig:query-dna-apx-multi}
 \includegraphics{multi.dna.celegans.1.30.pdf}
 \end{center}
 \end{figure}
+
+Algorithm \ref{alg:st-hamming} on lexicographically sorted patterns (histogram Sorted) is faster by a factor of 2 or more, on all indices.
+The time to sort the patterns becomes insignificant compared to the traversal time.
+Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor of 4--5 on LST, ESA, and SA.
+Thus, the time to construct the trie of the patterns is easily justified.
+In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
+Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
+
+This algorithms works according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
+Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
+Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
+Conversely, using backward search, the traversal becomes more expensive as it proceeds deeper in the trie; traversal downwards involves the computation of intervals outside of the current one, unlikely to be in the cache as they are accessed less often than top intervals.
+Multiple backtracking factorizes the traversal of top nodes, thus it pays off with forward search rather than with backward search.
+
+Figure \ref{fig:query-dna-apx-multi-sa} shows the average runtime of the three approaches on the SA by varying the number of patterns.
+While the average runtime of the single method is constant, both multiple methods clearly benefit from receiving a higher number of patterns.
+In particular, method Multiple is constantly faster than Sorted, and the runtime gap increases with the number of patterns.
+The speed-up of multiple methods slowly decreases, though there is still some space of improvement with more than 10~M patterns.
+
+Figure \ref{fig:query-dna-apx-multi-fmtl} presents the same evaluation of figure \ref{fig:query-dna-apx-multi-sa}, but for the TL FM-index.
+Multiple methods exhibit again decreasing average runtimes by number of patterns.
+However, here method Sorted is constantly faster than Multiple, but the runtime gap decreases with the number of patterns.
+Moreover, the speed-up of both multiple methods slowly increases with the number of patterns instead of decreasing.
 
 \begin{figure}[t]
 \begin{center}
