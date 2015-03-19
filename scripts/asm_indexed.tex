@@ -302,7 +302,7 @@ As proposed by \cite{Abouelhoda2004}, these intervals are computed in linear tim
 
 The lazy suffix tree (LST) \citep{Giegerich1999} variant proposed by \citep{Weese2013} is composed by a partially sorted SA plus a node directory.
 The SA initially reflects the ordering of the suffixes up to depth 1, and the node directory table contains only the root node.
-During a top-down traversal, the current node at depth $i$ is expanded by means of the \emph{wotd}-algorithm \citep{Giegerich1999}, which calls one round of radix sort to refine the ordering of the suffixes up to depth $i + 1$ and inserts the newly computed children nodes in the directory.
+During a top-down traversal, the current node at depth $i$ is expanded by means of the \emph{wotd} algorithm \citep{Giegerich1999}, which calls one round of radix sort to refine the ordering of the suffixes up to depth $i + 1$ and inserts the newly computed children nodes in the directory.
 The construction of the full LST takes $\Oh(n^2 + \sigma n)$ time in the worst case.
 
 \subsection{$q$-Gram index}
@@ -474,7 +474,7 @@ I index only the first suffix of each string in the collection and subsequently 
 The top-down traversal based on binary search still works as described in section \ref{sec:index:sa}.
 This trie is also extendable by a $q$-gram directory as in section \ref{sec:index:qgram}.
 A radix tree is constructed in an analogous way, starting from the LST of section \ref{sec:index:lst}.
-I fill the LST's partial SA as described above and subsequently apply the \emph{wotd}-algorithm \citep{Giegerich1999} to construct the radix tree in time $\Oh(\sigma n)$.
+I fill the LST's partial SA as described above and subsequently apply the \emph{wotd} algorithm \citep{Giegerich1999} to construct the radix tree in time $\Oh(\sigma n)$.
 
 
 \section{Succinct full-text indices}
@@ -941,7 +941,7 @@ Then, I present algorithms for exact string matching and $k$-mismatches.% and $k
 I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
 At the same time, I show the results of an experimental evaluation of all of these algorithms on various suffix trie implementations.
 
-As data structures, I consider the suffix array (SA), the $q$-gram index with $q=12$ (q-Gram), the FM-index with a two-levels DNA rank dictionary (FM-TL), the FM-index with a wavelet tree composed of two-levels binary rank dictionaries (FM-WT).
+As data structures, I consider the fully-constructed lazy suffix tree (LST), the enhanced suffix array (ESA), the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the FM-index with a two-levels DNA rank dictionary (FM-TL), the FM-index with a wavelet tree composed of two-levels binary rank dictionaries (FM-WT).
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of about 100~Mbp total length.
 As patterns, I use sequences extrapolated from an Illumina sequencing run (SRA/ENA id: SRR065390).
 
@@ -954,11 +954,12 @@ Moreover, they consider only traversal times, while they exclude the time to loc
 \label{sec:index:algo:construction}
 
 Table \ref{tab:index:construction} shows construction times and memory consumption for all indices.
-The construction of all indices uses the DC7 algorithm \citep{Dementiev2008} in external memory.
-In addition, the construction of the ESA uses the algorithms in \citep{Kasai2001,Abouelhoda2004}, while the FM-WT construction follows \citep{Grossi2003}.
-The construction of the FM-indices adds a 15--18\% additional runtime over the simple SA construction, the $q$-gram index directory construction adds only 3\% runtime, while the more involved ESA's LCP and child tables 36\%.
-As expected, the FM-TL and FM-WT are the most compact data structures, while the ESA is the most space inefficient one.
+The construction of the LST uses the quadratic-time in-memory \emph{wotd} algorithm \citep{Giegerich1999}, while the construction of all other indices relies on the linear-time external-memory \emph{DC7} suffix array construction algorithm \citep{Dementiev2008}.
+In addition, the construction of the ESA uses the linear-time algorithms in \citep{Kasai2001,Abouelhoda2004}, while the FM-WT construction follows the linear-time algorithm proposed in \citep{Grossi2003}.
 For additional information on the SA and ESA construction algorithms and their runtimes, refer to \citep{Weese2013}.
+
+On the chosen text, the practical runtime of the \emph{wotd} algorithm (LST) is in line with that one of the \emph{DC7} algorithm (SA). The construction of the $q$-gram index directory adds only 3\% runtime over the plain SA construction, the FM-indices adds a 15--18\% additional runtime, while the more involved ESA's LCP and child tables add 36\% overhead.
+As expected, the FM-TL and FM-WT are the most compact data structures, while the LST followed by the ESA are the most space inefficient ones.
 
 \begin{table}[b]
 \begin{center}
@@ -982,9 +983,9 @@ The $q$-gram index is never slower than the SA alone, however the contribution o
 %The SA is significantly slower than all other indices as binary search converges slowly.
 
 Depth 12 marks the turning point, as the indices become sparse.
-The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index is the fastest at depths 10--11.
-Below depth 12, the ESA (which is a tree) becomes significantly faster than all other trie indices.
-Conversely, the FM-indices (which are based on backward search) become up to two order of magnitude slower than the ESA.
+The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index and the LST are the fastest at depths 10--12.
+Below depth 12, the tree indices (ESA and LST) become significantly faster than the trie indices (SA, $q$-gram and FM-indices).
+In particular, the FM-indices, which are based on backward search, become more than one order of magnitude slower than tree indices.
 
 \begin{figure*}[t]
 \begin{center}
@@ -1023,14 +1024,14 @@ Conversely, the FM-indices (which are based on backward search) become up to two
 
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
 In the following, I assume the text $t$ to be indexed by its suffix trie $\Ti$.
-Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting in the root node of $\Ti$ and following the path spelling the pattern.
+Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting on the root node of $\Ti$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, then each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
 Figure \ref{fig:query-dna-exact} shows the results of the experimental evaluation of algorithm~\ref{alg:st-exact}.
-On forward indices the search time becomes practically constant for patterns of length above 15, \ie when the index becomes sparse.
-Conversely, on backward (FM) indices the search time is linear in the pattern length. 
+On forward indices (LST, ESA, SA and $q$-gram index) the search time becomes practically constant for patterns of length above 15, \ie when the tree becomes sparse.
+Conversely, on backward (FM) indices the practical search time stays linear in the pattern length. 
 The SA alone is at least 20\,\% slower than the $q$-gram index, hence never competitive.
 In particular, the SA shows a runtime peak for patterns of length 10, due to the fact that binary search algorithms \ref{alg:sa-lower}--\ref{alg:sa-upper} converge more slowly for shorter patterns.
 The ESA is never faster than the $q$-gram index despite its higher memory consumption.
@@ -1145,7 +1146,10 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 
 Figure \ref{fig:query-dna-apx} shows the results of the experimental evaluation of algorithm~\ref{alg:st-hamming} for $k=1$.
 The TL FM-index is always faster than any other index: for instance, on patterns of length 30, the SA it is 3 times slower; even the $q$-gram index is 50\,\% slower than the TL FM-index.
-On the TL FM-index, $1$-approximate matching of patterns of length 30 is 16 times slower than exact matching: on average, exact matching takes $1.3$ microseconds ($\mu s$), while $1$-approximate matching spends $21 \, \mu s$.
+Despite their tree structure, ESA and LST are always slower than $q$-gram and FM-indices.
+
+On the TL FM-index, $1$-approximate matching of patterns of length 30 is 16 times slower than exact matching: on average, $1$-approximate matching spends $21$ microseconds ($\mu s$), while exact matching takes $1.3 \, \mu s$.
+On the ESA, $1$-approximate matching shows a slow-down of 24 times: $1$-approximate matching spends $40.8 \, \mu s$, compared to the $1.7 \, \mu s$ for exact matching.
 
 %\subsection{Backtracking $k$-differences}
 %\label{sec:index:algo:kdifferences}
@@ -1297,7 +1301,7 @@ The same trick does not yield a significant speed-up on FM-indices nor on the $q
 
 Algorithm~\ref{alg:st-exact-multi} (histogram Multiple) further reduces the traversal time.
 Nonetheless, its runtime is dominated by the additional preprocessing time paid to construct the trie of the patterns.
-This algorithm becomes more useful as a primitive within the multiple $k$-mismatches algorithm.
+This algorithm becomes more useful as a primitive within the multiple $k$-mismatches algorithm, presented in the following section.
 
 \subsection{Multiple $k$-mismatches}
 \label{sec:index:algo:multimismatch}
@@ -1311,7 +1315,8 @@ Thus, runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) 
 
 Algorithm \ref{alg:st-hamming} on lexicographically sorted patterns (histogram Sorted) is faster by a factor of 2 or more, on all indices.
 The time to sort the patterns becomes insignificant compared to the traversal time.
-Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor of 5 on SA and ESA, thus the time to construct the trie of the patterns is easily justified.
+Algorithm \ref{alg:st-exact-multi} (histogram Multiple) reduces traversal time by a factor of 4--5 on LST, ESA, and SA.
+Thus, the time to construct the trie of the patterns is easily justified.
 In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
 Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
 
