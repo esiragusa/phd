@@ -3,7 +3,7 @@
 
 Suffix trees are elegant data structures but they are rarely used in practice.
 Although suffix trees provides theoretically optimal construction and query time, their high space consumption prohibits practical indexing of large string collections.
-A practical study on suffix trees by \cite{Kurtz1999} reports that efficient implementations achieve sizes between $12n$ and $20n$ bytes per character.
+A practical study on suffix trees by \cite{Kurtz1999} reports that efficient implementations achieve sizes between $12\Slen$ and $20\Slen$ bytes per character.
 For instance, two years before completing the sequencing of the human genome, \citeauthor{Kurtz1999} conjectured the resources required for computing the suffix tree for the complete human genome (consisting of about $3 \cdot 10^9$~bp) in 45.31~GB of memory and nine hours of CPU time, and concluded that \emph{``it seems feasible to compute the suffix tree for the entire human genome on some computers''}.
 
 One might be tempted to think that such memory requirements are not anymore a limiting factor as, at the time of writing, even standard workstations come with 32~GB of main memory.
@@ -112,17 +112,17 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \textbf{Output} & integer denoting the left interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\Last_1 \gets \StrieNode.l$}
-\State {$\Last_2 \gets \StrieNode.r$}
-\While {$\Last_1 < l_2$}
+\State {$l_1 \gets \StrieNode.l$}
+\State {$l_2 \gets \StrieNode.r$}
+\While {$l_1 < l_2$}
 	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
 	\If {$\Strings_{\Sarray[i] + \StrieNode.d} <_{lex} \StrieChar$}
-		\State {$\Last_1 \gets i+1$}
+		\State {$l_1 \gets i+1$}
 	\Else
-		\State {$\Last_2 \gets i$}
+		\State {$l_2 \gets i$}
 	\EndIf
 \EndWhile
-\State \Return $\Last_1$
+\State \Return $l_1$
 \end{algorithmic}
 \label{alg:sa-lower}
 \end{algorithm}
@@ -166,7 +166,7 @@ Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing
 The occurrences below any node correspond by definition to the interval $\Interval{l}{r}$ of $\Sarray$.
 Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, n, 0\}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, \Slen, 0\}$;
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\Sarray[\StrieNode.r] + \StrieNode.d = \Slen_{\Sarray[\StrieNode.r]}$;
 \item \FunctionCall{label}{\StrieNode} returns $\Strings_{\Sarray[\StrieNode.l] + \StrieNode.d}$;
@@ -231,7 +231,7 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,
 
 Binary search is the key to implement function \FunctionName{goDown} a symbol.
 Functions \FunctionName{L} (algorithm~\ref{alg:sa-lower}) and \FunctionName{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{\Slen})$ binary search steps the position in $\Sarray$ of the left and right intervals corresponding to the child node that is reached by going down the edge labeled by a given symbol $\StrieChar$.
-Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Strings$, hence I define $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $\StrieChar \in \Sigma$.
+%Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Strings$, hence I define $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $\StrieChar \in \Sigma$.
 
 \begin{figure*}[b!]
 \begin{center}
@@ -313,11 +313,11 @@ The idea is to supplement the SA with a so-called $q$-gram directory: an additio
 
 \begin{figure}[b!]
 \begin{center}
-\caption[Example of $q$-gram index]{$2$-Gram index of the string {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=4$ addresses two lookups in $D[4]$ and $D[5]$, that in turn provide the range $[5,6]$ in $\Sarray$.}
+\caption[Example of $q$-gram index]{$2$-Gram index of the string {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ A, N, S \}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=4$ addresses two lookups in $D[4]$ and $D[5]$, that in turn provide the range $\Interval{5}{6}$ in $\Sarray$.}
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
-$\Pattern$ & $h(p)$ & $D[h(p)]$ & \phantom{-} & $i$ & $\Sarray[i]$ & $\Suffix{\String}{\Sarray[i]}$\\
+$\Pattern$ & $h(\Pattern)$ & $D[h(\Pattern)]$ & \phantom{-} & $i$ & $\Sarray[i]$ & $\Suffix{\String}{\Sarray[i]}$\\
 \midrule
 AA & 1 & 2 & & 1 & 7 & \$\\
 AN & 2 & 2 & & 2 & 1 & ANANAS\$\\
@@ -344,7 +344,7 @@ h(p) = 1 + \sum_{i=1}^{q}{\rho_0(p_i) \cdot \sigma^{q-i}}
 \end{eqnarray}
 where $p \in \Sigma^q$ is any $q$-gram and $\rho_0$ is the zero-based lexicographic rank defined on $\Sigma$ (recall the lexicographic rank function $\rho$ from definition~\ref{def:rho} and pose $\rho_0(x) = \rho(x) - 1$).
 The canonical code assigned by $h$ preserves the lexicographical ordering for all words not longer than $q$, \ie $v <_{lex} w$ iff $h(v) < h(w)$ for all $v,w \in \Sigma^{\leq q}$.
-The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $D[h(p)] = \FunctionCall{L}{1,n,p}$.
+The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $D[h(p)] = \FunctionCall{L}{1,\Slen,p}$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $D[h(p)+1]$.
 
 In practice, the $q$-gram index is applicable only to relatively small alphabets and tree depths.
@@ -355,11 +355,11 @@ Using a 32 bits integer encoding, the directory alone consumes 1~GB of memory.
 
 I now describe how I extended the SA traversal operations of section \ref{sec:index:sa} to use the $q$-gram directory $D$, within the generic text indexing framework of the SeqAn library.
 Again, while traversing the trie, I maintain the current range $\Interval{l}{r}$ and the current depth $d$.
-In addition, I maintain the interval $[l_h,r_h]$ in $D$ and, in order to answer \FunctionCall{label}{\StrieNode}, the label $e$ of the edge entering the current node.
+In addition, I maintain the interval $\Interval{l_h}{r_h}$ in $D$ and, in order to answer \FunctionCall{label}{\StrieNode}, the label $e$ of the edge entering the current node.
 Summing up, I represent the current node $\StrieNode$ by the elements $\{ l, r, d, l_h, r_h, e \}$.
 I define the basic node operations as follows:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, n, 0, 1, \sigma^q, \epsilon \}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, \Slen,0, 1, \sigma^q, \epsilon \}$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.d=q$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$;
 \item \FunctionCall{occurrences}{\StrieNode} returns $\Substring{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
@@ -499,7 +499,7 @@ Let $\String$ be a padded string (definition~\ref{def:strd}) of length $\Slen$ o
 In the following, consider the string $\String$ to be cyclic and its subscript $\Subscript{\String}{i}$ to be \emph{modular}, \eg $\Subscript{\String}{0} = \Subscript{\String}{\Slen}$ and $\Subscript{\String}{\Slen+i} = \Subscript{\String}{i}$ for any $i \in \N$.
 Consider the square matrix consisting of all cyclic shifts of the string $\String$ sorted in lexicographical order, where the $i$-th cyclic shift has the form $\Substring{\String}{i}{\Slen} \Prefix{\String}{i-1}$.
 Figure~\ref{fig:bwt} shows an example.
-Note how the cyclic shifts matrix is related to the suffix array $A$ of $\String$: the $i$-th cyclic shift is $\Substring{\String}{\Sarray[i]}{\Slen} \Prefix{\String}{\Sarray[i]-1}$.
+Note how the cyclic shifts matrix is related to the suffix array $\Sarray$ of $\String$: the $i$-th cyclic shift is $\Substring{\String}{\Sarray[i]}{\Slen} \Prefix{\String}{\Sarray[i]-1}$.
 % (except when $\Sarray[i] = 1$).
 
 \begin{definition}
@@ -635,7 +635,7 @@ For all characters $\StrieChar \in \Sigma$, the $i$-th occurrence of $\StrieChar
 These observation are evident, indeed $\First = \Subscript{\String}{\Sarray[i]}$ and $\Last = \Subscript{\String}{\Sarray[i]-1}$ (see figure~\ref{fig:lf_psi}).
 Given the two above observations, \cite{Ferragina2000} define the permutation $LF$ as:
 \begin{eqnarray}
-LF(i) = C(l_i) + Occ(l_i, i)
+LF(i) = C(\Last_i) + Occ(\Last_i, i)
 \end{eqnarray}
 where $C : \Sigma \rightarrow \Interval{1}{\Slen}$ denotes the total number of occurrences in $\String$ of all characters alphabetically smaller than $\StrieChar$, and $Occ :  \Sigma \times \Interval{1}{\Slen} \rightarrow \Interval{1}{\Slen}$ the number of occurrences of character $\StrieChar$ in the prefix $\Prefix{\Last}{i}$.
 The key problem of encoding the permutation $LF$ lies in representing function $Occ$, as function $C$ is easily tabulated by a small array of size $\sigma \log{\Slen}$ bits.
@@ -661,12 +661,12 @@ I first consider the binary alphabet $\mathbb{B} = \{ 0, 1 \}$ and subsequently 
 \label{sec:index:rd:binary}
 
 Here, I follow the explanation of \citep{Navarro2007}.
-Hence, I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2n$ bits.
+Hence, I start by describing a simple \emph{one-level} rank dictionary answering rank queries in constant time but consuming $2\Slen$ bits.
 Subsequently, I describe an extended \emph{two-levels} RD consuming only $\Slen + o(\Slen)$ bits.
 In addition to that, I briefly discuss my implementation of practical \emph{multi-level} RDs.
 %In the following, I assume \wlogs the string length $\Slen$ to be a multiple of $b$, otherwise values in all subsequent formulas must be rounded accordingly.
 
-The binary one-level RD partitions the binary input string $s \in \mathbb{B}^*$ in blocks of $b$ symbols and
+The binary one-level RD partitions the binary input string $\String \in \mathbb{B}^*$ in blocks of $b$ symbols and
 complements it with an array $R$ of length $\xfloor{\Slen/b}$.
 The $j$-th entry of $R$ provides a summary of the number of occurrences of the bit $1$ in $\String$ before position $j b$, \ie $R[1] = 0$ and $R[j] = \rank_1(\String, j b - 1)$ for any $j > 1$.
 $R$ summarizes only $\rank_1$, as $\rank_0(\String, i) = i - \rank_1(\String, i)$.
@@ -682,11 +682,11 @@ The query is answered in time $\Oh(b)$ by
 Figure \ref{fig:rd1} illustrates.
 \citeauthor{Jacobson1989} poses $b=\log{\Slen}$ in order to answer step (\ref{itm:count}) in time $\Oh(1)$ with the four-Russians tabulation technique \citep{Arlazarov1970}.
 As the array $R$ stores $\xfloor{\Slen/\log{\Slen}}$ positions and each position in $\String$ requires $\log{\Slen}$ bits, $R$ consumes $\Slen$ bits.
-Thus, the binary one-level RD consumes $2n$ bits.
+Thus, the binary one-level RD consumes $2\Slen$ bits.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $s=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 8}, 1) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, 6) = R[2] + \rank_1(s_{5 \dots 8}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, 6) = R^2[2] + R[3] + \rank_1(s_{5 \dots 8}, 1) = 3$.}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -785,7 +785,7 @@ Thus, $R_{\sigma}$ consumes $\sigma n \log{\sigma}$ bits and the whole RD $\Slen
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $s=$ {\ttfamily CTCGCA} with $b=2$. In the example, $rank_{\text{C}}(\String,4)= R_{\sigma}[2,2] + rank_{\text{C}}(s_{3 \dots 4}, 1)=2.$}
+\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $rank_{\text{C}}(\String,4)= R_{\sigma}[2,2] + rank_{\text{C}}(s_{3 \dots 4}, 1)=2.$}
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcr}
@@ -815,14 +815,14 @@ I first give the formal definition of WT and then discuss how to answer rank que
 
 \begin{definition}
 \citep{Grossi2003, Navarro2007}
-The wavelet tree of a string $s \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$. The root represents all symbols in $\Sigma$ and each leaf exactly one symbol $\StrieChar \in \Sigma$.
-Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval[i,j]$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in \Interval[i,j] \}$, its left child $\Last$ represents the subset $\Sigma_l$ of symbols in range $[i,\frac{i+j}{2}]$ while its right child $r$ represents in $\Sigma_r$ those in range $[\frac{i+j}{2}+1, j]$.
+The wavelet tree of a string $\String \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$. The root represents all symbols in $\Sigma$ and each leaf exactly one symbol $\StrieChar \in \Sigma$.
+Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval{i}{j}$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in \Interval{i}{j} \}$, its left child $\Last$ represents the subset $\Sigma_l$ of symbols in range $\Interval{i}{\frac{i+j}{2}}$ while its right child $r$ represents in $\Sigma_r$ those in range $\Interval{\frac{i+j}{2}+1}{j}$.
 Node $v$ implicitly represents the subsequence $\String^v$ of all symbols of $\String$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $\String^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of wavelet tree]{Wavelet tree of the DNA string $s=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_{\text{C}}(\String,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
+\caption[Example of wavelet tree]{Wavelet tree of the DNA string $\String=$ {\ttfamily CTCGCA}. The alphabet $\Sigma_{\text{DNA}}$ is recursively partitioned as $\{ \{A,C\}, \{G,T\} \}$. In the example, $\rank_{\text{C}}(\String,4)=2$ is decomposed as $\rank_0(b,4) = 2$ on the root node and then $\rank_1(b^{AC}, 2) = 2$ on the left inner node.}
 \label{fig:wt_dna}
 \ttfamily
 \input{figures/wavelet_tree.tikz}
@@ -865,24 +865,24 @@ In this way, the top-down traversal is able to use the permutation $LF$ to decod
 I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where $\Interval{l}{r}$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 Therefore, I define the following node operations:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, n, \epsilon \}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ 1, \Slen, \epsilon \}$;
 %\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.r \in \mathbb{I}$;
-\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.l_r = \$$;
+\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.\Last_r = \$$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$.
 \end{itemize}
 %In order to answer \FunctionName{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $\String^i$ in the BWT.
 
-The traversal easily goes from the root node to its child node labeled by $\StrieChar$: it suffices to derive the interval $[C(c),C(c+1)]$.
-Suppose the traversal is on an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$.
-Now, the traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $\StrieChar \cdot s_v$ for some $\StrieChar \in \Sigma$.
-The known interval $[b_v, e_v]$ contains all prefixes of $\bar{\Strings}$ ending with $s_v$, \ie all suffixes of $\Strings$ starting with $s_v$, while the unknown interval $[b_w, e_w]$ contains all prefixes of $\bar{\Strings}$ ending with $\StrieChar \cdot s_v$, \ie all suffixes of $\Strings$ starting with $s_v \cdot c$.
+The traversal easily goes from the root node to its child node labeled by $\StrieChar$: it suffices to derive the interval $\Interval{C(c)}{C(c+1)}$.
+Suppose the traversal is on an arbitrary node $v$ of known interval $\Interval{b_v}{e_v}$ \st the path from the root to $v$ spells the substring $s_v$.
+Now, the traversal goes down to a child node $w$ of unknown interval $\Interval{b_w}{e_w}$ \st the path from the root to $w$ spells $\StrieChar \cdot s_v$ for some $\StrieChar \in \Sigma$.
+The known interval $\Interval{b_v}{e_v}$ contains all prefixes of $\bar{\Strings}$ ending with $s_v$, \ie all suffixes of $\Strings$ starting with $s_v$, while the unknown interval $\Interval{b_w}{e_w}$ contains all prefixes of $\bar{\Strings}$ ending with $\StrieChar \cdot s_v$, \ie all suffixes of $\Strings$ starting with $s_v \cdot c$.
 All these characters $\StrieChar$ are in $\Last_{b_v \dots e_v}$, since $\Last_i$ is the character $\Strings_{\Sarray[i] - 1}$ preceding the suffix pointed by $\Sarray[i]$.
 Moreover, these characters $\StrieChar$ are \emph{contiguous} and \emph{in relative order} in $\First$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
-If $b$ and $e$ are the first and last position in $\Last$ within $[b_v, e_v]$ such that $\Last_b = c$ and $\Last_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
+If $b$ and $e$ are the first and last position in $\Last$ within $\Interval{b_v}{e_v}$ such that $\Last_b = c$ and $\Last_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
 Therefore $LF(b)$ becomes:
 \begin{eqnarray}
 \begin{array}{lcl}
-LF(b) &=& C(l_b) + Occ(l_b, b)\\
+LF(b) &=& C(\Last_b) + Occ(\Last_b, b)\\
  	  &=& C(c) + Occ(c, b)\\
 	  &=& C(c) + Occ(c, b_v - 1) + 1
 \end{array}
@@ -991,17 +991,17 @@ In particular, the FM-indices, which are based on backward search, become more t
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
-\Algorithm{Dfs}{$x,d$}
+\Algorithm{Dfs}{$\StrieNode,d$}
 \begin{tabular}{ll}
-\textbf{Input}  & $x$ : pointer to the root node of a suffix trie\\
+\textbf{Input}  & $\StrieNode$ : pointer to the root node of a suffix trie\\
  			    & $d$ : integer bounding the traversal depth\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {$d > 0$}
-	\If {\Call{goDown}{$x$}}
+	\If {\Call{goDown}{$\StrieNode$}}
 		\Repeat
-			\State \Call{Dfs}{$x,d - 1$}
-		\Until \Call{goRight}{$x$}
+			\State \Call{Dfs}{$\StrieNode,d - 1$}
+		\Until \Call{goRight}{$\StrieNode$}
 	\EndIf
 \EndIf
 \end{algorithmic}
@@ -1248,12 +1248,12 @@ On the ESA, $1$-approximate matching shows a slow-down of 24 times: $1$-approxim
 
 Before turning to multiple $k$-mismatches, I describe a simpler algorithm for multiple exact string matching.
 In addition to the text $\Text$, multiple exact string matching provides a collection of patterns $\Patterns$.
-Hence, in addition to the suffix trie $\StrieOf{\Text}$ of $\Text$, algorithm \ref{alg:st-exact-multi} considers the trie $\Patterns$ of $\Patterns$.
-Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\Texts$ all patterns indexed in $\Patterns$.
-The traversal performed by algorithm \ref{alg:st-exact-multi} visits pairs of nodes in $\Texts \times \Patterns$ whose entering edges have the same label.
+Hence, in addition to the suffix trie $\StrieOf{\Text}$, algorithm \ref{alg:st-exact-multi} considers the trie $\RtrieOf{\Patterns}$.
+Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\StrieOf{\Texts}$ all patterns indexed in $\RtrieOf{\Patterns}$.
+The traversal performed by algorithm \ref{alg:st-exact-multi} visits pairs of nodes in $\StrieOf{\Texts} \times \RtrieOf{\Patterns}$ whose entering edges have the same label.
 Such traversal implicitly \emph{intersects} the two tries.
-However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\Texts$ and $\Patterns$ cannot be interchanged.
-The traversal stops whenever it reaches a leaf node in $\Patterns$ and reports the occurrences pointed by all the leaves beneath the current node in $\Texts$.
+However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\StrieOf{\Texts}$ and $\RtrieOf{\Patterns}$ cannot be interchanged.
+The traversal stops whenever it reaches a leaf node in $\RtrieOf{\Patterns}$ and reports the occurrences pointed by all the leaves beneath the current node in $\StrieOf{\Texts}$.
 %If the collection $\Patterns$ contains two equal strings, some leaf of $\Patterns$ points to more than one pattern.
 
 \begin{figure*}[t]
