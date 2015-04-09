@@ -9,8 +9,8 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 
 I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_1, a_2, \dots , a_{\sigma} \}$ is a finite ordered set of symbols (or characters) $a_i$.
-A \emph{string} (or word) $s=s_1 s_2 \dots s_n$ over an alphabet $\Sigma$ is a finite sequence of symbols $s_i \in \Sigma$.
-I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|s|=n$ the length of $\String$.
+A \emph{string} (or word) $\String=s_1 s_2 \dots s_n$ over an alphabet $\Sigma$ is a finite sequence of symbols $s_i \in \Sigma$.
+I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|\String|=n$ the length of $\String$.
 %I often call \emph{$q$-gram} a string of length $q$.
 %I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
 Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
@@ -39,7 +39,7 @@ The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,
 \emph{Generalized} full-text indices work on string collections.
 A \emph{string collection} is an ordered multiset $\Strings = \{ \String^1, \String^2, \dots, \String^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Strings}=\sum_{i=1}^{c}{|\String^i|}$ the total length of the string collection.
-I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Strings_{(d,i) \dots (d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
+I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
 
 To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
 I first introduce special terminator symbols to perform padding.
@@ -324,8 +324,8 @@ Thanks to these generic traversal operations, I later formulate generic string m
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $\Scard$ strings.
 Note that padding is necessary to ensure that no string $\String^i \in \Strings$ is a prefix of another string $\String^j \in \Strings$.
 \begin{definition}
-The \emph{trie} $\StrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{1}, \dots, \StrieLeaf{\Scard}$, where leaf $\StrieLeaf{i}$ points to string $\String^i$.
-Any edge entering a node of $\StrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\StrieOf{\Strings}$ is labeled with a terminator symbol.
+The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{1}, \dots, \StrieLeaf{\Scard}$, where leaf $\StrieLeaf{i}$ points to string $\String^i$.
+Any edge entering a node of $\RtrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\RtrieOf{\Strings}$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\String^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
@@ -333,8 +333,8 @@ Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\String^i$, 
 \subsubsection{Suffix trie}
 
 \begin{definition}
-Given a padded string $\String$ (definition~\ref{def:strd}) of length $\Slen$, the suffix trie $\StrieOf{\Strings}$ is the trie of all suffixes of $\String$.
-The \emph{suffix trie} $\StrieOf{\Strings}$ has $\Slen$ leaves, where leaf $\StrieLeaf{i}$ points to suffix $\Suffix{\String}{i}$.
+Given a padded string $\String$ (definition~\ref{def:strd}) of length $\Slen$, the suffix trie $\StrieOf{\String}$ is the trie of all suffixes of $\String$.
+The \emph{suffix trie} $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\StrieLeaf{i}$ points to suffix $\Suffix{\String}{i}$.
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
@@ -412,7 +412,7 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \If {\Call{goDown}{$\StrieNode, \min_{lex}{\Sigma}$}}
 	\State \Return \True
 \Else
-	\State \Return $\Call{goRight}{$\StrieNode$}$		
+	\State \Return $\Call{goRight}{\StrieNode}$		
 \EndIf
 \end{algorithmic}
 \label{alg:st-godown}
@@ -428,9 +428,9 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\NotB \Call{isRoot}{$\StrieNode$}}
-	\While {$c \gets \text{next}_{lex}{\Call{label}{\StrieNode}}$}
-		\State {$\Call{goUp}{\XSeq}$}
-		\If {$\Call{goDown}{x, c}$}
+	\While {$\StrieChar \gets \text{next}_{lex}{\Call{label}{\StrieNode}}$}
+		\State {$\Call{goUp}{\StrieNode}$}
+		\If {$\Call{goDown}{\StrieNode, \StrieChar}$}
 			\State \Return \True
 		\EndIf
 	\EndWhile
