@@ -10,7 +10,7 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_1, a_2, \dots , a_{\sigma} \}$ is a finite ordered set of symbols (or characters) $a_i$.
 A \emph{string} (or word) $s=s_1 s_2 \dots s_n$ over an alphabet $\Sigma$ is a finite sequence of symbols $s_i \in \Sigma$.
-I denote by $s_{i \dots j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|s|=n$ the length of $s$.
+I denote by $\String{i \dots j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|s|=n$ the length of $s$.
 %I often call \emph{$q$-gram} a string of length $q$.
 %I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
 Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^n$ contains all strings of length $n$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
@@ -375,7 +375,7 @@ Any path from the root to a leaf $\StrieLeaf[i]$ spells the string $s^i$, includ
 
 \begin{definition}
 Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\StrieOf{\Strings}$ is the trie of all suffixes of $s$.
-The \emph{suffix trie} $\StrieOf{\Strings}$ has $n$ leaves, where leaf $\StrieLeaf[i]$ points to suffix $s_{i..n}$.
+The \emph{suffix trie} $\StrieOf{\Strings}$ has $n$ leaves, where leaf $\StrieLeaf[i]$ points to suffix $\String{i..n}$.
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}

@@ -32,7 +32,7 @@ In this way, an additional logarithmic time complexity is paid to reduce space c
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
-The \emph{suffix array} of a padded string $s$ of length $n$ is an array $A$ containing a permutation of the interval $[1,n]$, \st $s_{A[i] \dots n} <_{lex} s_{A[i+1] \dots n}$ for all $1 \leq i < n$.
+The \emph{suffix array} of a padded string $s$ of length $n$ is an array $A$ containing a permutation of the interval $[1,n]$, \st $\String{A[i] \dots n} <_{lex} \String{A[i+1] \dots n}$ for all $1 \leq i < n$.
 \end{definition}
 
 \begin{definition}
@@ -50,7 +50,7 @@ Pairs are ordered \st $\Strings_{A[i] \dots} <_{lex} \Strings_{A[i+1] \dots}$ fo
 \label{fig:sa}
 \ttfamily
 \begin{tabular}{ccl}
-$i$ & $A[i]$ & $s_{A[i]\dots n}$\\
+$i$ & $A[i]$ & $\String{A[i]\dots n}$\\
 \midrule
 1 & 7 & \$\\
 2 & 1 & ANANAS\$\\
@@ -317,7 +317,7 @@ The idea is to supplement the SA with a so-called $q$-gram directory: an additio
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
-$p$ & $h(p)$ & $D[h(p)]$ & \phantom{-} & $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
+$p$ & $h(p)$ & $D[h(p)]$ & \phantom{-} & $i$ & $A[i]$ & $\String{A[i]\dots n}$\\
 \midrule
 AA & 1 & 2 & & 1 & 7 & \$\\
 AN & 2 & 2 & & 2 & 1 & ANANAS\$\\
@@ -496,24 +496,24 @@ Subsequently, I discuss my generalized FM-index implementation covering strings 
 \label{sec:index:bwt}
 
 Let $s$ be a padded string (definition~\ref{def:strd}) of length $n$ over an alphabet $\Sigma$.
-In the following, consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = s_{n}$ and $s_{n+i} = s_i$ for any $i \in \N$.
-Consider the square matrix consisting of all cyclic shifts of the string $s$ sorted in lexicographical order, where the $i$-th cyclic shift has the form $s_{i \dots n} s_{1 \dots i-1}$.
+In the following, consider the string $s$ to be cyclic and its subscript $s_i$ to be \emph{modular}, \eg $s_0 = \String{n}$ and $\String{n+i} = s_i$ for any $i \in \N$.
+Consider the square matrix consisting of all cyclic shifts of the string $s$ sorted in lexicographical order, where the $i$-th cyclic shift has the form $\String{i \dots n} \String{1 \dots i-1}$.
 Figure~\ref{fig:bwt} shows an example.
-Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $s_{A[i] \dots n} s_{1 \dots A[i]-1}$.
+Note how the cyclic shifts matrix is related to the suffix array $A$ of $s$: the $i$-th cyclic shift is $\String{A[i] \dots n} \String{1 \dots A[i]-1}$.
 % (except when $A[i] = 1$).
 
 \begin{definition}
 \label{def:bwt}
-The BWT of $s$ is the string $s_{A[i]-1}$, \ie the string obtained concatenating the symbols in the last column of the cyclic shifts matrix of $s$.
+The BWT of $s$ is the string $\String{A[i]-1}$, \ie the string obtained concatenating the symbols in the last column of the cyclic shifts matrix of $s$.
 \end{definition}
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of Burrows-Wheeler transform]{Cyclic shifts matrix of the string {\ttfamily ANANAS\$}. Column $s_{A[i]-1}$ represents the Burrows-Wheeler transform.}
+\caption[Example of Burrows-Wheeler transform]{Cyclic shifts matrix of the string {\ttfamily ANANAS\$}. Column $\String{A[i]-1}$ represents the Burrows-Wheeler transform.}
 \label{fig:bwt}
 \ttfamily
 \begin{tabular}{cccccc}
-$i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
+$i$ & $A[i]$ & \phantom{-} & $\String{A[i]}$ & $\dots$ & $\String{A[i]-1}$\\
 \midrule
 1 & 7 & & \$& ANANA  & \cell{l1}{S}\\
 2 & 1 & & A & NANAS  & \$\\
@@ -531,7 +531,7 @@ The BWT easily generalizes to string collections.
 Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT.
-The BWT can be obtained in linear time by scanning the suffix array $A$ and assigning the symbol $s_{A[i]-1}$ to the $i$-th BWT symbol.
+The BWT can be obtained in linear time by scanning the suffix array $A$ and assigning the symbol $\String{A[i]-1}$ to the $i$-th BWT symbol.
 However, constructing the BWT from the SA is still not desirable, especially for small alphabets, as the SA consumes $n \log{n}$ bits in addition to the $n \log{\sigma}$ bits of the BWT.
 Therefore, various direct BWT construction algorithms working within $o(n \log{\sigma})$ bits plus constant space have been recently proposed in \citep{Bauer2013, Crochemore2013}.
 
@@ -541,7 +541,7 @@ Therefore, various direct BWT construction algorithms working within $o(n \log{\
 \label{fig:lf_psi}
 \ttfamily
 \begin{tabular}{ccccccc}
-$i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
+$i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $\String{A[i]}$ & $\dots$ & $\String{A[i]-1}$\\
 \midrule
 1 & 2 & 7                        & & \$           & ANANA  & S\\
 2 & 5 & 1                        & & A            & NANAS  & \$\\
@@ -561,7 +561,7 @@ $i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
 \subsubsection{Inversion}
 
 I now describe how to invert the BWT to reconstruct the original string.
-For convenience, I denote the first column $s_{A[i]}$ by $f$ and the last column $s_{A[i] - 1}$ by $l$.
+For convenience, I denote the first column $\String{A[i]}$ by $f$ and the last column $\String{A[i] - 1}$ by $l$.
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
 To this intent, I define two permutations $LF : [1,n] \rightarrow [1,n]$ and $\Psi : [1,n] \rightarrow [1,n]$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $f$ where character $l_i$ occurs and the value $\Psi(j)$ gives back the position $i$ in $l$ where $f_j$ occurs.
 Figure~\ref{fig:lf_psi} illustrates.
@@ -592,7 +592,7 @@ Figure \ref{fig:psi} exemplifies.
 \label{fig:psi}
 \ttfamily
 \begin{tabular}{ccc}
-$s_{A[i]}$ & $i$ & $\Psi(i)$\\
+$\String{A[i]}$ & $i$ & $\Psi(i)$\\
 \midrule
 \cell{s1}{\$} & \cell{i1}{1} & \cell{psi1}{2}\\
 \cell{s2}{A}  & \cell{i2}{2} & \cell{psi2}{5}\\
@@ -632,7 +632,7 @@ For all $i \in [1,n]$, the character $l_i$ precedes the character $f_i$ in the o
 For all characters $c \in \Sigma$, the $i$-th occurrence of $c$ in $f$ corresponds to the $i$-th occurrence of $c$ in $l$.
 \end{observation}
 
-These observation are evident, indeed $f = s_{A[i]}$ and $l = s_{A[i] - 1}$ (see figure~\ref{fig:lf_psi}).
+These observation are evident, indeed $f = \String{A[i]}$ and $l = \String{A[i] - 1}$ (see figure~\ref{fig:lf_psi}).
 Given the two above observations, \cite{Ferragina2000} define the permutation $LF$ as:
 \begin{eqnarray}
 LF(i) = C(l_i) + Occ(l_i, i)
@@ -649,7 +649,7 @@ The general problem on arbitrary strings has been tackled by several studies on 
 This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary} (RD).
 
 \begin{definition}
-Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\rank_c(s, i)$ returns the number of occurrences of $c$ in the prefix $s_{1 \dots i}$.
+Given a string $s$ over an alphabet $\Sigma$ and a character $c \in \Sigma$, $\rank_c(s, i)$ returns the number of occurrences of $c$ in the prefix $\String{1 \dots i}$.
 \end{definition}
 
 The key idea of RDs is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.
