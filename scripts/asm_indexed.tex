@@ -581,7 +581,7 @@ LF^{i+1}(j) &=& LF(LF^{i}(j)).
 \end{eqnarray}
 
 
-The character $s_i$ is recovered as $f_{\Psi^{i-1}(j)}$, while $\bar{s}_i$ is recovered as $s_{LF^{i-1}(j)}$.
+The character $s_i$ is recovered as $f_{\Psi^{i-1}(j)}$, while $\bar{s}_i$ is recovered as $l_{LF^{i-1}(j)}$.
 The full string $s$ is recovered by starting in $f$ at the position of \$ and following the cycle defined by the permutation $\Psi$.
 Conversely, the reverse string $\bar{s}$ is recovered by starting in $l$ at the position of \$ and following the cycle defined by the permutation $LF$.
 Figure \ref{fig:psi} exemplifies.
@@ -613,7 +613,7 @@ $s_{A[i]}$ & $i$ & $\Psi(i)$\\
 
 Inverting the generalized BWT works in the same way.
 Indeed, permutations $\Psi$ and $LF$ are composed of $c$ cycles, where each cycle corresponds to a distinct string in the collection.
-The string $s^i$ is recovered by starting at the position of $\$^i$ and following the cycle of $\Psi$ (or $LF$) associated to $s^i$.
+The string $s^j$ is recovered by starting at the position of $\$^j$ and following the cycle of $\Psi$ (or $LF$) associated to $s^j$.
 
 \subsubsection{Permutation LF}
 
@@ -974,7 +974,7 @@ As expected, the FM-TL and FM-WT are the most compact data structures, while the
 \label{sec:index:algo:traversal}
 
 Before turning to proper string matching algorithms, I present a simple algorithm that helps to comprehend subsequent backtracking algorithms.
-Algorithm \ref{alg:st-dfs} performs a top-down traversal of a suffix trie in depth-first order.
+Algorithm \ref{alg:st-dfs} performs the top-down traversal of a suffix trie in depth-first order.
 The traversal is bounded, \ie after reaching the nodes at depth $d$ it stops going down and goes right instead.
 
 The experimental evaluation shown in figure \ref{fig:visit-dna} provides a first glimpse on what are the practical performances of various suffix trie implementations.
@@ -1147,7 +1147,7 @@ Conversely, if the pattern $p$ is completely spelled and the traversal ends up i
 %\end{figure}
 
 Figure \ref{fig:query-dna-apx} shows the results of the experimental evaluation of algorithm~\ref{alg:st-hamming} for $k=1$.
-The TL FM-index is always faster than any other index: for instance, on patterns of length 30, the SA it is 3 times slower; even the $q$-gram index is 50\,\% slower than the TL FM-index.
+The TL FM-index is always faster than any other index: for instance, on patterns of length 30, the SA is 3 times slower; even the $q$-gram index is 50\,\% slower than the TL FM-index.
 Despite their tree structure, ESA and LST are always slower than $q$-gram and FM-indices.
 
 On the TL FM-index, $1$-approximate matching of patterns of length 30 is 16 times slower than exact matching: on average, $1$-approximate matching spends $21$ microseconds ($\mu s$), while exact matching takes $1.3 \, \mu s$.
