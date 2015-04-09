@@ -38,11 +38,11 @@ Using a radix tree $\StrieOf{\Database}$ we can find all strings in $\Database$ 
 \label{alg:dict-exact}
 \begin{algorithmic}[1]
 \algnotext{EndFor}
-\Procedure{ExactSearch}{$\Tn,p$}
+\Procedure{ExactSearch}{$\StrieNode,p$}
 	\If {$p = \epsilon$}
-		\State \Report $\Ei(\Tn)$
-	\ElsIf {$\exists\,{\Cn \in \Ci(\Tn)}:\  label(\Cn) = p_1$\label{alg:dict-exact:comp}}
-		\State \Call{ExactSearch}{$\Cn,p_{2..|p|}$}
+		\State \Report $\Ei(\StrieNode)$
+	\ElsIf {$\exists\,{\StrieChar \in \Ci(\StrieNode)}:\  label(\StrieChar) = p_1$\label{alg:dict-exact:comp}}
+		\State \Call{ExactSearch}{$\StrieChar,p_{2..|p|}$}
 	\EndIf
 \EndProcedure
 \end{algorithmic}

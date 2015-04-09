@@ -365,9 +365,9 @@ Thanks to these generic traversal operations, I later formulate generic string m
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $c$ strings.
 Note that padding is necessary to ensure that no string $s^i \in \Strings$ is a prefix of another string $s^j \in \Strings$.
 \begin{definition}
-The \emph{trie} $\StrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+The \emph{trie} $\StrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\StrieLeaf[1] \dots \StrieLeaf[c]$, where leaf $\StrieLeaf[i]$ points to string $s^i$.
 Any edge entering a node of $\StrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\StrieOf{\Strings}$ is labeled with a terminator symbol.
-Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
+Any path from the root to a leaf $\StrieLeaf[i]$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
 
@@ -375,7 +375,7 @@ Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its 
 
 \begin{definition}
 Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\StrieOf{\Strings}$ is the trie of all suffixes of $s$.
-The \emph{suffix trie} $\StrieOf{\Strings}$ has $n$ leaves, where leaf $\Ln_i$ points to suffix $s_{i..n}$.
+The \emph{suffix trie} $\StrieOf{\Strings}$ has $n$ leaves, where leaf $\StrieLeaf[i]$ points to suffix $s_{i..n}$.
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
@@ -418,19 +418,19 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 
 I define a set of generic operations to traverse tries in a top-down fashion.
 Note that the following traversal operations do not walk over edges labeled terminator symbols, as these symbols are not necessary in string matching applications.
-Given a trie $\StrieOf{\Strings}$, I define the following operations inspecting any pointed node $\Tn$ of $\StrieOf{\Strings}$:
+Given a trie $\StrieOf{\Strings}$, I define the following operations inspecting any pointed node $\StrieNode$ of $\StrieOf{\Strings}$:
 \begin{itemize}
-\item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
-\item \textsc{isLeaf}($\Tn$) returns true iff all outgoing edges are labeled by terminator symbols;
-\item \textsc{label}($\Tn$) returns the symbol labeling the edge entering $\Tn$;
-\item \textsc{occurrences}($\Tn$) returns the list of positions pointed by leaves below $\Tn$;
+\item \textsc{isRoot}($\StrieNode$) returns true iff the pointed node is the root;
+\item \textsc{isLeaf}($\StrieNode$) returns true iff all outgoing edges are labeled by terminator symbols;
+\item \textsc{label}($\StrieNode$) returns the symbol labeling the edge entering $\StrieNode$;
+\item \textsc{occurrences}($\StrieNode$) returns the list of positions pointed by leaves below $\StrieNode$;
 \end{itemize}
-Moreover, I define the following operations moving from pointed node $\Tn$, and returning true on success and false otherwise:
+Moreover, I define the following operations moving from pointed node $\StrieNode$, and returning true on success and false otherwise:
 \begin{itemize}
-\item \textsc{goDown}($\Tn$) moves to the lexicographically smallest child of $\Tn$;
-\item \textsc{goDown}($\Tn, c$) moves to the child of $\Tn$ whose entering edge is labeled by $c$;
-\item \textsc{goRight}($\Tn$) moves to the lexicographically next child of $\Tn$;
-\item \textsc{goUp}($\Tn$) moves to the parent node of $\Tn$.
+\item \textsc{goDown}($\StrieNode$) moves to the lexicographically smallest child of $\StrieNode$;
+\item \textsc{goDown}($\StrieNode, c$) moves to the child of $\StrieNode$ whose entering edge is labeled by $c$;
+\item \textsc{goRight}($\StrieNode$) moves to the lexicographically next child of $\StrieNode$;
+\item \textsc{goUp}($\StrieNode$) moves to the parent node of $\StrieNode$.
 \end{itemize}
 
 Time complexities of the above operations depend on the data structure implementing the trie.
@@ -441,19 +441,19 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \begin{figure*}[t]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goDown}{$\Tn$}
+\Algorithm{goDown}{$\StrieNode$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix trie node\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\Tn$}}
+\If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\If {\Call{goDown}{$\Tn, \min_{lex}{\Sigma}$}}
+\If {\Call{goDown}{$\StrieNode, \min_{lex}{\Sigma}$}}
 	\State \Return \True
 \Else
-	\State \Return $\Call{goRight}{$\Tn$}$		
+	\State \Return $\Call{goRight}{$\StrieNode$}$		
 \EndIf
 \end{algorithmic}
 \label{alg:st-godown}
@@ -462,14 +462,14 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goRight}{$\Tn$}
+\Algorithm{goRight}{$\StrieNode$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix trie node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix trie node\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\NotB \Call{isRoot}{$\Tn$}}
-	\While {$c \gets \text{next}_{lex}{\Call{label}{\Tn}}$}
+\If {\NotB \Call{isRoot}{$\StrieNode$}}
+	\While {$c \gets \text{next}_{lex}{\Call{label}{\StrieNode}}$}
 		\State {$\Call{goUp}{x}$}
 		\If {$\Call{goDown}{x, c}$}
 			\State \Return \True

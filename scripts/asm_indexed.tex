@@ -105,18 +105,18 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \begin{figure*}[t!]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{L}{$\Tn,c$}
+\Algorithm{L}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix array node\\
 				& $c$ : character to query\\
 \textbf{Output} & integer denoting the left interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$l_1 \gets \Tn.l$}
-\State {$l_2 \gets \Tn.r$}
+\State {$l_1 \gets \StrieNode.l$}
+\State {$l_2 \gets \StrieNode.r$}
 \While {$l_1 < l_2$}
 	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-	\If {$\Strings_{A[i] + \Tn.d} <_{lex} c$}
+	\If {$\Strings_{A[i] + \StrieNode.d} <_{lex} c$}
 		\State {$l_1 \gets i+1$}
 	\Else
 		\State {$l_2 \gets i$}
@@ -130,18 +130,18 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{R}{$\Tn,c$}
+\Algorithm{R}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix array node\\
 				& $c$ : character to query\\
 \textbf{Output} & integer denoting the right interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$r_1 \gets \Tn.l$}
-\State {$r_2 \gets \Tn.r$}
+\State {$r_1 \gets \StrieNode.l$}
+\State {$r_2 \gets \StrieNode.r$}
 \While {$r_1 < r_2$}
 	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-	\If {$\Strings_{A[i] + \Tn.d} \leq_{lex} c$}
+	\If {$\Strings_{A[i] + \StrieNode.d} \leq_{lex} c$}
 		\State {$r_1 \gets i+1$}
 	\Else
 		\State {$r_2 \gets i$}
@@ -164,41 +164,41 @@ The root node is represented by the interval $[1,n]$ containing the whole suffix
 The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Strings_{A[i]}$ with $i \in [l,r]$.
 Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing edges labeled by terminator symbols.
 The occurrences below any node correspond by definition to the interval $[l,r]$ of $A$.
-Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
+Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
 \begin{itemize}
-\item \textsc{goRoot}($\Tn$) initializes $\Tn$ to $\{ 1, n, 0\}$;
-%\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $A[\Tn.r] + \Tn.d = n_{A[\Tn.r]}$;
-\item \textsc{label}($\Tn$) returns $\Strings_{A[\Tn.l] + \Tn.d}$;
-\item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
+\item \textsc{goRoot}($\StrieNode$) initializes $\StrieNode$ to $\{ 1, n, 0\}$;
+%\item \textsc{isRoot}($\StrieNode$) returns true iff $d = 0$;
+\item \textsc{isLeaf}($\StrieNode$) returns true iff $A[\StrieNode.r] + \StrieNode.d = n_{A[\StrieNode.r]}$;
+\item \textsc{label}($\StrieNode$) returns $\Strings_{A[\StrieNode.l] + \StrieNode.d}$;
+\item \textsc{occurrences}($\StrieNode$) returns $A[\StrieNode.l \dots \StrieNode.r]$.
 \end{itemize}
 
 \begin{figure*}[t!]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goDown}{$\Tn$}
+\Algorithm{goDown}{$\StrieNode$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix array node\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\Tn$}}
+\If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\State {$\Tn.d \gets \Tn.d+1$}
-\State {$\Tn.l \gets$ \Call{R}{$\Tn,\epsilon$}}
+\State {$\StrieNode.d \gets \StrieNode.d+1$}
+\State {$\StrieNode.l \gets$ \Call{R}{$\StrieNode,\epsilon$}}
 %\While {$A[l] + d < n_{A[l]}$}
 %	\State {$l \gets l+1$}
 %\EndWhile
 %\If {$l \geq r$}
 %	\State \Return \False
 %\EndIf
-\State {$c_l \gets \Strings_{A[\Tn.l] + \Tn.d}$}
-\State {$c_r \gets \Strings_{A[\Tn.r] + \Tn.d}$}
+\State {$c_l \gets \Strings_{A[\StrieNode.l] + \StrieNode.d}$}
+\State {$c_r \gets \Strings_{A[\StrieNode.r] + \StrieNode.d}$}
 \If {$c_l \neq c_r$}
-	\State {$\Tn.r \gets$ \Call{R}{$\Tn,c_l$}}
+	\State {$\StrieNode.r \gets$ \Call{R}{$\StrieNode,c_l$}}
 \EndIf
-\State \Return $\Tn.l < \Tn.r$
+\State \Return $\StrieNode.l < \StrieNode.r$
 \end{algorithmic}
 \label{alg:sa-godown}
 \end{algorithm}
@@ -206,22 +206,22 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 \hfill
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goRight}{$\Tn$}
+\Algorithm{goRight}{$\StrieNode$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix array node\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isRoot}{$\Tn$}}
+\If {\Call{isRoot}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\State {$c_l \gets \Strings_{A[\Tn.l] + \Tn.d}$}
-\State {$c_r \gets \Strings_{A[\Tn.r] + \Tn.d}$}
+\State {$c_l \gets \Strings_{A[\StrieNode.l] + \StrieNode.d}$}
+\State {$c_r \gets \Strings_{A[\StrieNode.r] + \StrieNode.d}$}
 \If {$c_l \neq c_r$}
-	\State {$\Tn.l \gets \Tn.r$}
-	\State {$\Tn.r \gets$ \Call{R}{$\Tn,c_l$}}
+	\State {$\StrieNode.l \gets \StrieNode.r$}
+	\State {$\StrieNode.r \gets$ \Call{R}{$\StrieNode,c_l$}}
 \EndIf
-\State \Return $\Tn.l < \Tn.r$
+\State \Return $\StrieNode.l < \StrieNode.r$
 \item[]
 \end{algorithmic}
 \label{alg:sa-goright}
@@ -237,20 +237,20 @@ Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involv
 \begin{center}
 \begin{minipage}[t]{.6\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goDown}{$\Tn,c$}
+\Algorithm{goDown}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a suffix array node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a suffix array node\\
 				& $c$ : character to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\Tn$}}
+\If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\State {$\Tn.d \gets \Tn.d+1$}
-\State {$\Tn.l \gets \Call{L}{\Tn,c}$}
-\State {$\Tn.r \gets \Call{R}{\Tn,c}$}
-\State \Return $\Tn.l < \Tn.r$
+\State {$\StrieNode.d \gets \StrieNode.d+1$}
+\State {$\StrieNode.l \gets \Call{L}{\StrieNode,c}$}
+\State {$\StrieNode.r \gets \Call{R}{\StrieNode,c}$}
+\State \Return $\StrieNode.l < \StrieNode.r$
 \end{algorithmic}
 \label{alg:sa-godownc}
 \end{algorithm}
@@ -355,28 +355,28 @@ Using a 32 bits integer encoding, the directory alone consumes 1~GB of memory.
 
 I now describe how I extended the SA traversal operations of section \ref{sec:index:sa} to use the $q$-gram directory $D$, within the generic text indexing framework of the SeqAn library.
 Again, while traversing the trie, I maintain the current range $[l,r]$ and the current depth $d$.
-In addition, I maintain the interval $[l_h,r_h]$ in $D$ and, in order to answer \textsc{label}$(\Tn)$, the label $e$ of the edge entering the current node.
-Summing up, I represent the current node $\Tn$ by the elements $\{ l, r, d, l_h, r_h, e \}$.
+In addition, I maintain the interval $[l_h,r_h]$ in $D$ and, in order to answer \textsc{label}$(\StrieNode)$, the label $e$ of the edge entering the current node.
+Summing up, I represent the current node $\StrieNode$ by the elements $\{ l, r, d, l_h, r_h, e \}$.
 I define the basic node operations as follows:
 \begin{itemize}
-\item \textsc{goRoot}($\Tn$) initializes $\Tn$ to $\{ 1, n, 0, 1, \sigma^q, \epsilon \}$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.d=q$;
-\item \textsc{label}($\Tn$) returns $\Tn.e$;
-\item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
+\item \textsc{goRoot}($\StrieNode$) initializes $\StrieNode$ to $\{ 1, n, 0, 1, \sigma^q, \epsilon \}$;
+\item \textsc{isLeaf}($\StrieNode$) returns true iff $\StrieNode.d=q$;
+\item \textsc{label}($\StrieNode$) returns $\StrieNode.e$;
+\item \textsc{occurrences}($\StrieNode$) returns $A[\StrieNode.l \dots \StrieNode.r]$.
 \end{itemize}
 
 \begin{figure*}[b!]
 \begin{minipage}[b]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{L}{$\Tn,c$}
+\Algorithm{L}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
 				& $c$ : character to query\\
 \textbf{Output} & integer denoting the left interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\Tn.l_h \gets \Tn.l_h + \rho_0(c) \cdot \sigma^{\Tn.d} $}
-\State \Return $D[\Tn.l_h]$
+\State {$\StrieNode.l_h \gets \StrieNode.l_h + \rho_0(c) \cdot \sigma^{\StrieNode.d} $}
+\State \Return $D[\StrieNode.l_h]$
 \end{algorithmic}
 \label{alg:qgram-lower}
 \end{algorithm}
@@ -384,15 +384,15 @@ I define the basic node operations as follows:
 \hfill
 \begin{minipage}[b]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{R}{$\Tn,c$}
+\Algorithm{R}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
 				& $c$ : character to query\\
 \textbf{Output} & integer denoting the right interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\Tn.r_h \gets \Tn.r_h - \rho_0(c) \cdot \sigma^{\Tn.d}$}
-\State \Return $D[\Tn.r_h]$
+\State {$\StrieNode.r_h \gets \StrieNode.r_h - \rho_0(c) \cdot \sigma^{\StrieNode.d}$}
+\State \Return $D[\StrieNode.r_h]$
 \end{algorithmic}
 \label{alg:qgram-upper}
 \end{algorithm}
@@ -406,21 +406,21 @@ In this way, both variants of \textsc{goDown} (algorithms \ref{alg:sa-godownc} a
 \begin{center}
 \begin{minipage}[t]{.6\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goDown}{$\Tn,c$}
+\Algorithm{goDown}{$\StrieNode,c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
 				& $c$ : character to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\Tn$}}
+\If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\State {$\Tn.d \gets \Tn.d+1$}
-\State {$\Tn.e \gets c$}
-\State {$\Tn.l \gets \Call{L}{\Tn,\Tn.e}$}
-\State {$\Tn.r \gets \Call{R}{\Tn,\Tn.e}$}
-\State \Return $\Tn.l < \Tn.r$
+\State {$\StrieNode.d \gets \StrieNode.d+1$}
+\State {$\StrieNode.e \gets c$}
+\State {$\StrieNode.l \gets \Call{L}{\StrieNode,\StrieNode.e}$}
+\State {$\StrieNode.r \gets \Call{R}{\StrieNode,\StrieNode.e}$}
+\State \Return $\StrieNode.l < \StrieNode.r$
 \end{algorithmic}
 \label{alg:qgram-godownc}
 \end{algorithm}
@@ -862,13 +862,13 @@ Therefore, I consider the BWT of $\bar{\Strings}$, such that $LF$ recovers any s
 To encode $LF$, I supplement the BWT of $\bar{\Strings}$ with its rank dictionary, either multi-levels or wavelet tree.
 In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
 
-I represent the current node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
+I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 Therefore, I define the following node operations:
 \begin{itemize}
-\item \textsc{goRoot}($\Tn$) initializes $\Tn$ to $\{ 1, n, \epsilon \}$;
-%\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.r \in \mathbb{I}$;
-\item \textsc{isLeaf}($\Tn$) returns true iff $\Tn.l_r = \$$;
-\item \textsc{label}($\Tn$) returns $\Tn.e$.
+\item \textsc{goRoot}($\StrieNode$) initializes $\StrieNode$ to $\{ 1, n, \epsilon \}$;
+%\item \textsc{isLeaf}($\StrieNode$) returns true iff $\StrieNode.r \in \mathbb{I}$;
+\item \textsc{isLeaf}($\StrieNode$) returns true iff $\StrieNode.l_r = \$$;
+\item \textsc{label}($\StrieNode$) returns $\StrieNode.e$.
 \end{itemize}
 %In order to answer \textsc{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $s^i$ in the BWT.
 
@@ -899,14 +899,14 @@ Conversely, \textsc{goDown} and \textsc{goRight} are provided by the generic alg
 \begin{center}
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
-\Algorithm{goDown}{$\Tn, c$}
+\Algorithm{goDown}{$\StrieNode, c$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\Tn$ : pointer to an FM-index node\\
+\textbf{Input}  & $\StrieNode$ : pointer to an FM-index node\\
 				& $c$ : char to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\Tn$}}
+\If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
 \State {$x.l \gets \Call{LF}{x.l,c}$}
@@ -927,7 +927,7 @@ As proposed by \cite{Ferragina2000}, I maintain a \emph{sampled} suffix array $A
 In order to determine if and where I sampled any $A[i]$ in $A^{\epsilon}$, I maintain a binary rank dictionary $S$ of length $n$: if $S[i]=1$, then I sampled $A[i]$ in $A^{\epsilon}[rank_1(S,i)]$.
 I obtain any $A[i]$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $A^{\epsilon}$, and then $A[i] = A[LF^j(i)] + j$.
 
-By sampling one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon > 0$, then $A^{\epsilon}$ consumes $\Oh(\frac{n}{\log^{\epsilon}{n}})$ space and \textsc{occurrences}($\Tn$) returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{n})$ time \citep{Ferragina2000}.
+By sampling one text position out of $\log^{1+\epsilon}{n}$, for some $\epsilon > 0$, then $A^{\epsilon}$ consumes $\Oh(\frac{n}{\log^{\epsilon}{n}})$ space and \textsc{occurrences}($\StrieNode$) returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{n})$ time \citep{Ferragina2000}.
 In practice, I sample text positions at rates between $2^{-3}$ and $2^{-5}$.
 The rank dictionary $S$ consumes $n+o(n)$ extra space, independently of the sampling rate.
 
@@ -1025,7 +1025,7 @@ In particular, the FM-indices, which are based on backward search, become more t
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
 In the following, I assume the text $t$ to be indexed by its suffix trie $\StrieOf{\Strings}$.
 Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting on the root node of $\StrieOf{\Strings}$ and following the path spelling the pattern.
-If the search ends up in a node $\Tn$, then each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
+If the search ends up in a node $\StrieNode$, then each leaf $\StrieLeaf[i]$ below $\StrieNode$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\StrieOf{\Strings}$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
@@ -1092,7 +1092,7 @@ Yet, the idea dates back to more than twenty years ago.
 Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\StrieOf{\Strings}$, spelling incrementally all distinct substrings of $t$.
 While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
 If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
-Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
+Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\StrieNode$, each leaf $\StrieLeaf[i]$ below $\StrieNode$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.
 
 \begin{figure}[b]
 \begin{center}
@@ -1234,9 +1234,9 @@ On the ESA, $1$-approximate matching shows a slow-down of 24 times: $1$-approxim
 %%\caption{$k$-difference on a suffix trie.}
 %%\label{alg:st-edit}
 %%\begin{algorithmic}[1]
-%%\Procedure{KDifferences}{$\Tn,p,e$}
-%%	\ForAll {$\Cn \in \Ci(\Tn)$}
-%%		\State \Call{KDifferences}{$\Cn,p_{2..|p|},e - d_E(repr(\Tn), p)$}
+%%\Procedure{KDifferences}{$\StrieNode,p,e$}
+%%	\ForAll {$\StrieChar \in \Ci(\StrieNode)$}
+%%		\State \Call{KDifferences}{$\StrieChar,p_{2..|p|},e - d_E(repr(\StrieNode), p)$}
 %%	\EndFor
 %%\EndProcedure
 %%\end{algorithmic}
