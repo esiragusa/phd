@@ -36,13 +36,13 @@ The \emph{suffix array} of a padded string $s$ of length $n$ is an array $A$ con
 \end{definition}
 
 \begin{definition}
-The \emph{generalized suffix array} (GSA) of a padded string collection $\Sc$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Sc$ and $j$ points to one of the $n_i$ suffixes of $s^i$.
-Pairs are ordered \st $\Sc_{A[i] \dots} <_{lex} \Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
+The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $c$ strings of total length $n$, is an array $A$ of length $n$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $s^i \in \Strings$ and $j$ points to one of the $n_i$ suffixes of $s^i$.
+Pairs are ordered \st $\Strings_{A[i] \dots} <_{lex} \Strings_{A[i+1] \dots}$ for all $1 \leq i < n$.
 \end{definition}
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
+\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 
 \begin{subfigure}[t]{0.45\textwidth}
 \begin{center}
@@ -68,7 +68,7 @@ $i$ & $A[i]$ & $s_{A[i]\dots n}$\\
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
-$i$ & $A[i]$ & $\Sc_{A[i]\dots}$\\
+$i$ & $A[i]$ & $\Strings_{A[i]\dots}$\\
 \midrule
 1 & (1,7) & $\$_1$\\
 2 & (2,6) & $\$_2$\\
@@ -116,7 +116,7 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \State {$l_2 \gets \Tn.r$}
 \While {$l_1 < l_2$}
 	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-	\If {$\Sc_{A[i] + \Tn.d} <_{lex} c$}
+	\If {$\Strings_{A[i] + \Tn.d} <_{lex} c$}
 		\State {$l_1 \gets i+1$}
 	\Else
 		\State {$l_2 \gets i$}
@@ -141,7 +141,7 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \State {$r_2 \gets \Tn.r$}
 \While {$r_1 < r_2$}
 	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-	\If {$\Sc_{A[i] + \Tn.d} \leq_{lex} c$}
+	\If {$\Strings_{A[i] + \Tn.d} \leq_{lex} c$}
 		\State {$r_1 \gets i+1$}
 	\Else
 		\State {$r_2 \gets i$}
@@ -161,7 +161,7 @@ Any suffix trie node is univocally identified by an interval of the suffix array
 Thus, while traversing the trie, I maintain the interval $[l,r]$ associated to the current node.
 In addition, I also remember the depth $d$ of the current node.
 The root node is represented by the interval $[1,n]$ containing the whole suffix array.
-The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Sc_{A[i]}$ with $i \in [l,r]$.
+The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Strings_{A[i]}$ with $i \in [l,r]$.
 Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing edges labeled by terminator symbols.
 The occurrences below any node correspond by definition to the interval $[l,r]$ of $A$.
 Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
@@ -169,7 +169,7 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 \item \textsc{goRoot}($\Tn$) initializes $\Tn$ to $\{ 1, n, 0\}$;
 %\item \textsc{isRoot}($\Tn$) returns true iff $d = 0$;
 \item \textsc{isLeaf}($\Tn$) returns true iff $A[\Tn.r] + \Tn.d = n_{A[\Tn.r]}$;
-\item \textsc{label}($\Tn$) returns $\Sc_{A[\Tn.l] + \Tn.d}$;
+\item \textsc{label}($\Tn$) returns $\Strings_{A[\Tn.l] + \Tn.d}$;
 \item \textsc{occurrences}($\Tn$) returns $A[\Tn.l \dots \Tn.r]$.
 \end{itemize}
 
@@ -193,8 +193,8 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 %\If {$l \geq r$}
 %	\State \Return \False
 %\EndIf
-\State {$c_l \gets \Sc_{A[\Tn.l] + \Tn.d}$}
-\State {$c_r \gets \Sc_{A[\Tn.r] + \Tn.d}$}
+\State {$c_l \gets \Strings_{A[\Tn.l] + \Tn.d}$}
+\State {$c_r \gets \Strings_{A[\Tn.r] + \Tn.d}$}
 \If {$c_l \neq c_r$}
 	\State {$\Tn.r \gets$ \Call{R}{$\Tn,c_l$}}
 \EndIf
@@ -215,8 +215,8 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 \If {\Call{isRoot}{$\Tn$}}
 	\State \Return \False
 \EndIf
-\State {$c_l \gets \Sc_{A[\Tn.l] + \Tn.d}$}
-\State {$c_r \gets \Sc_{A[\Tn.r] + \Tn.d}$}
+\State {$c_l \gets \Strings_{A[\Tn.l] + \Tn.d}$}
+\State {$c_r \gets \Strings_{A[\Tn.r] + \Tn.d}$}
 \If {$c_l \neq c_r$}
 	\State {$\Tn.l \gets \Tn.r$}
 	\State {$\Tn.r \gets$ \Call{R}{$\Tn,c_l$}}
@@ -231,7 +231,7 @@ Summing up, I represent the current node $\Tn$ by the integers $\{ l, r ,d \}$ a
 
 Binary search is the key to implement function \textsc{goDown} a symbol.
 Functions \textsc{L} (algorithm~\ref{alg:sa-lower}) and \textsc{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{n})$ binary search steps the position in $A$ of the left and right intervals corresponding to the child node that is reached by going down the edge labeled by a given symbol $c$.
-Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Sc$, hence I define $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
+Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Strings$, hence I define $t_i$ as the empty word $\epsilon$ if $i > |t|$ and $\epsilon <_{lex} c$ for all $c \in \Sigma$.
 
 \begin{figure*}[b!]
 \begin{center}
@@ -264,7 +264,7 @@ In this way, the SA supports exact string matching (see algorithm~\ref{alg:st-ex
 
 Note that the suffix array can be binary searched by spelling a full pattern within a single call of \textsc{L} and \textsc{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
 Nonetheless, the worst case runtime of algorithm~\ref{alg:st-exact} stays $\Oh(m \log{n})$, as each step of the binary search requires a full lexicographical comparison between the pattern and any suffix of the text, which takes $\Oh(m)$ time in the worst case.
-As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Sc_{A[i] \dots}$, $\Sc_{A[i+1] \dots}$ for all $1 \leq i < n$.
+As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(m + \log{n})$ at the expense of additional $n \log{n}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Strings_{A[i] \dots}$, $\Strings_{A[i+1] \dots}$ for all $1 \leq i < n$.
 
 Alternatively, the \emph{average case} runtime is reduced to $\Oh(m + \log{n})$, without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table \citep{Weese2013}.
@@ -528,7 +528,7 @@ $i$ & $A[i]$ & \phantom{-} & $s_{A[i]}$ & $\dots$ & $s_{A[i]-1}$\\
 \end{figure}
 
 The BWT easily generalizes to string collections.
-Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Sc$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
+Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT.
 The BWT can be obtained in linear time by scanning the suffix array $A$ and assigning the symbol $s_{A[i]-1}$ to the $i$-th BWT symbol.
@@ -856,10 +856,10 @@ Later, I focus on how to represent the leaves of the suffix trie, which are nece
 
 \subsubsection{Top-down traversal}
 
-Given a padded string collection $\Sc$, as shown in section \ref{sec:index:bwt}, its associated permutation $LF$ recovers substrings of $\bar{\Sc}$, \ie substrings of $\Sc$ in \emph{backward} direction.
-Nonetheless, the top-down traversal needs to recover the substrings of $\Sc$ in \emph{forward} direction, as the suffix trie $\Si$ spells all forward substrings of $\Sc$.
-Therefore, I consider the BWT of $\bar{\Sc}$, such that $LF$ recovers any substring of $\Sc$.
-To encode $LF$, I supplement the BWT of $\bar{\Sc}$ with its rank dictionary, either multi-levels or wavelet tree.
+Given a padded string collection $\Strings$, as shown in section \ref{sec:index:bwt}, its associated permutation $LF$ recovers substrings of $\bar{\Strings}$, \ie substrings of $\Strings$ in \emph{backward} direction.
+Nonetheless, the top-down traversal needs to recover the substrings of $\Strings$ in \emph{forward} direction, as the suffix trie $\Si$ spells all forward substrings of $\Strings$.
+Therefore, I consider the BWT of $\bar{\Strings}$, such that $LF$ recovers any substring of $\Strings$.
+To encode $LF$, I supplement the BWT of $\bar{\Strings}$ with its rank dictionary, either multi-levels or wavelet tree.
 In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
 
 I represent the current node $\Tn$ by the elements $\{ l, r, e \}$, where $[l,r]$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
@@ -875,8 +875,8 @@ Therefore, I define the following node operations:
 The traversal easily goes from the root node to its child node labeled by $c$: it suffices to derive the interval $[C(c),C(c+1)]$.
 Suppose the traversal is on an arbitrary node $v$ of known interval $[b_v, e_v]$ \st the path from the root to $v$ spells the substring $s_v$.
 Now, the traversal goes down to a child node $w$ of unknown interval $[b_w, e_w]$ \st the path from the root to $w$ spells $c \cdot s_v$ for some $c \in \Sigma$.
-The known interval $[b_v, e_v]$ contains all prefixes of $\bar{\Sc}$ ending with $s_v$, \ie all suffixes of $\Sc$ starting with $s_v$, while the unknown interval $[b_w, e_w]$ contains all prefixes of $\bar{\Sc}$ ending with $c \cdot s_v$, \ie all suffixes of $\Sc$ starting with $s_v \cdot c$.
-All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Sc_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
+The known interval $[b_v, e_v]$ contains all prefixes of $\bar{\Strings}$ ending with $s_v$, \ie all suffixes of $\Strings$ starting with $s_v$, while the unknown interval $[b_w, e_w]$ contains all prefixes of $\bar{\Strings}$ ending with $c \cdot s_v$, \ie all suffixes of $\Strings$ starting with $s_v \cdot c$.
+All these characters $c$ are in $l_{b_v \dots e_v}$, since $l_i$ is the character $\Strings_{A[i] - 1}$ preceding the suffix pointed by $A[i]$.
 Moreover, these characters $c$ are \emph{contiguous} and \emph{in relative order} in $f$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
 If $b$ and $e$ are the first and last position in $l$ within $[b_v, e_v]$ such that $l_b = c$ and $l_e = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
 Therefore $LF(b)$ becomes:
@@ -1247,14 +1247,14 @@ On the ESA, $1$-approximate matching shows a slow-down of 24 times: $1$-approxim
 \label{sec:index:algo:multiexact}
 
 Before turning to multiple $k$-mismatches, I describe a simpler algorithm for multiple exact string matching.
-In addition to the text $t$, multiple exact string matching provides a collection of patterns $\mathbb{P}$.
-Hence, in addition to the suffix trie $\mathcal{T}$ of $t$, algorithm \ref{alg:st-exact-multi} considers the trie $\mathcal{P}$ of $\mathbb{P}$.
+In addition to the text $t$, multiple exact string matching provides a collection of patterns $\Patterns$.
+Hence, in addition to the suffix trie $\mathcal{T}$ of $t$, algorithm \ref{alg:st-exact-multi} considers the trie $\mathcal{P}$ of $\Patterns$.
 Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\mathcal{T}$ all patterns indexed in $\mathcal{P}$.
 The traversal performed by algorithm \ref{alg:st-exact-multi} visits pairs of nodes in $\mathcal{T} \times \mathcal{P}$ whose entering edges have the same label.
 Such traversal implicitly \emph{intersects} the two tries.
 However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\mathcal{T}$ and $\mathcal{P}$ cannot be interchanged.
 The traversal stops whenever it reaches a leaf node in $\mathcal{P}$ and reports the occurrences pointed by all the leaves beneath the current node in $\mathcal{T}$.
-%If the collection $\mathbb{P}$ contains two equal strings, some leaf of $\mathcal{P}$ points to more than one pattern.
+%If the collection $\Patterns$ contains two equal strings, some leaf of $\mathcal{P}$ points to more than one pattern.
 
 \begin{figure*}[t]
 \begin{center}
@@ -1309,7 +1309,7 @@ This algorithm becomes more useful as a primitive within the multiple $k$-mismat
 \label{sec:index:algo:multimismatch}
 
 Algorithm \ref{alg:st-hamming-multi} is the straightforward generalization of algorithm \ref{alg:st-exact-multi} to $k$-mismatches.
-The algorithm receives a collection of patterns $\mathbb{P}$ and performs backtracking on $\mathcal{T}$ as in algorithm  \ref{alg:st-hamming}, this time using the associated trie $\mathcal{P}$.
+The algorithm receives a collection of patterns $\Patterns$ and performs backtracking on $\mathcal{T}$ as in algorithm  \ref{alg:st-hamming}, this time using the associated trie $\mathcal{P}$.
 
 \begin{figure*}[t]
 \begin{center}

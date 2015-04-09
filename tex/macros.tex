@@ -53,16 +53,46 @@
 \newcommand{\TCop}{\textsuperscript*{\textcopyright}\xspace}
 \newcommand{\TTra}{\textsuperscript*{\texttrademark}\xspace}
 
+% ----------------------------------------------------------
+% Approximate string matching notations
+% ----------------------------------------------------------
+
 \newcommand{\rank}{\text{rank}}
+
+\newcommand\interval[2]{[#1,#2]}
+\newcommand\ointerval[2]{[#1,#2)}
+\newcommand\suffix[2]{#1_{#2}}
+\newcommand\substring[3]{#1\interval{#2}{#3}}
+\newcommand\osubstring[3]{#1\ointerval{#2}{#3}}
+\newcommand\prefix[2]{\substr{#1}{0}{#2}}
+
+\newcommand\String{S}
+\newcommand\Strings{\mathbb{\String}}
+\newcommand\Slen{n}
+\newcommand\Text{T}
+\newcommand\Texts{\mathbb{\Text}}
+\newcommand\Tlen{n}
+\newcommand\Pattern{P}
+\newcommand\Patterns{\mathbb{\Pattern}}
+\newcommand\Plen{m}
+\newcommand\Database{\mathbb{D}}
+
+\newcommand\RtrieOf[1]{RT(#1)}
+\newcommand\StrieOf[1]{ST(#1)}
+\newcommand\StrieLeaf[1]{#1}
+\newcommand\StrieNode{v}
+\newcommand\StrieChar{c}
+\newcommand\Sarray{A}
+\newcommand\Qdir{D}
 
 % ----------------------------------------------------------
 % Approximate string matching notations
 % ----------------------------------------------------------
 
-\newcommand{\Sc}{\ensuremath{\mathbb {S}}}
-\newcommand{\Tc}{\ensuremath{\mathbb {T}}}
-\newcommand{\Pc}{\ensuremath{\mathbb {P}}}
-\newcommand{\Dc}{\ensuremath{\mathbb {D}}}
+%\newcommand{\Sc}{\ensuremath{\mathbb {S}}}
+%\newcommand{\Tc}{\ensuremath{\mathbb {T}}}
+%\newcommand{\Pc}{\ensuremath{\mathbb {P}}}
+%\newcommand{\Dc}{\ensuremath{\mathbb {D}}}
 
 \newcommand{\Si}{\ensuremath{\mathcal {S}}}
 \newcommand{\Ti}{\ensuremath{\mathcal {T}}}

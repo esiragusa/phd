@@ -37,9 +37,9 @@ Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic ra
 The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $x,y$ is defined as $x <_{lex} y \iff x_1 < y_1, \text{ or } x_1 = y_1 \text{ and } x_{2 \dots} <_{lex} y_{2 \dots}$.
 
 \emph{Generalized} full-text indices work on string collections.
-A \emph{string collection} is an ordered multiset $\Sc = \{ s^1, s^2, \dots, s^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
-I denote by $\norm{\Sc}=\sum_{i=1}^{c}{|s^i|}$ the total length of the string collection.
-I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Sc_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
+A \emph{string collection} is an ordered multiset $\Strings = \{ s^1, s^2, \dots, s^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+I denote by $\norm{\Strings}=\sum_{i=1}^{c}{|s^i|}$ the total length of the string collection.
+I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Strings_{(d,i) \dots (d,j)}$ denotes the substring $s^d_{i \dots j}$.
 
 To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
 I first introduce special terminator symbols to perform padding.
@@ -50,7 +50,7 @@ Given a string $s$ over $\Sigma$, I call \emph{padded string} the concatenation 
 \end{definition}
 \begin{definition}
 \label{def:coltd}
-Given a string collection $\Sc$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Sc$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
+Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $s^i \in \Strings$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
 \end{definition}
 
 In this manuscript, in addition to strings, I use numerical arrays and matrices.
@@ -261,7 +261,7 @@ In practice, if the text is long, static and searched frequently, offline method
 
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
-Very often, such \emph{full-text index} is realized as the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
+Very often, such full-text index is realized as the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
 Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and approximate string matching via backtracking \citep{Ukkonen1993}.
 Often, the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
@@ -362,10 +362,10 @@ Thanks to these generic traversal operations, I later formulate generic string m
 
 \subsubsection{Trie}
 
-Consider a padded string collection $\Sc$ (definition~\ref{def:coltd}) consisting of $c$ strings.
-Note that padding is necessary to ensure that no string $s^i \in \Sc$ is a prefix of another string $s^j \in \Sc$.
+Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $c$ strings.
+Note that padding is necessary to ensure that no string $s^i \in \Strings$ is a prefix of another string $s^j \in \Strings$.
 \begin{definition}
-The \emph{trie} $\Si$ of $\Sc$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+The \emph{trie} $\Si$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
 Any edge entering a node of $\Si$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\Si$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
@@ -379,8 +379,8 @@ The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
-Given a padded string collection $\Sc$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Sc$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
-Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Sc_{(i,j) \dots}$.
+Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $s^i \in \Strings$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $s^i$.
+Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Strings_{(i,j) \dots}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
@@ -407,7 +407,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 %I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[t]
-\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Sc = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
+\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
 \input{figures/gstrie.tikz}
