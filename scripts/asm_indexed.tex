@@ -857,7 +857,7 @@ Later, I focus on how to represent the leaves of the suffix trie, which are nece
 \subsubsection{Top-down traversal}
 
 Given a padded string collection $\Strings$, as shown in section \ref{sec:index:bwt}, its associated permutation $LF$ recovers substrings of $\bar{\Strings}$, \ie substrings of $\Strings$ in \emph{backward} direction.
-Nonetheless, the top-down traversal needs to recover the substrings of $\Strings$ in \emph{forward} direction, as the suffix trie $\Si$ spells all forward substrings of $\Strings$.
+Nonetheless, the top-down traversal needs to recover the substrings of $\Strings$ in \emph{forward} direction, as the suffix trie $\StrieOf{\Strings}$ spells all forward substrings of $\Strings$.
 Therefore, I consider the BWT of $\bar{\Strings}$, such that $LF$ recovers any substring of $\Strings$.
 To encode $LF$, I supplement the BWT of $\bar{\Strings}$ with its rank dictionary, either multi-levels or wavelet tree.
 In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
@@ -1023,10 +1023,10 @@ In particular, the FM-indices, which are based on backward search, become more t
 \label{sec:index:algo:exact}
 
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
-In the following, I assume the text $t$ to be indexed by its suffix trie $\Ti$.
-Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting on the root node of $\Ti$ and following the path spelling the pattern.
+In the following, I assume the text $t$ to be indexed by its suffix trie $\StrieOf{\Strings}$.
+Algorithm~\ref{alg:st-exact} searches the pattern $p$ by starting on the root node of $\StrieOf{\Strings}$ and following the path spelling the pattern.
 If the search ends up in a node $\Tn$, then each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $t_{i..i+m}$ equals $p$.
-%Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\Ti$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
+%Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\StrieOf{\Strings}$ spells a different unique substring of $t$; consequently all equal substrings of $t$ are represented by a single common path.
 If \textsc{goDown} is implemented in constant time and \textsc{occurrences} in linear time, all occurrences of $p$ into $t$ are found in optimal time $\Oh(m+o)$, where $m$ is the length of $p$ and $o$ its number of occurrences in $t$.
 
 Figure \ref{fig:query-dna-exact} shows the results of the experimental evaluation of algorithm~\ref{alg:st-exact}.
@@ -1089,7 +1089,7 @@ The idea of backtracking a suffix tree has been first proposed in \citep{Ukkonen
 Recently, various popular bioinformatics tools, \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, adopted variations of this method in conjunction with an FM-index.
 Yet, the idea dates back to more than twenty years ago.
 
-Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\Ti$, spelling incrementally all distinct substrings of $t$.
+Algorithm~\ref{alg:st-hamming} performs a top-down traversal on the suffix trie $\StrieOf{\Strings}$, spelling incrementally all distinct substrings of $t$.
 While traversing each branch of the trie, this algorithm incrementally computes the distance between the query and the spelled string.
 If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
 Conversely, if the pattern $p$ is completely spelled and the traversal ends up in a node $\Tn$, each leaf $\Ln_i$ below $\Tn$ points to a distinct suffix $t_{i..n}$ such that $d_H(t_{i..i+m}, p) \leq k$.

@@ -365,8 +365,8 @@ Thanks to these generic traversal operations, I later formulate generic string m
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $c$ strings.
 Note that padding is necessary to ensure that no string $s^i \in \Strings$ is a prefix of another string $s^j \in \Strings$.
 \begin{definition}
-The \emph{trie} $\Si$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
-Any edge entering a node of $\Si$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\Si$ is labeled with a terminator symbol.
+The \emph{trie} $\StrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $c$ leaves, denoted as $\Ln_1 \dots \Ln_c$, where leaf $\Ln_i$ points to string $s^i$.
+Any edge entering a node of $\StrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\StrieOf{\Strings}$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
@@ -374,8 +374,8 @@ Any path from the root to a leaf $\Ln_i$ spells the string $s^i$, including its 
 \subsubsection{Suffix trie}
 
 \begin{definition}
-Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\Si$ is the trie of all suffixes of $s$.
-The \emph{suffix trie} $\Si$ has $n$ leaves, where leaf $\Ln_i$ points to suffix $s_{i..n}$.
+Given a padded string $s$ (definition~\ref{def:strd}) of length $n$, the suffix trie $\StrieOf{\Strings}$ is the trie of all suffixes of $s$.
+The \emph{suffix trie} $\StrieOf{\Strings}$ has $n$ leaves, where leaf $\Ln_i$ points to suffix $s_{i..n}$.
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
@@ -418,7 +418,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 
 I define a set of generic operations to traverse tries in a top-down fashion.
 Note that the following traversal operations do not walk over edges labeled terminator symbols, as these symbols are not necessary in string matching applications.
-Given a trie $\Ti$, I define the following operations inspecting any pointed node $\Tn$ of $\Ti$:
+Given a trie $\StrieOf{\Strings}$, I define the following operations inspecting any pointed node $\Tn$ of $\StrieOf{\Strings}$:
 \begin{itemize}
 \item \textsc{isRoot}($\Tn$) returns true iff the pointed node is the root;
 \item \textsc{isLeaf}($\Tn$) returns true iff all outgoing edges are labeled by terminator symbols;
