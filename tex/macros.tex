@@ -59,15 +59,19 @@
 
 \newcommand{\rank}{\text{rank}}
 
-\newcommand\interval[2]{[#1,#2]}
-\newcommand\ointerval[2]{[#1,#2)}
-\newcommand\suffix[2]{#1_{#2}}
-\newcommand\substring[3]{#1\interval{#2}{#3}}
-\newcommand\osubstring[3]{#1\ointerval{#2}{#3}}
-\newcommand\prefix[2]{\substr{#1}{0}{#2}}
+\newcommand\Interval[2]{[#1,#2]}
+\newcommand\OInterval[2]{[#1,#2)}
+\newcommand\Suffix[2]{#1_{#2}}
+\newcommand\Substring[3]{#1\Interval{#2}{#3}}
+\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}}
+\newcommand\Prefix[2]{\Substring{#1}{1}{#2}}
 
 \newcommand\String{S}
 \newcommand\Strings{\mathbb{\String}}
+\newcommand\XSeq{X}
+\newcommand\YSeq{Y}
+\newcommand\Xlen{n}
+\newcommand\Ylen{m}
 \newcommand\Slen{n}
 \newcommand\Scard{c}
 \newcommand\Text{T}
@@ -85,6 +89,9 @@
 \newcommand\StrieChar{c}
 \newcommand\Sarray{A}
 \newcommand\Qdir{D}
+
+\newcommand\FunctionName[1]{\textsc{#1}}
+\newcommand\FunctionCall[2]{\FunctionName{#1}($#2$)}
 
 % ----------------------------------------------------------
 % Tables
