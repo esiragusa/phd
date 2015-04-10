@@ -17,7 +17,7 @@
 
 \node[inner](r) {}
 child[transparent] {
-node[leaf](D) {$7$}
+node[leaf](D) {$\At{7}$}
 }
 child[transparent] {
 node[inner](A) {}
@@ -32,7 +32,7 @@ node[inner](ANANA) {}
 child[transparent] {
 node[inner](ANANAS) {}
 child[transparent] {
-node[leaf](ANANASD) {$1$}
+node[leaf](ANANASD) {$\At{1}$}
 }
 }
 }
@@ -40,7 +40,7 @@ node[leaf](ANANASD) {$1$}
 child[transparent] {
 node[inner](ANAS) {}
 child[transparent] {
-node[leaf](ANASD) {$3$}
+node[leaf](ANASD) {$\At{3}$}
 }
 }
 }
@@ -48,7 +48,7 @@ node[leaf](ANASD) {$3$}
 child[transparent] {
 node[inner](AS) {}
 child[transparent] {
-node[leaf](ASD) {$5$}
+node[leaf](ASD) {$\At{5}$}
 }
 }
 }
@@ -63,7 +63,7 @@ node[inner](NANA) {}
 child[transparent] {
 node[inner](NANAS) {}
 child[transparent] {
-node[leaf](NANASD) {$2$}
+node[leaf](NANASD) {$\At{2}$}
 }
 }
 }
@@ -71,7 +71,7 @@ node[leaf](NANASD) {$2$}
 child[transparent] {
 node[inner](NAS) {}
 child[transparent] {
-node[leaf](NASD) {$4$}
+node[leaf](NASD) {$\At{4}$}
 }
 }
 }
@@ -79,7 +79,7 @@ node[leaf](NASD) {$4$}
 child[transparent] {
 node[inner](S) {}
 child[transparent] {
-node[leaf](SD) {$6$}
+node[leaf](SD) {$\At{6}$}
 }
 }
 ;

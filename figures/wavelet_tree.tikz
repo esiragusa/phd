@@ -12,7 +12,7 @@
 \node[wt](ACGT)
 {
 \begin{tabular}{r|p{0mm}p{0mm}p{0mm}p{0mm}p{0mm}c}
-$i$&1&2&3&\cell{i4}{4}&5&6\\
+$i$&\At{1}&\At{2}&\At{3}&\cell{i4}{\At{4}}&\At{5}&\At{6}\\
 $s_i$&C&T&C&G&C&A\\
 $b_i$&\cell{b1}{0}&1&0&\cell{b4}{1}&0&0\\
 \end{tabular}
@@ -21,7 +21,7 @@ child[transparent] {
 node[wt](AC)
 {
 \begin{tabular}{r|p{0mm}p{0mm}p{0mm}c}
-$i$&1&\cell{iac2}{2}&3&4\\
+$i$&\At{1}&\cell{iac2}{\At{2}}&\At{3}&\At{4}\\
 $s_i^{AC}$&C&C&C&A\\
 $b_i^{AC}$&\cell{bac1}{1}&\cell{bac2}{1}&1&0\\
 \end{tabular}
@@ -37,7 +37,7 @@ child[transparent] {
 node[wt](GT)
 {
 \begin{tabular}{p{0mm}c|l}
-1&2&$i$\\
+\At{1}&\At{2}&$i$\\
 T&G&$s^{GT}$\\
 1&0&$b^{GT}$\\
 \end{tabular}

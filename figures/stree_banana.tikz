@@ -13,34 +13,34 @@
 
 \node[inner](r) {}
 child[transparent] {
-node[leaf](D) {$7$}
+node[leaf](D) {$\At{7}$}
 }
 child[transparent] {
 node[inner](A) {}
 child[transparent] {
 node[inner](ANA) {}
 child[transparent] {
-node[leaf](ANANAS) {$1$}
+node[leaf](ANANAS) {$\At{1}$}
 }
 child[transparent] {
-node[leaf](ANAS) {$3$}
+node[leaf](ANAS) {$\At{3}$}
 }
 }
 child[transparent] {
-node[leaf](AS) {$5$}
+node[leaf](AS) {$\At{5}$}
 }
 }
 child[transparent] {
 node[inner](NA) {}
 child[transparent] {
-node[leaf](NANAS) {$2$}
+node[leaf](NANAS) {$\At{2}$}
 }
 child[transparent] {
-node[leaf](NAS) {$4$}
+node[leaf](NAS) {$\At{4}$}
 }
 }
 child[transparent] {
-node[leaf](S) {$6$}
+node[leaf](S) {$\At{6}$}
 }
 ;
 

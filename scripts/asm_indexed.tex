@@ -32,7 +32,7 @@ In this way, an additional logarithmic time complexity is paid to reduce space c
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
-The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\Ibase}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 \end{definition}
 
 \begin{definition}
@@ -42,7 +42,7 @@ Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suff
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_1$}, {\ttfamily CACAO$\$_2$} $\}$.}
+\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_{\At{1}}$}, {\ttfamily CACAO$\$_{\At{2}}$} $\}$.}
 
 \begin{subfigure}[t]{0.45\textwidth}
 \begin{center}
@@ -52,13 +52,13 @@ Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suff
 \begin{tabular}{ccl}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-1 & 7 & \$\\
-2 & 1 & ANANAS\$\\
-3 & 3 & ANAS\$\\
-4 & 5 & AS\$\\
-5 & 2 & NANAS\$\\
-6 & 4 & NAS\$\\
-7 & 6 & S\$\\
+\At{1} & \At{7} & \$\\
+\At{2} & \At{1} & ANANAS\$\\
+\At{3} & \At{3} & ANAS\$\\
+\At{4} & \At{5} & AS\$\\
+\At{5} & \At{2} & NANAS\$\\
+\At{6} & \At{4} & NAS\$\\
+\At{7} & \At{6} & S\$\\
 \end{tabular}
 \end{center}
 \end{subfigure}%
@@ -70,19 +70,19 @@ $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\
 \begin{tabular}{rcl}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-1 & (1,7) & $\$_1$\\
-2 & (2,6) & $\$_2$\\
-3 & (2,2) & ACAO$\$_2$\\
-4 & (1,1) & ANANAS$\$_1$\\
-5 & (1,3) & ANAS$\$_1$\\
-6 & (2,4) & AO$\$_2$\\
-7 & (1,5) & AS$\$_1$\\
-8 & (2,1) & CACAO$\$_2$\\
-9 & (2,3) & CAO$\$_2$\\
-10 & (1,2) & NANAS$\$_1$\\
-11 & (1,4) & NAS$\$_1$\\
-12 & (2,5) & O$\$_2$\\
-13 & (1,6) & S$\$_1$\\
+\At{1} & (\At{1},\At{7}) & $\$_{\At{1}}$\\
+\At{2} & (\At{2},\At{6}) & $\$_{\At{2}}$\\
+\At{3} & (\At{2},\At{2}) & ACAO$\$_{\At{2}}$\\
+\At{4} & (\At{1},\At{1}) & ANANAS$\$_{\At{1}}$\\
+\At{5} & (\At{1},\At{3}) & ANAS$\$_{\At{1}}$\\
+\At{6} & (\At{2},\At{4}) & AO$\$_{\At{2}}$\\
+\At{7} & (\At{1},\At{5}) & AS$\$_{\At{1}}$\\
+\At{8} & (\At{2},\At{1}) & CACAO$\$_{\At{2}}$\\
+\At{9} & (\At{2},\At{3}) & CAO$\$_{\At{2}}$\\
+\At{10} & (\At{1},\At{2}) & NANAS$\$_{\At{1}}$\\
+\At{11} & (\At{1},\At{4}) & NAS$\$_{\At{1}}$\\
+\At{12} & (\At{2},\At{5}) & O$\$_{\At{2}}$\\
+\At{13} & (\At{1},\At{6}) & S$\$_{\At{1}}$\\
 \end{tabular}
 \end{center}
 \end{subfigure}
@@ -92,7 +92,7 @@ $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$
 
 The SA is constructed in $\Oh(\Slen)$ time, for instance using the \citep{Kaerkkaeinen2003} algorithm, or using non-optimal but practically faster algorithms, \eg \citep{Schuermann2007}.
 The space consumption of the suffix array is $\Slen \log{\Slen}$ bits.
-When $\Slen < 2^{32}$, a 32 bit integer is sufficient to encode any value in the range $\OInterval{\Ibase}{\Slen}$.
+When $\Slen < 2^{32}$, a 32 bit integer is sufficient to encode any value in the range $\OInterval{\At{1}}{\Slen}$.
 Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 \Slen$ bytes.
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(\Slen)$ time.
@@ -160,13 +160,13 @@ I now concentrate on describing suffix trie functionalities, as I implemented th
 Any suffix trie node is univocally identified by an interval of the suffix array $\Sarray$.
 Thus, while traversing the trie, I maintain the interval $\OInterval{l}{r}$ associated to the current node.
 In addition, I also remember the depth $d$ of the current node.
-The root node is represented by the interval $\OInterval{\Ibase}{\Slen}$ containing the whole suffix array.
+The root node is represented by the interval $\OInterval{\At{1}}{\Slen}$ containing the whole suffix array.
 The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ with $i \in \OInterval{l}{r}$.
 Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing edges labeled by terminator symbols.
 The occurrences below any node correspond by definition to the interval $\OInterval{l}{r}$ of $\Sarray$.
 Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \Ibase, \Slen, 0\}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, 0\}$;
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\SubscriptNV{\Sarray}{\StrieNode.r} + \StrieNode.d = \Slen_{\SubscriptNV{\Sarray}{\StrieNode.r}}$;
 \item \FunctionCall{label}{\StrieNode} returns $\Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
@@ -313,16 +313,16 @@ The idea is to supplement the SA with a so-called $q$-gram directory: an additio
 \begin{tabular}{ccccccl}
 $\Pattern$ & $h(\Pattern)$ & $\SubscriptNV{D}{h(\Pattern)}$ & \phantom{-} & $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-AA & 1 & 2 & & 1 & 7 & \$\\
-AN & 2 & 2 & & 2 & 1 & ANANAS\$\\
-AS & 3 & 4 & & 3 & 3 & ANAS\$\\
-\cell{p}{NA} & \cell{h4}{4} & \cell{d5}{5} & & 4 & 5 & AS\$\\
-NN & \cell{h5}{5} & \cell{d6}{6} & & \cell{i5}{5} & \cell{a5}{2} & NANAS\$\\
-NS & 6 & 6 & & \cell{i6}{6} & \cell{a6}{4} & NAS\$\\
-SA & 7 & 6 & & 7 & 6 & S\$\\
-SN & 8 & 6 \\
-SS & 9 & 6 \\
-   & 10 & 6 \\
+AA & \At{1} & \At{2} & & \At{1} & \At{7} & \$\\
+AN & \At{2} & \At{2} & & \At{2} & \At{1} & ANANAS\$\\
+AS & \At{3} & \At{4} & & \At{3} & \At{3} & ANAS\$\\
+\cell{p}{NA} & \cell{h4}{\At{4}} & \cell{d5}{\At{5}} & & \At{4} & \At{5} & AS\$\\
+NN & \cell{h5}{\At{5}} & \cell{d6}{\At{6}} & & \cell{i5}{\At{5}} & \cell{a5}{\At{2}} & NANAS\$\\
+NS & \At{6} & \At{6} & & \cell{i6}{\At{6}} & \cell{a6}{\At{4}} & NAS\$\\
+SA & \At{7} & \At{6} & & \At{7} & \At{6} & S\$\\
+SN & \At{8} & \At{6} \\
+SS & \At{9} & \At{6} \\
+   & \At{10} & \At{6} \\
 \end{tabular}
 \around{p}
 \eround{h4}{h5}
@@ -332,13 +332,13 @@ SS & 9 & 6 \\
 \end{center}
 \end{figure}
 
-With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow \OInterval{\Ibase}{\sigma^q}$ defined as in \citep{Knuth1973}:
+With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow \OInterval{\At{1}}{\sigma^q}$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
-h(\Pattern) = 1 + \sum_{i=\Ibase}^{q}{\rho_0(\Subscript{\Pattern}{i}) \cdot \sigma^{q-i}}
+h(\Pattern) = 1 + \sum_{i=\At{1}}^{\AtEnd{q}}{\rho_0(\Subscript{\Pattern}{i}) \cdot \sigma^{q-i}}
 \end{eqnarray}
 where $p \in \Sigma^q$ is any $q$-gram and $\rho_0$ is the zero-based lexicographic rank defined on $\Sigma$ (recall the lexicographic rank function $\rho$ from definition~\ref{def:rho} and pose $\rho_0(\XSeq) = \rho(\XSeq) - 1$).
 The canonical code assigned by $h$ preserves the lexicographical ordering for all words not longer than $q$, \ie $\XSeq <_{lex} \YSeq$ iff $h(\XSeq) < h(\YSeq)$ for all $\XSeq,\YSeq \in \Sigma^{\leq q}$.
-The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $\SubscriptNV{D}{h(\Pattern)} = \FunctionCall{L}{\Ibase,\Slen,p}$.
+The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $\SubscriptNV{D}{h(\Pattern)} = \FunctionCall{L}{\At{1},\Slen,p}$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $\SubscriptNV{D}{h(\Pattern)+1}$.
 
 In practice, the $q$-gram index is applicable only to relatively small alphabets and tree depths.
@@ -353,7 +353,7 @@ In addition, I maintain the interval $\OInterval{l_h}{r_h}$ in $D$ and, in order
 Summing up, I represent the current node $\StrieNode$ by the elements $\{ l, r, d, l_h, r_h, e \}$.
 I define the basic node operations as follows:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \Ibase, \Slen, 0, \Ibase, \sigma^q, \epsilon \}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, 0, \At{1}, \sigma^q, \epsilon \}$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.d=q$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$;
 \item \FunctionCall{occurrences}{\StrieNode} returns $\Substring{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
@@ -509,13 +509,13 @@ The BWT of $\String$ is the string $\Subscript{\String}{\SubscriptNV{\Sarray}{i}
 \begin{tabular}{cccccc}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & \phantom{-} & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $\dots$ & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$\\
 \midrule
-1 & 7 & & \$& ANANA  & \cell{l1}{S}\\
-2 & 1 & & A & NANAS  & \$\\
-3 & 3 & & A & NAS\$A & N\\
-4 & 5 & & A & S\$ANA & N\\
-5 & 2 & & N & ANAS\$ & A\\
-6 & 4 & & N & AS\$AN & A\\
-7 & 6 & & S & \$ANAN & \cell{l7}{\Sarray}\\
+\At{1} & \At{7} & & \$& ANANA  & \cell{l1}{S}\\
+\At{2} & \At{1} & & A & NANAS  & \$\\
+\At{3} & \At{3} & & A & NAS\$A & N\\
+\At{4} & \At{5} & & A & S\$ANA & N\\
+\At{5} & \At{2} & & N & ANAS\$ & A\\
+\At{6} & \At{4} & & N & AS\$AN & A\\
+\At{7} & \At{6} & & S & \$ANAN & \cell{l7}{\Sarray}\\
 \end{tabular}
 \eround{l1}{l7}
 \end{center}
@@ -537,13 +537,13 @@ Therefore, various direct BWT construction algorithms working within $o(\Slen \l
 \begin{tabular}{ccccccc}
 $i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $\dots$ & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$\\
 \midrule
-1 & 2 & 7                        & & \$           & ANANA  & S\\
-2 & 5 & 1                        & & A            & NANAS  & \$\\
-3 & 6 & \cell{lf3}{5} & & A      & NAS\$A & \cell{l3}{N}\\
-4 & 7 & 6                        & & A            & S\$ANA & N\\
-5 & \cell{psi5}{3} & 2           & & \cell{f5}{N} & ANAS\$ & A\\
-6 & 4 & 3                        & & N            & AS\$AN & A\\
-7 & 1 & 4                        & & S            & \$ANAN & A\\
+\At{1} & \At{2} & \At{7}                        & & \$           & ANANA  & S\\
+\At{2} & \At{5} & \At{1}                        & & A            & NANAS  & \$\\
+\At{3} & \At{6} & \cell{lf3}{\At{5}} & & A      & NAS\$A & \cell{l3}{N}\\
+\At{4} & \At{7} & \At{6}                        & & A            & S\$ANA & N\\
+\At{5} & \cell{psi5}{\At{3}} & \At{2}           & & \cell{f5}{N} & ANAS\$ & A\\
+\At{6} & \At{4} & \At{3}                        & & N            & AS\$AN & A\\
+\At{7} & \At{1} & \At{4}                        & & S            & \$ANAN & A\\
 \end{tabular}
 \around{lf3}
 \around{psi5}
@@ -557,7 +557,7 @@ $i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $\Subscript{\String}{\SubscriptNV{\Sar
 I now describe how to invert the BWT to reconstruct the original string.
 For convenience, I denote the first column $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ by $\First$ and the last column $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ by $\Last$.
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
-To this intent, I define two permutations $LF : \OInterval{\Ibase}{\Slen} \rightarrow \OInterval{\Ibase}{\Slen}$ and $\Psi : \OInterval{\Ibase}{\Slen} \rightarrow \OInterval{\Ibase}{\Slen}$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $\First$ where character $\Subscript{\Last}{i}$ occurs and the value $\Psi(j)$ gives back the position $i$ in $\Last$ where $\Subscript{\First}{j}$ occurs.
+To this intent, I define two permutations $LF : \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$ and $\Psi : \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $\First$ where character $\Subscript{\Last}{i}$ occurs and the value $\Psi(j)$ gives back the position $i$ in $\Last$ where $\Subscript{\First}{j}$ occurs.
 Figure~\ref{fig:lf_psi} illustrates.
 I define the iterated $\Psi$ as
 \begin{eqnarray}
@@ -588,13 +588,13 @@ Figure \ref{fig:psi} exemplifies.
 \begin{tabular}{ccc}
 $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $i$ & $\Psi(i)$\\
 \midrule
-\cell{s1}{\$} & \cell{i1}{1} & \cell{psi1}{2}\\
-\cell{s2}{A}  & \cell{i2}{2} & \cell{psi2}{5}\\
-\cell{s3}{A}  & \cell{i3}{3} & \cell{psi3}{6}\\
-\cell{s4}{A}  & \cell{i4}{4} & \cell{psi4}{7}\\
-\cell{s5}{N}  & \cell{i5}{5} & \cell{psi5}{3}\\
-\cell{s6}{N}  & \cell{i6}{6} & \cell{psi6}{4}\\
-\cell{s7}{S}  & \cell{i7}{7} & \cell{psi7}{1}\\
+\cell{s1}{\$} & \cell{i1}{\At{1}} & \cell{psi1}{\At{2}}\\
+\cell{s2}{A}  & \cell{i2}{\At{2}} & \cell{psi2}{\At{5}}\\
+\cell{s3}{A}  & \cell{i3}{\At{3}} & \cell{psi3}{\At{6}}\\
+\cell{s4}{A}  & \cell{i4}{\At{4}} & \cell{psi4}{\At{7}}\\
+\cell{s5}{N}  & \cell{i5}{\At{5}} & \cell{psi5}{\At{3}}\\
+\cell{s6}{N}  & \cell{i6}{\At{6}} & \cell{psi6}{\At{4}}\\
+\cell{s7}{S}  & \cell{i7}{\At{7}} & \cell{psi7}{\At{1}}\\
 \end{tabular}
 \link{s1}{i1}
 \linkdown{i1}{psi1}{i2}
@@ -618,7 +618,7 @@ This is possible due to two simple observations on the cyclic shifts matrix.
 \begin{observation}
 \label{obs:lf-a}
 \citep{Burrows1994}
-For all $i \in \OInterval{\Ibase}{\Slen}$, the character $\Subscript{\Last}{i}$ precedes the character $\Subscript{\First}{i}$ in the original string $\String$.% (except when $\Subscript{\Last}{i} = \$$);
+For all $i \in \OInterval{\At{1}}{\Slen}$, the character $\Subscript{\Last}{i}$ precedes the character $\Subscript{\First}{i}$ in the original string $\String$.% (except when $\Subscript{\Last}{i} = \$$);
 \end{observation}
 \begin{observation}
 \label{obs:lf-b}
@@ -631,7 +631,7 @@ Given the two above observations, \cite{Ferragina2000} define the permutation $L
 \begin{eqnarray}
 LF(i) = C(\Subscript{\Last}{i}) + Occ(\Subscript{\Last}{i}, i)
 \end{eqnarray}
-where $C : \Sigma \rightarrow \OInterval{\Ibase}{\Slen}$ denotes the total number of occurrences in $\String$ of all characters alphabetically smaller than $\StrieChar$, and $Occ :  \Sigma \times \OInterval{\Ibase}{\Slen} \rightarrow \OInterval{\Ibase}{\Slen}$ the number of occurrences of character $\StrieChar$ in the prefix $\Prefix{\Last}{i}$.
+where $C : \Sigma \rightarrow \OInterval{\At{1}}{\Slen}$ denotes the total number of occurrences in $\String$ of all characters alphabetically smaller than $\StrieChar$, and $Occ :  \Sigma \times \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$ the number of occurrences of character $\StrieChar$ in the prefix $\Prefix{\Last}{i}$.
 The key problem of encoding the permutation $LF$ lies in representing function $Occ$, as function $C$ is easily tabulated by a small array of size $\sigma \log{\Slen}$ bits.
 In the next subsection, I address the problem of representing function $Occ$ efficiently. Subsequently, I explain how to implement generic full-text index traversal using the permutation $LF$.
 
@@ -662,7 +662,7 @@ In addition to that, I briefly discuss my implementation of practical \emph{mult
 
 The binary one-level RD partitions the binary input string $\String \in \mathbb{B}^*$ in blocks of $b$ symbols and
 complements it with an array $R$ of length $\xfloor{\Slen/b}$.
-The $j$-th entry of $R$ provides a summary of the number of occurrences of the bit $1$ in $\String$ before position $j b$, \ie $\SubscriptNV{R}{\Ibase} = 0$ and $\SubscriptNV{R}{j} = \rank_1(\String, j b - 1)$ for any $j > 1$.
+The $j$-th entry of $R$ provides a summary of the number of occurrences of the bit $1$ in $\String$ before position $j b$, \ie $\SubscriptNV{R}{\At{1}} = 0$ and $\SubscriptNV{R}{j} = \rank_1(\String, j b - 1)$ for any $j > 1$.
 $R$ summarizes only $\rank_1$, as $\rank_0(\String, i) = i - \rank_1(\String, i)$.
 Therefore, the rank query is rewritten as:
 \begin{eqnarray}
@@ -680,7 +680,7 @@ Thus, the binary one-level RD consumes $2\Slen$ bits.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, 6) = \SubscriptNV{R}{2} + \rank_1(\Suffix{\String}{5}, 2) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, 6) = \SubscriptNV{R^2}{2} + \SubscriptNV{R}{3} + \rank_1(\Suffix{\String}{5}, 1) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R}{\At{2}} + \rank_1(\Suffix{\String}{5}, \At{2}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \rank_1(\Suffix{\String}{\At{5}}, \At{2}) = 3$.}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -689,18 +689,18 @@ Thus, the binary one-level RD consumes $2\Slen$ bits.
 \begin{tabular}{rcc}
 $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/4}}$\\
 \midrule
-1   & 0     & 0\\
-2   & 1\\
-3   & 0\\
-4   & 1\\
-5   & \cell{s5}{0} & \cell{R5}{2}\\
-\cell{i6}{6} & \cell{s6}{1}\\
-7   & 1\\
-8   & 0\\
-9   & 0     & 4\\
-10  & 1\\
-11  & 0\\
-12  & 0\\
+\At{1} & 0     & 0\\
+\At{2} & 1\\
+\At{3} & 0\\
+\At{4} & 1\\
+\At{5} & \cell{s5}{0} & \cell{R5}{2}\\
+\cell{i6}{\At{6}} & \cell{s6}{1}\\
+\At{7} & 1\\
+\At{8} & 0\\
+\At{9} & 0     & 4\\
+\At{10} & 1\\
+\At{11} & 0\\
+\At{12} & 0\\
 \end{tabular}
 \around{i6}
 \eround{s5}{s6}
@@ -715,18 +715,18 @@ $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/4}}$\\
 \begin{tabular}{rccc}
 $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/2}}$ & $\SubscriptNV{R^2}{\xfloor{i/4}}$\\
 \midrule
-1   & 0 & 0 & 0\\
-2   & 1\\
-3   & 0	& 1\\
-4   & 1\\
-5   & \cell{s5}{0} & \cell{Rb5}{0} & \cell{R5}{2}\\
-\cell{i6}{6} & \cell{s6}{1}\\
-7   & 1 & 1\\
-8   & 0\\
-9   & 0 & 0 & 4\\
-10  & 1\\
-11  & 0 & 1\\
-12  & 0\\
+\At{1} & 0 & 0 & 0\\
+\At{2} & 1\\
+\At{3} & 0	& 1\\
+\At{4} & 1\\
+\At{5} & \cell{s5}{0} & \cell{Rb5}{0} & \cell{R5}{2}\\
+\cell{i6}{\At{6}} & \cell{s6}{1}\\
+\At{7} & 1 & 1\\
+\At{8} & 0\\
+\At{9} & 0 & 0 & 4\\
+\At{10} & 1\\
+\At{11} & 0 & 1\\
+\At{12} & 0\\
 \end{tabular}
 \around{i6}
 \eround{s5}{s6}
@@ -785,12 +785,12 @@ Thus, $R_{\sigma}$ consumes $\sigma n \log{\sigma}$ bits and the whole RD $\Slen
 \begin{tabular}{rcr}
 $i$	& $\Subscript{\String}{i}$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \, \text{T}\}]$\\
 \midrule
-1   & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
-2   & T\\
-3   & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
-\cell{i4}{4}   & \cell{s4}{G}\\
-5   & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
-6   & A\\
+\At{1} & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
+\At{2} & T\\
+\At{3} & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
+\cell{i4}{\At{4}}   & \cell{s4}{G}\\
+\At{5} & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
+\At{6} & A\\
 \end{tabular}
 \around{i4}
 \eround{s3}{s4}
@@ -859,7 +859,7 @@ In this way, the top-down traversal is able to use the permutation $LF$ to decod
 I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where $\OInterval{l}{r}$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
 Therefore, I define the following node operations:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \Ibase, \Slen, \epsilon \}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, \epsilon \}$;
 %\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.r \in \mathbb{I}$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.\Subscript{\Last}{r} = \$$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$.
