@@ -8,21 +8,21 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 \section{Definitions}
 
 I start with fundamental objects of stringology: alphabets and strings.
-An \emph{alphabet} $\Sigma= \{ a_1, a_2, \dots , a_{\sigma} \}$ is a finite ordered set of symbols (or characters) $a_i$.
-A \emph{string} (or word) $\String=s_1 s_2 \dots s_n$ over an alphabet $\Sigma$ is a finite sequence of symbols $s_i \in \Sigma$.
-I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $s_i \dots s_j$, and by $|\String|=n$ the length of $\String$.
+An \emph{alphabet} $\Sigma= \{ a_0, a_1, \dots , a_{\sigma-1} \}$ is a finite ordered set of symbols (or characters) $a_i$.
+A \emph{string} (or word) $\String=\Subscript{\String}{0} \Subscript{\String}{1} \dots \Subscript{\String}{\Slen-1}$ over an alphabet $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
+I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $\Subscript{\String}{i} \dots \Subscript{\String}{j}$, and by $|\String|=\Slen$ the length of $\String$.
 %I often call \emph{$q$-gram} a string of length $q$.
 %I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
 Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
 The definitions of prefix, suffix and substring are immediately derived from concatenation.
-A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $x = \Prefix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, a \emph{suffix} iff $x = \Suffix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, 
-and a \emph{substring} iff $x = \Substring{\YSeq}{i}{j}$ for some $1 \leq i \leq j \leq |\YSeq|$.
+A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, a \emph{suffix} iff $\XSeq = \Suffix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, 
+and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $1 \leq i \leq j \leq |\YSeq|$.
 For convenience, often I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
 
 The definition of \emph{occurrence} is fundamental in string matching.
 A string $\XSeq$ occurs in a string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
-Given $x = \Substring{\YSeq}{i}{j}$, the occurrence of $\XSeq$ starts at position $i$ and ends at position $j$ in $\YSeq$.
+Given $\XSeq = \Substring{\YSeq}{i}{j}$, the occurrence of $\XSeq$ starts at position $i$ and ends at position $j$ in $\YSeq$.
 Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
 \label{def:delta}
@@ -34,7 +34,7 @@ Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
 \label{def:rho}
 Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\rho : \Sigma \rightarrow \Interval{1}{\sigma}$, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
 \end{definition}
-The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq <_{lex} \YSeq \iff x_1 < y_1, \text{ or } x_1 = y_1 \text{ and } \Suffix{\XSeq}{2} <_{lex} \Suffix{\YSeq}{2}$.
+The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq <_{lex} \YSeq \iff \Subscript{\XSeq}{0} < \Subscript{\YSeq}{0}, \text{ or } \Subscript{\XSeq}{0} = \Subscript{\YSeq}{0} \text{ and } \Suffix{\XSeq}{1} <_{lex} \Suffix{\YSeq}{1}$.
 
 \emph{Generalized} full-text indices work on string collections.
 A \emph{string collection} is an ordered multiset $\Strings = \{ \String^1, \String^2, \dots, \String^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
@@ -54,22 +54,22 @@ Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string c
 \end{definition}
 
 In this manuscript, in addition to strings, I use numerical arrays and matrices.
-An \emph{array} (or table, or vector) $V=v_1 v_2 \dots v_n$ is a finite sequence of numbers $v_i \in \N_0$ (or any subset of $\N_0$).
-I denote by $V[i]$ the subscript element $v_i$.
-A \emph{matrix} $X$ is a rectangular array of numbers $x_{i,j} \in \N_0$ (or any subset of $\N_0$) arranged \st
+An \emph{array} (or table, or vector) $V=\Subscript{V}{0} \Subscript{V}{1} \dots \Subscript{V}{\Slen-1}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$ (or any subset of $\N_0$).
+I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
+A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ (or any subset of $\N_0$) arranged \st
 $$X=
 \begin{pmatrix}
-  x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
-  x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
-  \vdots  & \vdots  & \ddots & \vdots  \\
-  x_{m,1} & x_{m,2} & \cdots & x_{m,n}
+  \SubscriptM{X}{0}{0} & \SubscriptM{X}{0}{1} & \cdots & \SubscriptM{X}{0}{n-1} \\
+  \SubscriptM{X}{1}{0} & \SubscriptM{X}{1}{1} & \cdots & \SubscriptM{X}{1}{n-1} \\
+  \vdots & \vdots  & \ddots & \vdots  \\
+  \SubscriptM{X}{m-1}{0} & \SubscriptM{X}{m-1}{1} & \cdots & \SubscriptM{X}{m-1}{n-1}
 \end{pmatrix}$$
-I denote by $X[i,j]$ the subscript element $x_{i,j}$.
+I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
 \section{Transcripts, alignments and distances}
 
 I now define the basic edit operations to transform one string into another.
-Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $x_i$ \st $x_i \neq y_i$ into $y_i$, for $1 \leq i \leq \Xlen$.
+Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $\Subscript{X}{i}$ \st $\Subscript{X}{i} \neq \Subscript{Y}{i}$ into $\Subscript{Y}{i}$, for $1 \leq i \leq \Xlen$.
 However, if the two strings have different lengths, some symbols from $\XSeq$ must be necessarily inserted or deleted in order to obtain $\YSeq$.
 This fact motivates the following definition of \emph{edit transcript}.
 
@@ -133,11 +133,11 @@ d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j}) = \min \left\{
 \begin{array}{lcl}
 d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j})&+&1\\
 d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j-1})&+&1\\
-d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j-1})&+&\delta(x_i, y_j)
+d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j-1})&+&\delta(\Subscript{X}{i}, \Subscript{Y}{j})
 \end{array}
 \right.\label{eq:dp-min}
 \end{eqnarray}
-where the function $\delta$ indicates whether the characters $x_i$, $x_j$ match or mismatch (see definition \ref{def:delta}).
+where the function $\delta$ indicates whether the characters $\Subscript{X}{i}$, $\Subscript{Y}{j}$ match or mismatch (see definition \ref{def:delta}).
 
 \begin{figure*}[t]
 \begin{center}
@@ -150,17 +150,17 @@ where the function $\delta$ indicates whether the characters $x_i$, $x_j$ match 
 \textbf{Output} & the edit distance $d_E(\XSeq,\YSeq)$ between $\XSeq$ and $\YSeq$\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$D[0,0] \gets 0$}
+\State {$\SubscriptNM{D}{0}{0} \gets 0$}
 \For {$j \gets 1 \, \To \Ylen$}
-	\State {$D[j,0] \gets D[j-1,0] + 1$}
+	\State {$\SubscriptNM{D}{j}{0} \gets \SubscriptNM{D}{j-1}{0} + 1$}
 \EndFor
 \For {$i \gets 1 \, \To \Xlen$}
-	\State {$D[0,i] \gets D[0,i-1] + 1$}
+	\State {$\SubscriptNM{D}{0}{i} \gets \SubscriptNM{D}{0}{i-1} + 1$}
 	\For {$j \gets 1 \, \To \Ylen$}
-		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(x_i, y_j) \, \}$}
+		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \{ \, \SubscriptNM{D}{i-1}{j} + 1, \SubscriptNM{D}{i}{j-1} + 1, \SubscriptNM{D}{i-1}{j-1} + \delta(\Subscript{X}{i}, \Subscript{Y}{j}) \, \}$}
 	\EndFor
 \EndFor
-\State \Return D[\Ylen,\Xlen]
+\State \Return \SubscriptNM{D}{\Ylen}{\Xlen}
 \end{algorithmic}
 \label{alg:dp-edit}
 \end{algorithm}
@@ -168,7 +168,7 @@ where the function $\delta$ indicates whether the characters $x_i$, $x_j$ match 
 \end{center}
 \end{figure*}
 
-Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(\Xlen\Ylen)$ using a dynamic programming table $D$ of $(\Xlen+1) \times (\Ylen+1)$ cells, where cell $D[i,j]$ stores the value of $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$.
+Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(\Xlen\Ylen)$ using a dynamic programming table $D$ of $(\Xlen+1) \times (\Ylen+1)$ cells, where cell $\SubscriptNM{D}{i}{j}$ stores the value of $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$.
 The sole edit distance without any alignment can be computed in space $\Oh(\Ylen)$; indeed, only column $j-1$ is required to compute column $j$.
 An optimal alignment can be computed in time $\Oh(\Xlen + \Ylen)$ via \emph{traceback} on the table $D$;
 the traceback starts in the cell $D[\Ylen,\Xlen]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[\Ylen,\Xlen]$.
@@ -265,16 +265,16 @@ Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the e
 \textbf{Output} & all end positions of $k$-differences occurrences of $\Pattern$ in $\Text$\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$D[0,0] \gets 0$}
+\State {$\SubscriptNM{D}{0}{0} \gets 0$}
 \For {$j \gets 1 \, \To \Plen$}
-	\State {$D[j,0] \gets j$}
+	\State {$\SubscriptNM{D}{j}{0} \gets j$}
 \EndFor
 \For {$i \gets 1 \, \To \Tlen$}
-	\State {$D[0,i] \gets 0$}
+	\State {$\SubscriptNM{D}{0}{i} \gets 0$}
 	\For {$j \gets 1 \, \To \Plen$}
-		\State {$D[i,j] \gets \min \, \{ \, D[i-1,j] + 1, D[i,j-1] + 1, D[i-1,j-1] + \delta(t_i, p_j) \, \}$}
+		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \{ \, \SubscriptNM{D}{i-1}{j} + 1, \SubscriptNM{D}{i}{j-1} + 1, \SubscriptNM{D}{i-1}{j-1} + \delta(\Subscript{\Text}{i}, \Subscript{\Pattern}{j}) \, \}$}
 	\EndFor
-	\If {$D[i,\Plen] \leq k$}
+	\If {$\SubscriptNM{D}{i}{\Plen} \leq k$}
 		\State \Report $i$
 	\EndIf
 \EndFor
@@ -358,7 +358,7 @@ Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\String
 \end{subfigure}
 \end{figure}
 
-Note that the (generalized) suffix trie here defined contains $\Oh(n^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
+Note that the (generalized) suffix trie here defined contains $\Oh(\Slen^2)$ nodes, yet I only consider the suffix trie as an idealized data structure to formulate generic algorithms.
 The optimal data structure to represent in linear space all suffixes of a given string is the \emph{suffix tree} \citep{Morrison1968}.
 However, the suffix tree comes with the restriction that internal nodes are branching, \ie they must have more than one child, and with the property that edges can labeled by strings of arbitrary length (see figure~\ref{fig:stree}).
 This latter property slightly complicates the exposition of string matching algorithms but it does not affect their runtime complexity nor their result.

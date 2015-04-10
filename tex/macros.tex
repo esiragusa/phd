@@ -59,7 +59,10 @@
 
 \newcommand\Interval[2]{[#1,#2]}
 \newcommand\OInterval[2]{[#1,#2)}
-\newcommand\Subscript[2]{#1[#2]}
+\newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}
+\newcommand\SubscriptM[3]{\MakeLowercase{#1}_{#2,#3}}
+\newcommand\SubscriptNV[2]{#1[#2]}
+\newcommand\SubscriptNM[3]{#1[#2,#3]}
 \newcommand\Suffix[2]{#1_{#2}}
 \newcommand\Substring[3]{#1\Interval{#2}{#3}}
 \newcommand\OSubstring[3]{#1\OInterval{#2}{#3}}
