@@ -58,6 +58,19 @@
 % ----------------------------------------------------------
 
 \newcommand\Ibase{0}								% 0- or 1-based
+
+\newcounter{I}
+\newcommand\FirstI{\setcounter{I}{\Ibase} \arabic{I}}
+\newcommand\NextI{\stepcounter{I} \arabic{I}}
+\newcommand\SameI{\arabic{I}}
+\newcommand\LastI[1]{#1-1}
+
+\newcounter{J}
+\newcommand\FirstJ{\setcounter{J}{\Ibase} \arabic{J}}
+\newcommand\NextJ{\stepcounter{J} \arabic{J}}
+\newcommand\SameJ{\arabic{J}}
+\newcommand\LastJ[1]{#1-1}
+
 \newcommand\Interval[2]{[#1,#2]}					% [] interval
 %\newcommand\OInterval[2]{[#1,#2-1]}
 \newcommand\OInterval[2]{[#1,#2)}					% [) interval

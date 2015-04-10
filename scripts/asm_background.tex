@@ -8,8 +8,8 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 \section{Definitions}
 
 I start with fundamental objects of stringology: alphabets and strings.
-An \emph{alphabet} $\Sigma= \{ a_0, a_1, \dots , a_{\sigma-1} \}$ is a finite ordered set of symbols (or characters) $a_i$.
-A \emph{string} (or word) $\String=\Subscript{\String}{\Ibase} \Subscript{\String}{1} \dots \Subscript{\String}{\Slen-1}$ over an alphabet $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
+An \emph{alphabet} $\Sigma= \{ a_{\FirstI}, a_{\NextI}, \dots , a_{\LastI{\sigma}} \}$ is a finite ordered set of symbols (or characters) $a_i$.
+A \emph{string} (or word) $\String=\Subscript{\String}{\FirstI} \Subscript{\String}{\NextI} \dots \Subscript{\String}{\LastI{\Slen}}$ over an alphabet $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
 I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $\Subscript{\String}{i} \dots \Subscript{\String}{j}$, and by $|\String|=\Slen$ the length of $\String$.
 %I often call \emph{$q$-gram} a string of length $q$.
 %I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
@@ -32,13 +32,13 @@ Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sig
 Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
 \begin{definition}
 \label{def:rho}
-Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\rho : \Sigma \rightarrow \Interval{\Ibase}{\sigma}$, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
+Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\rho : \Sigma \rightarrow \OInterval{\Ibase}{\sigma}$, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
 \end{definition}
-The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq <_{lex} \YSeq \iff \Subscript{\XSeq}{\Ibase} < \Subscript{\YSeq}{\Ibase}, \text{ or } \Subscript{\XSeq}{\Ibase} = \Subscript{\YSeq}{\Ibase} \text{ and } \Suffix{\XSeq}{1} <_{lex} \Suffix{\YSeq}{1}$.
+The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq <_{lex} \YSeq \iff \Subscript{\XSeq}{\FirstI} < \Subscript{\YSeq}{\FirstJ}, \text{ or } \Subscript{\XSeq}{\FirstI} = \Subscript{\YSeq}{\FirstJ} \text{ and } \Suffix{\XSeq}{\NextI} <_{lex} \Suffix{\YSeq}{\NextJ}$.
 
 \emph{Generalized} full-text indices work on string collections.
-A \emph{string collection} is an ordered multiset $\Strings = \{ \String^1, \String^2, \dots, \String^c \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
-I denote by $\norm{\Strings}=\sum_{i=1}^{c}{|\String^i|}$ the total length of the string collection.
+A \emph{string collection} is an ordered multiset $\Strings = \{ \String^{\FirstI}, \String^{\NextI}, \dots, \String^{\LastI{c}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+I denote by $\norm{\Strings}=\sum_{i=\FirstI}^{\LastI{c}}{|\String^i|}$ the total length of the string collection.
 I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
 
 To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
@@ -54,15 +54,15 @@ Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string c
 \end{definition}
 
 In this manuscript, in addition to strings, I use numerical arrays and matrices.
-An \emph{array} (or table, or vector) $V=\Subscript{V}{\Ibase} \Subscript{V}{1} \dots \Subscript{V}{\Slen-1}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$ (or any subset of $\N_0$).
+An \emph{array} (or table, or vector) $V=\Subscript{V}{\FirstI} \Subscript{V}{\NextI} \dots \Subscript{V}{\LastI{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$ (or any subset of $\N_0$).
 I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
 A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ (or any subset of $\N_0$) arranged \st
 $$X=
 \begin{pmatrix}
-  \SubscriptM{X}{\Ibase}{\Ibase} & \SubscriptM{X}{\Ibase}{1} & \cdots & \SubscriptM{X}{\Ibase}{n-1} \\
-  \SubscriptM{X}{1}{\Ibase} & \SubscriptM{X}{1}{1} & \cdots & \SubscriptM{X}{1}{n-1} \\
+  \SubscriptM{X}{\FirstI}{\FirstJ} & \SubscriptM{X}{\SameI}{\NextJ} & \cdots & \SubscriptM{X}{\SameI}{\LastJ{n}} \\
+  \SubscriptM{X}{\NextI}{\FirstJ} & \SubscriptM{X}{1}{\SameI} & \cdots & \SubscriptM{X}{\SameI}{\LastJ{n}} \\
   \vdots & \vdots  & \ddots & \vdots  \\
-  \SubscriptM{X}{m-1}{\Ibase} & \SubscriptM{X}{m-1}{1} & \cdots & \SubscriptM{X}{m-1}{n-1}
+  \SubscriptM{X}{\LastI{m}}{\FirstJ} & \SubscriptM{X}{\LastI{m}}{\NextJ} & \cdots & \SubscriptM{X}{\LastJ{m}}{\LastJ{n}}
 \end{pmatrix}$$
 I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
@@ -324,7 +324,7 @@ Thanks to these generic traversal operations, I later formulate generic string m
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $\Scard$ strings.
 Note that padding is necessary to ensure that no string $\String^i \in \Strings$ is a prefix of another string $\String^j \in \Strings$.
 \begin{definition}
-The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\Ibase}, \dots, \StrieLeaf{\Scard}$, where leaf $\StrieLeaf{i}$ points to string $\String^i$.
+The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\FirstI}, \dots, \StrieLeaf{\LastI{\Scard}}$, where leaf $\StrieLeaf{i}$ points to string $\String^i$.
 Any edge entering a node of $\RtrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\RtrieOf{\Strings}$ is labeled with a terminator symbol.
 Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\String^i$, including its terminator symbol $\$^i$.
 %Figure~\ref{fig:trie} illustrates.
@@ -338,7 +338,7 @@ The \emph{suffix trie} $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\Stri
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
-Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\String^i \in \Strings$ and $1 \leq j \leq n_i$ points to one of the $n_i$ suffixes of $\String^i$.
+Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\String^i \in \Strings$ and $\FirstI \leq j \leq n_i$ points to one of the $n_i$ suffixes of $\String^i$.
 Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
