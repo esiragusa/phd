@@ -57,16 +57,20 @@
 % Approximate string matching notations
 % ----------------------------------------------------------
 
-\newcommand\Interval[2]{[#1,#2]}
-\newcommand\OInterval[2]{[#1,#2)}
-\newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}
+\newcommand\Ibase{0}								% 0- or 1-based
+\newcommand\Interval[2]{[#1,#2]}					% [] interval
+%\newcommand\OInterval[2]{[#1,#2-1]}
+\newcommand\OInterval[2]{[#1,#2)}					% [) interval
+%\newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}	% string subscript s_i
+\newcommand\Subscript[2]{#1[#2]}					% string subscript S[i]
 \newcommand\SubscriptM[3]{\MakeLowercase{#1}_{#2,#3}}
 \newcommand\SubscriptNV[2]{#1[#2]}
 \newcommand\SubscriptNM[3]{#1[#2,#3]}
 \newcommand\Suffix[2]{#1_{#2}}
-\newcommand\Substring[3]{#1\Interval{#2}{#3}}
-\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}}
-\newcommand\Prefix[2]{\Substring{#1}{1}{#2}}
+\newcommand\Substring[3]{#1\Interval{#2}{#3}}   	% substring
+\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}} 	% substring -1
+\newcommand\Prefix[2]{#1\OInterval{\Ibase}{#2}} 	% prefix 0-based
+%\newcommand\Prefix[2]{#1\Interval{\Ibase}{#2}} 	% prefix 1-based
 
 \newcommand\String{S}
 \newcommand\Strings{\mathbb{\String}}
