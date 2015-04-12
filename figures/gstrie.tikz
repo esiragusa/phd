@@ -138,49 +138,49 @@ node[leaf](SD) {$\At{1},\At{6}$}
 }
 ;
 
-\draw[el] (r) -- (D) \labelA{$\$_{\At{1}}$};
-\draw[el] (r) -- (D2) \labelA{$\$_{\At{2}}$};
+\draw[el] (r) -- (D) \labelA{$\AtCollection{\$}{\At{1}}$};
+\draw[el] (r) -- (D2) \labelA{$\AtCollection{\$}{\At{2}}$};
 
 \draw[el] (r) -- (A) \labelA{A};
 \draw[el] (A) -- (AC) \labelA{C};
 \draw[el] (AC) -- (ACA) \labelA{A};
 \draw[el] (ACA) -- (ACAO) \labelA{O};
-\draw[el] (ACAO) -- (ACAOD) \labelA{$\$_{\At{2}}$};
+\draw[el] (ACAO) -- (ACAOD) \labelA{$\AtCollection{\$}{\At{2}}$};
 
 \draw[el] (A) -- (AN) \labelA{N};
 \draw[el] (AN) -- (ANA) \labelA{A};
 \draw[el] (ANA) -- (ANAN) \labelA{N};
 \draw[el] (ANAN) -- (ANANA) \labelA{A};
 \draw[el] (ANANA) -- (ANANAS) \labelA{S};
-\draw[el] (ANANAS) -- (ANANASD) \labelA{$\$_{\At{1}}$};
+\draw[el] (ANANAS) -- (ANANASD) \labelA{$\AtCollection{\$}{\At{1}}$};
 \draw[el] (ANA) -- (ANAS) \labelA{S};
-\draw[el] (ANAS) -- (ANASD) \labelA{$\$_{\At{1}}$};
+\draw[el] (ANAS) -- (ANASD) \labelA{$\AtCollection{\$}{\At{1}}$};
 \draw[el] (A) -- (AO) \labelA{O};
-\draw[el] (AO) -- (AOD) \labelA{$\$_{\At{2}}$};
+\draw[el] (AO) -- (AOD) \labelA{$\AtCollection{\$}{\At{2}}$};
 \draw[el] (A) -- (AS) \labelA{S};
-\draw[el] (AS) -- (ASD) \labelA{$\$_{\At{1}}$};
+\draw[el] (AS) -- (ASD) \labelA{$\AtCollection{\$}{\At{1}}$};
 
 \draw[el] (r) -- (C) \labelA{C};
 \draw[el] (C) -- (CA) \labelA{A};
 \draw[el] (CA) -- (CAC) \labelA{C};
 \draw[el] (CAC) -- (CACA) \labelA{A};
 \draw[el] (CACA) -- (CACAO) \labelA{O};
-\draw[el] (CACAO) -- (CACAOD) \labelA{$\$_{\At{2}}$};
+\draw[el] (CACAO) -- (CACAOD) \labelA{$\AtCollection{\$}{\At{2}}$};
 \draw[el] (CA) -- (CAO) \labelA{O};
-\draw[el] (CAO) -- (CAOD) \labelA{$\$_{\At{2}}$};
+\draw[el] (CAO) -- (CAOD) \labelA{$\AtCollection{\$}{\At{2}}$};
 
 \draw[el] (r) -- (N) \labelA{N};
 \draw[el] (N) -- (NA) \labelA{A};
 \draw[el] (NA) -- (NAN) \labelA{N};
 \draw[el] (NAN) -- (NANA) \labelA{A};
 \draw[el] (NANA) -- (NANAS) \labelA{S};
-\draw[el] (NANAS) -- (NANASD) \labelA{$\$_{\At{1}}$};
+\draw[el] (NANAS) -- (NANASD) \labelA{$\AtCollection{\$}{\At{1}}$};
 \draw[el] (NA) -- (NAS) \labelA{S};
-\draw[el] (NAS) -- (NASD) \labelA{$\$_{\At{1}}$};
+\draw[el] (NAS) -- (NASD) \labelA{$\AtCollection{\$}{\At{1}}$};
 \draw[el] (r) -- (O) \labelA{O};
-\draw[el] (O) -- (OD) \labelA{$\$_{\At{2}}$};
+\draw[el] (O) -- (OD) \labelA{$\AtCollection{\$}{\At{2}}$};
 
 \draw[el] (r) -- (S) \labelA{S};
-\draw[el] (S) -- (SD) \labelA{$\$_{\At{1}}$};
+\draw[el] (S) -- (SD) \labelA{$\AtCollection{\$}{\At{1}}$};
 
 \end{tikzpicture}

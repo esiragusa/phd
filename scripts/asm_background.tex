@@ -327,7 +327,7 @@ The \emph{suffix trie} $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\Stri
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
-Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\String^i \in \Strings$ and $\At{1} \leq j \leq n_i$ points to one of the $n_i$ suffixes of $\String^i$.
+Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\String^i$.
 Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
@@ -355,7 +355,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 %I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[t]
-\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_{\At{1}}$}, {\ttfamily CACAO$\$_{\At{2}}$} $\}$.}
+\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
 \input{figures/gstrie.tikz}

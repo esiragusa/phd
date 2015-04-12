@@ -36,13 +36,13 @@ The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an arr
 \end{definition}
 
 \begin{definition}
-The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $\String^i \in \Strings$ and $j$ points to one of the $\Slen_i$ suffixes of $\String^i$.
+The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $\AtCollection{\String}{i} \in \Strings$ and $j$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\AtCollection{\String}{i}$.
 Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 \end{definition}
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\$_{\At{1}}$}, {\ttfamily CACAO$\$_{\At{2}}$} $\}$.}
+\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
 
 \begin{subfigure}[t]{0.45\textwidth}
 \begin{center}
@@ -70,19 +70,19 @@ $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\
 \begin{tabular}{rcl}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-\At{1} & (\At{1},\At{7}) & $\$_{\At{1}}$\\
-\At{2} & (\At{2},\At{6}) & $\$_{\At{2}}$\\
-\At{3} & (\At{2},\At{2}) & ACAO$\$_{\At{2}}$\\
-\At{4} & (\At{1},\At{1}) & ANANAS$\$_{\At{1}}$\\
-\At{5} & (\At{1},\At{3}) & ANAS$\$_{\At{1}}$\\
-\At{6} & (\At{2},\At{4}) & AO$\$_{\At{2}}$\\
-\At{7} & (\At{1},\At{5}) & AS$\$_{\At{1}}$\\
-\At{8} & (\At{2},\At{1}) & CACAO$\$_{\At{2}}$\\
-\At{9} & (\At{2},\At{3}) & CAO$\$_{\At{2}}$\\
-\At{10} & (\At{1},\At{2}) & NANAS$\$_{\At{1}}$\\
-\At{11} & (\At{1},\At{4}) & NAS$\$_{\At{1}}$\\
-\At{12} & (\At{2},\At{5}) & O$\$_{\At{2}}$\\
-\At{13} & (\At{1},\At{6}) & S$\$_{\At{1}}$\\
+\At{1} & (\At{1},\At{7}) & $\AtCollection{\$}{\At{1}}$\\
+\At{2} & (\At{2},\At{6}) & $\AtCollection{\$}{\At{2}}$\\
+\At{3} & (\At{2},\At{2}) & ACAO$\AtCollection{\$}{\At{2}}$\\
+\At{4} & (\At{1},\At{1}) & ANANAS$\AtCollection{\$}{\At{1}}$\\
+\At{5} & (\At{1},\At{3}) & ANAS$\AtCollection{\$}{\At{1}}$\\
+\At{6} & (\At{2},\At{4}) & AO$\AtCollection{\$}{\At{2}}$\\
+\At{7} & (\At{1},\At{5}) & AS$\AtCollection{\$}{\At{1}}$\\
+\At{8} & (\At{2},\At{1}) & CACAO$\AtCollection{\$}{\At{2}}$\\
+\At{9} & (\At{2},\At{3}) & CAO$\AtCollection{\$}{\At{2}}$\\
+\At{10} & (\At{1},\At{2}) & NANAS$\AtCollection{\$}{\At{1}}$\\
+\At{11} & (\At{1},\At{4}) & NAS$\AtCollection{\$}{\At{1}}$\\
+\At{12} & (\At{2},\At{5}) & O$\AtCollection{\$}{\At{2}}$\\
+\At{13} & (\At{1},\At{6}) & S$\AtCollection{\$}{\At{1}}$\\
 \end{tabular}
 \end{center}
 \end{subfigure}
@@ -96,7 +96,7 @@ When $\Slen < 2^{32}$, a 32 bit integer is sufficient to encode any value in the
 Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 \Slen$ bytes.
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(\Slen)$ time.
-The space consumption of the GSA is $\Slen \log{\Scard\Slen^*}$ bits, where $\Slen^* = \max{\,\Slen_i}$.
+The space consumption of the GSA is $\Slen \log{\Scard\Slen^*}$ bits, where $\Slen^* = \max{\,\AtCollection{\Slen}{i}}$.
 For instance, for collections consisting of not more than 256 texts shorter than 4~GB, a pair of $1+4$~bytes suffices to encode any suffix position.
 
 %For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
@@ -168,7 +168,7 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,
 \begin{itemize}
 \item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, 0\}$;
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
-\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\SubscriptNV{\Sarray}{\StrieNode.r} + \StrieNode.d = \Slen_{\SubscriptNV{\Sarray}{\StrieNode.r}}$;
+\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\SubscriptNV{\Sarray}{\StrieNode.r} + \StrieNode.d = \AtCollection{\Slen}{\SubscriptNV{\Sarray}{\StrieNode.r}}$;
 \item \FunctionCall{label}{\StrieNode} returns $\Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
 \item \FunctionCall{occurrences}{\StrieNode} returns $\Substring{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
 \end{itemize}
@@ -608,7 +608,7 @@ $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $i$ & $\Psi(i)$\\
 
 Inverting the generalized BWT works in the same way.
 Indeed, permutations $\Psi$ and $LF$ are composed of $\Scard$ cycles, where each cycle corresponds to a distinct string in the collection.
-The string $\String^j$ is recovered by starting at the position of $\$^j$ and following the cycle of $\Psi$ (or $LF$) associated to $\String^j$.
+The string $\AtCollection{String}{j}$ is recovered by starting at the position of $\AtCollection{\$}{j}$ and following the cycle of $\Psi$ (or $LF$) associated to $\AtCollection{\String}{j}$.
 
 \subsubsection{Permutation LF}
 
@@ -861,11 +861,9 @@ I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where
 Therefore, I define the following node operations:
 \begin{itemize}
 \item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, \epsilon \}$;
-%\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.r \in \mathbb{I}$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.\Subscript{\Last}{r} = \$$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$.
 \end{itemize}
-%In order to answer \FunctionName{isLeaf}, I consider the set $\mathbb{I}$ of positions of the terminator symbols $\String^i$ in the BWT.
 
 The traversal easily goes from the root node to its child node labeled by $\StrieChar$: it suffices to derive the interval $\OInterval{C(c)}{C(c+1)}$.
 Suppose the traversal is on an arbitrary node $v$ of known interval $\OInterval{b_v}{e_v}$ \st the path from the root to $v$ spells the substring $s_v$.
