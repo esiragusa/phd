@@ -78,8 +78,11 @@
 %\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}} 	% substring S[i,j)
 %\newcommand\Substring[3]{{#1}_{\Interval{#2}{#3}}}   	% substring s_[i,j]
 %\newcommand\OSubstring[3]{{#1}_{\OInterval{#2}{#3}}} 	% substring s_[i,j)
-\newcommand\Substring[3]{{#1}_{{#2}\dots{#3}}}   	% substring s_{i..j}
-\newcommand\OSubstring[3]{{#1}_{{#2}\dots{#3-1}}} 	% substring s_{i..j-1}
+\newcommand\Substring[3]{{#1}_{{#2}\dots{#3}}}   	% substring S_{i..j}
+\newcommand\OSubstring[3]{{#1}_{{#2}\dots{#3-1}}} 	% substring S_{i..j-1}
+
+\newcommand\SubstringNV[3]{{#1}\Interval{#2}{#3}}  % numerical subvector V[i,j]
+\newcommand\OSubstringNV[3]{{#1}\OInterval{#2}{#3}} % numerical subvector V[i,j)
 
 \newcommand\Prefix[2]{\Substring{#1}{\Ibase}{#2}}	% prefix as substring
 \newcommand\Suffix[2]{{#1}_{#2}}					% suffix S_i

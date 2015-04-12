@@ -32,12 +32,12 @@ In this way, an additional logarithmic time complexity is paid to reduce space c
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
-The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suffix{\String}{\SubscriptNV{\Sarray}{i}}$ for all $\At{2} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
 \begin{definition}
 The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $\AtCollection{\String}{i} \in \Strings$ and $j$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\AtCollection{\String}{i}$.
-Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ for all $\At{2} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
 \begin{figure}[b]
@@ -52,13 +52,13 @@ Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffi
 \begin{tabular}{ccl}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-\At{1} & \At{7} & \$\\
-\At{2} & \At{1} & ANANAS\$\\
-\At{3} & \At{3} & ANAS\$\\
-\At{4} & \At{5} & AS\$\\
-\At{5} & \At{2} & NANAS\$\\
-\At{6} & \At{4} & NAS\$\\
-\At{7} & \At{6} & S\$\\
+$\At{1}$ & $\At{7}$ & \$\\
+$\At{2}$ & $\At{1}$ & ANANAS\$\\
+$\At{3}$ & $\At{3}$ & ANAS\$\\
+$\At{4}$ & $\At{5}$ & AS\$\\
+$\At{5}$ & $\At{2}$ & NANAS\$\\
+$\At{6}$ & $\At{4}$ & NAS\$\\
+$\At{7}$ & $\At{6}$ & S\$\\
 \end{tabular}
 \end{center}
 \end{subfigure}%
@@ -70,19 +70,19 @@ $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\
 \begin{tabular}{rcl}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-\At{1} & (\At{1},\At{7}) & $\AtCollection{\$}{\At{1}}$\\
-\At{2} & (\At{2},\At{6}) & $\AtCollection{\$}{\At{2}}$\\
-\At{3} & (\At{2},\At{2}) & ACAO$\AtCollection{\$}{\At{2}}$\\
-\At{4} & (\At{1},\At{1}) & ANANAS$\AtCollection{\$}{\At{1}}$\\
-\At{5} & (\At{1},\At{3}) & ANAS$\AtCollection{\$}{\At{1}}$\\
-\At{6} & (\At{2},\At{4}) & AO$\AtCollection{\$}{\At{2}}$\\
-\At{7} & (\At{1},\At{5}) & AS$\AtCollection{\$}{\At{1}}$\\
-\At{8} & (\At{2},\At{1}) & CACAO$\AtCollection{\$}{\At{2}}$\\
-\At{9} & (\At{2},\At{3}) & CAO$\AtCollection{\$}{\At{2}}$\\
-\At{10} & (\At{1},\At{2}) & NANAS$\AtCollection{\$}{\At{1}}$\\
-\At{11} & (\At{1},\At{4}) & NAS$\AtCollection{\$}{\At{1}}$\\
-\At{12} & (\At{2},\At{5}) & O$\AtCollection{\$}{\At{2}}$\\
-\At{13} & (\At{1},\At{6}) & S$\AtCollection{\$}{\At{1}}$\\
+$\At{1}$ & $(\At{1},\At{7})$ & $\AtCollection{\$}{\At{1}}$\\
+$\At{2}$ & $(\At{2},\At{6})$ & $\AtCollection{\$}{\At{2}}$\\
+$\At{3}$ & $(\At{2},\At{2})$ & ACAO$\AtCollection{\$}{\At{2}}$\\
+$\At{4}$ & $(\At{1},\At{1})$ & ANANAS$\AtCollection{\$}{\At{1}}$\\
+$\At{5}$ & $(\At{1},\At{3})$ & ANAS$\AtCollection{\$}{\At{1}}$\\
+$\At{6}$ & $(\At{2},\At{4})$ & AO$\AtCollection{\$}{\At{2}}$\\
+$\At{7}$ & $(\At{1},\At{5})$ & AS$\AtCollection{\$}{\At{1}}$\\
+$\At{8}$ & $(\At{2},\At{1})$ & CACAO$\AtCollection{\$}{\At{2}}$\\
+$\At{9}$ & $(\At{2},\At{3})$ & CAO$\AtCollection{\$}{\At{2}}$\\
+$\At{10}$ & $(\At{1},\At{2})$ & NANAS$\AtCollection{\$}{\At{1}}$\\
+$\At{11}$ & $(\At{1},\At{4})$ & NAS$\AtCollection{\$}{\At{1}}$\\
+$\At{12}$ & $(\At{2},\At{5})$ & O$\AtCollection{\$}{\At{2}}$\\
+$\At{13}$ & $(\At{1},\At{6})$ & S$\AtCollection{\$}{\At{1}}$\\
 \end{tabular}
 \end{center}
 \end{subfigure}
@@ -96,7 +96,7 @@ When $\Slen < 2^{32}$, a 32 bit integer is sufficient to encode any value in the
 Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 \Slen$ bytes.
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(\Slen)$ time.
-The space consumption of the GSA is $\Slen \log{\Scard\Slen^*}$ bits, where $\Slen^* = \max{\,\AtCollection{\Slen}{i}}$.
+The space consumption of the GSA is $\Slen \log{\AtCollection{\Slen}{*}}$ bits, where $\AtCollection{\Slen}{*} = \max{\,\AtCollection{\Slen}{i}}$.
 For instance, for collections consisting of not more than 256 texts shorter than 4~GB, a pair of $1+4$~bytes suffices to encode any suffix position.
 
 %For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
@@ -170,7 +170,7 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\SubscriptNV{\Sarray}{\StrieNode.r} + \StrieNode.d = \AtCollection{\Slen}{\SubscriptNV{\Sarray}{\StrieNode.r}}$;
 \item \FunctionCall{label}{\StrieNode} returns $\Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
-\item \FunctionCall{occurrences}{\StrieNode} returns $\Substring{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
+\item \FunctionCall{occurrences}{\StrieNode} returns $\OSubstringNV{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
 \end{itemize}
 
 \begin{figure*}[t!]
@@ -313,16 +313,16 @@ The idea is to supplement the SA with a so-called $q$-gram directory: an additio
 \begin{tabular}{ccccccl}
 $\Pattern$ & $h(\Pattern)$ & $\SubscriptNV{D}{h(\Pattern)}$ & \phantom{-} & $i$ & $\SubscriptNV{\Sarray}{i}$ & $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$\\
 \midrule
-AA & \At{1} & \At{2} & & \At{1} & \At{7} & \$\\
-AN & \At{2} & \At{2} & & \At{2} & \At{1} & ANANAS\$\\
-AS & \At{3} & \At{4} & & \At{3} & \At{3} & ANAS\$\\
-\cell{p}{NA} & \cell{h4}{\At{4}} & \cell{d5}{\At{5}} & & \At{4} & \At{5} & AS\$\\
-NN & \cell{h5}{\At{5}} & \cell{d6}{\At{6}} & & \cell{i5}{\At{5}} & \cell{a5}{\At{2}} & NANAS\$\\
-NS & \At{6} & \At{6} & & \cell{i6}{\At{6}} & \cell{a6}{\At{4}} & NAS\$\\
-SA & \At{7} & \At{6} & & \At{7} & \At{6} & S\$\\
-SN & \At{8} & \At{6} \\
-SS & \At{9} & \At{6} \\
-   & \At{10} & \At{6} \\
+AA & $\At{1}$ & $\At{2}$ & & $\At{1}$ & $\At{7}$ & \$\\
+AN & $\At{2}$ & $\At{2}$ & & $\At{2}$ & $\At{1}$ & ANANAS\$\\
+AS & $\At{3}$ & $\At{4}$ & & $\At{3}$ & $\At{3}$ & ANAS\$\\
+\cell{p}{NA} & \cell{h4}{$\At{4}$} & \cell{d5}{$\At{5}$} & & $\At{4}$ & $\At{5}$ & AS\$\\
+NN & \cell{h5}{$\At{5}$} & \cell{d6}{$\At{6}$} & & \cell{i5}{$\At{5}$} & \cell{a5}{$\At{2}$} & NANAS\$\\
+NS & $\At{6}$ & $\At{6}$ & & \cell{i6}{$\At{6}$} & \cell{a6}{$\At{4}$} & NAS\$\\
+SA & $\At{7}$ & $\At{6}$ & & $\At{7}$ & $\At{6}$ & S\$\\
+SN & $\At{8}$ & $\At{6}$ \\
+SS & $\At{9}$ & $\At{6}$ \\
+   & $\At{10}$ & $\At{6}$ \\
 \end{tabular}
 \around{p}
 \eround{h4}{h5}
@@ -510,13 +510,13 @@ The BWT of $\String$ is the string $\Subscript{\String}{\SubscriptNV{\Sarray}{i}
 \begin{tabular}{cccccc}
 $i$ & $\SubscriptNV{\Sarray}{i}$ & \phantom{-} & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $\dots$ & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$\\
 \midrule
-\At{1} & \At{7} & & \$& ANANA  & \cell{l1}{S}\\
-\At{2} & \At{1} & & A & NANAS  & \$\\
-\At{3} & \At{3} & & A & NAS\$A & N\\
-\At{4} & \At{5} & & A & S\$ANA & N\\
-\At{5} & \At{2} & & N & ANAS\$ & A\\
-\At{6} & \At{4} & & N & AS\$AN & A\\
-\At{7} & \At{6} & & S & \$ANAN & \cell{l7}{\Sarray}\\
+$\At{1}$ & $\At{7}$ & & \$& ANANA  & \cell{l1}{S}\\
+$\At{2}$ & $\At{1}$ & & A & NANAS  & \$\\
+$\At{3}$ & $\At{3}$ & & A & NAS\$A & N\\
+$\At{4}$ & $\At{5}$ & & A & S\$ANA & N\\
+$\At{5}$ & $\At{2}$ & & N & ANAS\$ & A\\
+$\At{6}$ & $\At{4}$ & & N & AS\$AN & A\\
+$\At{7}$ & $\At{6}$ & & S & \$ANAN & \cell{l7}{\Sarray}\\
 \end{tabular}
 \eround{l1}{l7}
 \end{center}
@@ -538,13 +538,13 @@ Therefore, various direct BWT construction algorithms working within $o(\Slen \l
 \begin{tabular}{ccccccc}
 $i$ & $\Psi(i)$ & $LF(i)$ & \phantom{-} & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $\dots$ & $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$\\
 \midrule
-\At{1} & \At{2} & \At{7}                        & & \$           & ANANA  & S\\
-\At{2} & \At{5} & \At{1}                        & & A            & NANAS  & \$\\
-\At{3} & \At{6} & \cell{lf3}{\At{5}} & & A      & NAS\$A & \cell{l3}{N}\\
-\At{4} & \At{7} & \At{6}                        & & A            & S\$ANA & N\\
-\At{5} & \cell{psi5}{\At{3}} & \At{2}           & & \cell{f5}{N} & ANAS\$ & A\\
-\At{6} & \At{4} & \At{3}                        & & N            & AS\$AN & A\\
-\At{7} & \At{1} & \At{4}                        & & S            & \$ANAN & A\\
+$\At{1}$ & $\At{2}$ & $\At{7}$                        & & \$           & ANANA  & S\\
+$\At{2}$ & $\At{5}$ & $\At{1}$                        & & A            & NANAS  & \$\\
+$\At{3}$ & $\At{6}$ & \cell{lf3}{$\At{5}$} & & A      & NAS\$A & \cell{l3}{N}\\
+$\At{4}$ & $\At{7}$ & $\At{6}$                        & & A            & S\$ANA & N\\
+$\At{5}$ & \cell{psi5}{$\At{3}$} & $\At{2}$           & & \cell{f5}{N} & ANAS\$ & A\\
+$\At{6}$ & $\At{4}$ & $\At{3}$                        & & N            & AS\$AN & A\\
+$\At{7}$ & $\At{1}$ & $\At{4}$                        & & S            & \$ANAN & A\\
 \end{tabular}
 \around{lf3}
 \around{psi5}
@@ -589,13 +589,13 @@ Figure \ref{fig:psi} exemplifies.
 \begin{tabular}{ccc}
 $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $i$ & $\Psi(i)$\\
 \midrule
-\cell{s1}{\$} & \cell{i1}{\At{1}} & \cell{psi1}{\At{2}}\\
-\cell{s2}{A}  & \cell{i2}{\At{2}} & \cell{psi2}{\At{5}}\\
-\cell{s3}{A}  & \cell{i3}{\At{3}} & \cell{psi3}{\At{6}}\\
-\cell{s4}{A}  & \cell{i4}{\At{4}} & \cell{psi4}{\At{7}}\\
-\cell{s5}{N}  & \cell{i5}{\At{5}} & \cell{psi5}{\At{3}}\\
-\cell{s6}{N}  & \cell{i6}{\At{6}} & \cell{psi6}{\At{4}}\\
-\cell{s7}{S}  & \cell{i7}{\At{7}} & \cell{psi7}{\At{1}}\\
+\cell{s1}{\$} & \cell{i1}{$\At{1}$} & \cell{psi1}{$\At{2}$}\\
+\cell{s2}{A}  & \cell{i2}{$\At{2}$} & \cell{psi2}{$\At{5}$}\\
+\cell{s3}{A}  & \cell{i3}{$\At{3}$} & \cell{psi3}{$\At{6}$}\\
+\cell{s4}{A}  & \cell{i4}{$\At{4}$} & \cell{psi4}{$\At{7}$}\\
+\cell{s5}{N}  & \cell{i5}{$\At{5}$} & \cell{psi5}{$\At{3}$}\\
+\cell{s6}{N}  & \cell{i6}{$\At{6}$} & \cell{psi6}{$\At{4}$}\\
+\cell{s7}{S}  & \cell{i7}{$\At{7}$} & \cell{psi7}{$\At{1}$}\\
 \end{tabular}
 \link{s1}{i1}
 \linkdown{i1}{psi1}{i2}
@@ -681,7 +681,7 @@ Thus, the binary one-level RD consumes $2\Slen$ bits.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=$ {\ttfamily 010101100100}. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R}{\At{2}} + \rank_1(\Suffix{\String}{5}, \At{2}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \rank_1(\Suffix{\String}{\At{5}}, \At{2}) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=010101100100$. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R}{\At{2}} + \rank_1(\Suffix{\String}{5}, \At{2}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \rank_1(\Suffix{\String}{\At{5}}, \At{2}) = 3$.}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -690,18 +690,18 @@ Thus, the binary one-level RD consumes $2\Slen$ bits.
 \begin{tabular}{rcc}
 $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/4}}$\\
 \midrule
-\At{1} & 0     & 0\\
-\At{2} & 1\\
-\At{3} & 0\\
-\At{4} & 1\\
-\At{5} & \cell{s5}{0} & \cell{R5}{2}\\
-\cell{i6}{\At{6}} & \cell{s6}{1}\\
-\At{7} & 1\\
-\At{8} & 0\\
-\At{9} & 0     & 4\\
-\At{10} & 1\\
-\At{11} & 0\\
-\At{12} & 0\\
+$\At{1}$ & $0$     & $0$\\
+$\At{2}$ & $1$\\
+$\At{3}$ & $0$\\
+$\At{4}$ & $1$\\
+$\At{5}$ & \cell{s5}{$0$} & \cell{R5}{$2$}\\
+\cell{i6}{$\At{6}$} & \cell{s6}{$1$}\\
+$\At{7}$ & $1$\\
+$\At{8}$ & $0$\\
+$\At{9}$ & $0$     & $4$\\
+$\At{10}$ & $1$\\
+$\At{11}$ & $0$\\
+$\At{12}$ & $0$\\
 \end{tabular}
 \around{i6}
 \eround{s5}{s6}
@@ -716,18 +716,18 @@ $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/4}}$\\
 \begin{tabular}{rccc}
 $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/2}}$ & $\SubscriptNV{R^2}{\xfloor{i/4}}$\\
 \midrule
-\At{1} & 0 & 0 & 0\\
-\At{2} & 1\\
-\At{3} & 0	& 1\\
-\At{4} & 1\\
-\At{5} & \cell{s5}{0} & \cell{Rb5}{0} & \cell{R5}{2}\\
-\cell{i6}{\At{6}} & \cell{s6}{1}\\
-\At{7} & 1 & 1\\
-\At{8} & 0\\
-\At{9} & 0 & 0 & 4\\
-\At{10} & 1\\
-\At{11} & 0 & 1\\
-\At{12} & 0\\
+$\At{1}$ & $0$ & $0$ & $0$\\
+$\At{2}$ & $1$\\
+$\At{3}$ & $0$	& $1$\\
+$\At{4}$ & $1$\\
+$\At{5}$ & \cell{s5}{$0$} & \cell{Rb5}{$0$} & \cell{R5}{$2$}\\
+\cell{i6}{$\At{6}$} & \cell{s6}{$1$}\\
+$\At{7}$ & $1$ & $1$\\
+$\At{8}$ & $0$\\
+$\At{9}$ & $0$ & $0$ & $4$\\
+$\At{10}$ & $1$\\
+$\At{11}$ & $0$ & $1$\\
+$\At{12}$ & $0$\\
 \end{tabular}
 \around{i6}
 \eround{s5}{s6}
@@ -786,12 +786,12 @@ Thus, $R_{\sigma}$ consumes $\sigma n \log{\sigma}$ bits and the whole RD $\Slen
 \begin{tabular}{rcr}
 $i$	& $\Subscript{\String}{i}$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \, \text{T}\}]$\\
 \midrule
-\At{1} & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
-\At{2} & T\\
-\At{3} & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
-\cell{i4}{\At{4}}   & \cell{s4}{G}\\
-\At{5} & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
-\At{6} & A\\
+$\At{1}$ & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
+$\At{2}$ & T\\
+$\At{3}$ & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
+\cell{i4}{$\At{4}$}   & \cell{s4}{G}\\
+$\At{5}$ & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
+$\At{6}$ & A\\
 \end{tabular}
 \around{i4}
 \eround{s3}{s4}
