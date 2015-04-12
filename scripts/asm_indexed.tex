@@ -32,12 +32,12 @@ In this way, an additional logarithmic time complexity is paid to reduce space c
 I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
 
 \begin{definition}
-The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 \end{definition}
 
 \begin{definition}
 The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $\String^i \in \Strings$ and $j$ points to one of the $\Slen_i$ suffixes of $\String^i$.
-Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} <_{lex} \Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 \end{definition}
 
 \begin{figure}[b]
@@ -116,7 +116,7 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \State {$l_2 \gets \StrieNode.r$}
 \While {$l_1 < l_2$}
 	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} <_{lex} \StrieChar$}
+	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexlt \StrieChar$}
 		\State {$l_1 \gets i+1$}
 	\Else
 		\State {$l_2 \gets i$}
@@ -141,7 +141,7 @@ For instance, for collections consisting of not more than 256 texts shorter than
 \State {$r_2 \gets \StrieNode.r$}
 \While {$r_1 < r_2$}
 	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \leq_{lex} \StrieChar$}
+	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexleq \StrieChar$}
 		\State {$r_1 \gets i+1$}
 	\Else
 		\State {$r_2 \gets i$}
@@ -225,7 +225,7 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,
 
 Binary search is the key to implement function \FunctionName{goDown} a symbol.
 Functions \FunctionName{L} (algorithm~\ref{alg:sa-lower}) and \FunctionName{R} (algorithm~\ref{alg:sa-upper}) compute in $\Oh(\log{\Slen})$ binary search steps the position in $\Sarray$ of the left and right intervals corresponding to the child node that is reached by going down the edge labeled by a given symbol $\StrieChar$.
-%Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Strings$, hence I define $\Subscript{\Text}{i}$ as the empty word $\epsilon$ if $i > |\Text|$ and $\epsilon <_{lex} \StrieChar$ for all $\StrieChar \in \Sigma$.
+%Note that line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper} may involve a comparison beyond the end of strings in $\Strings$, hence I define $\Subscript{\Text}{i}$ as the empty word $\epsilon$ if $i > |\Text|$ and $\epsilon \lexlt \StrieChar$ for all $\StrieChar \in \Sigma$.
 
 \begin{figure*}[b!]
 \begin{center}
@@ -334,10 +334,11 @@ SS & \At{9} & \At{6} \\
 
 With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow \OInterval{\At{1}}{\sigma^q}$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
-h(\Pattern) = 1 + \sum_{i=\At{1}}^{\AtEnd{q}}{\rho_0(\Subscript{\Pattern}{i}) \cdot \sigma^{q-i}}
+h(\Pattern) = 1 + \sum_{i=\At{1}}^{\AtEnd{q}}{\lexrank{\Subscript{\Pattern}{i}} \cdot \sigma^{q-i}}
 \end{eqnarray}
-where $p \in \Sigma^q$ is any $q$-gram and $\rho_0$ is the zero-based lexicographic rank defined on $\Sigma$ (recall the lexicographic rank function $\rho$ from definition~\ref{def:rho} and pose $\rho_0(\XSeq) = \rho(\XSeq) - 1$).
-The canonical code assigned by $h$ preserves the lexicographical ordering for all words not longer than $q$, \ie $\XSeq <_{lex} \YSeq$ iff $h(\XSeq) < h(\YSeq)$ for all $\XSeq,\YSeq \in \Sigma^{\leq q}$.
+where $p \in \Sigma^q$ is any $q$-gram and $\lexrank{}$ is the lexicographic rank defined on $\Sigma$ (see definition~\ref{def:rho}). 
+% pose $\lexrank_0{c} = \lexrank{c} - 1$.
+The canonical code assigned by $h$ preserves the lexicographical ordering for all words not longer than $q$, \ie $\XSeq \lexlt \YSeq$ iff $h(\XSeq) < h(\YSeq)$ for all $\XSeq,\YSeq \in \Sigma^{\leq q}$.
 The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $\SubscriptNV{D}{h(\Pattern)} = \FunctionCall{L}{\At{1},\Slen,p}$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $\SubscriptNV{D}{h(\Pattern)+1}$.
 
@@ -369,7 +370,7 @@ I define the basic node operations as follows:
 \textbf{Output} & integer denoting the left interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\StrieNode.l_h \gets \StrieNode.l_h + \rho_0(c) \cdot \sigma^{\StrieNode.d} $}
+\State {$\StrieNode.l_h \gets \StrieNode.l_h + \lexrank{c} \cdot \sigma^{\StrieNode.d} $}
 \State \Return $\SubscriptNV{D}{\StrieNode.l_h}$
 \end{algorithmic}
 \label{alg:qgram-lower}
@@ -385,7 +386,7 @@ I define the basic node operations as follows:
 \textbf{Output} & integer denoting the right interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\StrieNode.r_h \gets \StrieNode.r_h - \rho_0(c) \cdot \sigma^{\StrieNode.d}$}
+\State {$\StrieNode.r_h \gets \StrieNode.r_h - \lexrank{c} \cdot \sigma^{\StrieNode.d}$}
 \State \Return $\SubscriptNV{D}{\StrieNode.r_h}$
 \end{algorithmic}
 \label{alg:qgram-upper}
@@ -769,7 +770,7 @@ As in the binary case, this one-level RD partitions $\String$ in blocks of $b$ s
 It complements the string $\String$ with a matrix $R_{\sigma}$ of size $\xfloor{\Slen/b} \times \sigma$ entries, summarizing the number of occurrences for each symbol in $\Sigma$.
 The rank query is rewritten accordingly:
 \begin{eqnarray}
-\rank_{\StrieChar}(\String,i) = \SubscriptNM{R_{\sigma}}{\xfloor{i/b}}{\rho(c)} + \rank_{\StrieChar}(\Suffix{\String}{\xfloor{i/b}}, \, i\imod{b}).
+\rank_{\StrieChar}(\String,i) = \SubscriptNM{R_{\sigma}}{\xfloor{i/b}}{\lexrank{c}} + \rank_{\StrieChar}(\Suffix{\String}{\xfloor{i/b}}, \, i\imod{b}).
 \end{eqnarray}
 Figure \ref{fig:rd_dna} shows an example of one-level DNA RD.
 Answering this query requires counting the number of occurrences of the character $\StrieChar$ inside a block of $\Oh(b)$ symbols.
@@ -810,7 +811,7 @@ I first give the formal definition of WT and then discuss how to answer rank que
 \begin{definition}
 \citep{Grossi2003, Navarro2007}
 The wavelet tree of a string $\String \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$. The root represents all symbols in $\Sigma$ and each leaf exactly one symbol $\StrieChar \in \Sigma$.
-Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval{i}{j}$ \ie $\Sigma_v = \{ c \in \Sigma : \rho(c) \in \Interval{i}{j} \}$, its left child $\Last$ represents the subset $\Sigma_l$ of symbols in range $\Interval{i}{\frac{i+j}{2}}$ while its right child $r$ represents in $\Sigma_r$ those in range $\Interval{\frac{i+j}{2}+1}{j}$.
+Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval{i}{j}$ \ie $\Sigma_v = \{ c \in \Sigma : \lexrank{c} \in \Interval{i}{j} \}$, its left child $\Last$ represents the subset $\Sigma_l$ of symbols in range $\Interval{i}{\frac{i+j}{2}}$ while its right child $r$ represents in $\Sigma_r$ those in range $\Interval{\frac{i+j}{2}+1}{j}$.
 Node $v$ implicitly represents the subsequence $\String^v$ of all symbols of $\String$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $b^v$ \st $b^v_i = 0$ if $\String^v_i \in \Sigma_l$ and 1 otherwise.
 \end{definition}
 

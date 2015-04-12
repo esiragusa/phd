@@ -7,56 +7,61 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 
 \section{Definitions}
 
-I start with fundamental objects of stringology: alphabets and strings.
+%I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_{\At{1}}, a_{\At{2}}, \dots , a_{\AtEnd{\sigma}} \}$ is a finite ordered set of symbols (or characters) $a_i$.
 A \emph{string} (or word) $\String=\Subscript{\String}{\At{1}} \Subscript{\String}{\At{2}} \dots \Subscript{\String}{\AtEnd{\Slen}}$ over an alphabet $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
-I denote by $\Substring{\String}{i}{j}$ the \emph{concatenated} symbols $\Subscript{\String}{i} \dots \Subscript{\String}{j}$, and by $|\String|=\Slen$ the length of $\String$.
-%I often call \emph{$q$-gram} a string of length $q$.
-%I denote by $\epsilon$ the \emph{empty string}, \st $|\epsilon|=0$.
+I denote by $|\String|=\Slen$ the length of $\String$.
 Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
-The definitions of prefix, suffix and substring are immediately derived from concatenation.
-A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, a \emph{suffix} iff $\XSeq = \Suffix{\YSeq}{i}$ for some $1 \leq i \leq |\YSeq|$, 
-and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $1 \leq i \leq j \leq |\YSeq|$.
+I denote by $\Substring{\String}{i}{j}$ the concatenated symbols $\Subscript{\String}{i} \dots \Subscript{\String}{j}$ for any $\At{1} \leq i \leq j \LeqThan{\Slen}$.
+A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|$}, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|}$, 
+and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \leq i \leq j \LeqThan{|\YSeq|}$.
 For convenience, often I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
 
-The definition of \emph{occurrence} is fundamental in string matching.
-A string $\XSeq$ occurs in a string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
-Given $\XSeq = \Substring{\YSeq}{i}{j}$, the occurrence of $\XSeq$ starts at position $i$ and ends at position $j$ in $\YSeq$.
-Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
+%The definition of \emph{occurrence} is fundamental in string matching.
+\begin{definition}
+\label{def:occurrence}
+A string $\XSeq$ \emph{occurs} in a string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
+Given $\XSeq = \Substring{\YSeq}{i}{j}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $j$ in $\YSeq$.
+\end{definition}
+%Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
 \label{def:delta}
-Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any two distinct $a,b \in \Sigma$ and 0 otherwise.
+Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any distinct $a,b \in \Sigma$ and 0 otherwise.
 \end{definition}
 
-Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
+%Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
 \begin{definition}
 \label{def:rho}
-Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\rho : \Sigma \rightarrow \OInterval{\Ibase}{\sigma}$, \st $\rho(a) < \rho(b) \iff a < b$ for any distinct $a,b \in \Sigma$.
+Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\lexrank{} : \Sigma \rightarrow \OInterval{\Ibase}{\sigma}$, \st $\lexrank{a} < \lexrank{b} \iff a < b$ for any distinct $a,b \in \Sigma$.
 \end{definition}
-The \emph{lexicographical order} $<_{lex}$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq <_{lex} \YSeq \iff \Subscript{\XSeq}{\At{1}} < \Subscript{\YSeq}{\At{1}}, \text{ or } \Subscript{\XSeq}{\At{1}} = \Subscript{\YSeq}{\At{1}} \text{ and } \Suffix{\XSeq}{\At{2}} <_{lex} \Suffix{\YSeq}{\At{2}}$.
 
-\emph{Generalized} full-text indices work on string collections.
+\begin{definition}
+\label{def:lexorder}
+The \emph{lexicographical order} $\lexlt$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq \lexlt \YSeq \iff \Subscript{\XSeq}{\At{1}} < \Subscript{\YSeq}{\At{1}}, \text{ or } \Subscript{\XSeq}{\At{1}} = \Subscript{\YSeq}{\At{1}} \text{ and } \Suffix{\XSeq}{\At{2}} \lexlt \Suffix{\YSeq}{\At{2}}$.
+\end{definition}
+
+%\emph{Generalized} full-text indices work on string collections.
 A \emph{string collection} is an ordered multiset $\Strings = \{ \String^{\At{1}}, \String^{\At{2}}, \dots, \String^{\AtEnd{c}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\String^i|}$ the total length of the string collection.
 I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
 
 To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
 I first introduce special terminator symbols to perform padding.
-I call \emph{terminator} a symbol $\$ \not \in \Sigma$ \st $\rho(\$) < \rho(a)$ for any $a \in \Sigma$.
+I call \emph{terminator} a symbol $\$ \not \in \Sigma$ \st $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
 \begin{definition}
 \label{def:strd}
 Given a string $\String$ over $\Sigma$, I call \emph{padded string} the concatenation of $\String$ with a terminator symbol \$.
 \end{definition}
 \begin{definition}
 \label{def:coltd}
-Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $\String^i \in \Strings$ padded with terminator symbols $\$^i$ \st $\rho(\$^i) < \rho(\$^j) \iff i < j$.
+Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $\String^i \in \Strings$ padded with terminator symbols $\$^i$ \st $\lexrank{\$^i} < \lexrank{\$^j} \iff i < j$.
 \end{definition}
 
 In this manuscript, in addition to strings, I use numerical arrays and matrices.
-An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \Subscript{V}{\At{2}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$ (or any subset of $\N_0$).
+An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \Subscript{V}{\At{2}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$.
 I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
-A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ (or any subset of $\N_0$) arranged \st
+A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ arranged \st
 $$X=
 \begin{pmatrix}
   \SubscriptM{X}{\At{1}}{\At{1}} & \SubscriptM{X}{\At{1}}{\At{2}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
@@ -69,8 +74,8 @@ I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$
 \section{Transcripts, alignments and distances}
 
 I now define the basic edit operations to transform one string into another.
-Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $\Subscript{X}{i}$ \st $\Subscript{X}{i} \neq \Subscript{Y}{i}$ into $\Subscript{Y}{i}$, for $1 \leq i \leq \Xlen$.
-However, if the two strings have different lengths, some symbols from $\XSeq$ must be necessarily inserted or deleted in order to obtain $\YSeq$.
+Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $\Subscript{X}{i}$ \st $\Subscript{X}{i} \neq \Subscript{Y}{i}$ into $\Subscript{Y}{i}$, for $\At{1} \leq i \LeqThan{\Xlen}$.
+However, if the two strings have different lengths, some symbols must be necessarily inserted or deleted from $\XSeq$ in order to obtain $\YSeq$.
 This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
@@ -92,7 +97,7 @@ An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of edit transcript and alignment]{Example of edit transcript and alignment. The string $\XSeq$ is transformed into $\YSeq$. The transcript character M indicates a match, R a replacement, I an insertion, and D a deletion.
+\caption[Example of edit transcript and alignment]{Example of edit transcript and alignment. The string $\XSeq$ is transformed into $\YSeq$. The transcript character \texttt{M} indicates a match, \texttt{R} a replacement, \texttt{I} an insertion, and \texttt{D} a deletion.
 }
 \label{fig:edit-transcript}
 \input{figures/transcript.tikz}
@@ -120,14 +125,13 @@ The edit distance between two strings is efficiently computed via \emph{dynamic 
 %Below, I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 Let $\XSeq,\YSeq$ be two strings of length $\Xlen \geq \Ylen$.
 The edit distance $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$ between any their prefixes $\Prefix{\XSeq}{i}$ and $\Prefix{\YSeq}{j}$ is defined recursively.
-
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d_E(\epsilon,\epsilon)&=&0\label{eq:dp-ee}\\
-d_E(\Prefix{\XSeq}{i},\epsilon)&=&i \; \text{ for all } 1 \leq i \leq \Xlen\label{eq:dp-row}\\
-d_E(\epsilon, \Prefix{\YSeq}{j})&=&j \; \text{ for all } 1 \leq j \leq \Ylen\label{eq:dp-col}
+d_E(\Prefix{\XSeq}{i},\epsilon)&=&i \; \text{ for all } \At{1} < i \LeqThan{\Xlen}\label{eq:dp-row}\\
+d_E(\epsilon, \Prefix{\YSeq}{j})&=&j \; \text{ for all } \At{1} < j \LeqThan{\Ylen}\label{eq:dp-col}
 \end{eqnarray}
-and the recursive case for all $1 < i \leq \Xlen$ and $1 < j \leq \Ylen$ is as follows:
+and the recursive case for all $\At{1} < i \LeqThan{\Xlen}$ and $\At{1} < j \LeqThan{\Ylen}$ is as follows:
 \begin{eqnarray}
 d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j}) = \min \left\{
 \begin{array}{lcl}
@@ -288,32 +292,17 @@ Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the e
 Consider the recurrence relation described by equations~\ref{eq:dp-ee}--\ref{eq:dp-min} and pose $\XSeq=\Text$ and $\YSeq=\Pattern$.
 Because an occurrence of the pattern can start anywhere in the text, the base condition \ref{eq:dp-row} of the edit distance recurrence relation becomes:
 \begin{eqnarray}
-d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } 1 \leq i \leq \Xlen\label{eq:dp-row-kdiff}
+d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } \At{1} < i \LeqThan{\Xlen} \label{eq:dp-row-kdiff}
 \end{eqnarray}
 and algorithm~\ref{alg:dp-kdiff} initializes the top row of the DP matrix $D$ accordingly.
-Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-kdiff} checks any cell in the bottom row for the condition $D[i,\Plen] \leq k$.
+Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-kdiff} checks any cell in the bottom row for the condition $\SubscriptNM{D}{i}{\Plen} \leq k$.
 
-%\begin{figure}[h]
-%\begin{center}
-%\caption[Example of approximate string matching via DP]{DP table representing the match of $p=...$ in $t=...$.}
-%\label{fig:asm-dp}
-%\input{figures/dp_asm.tikz}
-%\end{center}
-%\end{figure}
-
-%\subsubsection{Myers' algorithm}
-
-%DP bit-parallelism.
-%Other algorithms for approximate string matching are based on automata \citep{Navarro2001b}.
 
 % --- Indexed methods ---
 
 \subsection{Indexed methods}
 \label{sub:introindex}
 
-%Indexed methods are more attractive than online methods when several patterns are to be searched in the same static text.
-%These methods work by building an index of the text beforehand to speed up subsequent searches.
-%To this intent,
 I now introduce \emph{suffix tries}, idealized data structures to index full texts.
 I define a set of generic operations to traverse them in a top-down fashion.
 In chapter~\ref{chr:index}, I introduce various data structures replacing suffix tries in practical implementations.
@@ -346,12 +335,12 @@ Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\String
 \begin{figure}[b]
 \caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree of the string {\ttfamily ANANAS\$} .}
 \label{fig:stree}
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}[b]{.5\textwidth}
 \begin{center}
 \input{figures/strie_banana.tikz}
 \end{center}
 \end{subfigure}%
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}[b]{.5\textwidth}
 \begin{center}
 \input{figures/stree_banana.tikz}
 \end{center}
@@ -409,7 +398,7 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\If {\Call{goDown}{$\StrieNode, \min_{lex}{\Sigma}$}}
+\If {\Call{goDown}{$\StrieNode, \lexmin{\Sigma}$}}
 	\State \Return \True
 \Else
 	\State \Return $\Call{goRight}{\StrieNode}$		
@@ -428,7 +417,7 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\NotB \Call{isRoot}{$\StrieNode$}}
-	\While {$\StrieChar \gets \text{next}_{lex}{\Call{label}{\StrieNode}}$}
+	\While {$\StrieChar \gets \lexnext{\Call{label}{\StrieNode}}$}
 		\State {$\Call{goUp}{\StrieNode}$}
 		\If {$\Call{goDown}{\StrieNode, \StrieChar}$}
 			\State \Return \True

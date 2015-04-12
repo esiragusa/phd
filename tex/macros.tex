@@ -54,28 +54,39 @@
 \newcommand{\TTra}{\textsuperscript*{\texttrademark}\xspace}
 
 % ----------------------------------------------------------
-% Approximate string matching notations
+% Basic notations
 % ----------------------------------------------------------
 
-\newcommand\Ibase{0}								% 0- or 1-based
+\newcommand\Ibase{0}								% indices 0- or 1-based
 
 \newcounter{At}
-\newcommand\At[1]{\setcounter{At}{#1}\addtocounter{At}{-1}\arabic{At}}	% Convert 1- to 0-base
+\newcommand\At[1]{\setcounter{At}{#1}\addtocounter{At}{-1}\arabic{At}}	% Convert 1-based index to 0-based
 \newcommand\AtEnd[1]{#1-1}
+\newcommand\LeqThan[1]{< #1}						% Convert 1-based <= to <
 
 \newcommand\Interval[2]{[#1,#2]}					% [] interval
 %\newcommand\OInterval[2]{[#1,#2-1]}
 \newcommand\OInterval[2]{[#1,#2)}					% [) interval
-%\newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}	% string subscript s_i
-\newcommand\Subscript[2]{#1[#2]}					% string subscript S[i]
-\newcommand\SubscriptM[3]{\MakeLowercase{#1}_{#2,#3}}
-\newcommand\SubscriptNV[2]{#1[#2]}
-\newcommand\SubscriptNM[3]{#1[#2,#3]}
-\newcommand\Suffix[2]{#1_{#2}}
-\newcommand\Substring[3]{#1\Interval{#2}{#3}}   	% substring
-\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}} 	% substring -1
-\newcommand\Prefix[2]{#1\OInterval{\Ibase}{#2}} 	% prefix 0-based
-%\newcommand\Prefix[2]{#1\Interval{\Ibase}{#2}} 	% prefix 1-based
+
+%\newcommand\Subscript[2]{#1[#2]}					% string subscript S[i]
+\newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}	% string subscript s_i
+\newcommand\SubscriptM[3]{\MakeLowercase{#1}_{#2,#3}} % matrix subscript s_{i,j}
+\newcommand\SubscriptNV[2]{#1[#2]}					% numerical vector subscript V[i]
+\newcommand\SubscriptNM[3]{#1[#2,#3]}				% numerical matrix subscript M[i,j]
+
+%\newcommand\Substring[3]{#1\Interval{#2}{#3}}   	% substring S[i,j]
+%\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}} 	% substring S[i,j)
+%\newcommand\Substring[3]{{#1}_{\Interval{#2}{#3}}}   	% substring s_[i,j]
+%\newcommand\OSubstring[3]{{#1}_{\OInterval{#2}{#3}}} 	% substring s_[i,j)
+\newcommand\Substring[3]{{#1}_{{#2}\dots{#3}}}   	% substring s_{i..j}
+\newcommand\OSubstring[3]{{#1}_{{#2}\dots{#3-1}}} 	% substring s_{i..j-1}
+
+\newcommand\Prefix[2]{\Substring{#1}{\Ibase}{#2}}	% prefix as substring
+\newcommand\Suffix[2]{{#1}_{#2}}					% suffix S_i
+
+% ----------------------------------------------------------
+% Approximate string matching notations
+% ----------------------------------------------------------
 
 \newcommand\String{S}
 \newcommand\Strings{\mathbb{\String}}
@@ -106,6 +117,13 @@
 
 \newcommand\FunctionName[1]{\textsc{#1}}
 \newcommand\FunctionCall[2]{\FunctionName{#1}($#2$)}
+
+\newcommand{\lexrank}[1]{\ifthenelse{\equal{#1}{}}{\text{rank}}{\text{rank}(#1)}}
+\newcommand{\lexlt}{<_{lex}}
+\newcommand{\lexleq}{\leq_{lex}}
+\newcommand{\lexmin}[1]{\min_{lex}{#1}}
+\newcommand{\lexnext}[1]{\text{next}_{lex}{#1}}
+
 
 \newcommand{\rank}{\FunctionName{rank}}
 \newcommand{\popcount}{\FunctionName{popcount}}
