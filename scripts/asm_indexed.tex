@@ -334,12 +334,13 @@ SS & $\At{9}$ & $\At{6}$ \\
 
 With the aim of addressing $q$-grams in the directory $D$, I impose a canonical code on $q$-grams through a bijective function $h : \Sigma^q \rightarrow \OInterval{\At{1}}{\sigma^q}$ defined as in \citep{Knuth1973}:
 \begin{eqnarray}
-h(\Pattern) = 1 + \sum_{i=\At{1}}^{\AtEnd{q}}{\lexrank{\Subscript{\Pattern}{i}} \cdot \sigma^{q-i}}
+%h(\Pattern) = 1 + \sum_{i=\At{1}}^{\AtEnd{q}}{\lexrank{\Subscript{\Pattern}{i}} \cdot \sigma^{q-i}} 	% 1-based
+h(\Pattern) = \sum_{i=\At{1}}^{\AtEnd{q}}{\lexrank{\Subscript{\Pattern}{i}} \cdot \sigma^{q-i}}			% 0-based
 \end{eqnarray}
-where $p \in \Sigma^q$ is any $q$-gram and $\lexrank{}$ is the lexicographic rank defined on $\Sigma$ (see definition~\ref{def:rho}). 
-% pose $\lexrank_0{c} = \lexrank{c} - 1$.
+where $\Pattern \in \Sigma^q$ is some $q$-gram and $\lexrank{}$ is the lexicographic rank defined on $\Sigma$ (see definition~\ref{def:rho}). 
+% pose $\lexrank_0{c} = \lexrank{c} - 1$ 	% 1-based
 The canonical code assigned by $h$ preserves the lexicographical ordering for all words not longer than $q$, \ie $\XSeq \lexlt \YSeq$ iff $h(\XSeq) < h(\YSeq)$ for all $\XSeq,\YSeq \in \Sigma^{\leq q}$.
-The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $p \in \Sigma^q$, $\SubscriptNV{D}{h(\Pattern)} = \FunctionCall{L}{\At{1},\Slen,p}$.
+The hash function $h$ allows to store in and retrieve from $D$ the left SA interval returned by algorithm~\ref{alg:sa-lower} for each $q$-gram, \ie $\Pattern \in \Sigma^q$, $\SubscriptNV{D}{h(\Pattern)} = \FunctionCall{L}{\At{1},\Slen,\Pattern}$.
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $\SubscriptNV{D}{h(\Pattern)+1}$.
 
 In practice, the $q$-gram index is applicable only to relatively small alphabets and tree depths.
@@ -386,7 +387,7 @@ I define the basic node operations as follows:
 \textbf{Output} & integer denoting the right interval\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\StrieNode.r_h \gets \StrieNode.r_h - \lexrank{c} \cdot \sigma^{\StrieNode.d}$}
+\State {$\StrieNode.r_h \gets \StrieNode.r_h - \lexrank{\StrieChar} \cdot \sigma^{\StrieNode.d}$}
 \State \Return $\SubscriptNV{D}{\StrieNode.r_h}$
 \end{algorithmic}
 \label{alg:qgram-upper}
@@ -412,7 +413,7 @@ In this way, both variants of \FunctionName{goDown} (algorithms \ref{alg:sa-godo
 	\State \Return \False
 \EndIf
 \State {$\StrieNode.d \gets \StrieNode.d+1$}
-\State {$\StrieNode.e \gets c$}
+\State {$\StrieNode.e \gets \StrieChar$}
 \State {$\StrieNode.l \gets \Call{L}{\StrieNode,\StrieNode.e}$}
 \State {$\StrieNode.r \gets \Call{R}{\StrieNode,\StrieNode.e}$}
 \State \Return $\StrieNode.l < \StrieNode.r$

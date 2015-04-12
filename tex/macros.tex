@@ -65,8 +65,9 @@
 \newcommand\LeqThan[1]{< #1}						% Convert 1-based <= to <
 
 \newcommand\Interval[2]{[#1,#2]}					% [] interval
-%\newcommand\OInterval[2]{[#1,#2-1]}
 \newcommand\OInterval[2]{[#1,#2)}					% [) interval
+
+\newcommand\SAInterval[2]{\OInterval{#1}{#2}}		% SA-interval
 
 %\newcommand\Subscript[2]{#1[#2]}					% string subscript S[i]
 \newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}	% string subscript s_i
