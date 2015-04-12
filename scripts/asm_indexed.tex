@@ -303,7 +303,7 @@ The construction of the full LST takes $\Oh(\Slen^2 + \sigma \Slen)$ time in the
 \label{sec:index:qgram}
 
 If the traversal of the idealized suffix trie can be bounded to a maximum depth $q$, the logarithmic factor paid by using the SA vanishes.
-The idea is to supplement the SA with a so-called $q$-gram directory: an additional array $D$ of $\Sigma^q + 1$ integers, storing the SA ranges computed by algorithm~\ref{alg:sa-lower} for any possible word of length $q$.
+The idea is to supplement the SA with a so-called $q$-gram directory: an additional array $D$ of $\sigma^q + 1$ integers, storing the SA ranges computed by algorithm~\ref{alg:sa-lower} for any possible word of length $q$.
 
 \begin{figure}[b!]
 \begin{center}
@@ -343,7 +343,7 @@ The hash function $h$ allows to store in and retrieve from $D$ the left SA inter
 Note that the right interval returned by algorithm~\ref{alg:sa-upper} is equivalent to the left interval of the lexicographical successor $q$-gram and therefore available in $\SubscriptNV{D}{h(\Pattern)+1}$.
 
 In practice, the $q$-gram index is applicable only to relatively small alphabets and tree depths.
-For instance, parameters $|\Sigma| = 4$ and $q=14$ require a $q$-gram directory consisting of 268~M entries.
+For instance, parameters $\sigma = 4$ and $q=14$ require a $q$-gram directory consisting of 268~M entries.
 Using a 32 bits integer encoding, the directory alone consumes 1~GB of memory.
 
 \subsubsection{Top-down traversal}
@@ -357,7 +357,7 @@ I define the basic node operations as follows:
 \item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, 0, \At{1}, \sigma^q, \epsilon \}$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.d=q$;
 \item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$;
-\item \FunctionCall{occurrences}{\StrieNode} returns $\Substring{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
+\item \FunctionCall{occurrences}{\StrieNode} returns $\OSubstringNV{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
 \end{itemize}
 
 \begin{figure*}[b!]
@@ -608,7 +608,7 @@ $\Subscript{\String}{\SubscriptNV{\Sarray}{i}}$ & $i$ & $\Psi(i)$\\
 
 Inverting the generalized BWT works in the same way.
 Indeed, permutations $\Psi$ and $LF$ are composed of $\Scard$ cycles, where each cycle corresponds to a distinct string in the collection.
-The string $\AtCollection{String}{j}$ is recovered by starting at the position of $\AtCollection{\$}{j}$ and following the cycle of $\Psi$ (or $LF$) associated to $\AtCollection{\String}{j}$.
+The string $\AtCollection{\String}{j}$ is recovered by starting at the position of $\AtCollection{\$}{j}$ and following the cycle of $\Psi$ (or $LF$) associated to $\AtCollection{\String}{j}$.
 
 \subsubsection{Permutation LF}
 
