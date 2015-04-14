@@ -8,22 +8,23 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 \section{Definitions}
 
 %I start with fundamental objects of stringology: alphabets and strings.
-An \emph{alphabet} $\Sigma= \{ a_{\At{1}}, a_{\At{2}}, \dots , a_{\AtEnd{\sigma}} \}$ is a finite ordered set of symbols (or characters) $a_i$.
-A \emph{string} (or word) $\String=\Subscript{\String}{\At{1}} \Subscript{\String}{\At{2}} \dots \Subscript{\String}{\AtEnd{\Slen}}$ over an alphabet $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
-I denote by $|\String|=\Slen$ the length of $\String$.
-Given an alphabet $\Sigma$, the set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
+An \emph{alphabet} $\Sigma= \{ a_{\At{1}}, \dots, a_{\AtEnd{\sigma}} \}$ is a finite ordered set of characters (or symbols) $a_i$.
+A \emph{string} (or word) $\String$ over $\Sigma$ is a finite sequence of symbols from $\Sigma$.
+I denote with $\Subscript{\String}{i}$ the $i$-th symbol of $\String$ counting from $\Ibase$, with $\Substring{\String}{i}{j}$ the sequence of symbols $\Subscript{\String}{i} \ldots \Subscript{\String}{j}$ for any $\At{1} \leq i \leq j \LeqThan{\Slen}$, and with $|\String|=\Slen$ the length of $\String$.
+The set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
-I denote by $\Substring{\String}{i}{j}$ the concatenated symbols $\Subscript{\String}{i} \dots \Subscript{\String}{j}$ for any $\At{1} \leq i \leq j \LeqThan{\Slen}$.
 A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|$}, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|}$, 
 and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \leq i \leq j \LeqThan{|\YSeq|}$.
-For convenience, often I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
+For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
+Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
 
 %The definition of \emph{occurrence} is fundamental in string matching.
 \begin{definition}
 \label{def:occurrence}
-A string $\XSeq$ \emph{occurs} in a string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
-Given $\XSeq = \Substring{\YSeq}{i}{j}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $j$ in $\YSeq$.
+A string $\XSeq$ of length $\Xlen$ \emph{occurs} in a longer string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
+Given $\XSeq = \Substring{\YSeq}{i}{i+\Xlen}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $i+\Xlen$ in $\YSeq$.
 \end{definition}
+
 %Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
 \label{def:delta}
@@ -34,6 +35,7 @@ Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sig
 \begin{definition}
 \label{def:rho}
 Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\lexrank{} : \Sigma \rightarrow \OInterval{\Ibase}{\sigma}$, \st $\lexrank{a} < \lexrank{b} \iff a < b$ for any distinct $a,b \in \Sigma$.
+In addition, I denote by $\lexmin{\Sigma}$ the lexicographically smallest symbol $a \in \Sigma$ \st $\lexrank{a}=0$, and by $\lexnext{a}$ the lexicographical successor $b$ of $a$ in $\Sigma$ \st $\lexrank{b} = \lexrank{a}+1$.
 \end{definition}
 
 \begin{definition}
@@ -42,32 +44,46 @@ The \emph{lexicographical order} $\lexlt$ between two non-empty strings $\XSeq,\
 \end{definition}
 
 %\emph{Generalized} full-text indices work on string collections.
-A \emph{string collection} is an ordered multiset $\Strings = \{ \String^{\At{1}}, \String^{\At{2}}, \dots, \String^{\AtEnd{c}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
-I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\String^i|}$ the total length of the string collection.
-I extend the above definitions of prefix, suffix and substring also to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
+\begin{definition}
+\label{def:col}
+A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
+The above definitions of prefix, suffix and substring generalize to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
+\end{definition}
 
-To present full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
-I first introduce special terminator symbols to perform padding.
-I call \emph{terminator} a symbol $\$ \not \in \Sigma$ \st $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
+To well-define full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
+To this end, I introduce the special \emph{terminator} symbol $\$ \not \in \Sigma$, \st $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
+
 \begin{definition}
 \label{def:strd}
-Given a string $\String$ over $\Sigma$, I call \emph{padded string} the concatenation of $\String$ with a terminator symbol \$.
-\end{definition}
-\begin{definition}
-\label{def:coltd}
-Given a string collection $\Strings$ over $\Sigma$, I call \emph{padded string collection} the collection consisting of strings $\String^i \in \Strings$ padded with terminator symbols $\$^i$ \st $\lexrank{\$^i} < \lexrank{\$^j} \iff i < j$.
+Given a string $\String$ over $\Sigma$, I call \emph{padded string} the string $\String\$$ over $\Sigma_{\$}$, where $\Sigma_{\$} =\Sigma \cup \{ \$ \}$.
 \end{definition}
 
-In this manuscript, in addition to strings, I use numerical arrays and matrices.
-An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \Subscript{V}{\At{2}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$.
+\begin{definition}
+\label{def:coltd}
+Given a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{c}} \}$ over $\Sigma$, I call \emph{padded string collection} the collection $\{ \AtCollection{\String}{\At{1}}\AtCollection{\$}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}}\AtCollection{\$}{\AtEnd{\Scard}} \} $ over $\Sigma_{\$}$, where  $\Sigma_{\$} = \Sigma \cup \{ \AtCollection{\$}{\At{1}}, \ldots, \AtCollection{\$}{\AtEnd{\Scard}} \}$ and $\lexrank{\AtCollection{\$}{i}} < \lexrank{\AtCollection{\$}{j}} \iff i < j$.
+\end{definition}
+
+\begin{definition}
+\label{def:revstr}
+For a string $\String$, $\Rev{\String}$ denotes its reversal, \ie $\Subscript{\Rev{\String}}{i} = \Subscript{\String}{\AtEnd{\Slen} - i}$ for any $\At{1} \leq i \LeqThan{\Slen}$.
+\end{definition}
+
+\begin{definition}
+\label{def:revcol}
+For a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}} \}$, $\Rev{\Strings}$ denotes the reversed collection $\{ \AtCollection{\Rev{\String}}{\At{1}}, \ldots, \AtCollection{\Rev{\String}}{\AtEnd{\Scard}} \}$.
+\end{definition}
+
+In this manuscript, I use numerical intervals, arrays and matrices.
+Numerical intervals are sequences over $\N_{\Ibase}$, \ie $\Interval{i}{j} = \{i,i+1,\ldots,j\}$ and $\OInterval{i}{j} = \Interval{i}{j-1}$.
+An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$.
 I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
 A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ arranged \st
 $$X=
 \begin{pmatrix}
-  \SubscriptM{X}{\At{1}}{\At{1}} & \SubscriptM{X}{\At{1}}{\At{2}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
-  \SubscriptM{X}{\At{2}}{\At{1}} & \SubscriptM{X}{1}{\At{1}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
-  \vdots & \vdots  & \ddots & \vdots  \\
-  \SubscriptM{X}{\AtEnd{m}}{\At{1}} & \SubscriptM{X}{\AtEnd{m}}{\At{2}} & \cdots & \SubscriptM{X}{\AtEnd{m}}{\AtEnd{n}}
+  \SubscriptM{X}{\At{1}}{\At{1}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
+  \vdots & \ddots & \vdots  \\
+  \SubscriptM{X}{\AtEnd{m}}{\At{1}} & \cdots & \SubscriptM{X}{\AtEnd{m}}{\AtEnd{n}}
 \end{pmatrix}$$
 I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
@@ -311,11 +327,11 @@ Thanks to these generic traversal operations, I later formulate generic string m
 \subsubsection{Trie}
 
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $\Scard$ strings.
-Note that padding is necessary to ensure that no string $\String^i \in \Strings$ is a prefix of another string $\String^j \in \Strings$.
+Note that padding is necessary to ensure that no string $\AtCollection{\String}{i} \in \Strings$ is a prefix of another string $\AtCollection{\String}{j} \in \Strings$.
 \begin{definition}
-The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\At{1}}, \dots, \StrieLeaf{\AtEnd{\Scard}}$, where leaf $\StrieLeaf{i}$ points to string $\String^i$.
+The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\At{1}}, \dots, \StrieLeaf{\AtEnd{\Scard}}$, where leaf $\StrieLeaf{i}$ points to string $\AtCollection{\String}{i}$.
 Any edge entering a node of $\RtrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\RtrieOf{\Strings}$ is labeled with a terminator symbol.
-Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\String^i$, including its terminator symbol $\$^i$.
+Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\AtCollection{\String}{i}$, including its terminator symbol $\AtCollection{\$}{i}$.
 %Figure~\ref{fig:trie} illustrates.
 \end{definition}
 
@@ -327,7 +343,7 @@ The \emph{suffix trie} $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\Stri
 \end{definition}
 %The suffix trie generalizes to index string collections.
 \begin{definition}
-Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\String^i$.
+Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\AtCollection{\String}{i}$.
 Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
