@@ -24,23 +24,25 @@ My implementation of all these algorithms and data structures is publicly availa
 \subsection{Suffix array}
 \label{sec:index:sa}
 
-The key idea of the suffix array (SA) \citep{Manber1990} is that most information explicitly encoded in a suffix trie is superfluous for string matching.
-The explicit representation of suffix trie's internal nodes and outgoing edges can be omitted.
-Leaves pointing to the sorted suffixes are sufficient to perform exact string matching or even top-down traversals.
-On the SA, any path from the root to an internal node is computed on the fly via binary search over the leaves.
-In this way, an additional logarithmic time complexity is paid to reduce space consumption by a constant factor.
-I formally define the (generalized) suffix array and later show how to emulate suffix trie traversals.
+The suffix array (SA) has been initially proposed by \cite{Manber1990} as a practical replacement of the suffix tree in exact string matching.
+The SA reduces the space complexity of the suffix tree by a constant factor at the cost of an increase of the search time complexity by a logarithmic factor.
+It achieves that by explicitly representing only the leaves of the suffix trie while omitting its internal nodes and outgoing edges.
+Figure~\ref{fig:sa_gsa} shows an example.
+The leaves referring to sorted suffixes are sufficient to emulate suffix trie traversals.
+Any path from the root to some internal node is indeed computed on the fly via binary search over the sorted suffixes.
+Below, I define the (generalized) suffix array and then show how to emulate all top-down traversal operations.
 
-\begin{definition}
+\begin{definition}[Suffix array]
 The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an array $\Sarray$ containing a permutation of the interval $\OInterval{\At{1}}{\Slen}$, \st $\Suffix{\String}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suffix{\String}{\SubscriptNV{\Sarray}{i}}$ for all $\At{2} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
-\begin{definition}
-The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ where $i$ points to a string $\AtCollection{\String}{i} \in \Strings$ and $j$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\AtCollection{\String}{i}$.
+\begin{definition}[Generalized suffix array]
+The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ with $\At{1} \leq i \LeqThan{\Scard}$ and $\At{1} \leq j \LeqThan{|\AtCollection{\String}{i}|}$.
 Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ for all $\At{2} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
 \begin{figure}[b]
+\label{fig:sa_gsa}
 \begin{center}
 \caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
 
@@ -91,13 +93,13 @@ $\At{13}$ & $(\At{1},\At{6})$ & S$\AtCollection{\$}{\At{1}}$\\
 \end{figure}
 
 The SA is constructed in $\Oh(\Slen)$ time, for instance using the \citep{Kaerkkaeinen2003} algorithm, or using non-optimal but practically faster algorithms, \eg \citep{Schuermann2007}.
-The space consumption of the suffix array is $\Slen \log{\Slen}$ bits.
+The space consumption of the SA is $\Slen \log{\Slen}$ bits.
 When $\Slen < 2^{32}$, a 32 bit integer is sufficient to encode any value in the range $\OInterval{\At{1}}{\Slen}$.
-Consequently, the space consumption of suffix arrays for texts shorter than 4~GB is $4 \Slen$ bytes.
+Consequently, the space consumption of suffix arrays for strings shorter than 4~GB is $4 \Slen$ bytes.
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(\Slen)$ time.
 The space consumption of the GSA is $\Slen \log{\AtCollection{\Slen}{*}}$ bits, where $\AtCollection{\Slen}{*} = \max{\,\AtCollection{\Slen}{i}}$.
-For instance, for collections consisting of not more than 256 texts shorter than 4~GB, a pair of $1+4$~bytes suffices to encode any suffix position.
+For instance, for collections consisting of not more than 256 strings shorter than 4~GB in total, a pair of $1+4$~bytes suffices to encode any suffix position.
 
 %For instance, the \emph{H.~sapiens} reference genome (hg19) is a collection of 24 sequences, among whose the largest one consists of 248~Mbp.
 %Thus, the GSA of hg19 stores pairs of $1+4$~bytes and fits in 15~GB \citep{Weese2013}.
@@ -158,15 +160,15 @@ For instance, for collections consisting of not more than 256 texts shorter than
 
 I now concentrate on describing suffix trie functionalities, as I implemented them within the SeqAn library.
 Any suffix trie node is univocally identified by an interval of the suffix array $\Sarray$.
-Thus, while traversing the trie, I maintain the interval $\OInterval{l}{r}$ associated to the current node.
-In addition, I also remember the depth $d$ of the current node.
-The root node is represented by the interval $\OInterval{\At{1}}{\Slen}$ containing the whole suffix array.
-The label of any edge entering some internal node at depth $d$ is defined by the $d$-th symbol within the corresponding suffix $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ with $i \in \OInterval{l}{r}$.
-Any leaf node is defined (see section~\ref{sub:introindex}) to have all outgoing edges labeled by terminator symbols.
+For instance, the root node is represented by the interval $\OInterval{\At{1}}{\Slen}$ containing the whole SA.
+Thus, while traversing the trie, I remember the interval $\OInterval{l}{r}$ associated to the current node.
+In addition, I also remember the right interval $parentR$ of the parent node and the depth $d$ of the current node.
+The incoming edge label of an internal node at depth $d$ is identified by the $(\AtEnd{d})$-th symbol within the corresponding suffix $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ with $i \in \OInterval{l}{r}$.
+Any leaf node is defined to have all outgoing edges labeled by terminator symbols (see section~\ref{sub:introindex}).
 The occurrences below any node correspond by definition to the interval $\OInterval{l}{r}$ of $\Sarray$.
-Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r ,d \}$ and define the following operations on it:
+Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r, parentR, d \}$ and define the following operations on it:
 \begin{itemize}
-\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, 0\}$;
+\item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, \Slen, 0\}$;
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\SubscriptNV{\Sarray}{\StrieNode.r} + \StrieNode.d = \AtCollection{\Slen}{\SubscriptNV{\Sarray}{\StrieNode.r}}$;
 \item \FunctionCall{label}{\StrieNode} returns $\Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
@@ -275,7 +277,7 @@ In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the hi
 \subsection{Suffix tree realizations}
 \label{sec:index:stree}
 
-I briefly introduce two suffix tree realizations from the literature: the enhanced suffix array (ESA) \citep{Abouelhoda2004} and the lazy suffix tree (LST) \citep{Giegerich2003}.
+I briefly introduce two suffix tree realizations from the literature: the \emph{enhanced suffix array} (ESA) \citep{Abouelhoda2004} and the \emph{lazy suffix tree} (LST) \citep{Giegerich2003}.
 These realizations explicitly implement or implicitly emulate a suffix tree rather than a suffix trie.
 The string matching algorithms of section \ref{sec:index:algo} work on tries, yet any tree can be easily traversed as a trie.
 %Here, I only show how to adapt the traversal of any tree as a trie.
