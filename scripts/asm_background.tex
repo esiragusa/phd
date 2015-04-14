@@ -19,7 +19,7 @@ For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply
 Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
 
 %The definition of \emph{occurrence} is fundamental in string matching.
-\begin{definition}
+\begin{definition}[Occurrence]
 \label{def:occurrence}
 A string $\XSeq$ of length $\Xlen$ \emph{occurs} in a longer string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
 Given $\XSeq = \Substring{\YSeq}{i}{i+\Xlen}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $i+\Xlen$ in $\YSeq$.
@@ -32,19 +32,19 @@ Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sig
 \end{definition}
 
 %Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
-\begin{definition}
+\begin{definition}[Lexicographic rank]
 \label{def:rho}
 Given an alphabet $\Sigma$ of size $\sigma$, I denote the \emph{lexicographic rank} of any alphabet symbol by the function $\lexrank{} : \Sigma \rightarrow \OInterval{\Ibase}{\sigma}$, \st $\lexrank{a} < \lexrank{b} \iff a < b$ for any distinct $a,b \in \Sigma$.
 In addition, I denote by $\lexmin{\Sigma}$ the lexicographically smallest symbol $a \in \Sigma$ \st $\lexrank{a}=0$, and by $\lexnext{a}$ the lexicographical successor $b$ of $a$ in $\Sigma$ \st $\lexrank{b} = \lexrank{a}+1$.
 \end{definition}
 
-\begin{definition}
+\begin{definition}[Lexicographical order]
 \label{def:lexorder}
 The \emph{lexicographical order} $\lexlt$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq \lexlt \YSeq \iff \Subscript{\XSeq}{\At{1}} < \Subscript{\YSeq}{\At{1}}, \text{ or } \Subscript{\XSeq}{\At{1}} = \Subscript{\YSeq}{\At{1}} \text{ and } \Suffix{\XSeq}{\At{2}} \lexlt \Suffix{\YSeq}{\At{2}}$.
 \end{definition}
 
 %\emph{Generalized} full-text indices work on string collections.
-\begin{definition}
+\begin{definition}[String collection]
 \label{def:col}
 A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
@@ -54,22 +54,22 @@ The above definitions of prefix, suffix and substring generalize to multisets, \
 To well-define full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
 To this end, I introduce the special \emph{terminator} symbol $\$ \not \in \Sigma$, \st $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
 
-\begin{definition}
+\begin{definition}[Padded string]
 \label{def:strd}
 Given a string $\String$ over $\Sigma$, I call \emph{padded string} the string $\String\$$ over $\Sigma_{\$}$, where $\Sigma_{\$} =\Sigma \cup \{ \$ \}$.
 \end{definition}
 
-\begin{definition}
+\begin{definition}[Padded string collection]
 \label{def:coltd}
 Given a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{c}} \}$ over $\Sigma$, I call \emph{padded string collection} the collection $\{ \AtCollection{\String}{\At{1}}\AtCollection{\$}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}}\AtCollection{\$}{\AtEnd{\Scard}} \} $ over $\Sigma_{\$}$, where  $\Sigma_{\$} = \Sigma \cup \{ \AtCollection{\$}{\At{1}}, \ldots, \AtCollection{\$}{\AtEnd{\Scard}} \}$ and $\lexrank{\AtCollection{\$}{i}} < \lexrank{\AtCollection{\$}{j}} \iff i < j$.
 \end{definition}
 
-\begin{definition}
+\begin{definition}[Reverse string]
 \label{def:revstr}
 For a string $\String$, $\Rev{\String}$ denotes its reversal, \ie $\Subscript{\Rev{\String}}{i} = \Subscript{\String}{\AtEnd{\Slen} - i}$ for any $\At{1} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
-\begin{definition}
+\begin{definition}[Reverse string collection]
 \label{def:revcol}
 For a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}} \}$, $\Rev{\Strings}$ denotes the reversed collection $\{ \AtCollection{\Rev{\String}}{\At{1}}, \ldots, \AtCollection{\Rev{\String}}{\AtEnd{\Scard}} \}$.
 \end{definition}
@@ -95,8 +95,8 @@ However, if the two strings have different lengths, some symbols must be necessa
 This fact motivates the following definition of \emph{edit transcript}.
 
 \begin{definition}
-\label{def:transcript}
-\citep{Gusfield1997} An edit transcript for any two given strings $\XSeq,\YSeq$ is a finite sequence of substitutions, insertions and deletions transforming $\XSeq$ into $\YSeq$.
+\label{def:transcript}[Edit transcript]
+An edit transcript for any two given strings $\XSeq,\YSeq$ is a finite sequence of substitutions, insertions and deletions transforming $\XSeq$ into $\YSeq$ \citep{Gusfield1997}.
 \end{definition}
 
 An \emph{alignment} is an alternative way of visualizing a transformation between strings.
@@ -106,7 +106,7 @@ For this reason, it is necessary to introduce an additional gap symbol $-$, not 
 The definition of alignment follows.
 Figure~\ref{fig:edit-transcript} shows an example of edit transcript with its associated alignment.
 
-\begin{definition}
+\begin{definition}[Alignment]
 \label{def:alignment}
 An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of length between $\min\{\Ylen,\Xlen\}$ and $\Ylen+\Xlen$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \setminus \{ (-,-) \} $.
 \end{definition}
@@ -122,14 +122,14 @@ An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of
 
 At this point, I give the definition of two fundamental distance functions between strings.
 
-\begin{definition}
+\begin{definition}[Hamming distance]
 \label{def:hamming}
-\citep{Hamming1950} The \emph{Hamming distance} $d_H : \Sigma^{\Xlen} \times \Sigma^{\Xlen} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{\Xlen}$ counts the number of substitutions necessary to transform $\XSeq$ into $\YSeq$.
+The \emph{Hamming distance} $d_H : \Sigma^{\Xlen} \times \Sigma^{\Xlen} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{\Xlen}$ counts the number of substitutions necessary to transform $\XSeq$ into $\YSeq$ \citep{Hamming1950}.
 \end{definition}
 
-\begin{definition}
+\begin{definition}[Edit distance]
 \label{def:edit}
-\citep{Levenshtein1966} The \emph{Levenshtein} or \emph{edit distance} $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $\XSeq$ into $\YSeq$.
+The \emph{Levenshtein} or \emph{edit distance} $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $\XSeq$ into $\YSeq$ \citep{Levenshtein1966}.
 \end{definition}
 
 The problem of finding an optimal alignment between two strings is equivalent to the problem of finding their minimum distance \citep{Gusfield1997}.
@@ -201,24 +201,23 @@ The time complexity of Myers' algorithm is $\Oh(\Xlen\Ylen/b)$, where $b$ is the
 
 \section{String matching}
 
-\emph{Exact string matching} is one of the most fundamental problems in stringology.
-\begin{definition}
-\citep{Gusfield1997}
-Given a string $\Pattern$ of length $\Plen$, called the \emph{pattern}, and a string $\Text$ of length $\Tlen$, called the \emph{text}, the exact string matching problem is to find all occurrences of $\Pattern$ into $\Text$.
+\begin{definition}[Exact string matching]
+Given a string $\Pattern$ of length $\Plen$, called the \emph{pattern}, and a string $\Text$ of length $\Tlen$, called the \emph{text}, the \emph{exact string matching} problem is to find all occurrences of $\Pattern$ into $\Text$ \citep{Gusfield1997}.
 \end{definition}
 
+Exact string matching is one of the most fundamental problems in stringology.
 This problem has been extensively studied from the theoretical standpoint and is well solved in practice \citep{Faro2013}.
 Nonetheless, the definition of distance functions between strings lends to a more challenging problem: \emph{approximate string matching}.
 
-\begin{definition}
-\citep{Galil1988}
-Given a text $\Text$, a pattern $\Pattern$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $\Pattern$ into $\Text$ within distance $k$.
+\begin{definition}[Approximate string matching]
+Given a text $\Text$, a pattern $\Pattern$, and a \emph{distance threshold} $k \in \N$, the approximate string matching problem is to find all occurrences of $\Pattern$ into $\Text$ within distance $k$ \citep{Galil1988}.
 \end{definition}
+
 The approximate string matching problem under the Hamming distance is commonly called the \emph{$k$-mismatches} problem, while under the edit distance is called the \emph{$k$-differences} problem.
 Figure \ref{fig:edit-occurrence} shows an example of occurrence for $k$-differences.
 For $k$-mismatches and $k$-differences, it must hold $k > 0$ as the case $k = 0$ corresponds to exact string matching, and $k < \Plen$ as a pattern trivially occurs at any position in the text if all its $\Plen$ characters are substituted.
 Frequently, the problem's input respects the condition $k \ll \Plen \ll \Tlen$.
-\begin{definition}
+\begin{definition}[Error rate]
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = k/\Plen$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
 
@@ -324,27 +323,35 @@ I define a set of generic operations to traverse them in a top-down fashion.
 In chapter~\ref{chr:index}, I introduce various data structures replacing suffix tries in practical implementations.
 Thanks to these generic traversal operations, I later formulate generic string matching algorithms that are independent of the practical suffix trie implementations.
 
-\subsubsection{Trie}
+%\subsubsection{Trie}
 
 Consider a padded string collection $\Strings$ (definition~\ref{def:coltd}) consisting of $\Scard$ strings.
 Note that padding is necessary to ensure that no string $\AtCollection{\String}{i} \in \Strings$ is a prefix of another string $\AtCollection{\String}{j} \in \Strings$.
-\begin{definition}
-The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\At{1}}, \dots, \StrieLeaf{\AtEnd{\Scard}}$, where leaf $\StrieLeaf{i}$ points to string $\AtCollection{\String}{i}$.
-Any edge entering a node of $\RtrieOf{\Strings}$ is labeled with a symbol in $\Sigma$, while any edge entering a leaf of $\RtrieOf{\Strings}$ is labeled with a terminator symbol.
-Any path from the root to a leaf $\StrieLeaf{i}$ spells the string $\AtCollection{\String}{i}$, including its terminator symbol $\AtCollection{\$}{i}$.
+
+\begin{definition}[Trie]
+The \emph{trie} $\RtrieOf{\Strings}$ of $\Strings$ is a lexicographically ordered tree data structure having one node designated as the root and $\Scard$ leaves, denoted as $\StrieLeaf{\At{1}}, \dots, \StrieLeaf{\AtEnd{\Scard}}$, where leaf $\StrieLeaf{i}$ points to string $\AtCollection{\String}{i}$. In addition,
+\begin{enumerate}
+\item the incoming edge of any inner node of $\RtrieOf{\Strings}$ is labeled with a symbol in $\Sigma$;
+\item the incoming edge of any leaf of $\RtrieOf{\Strings}$ is labeled with a terminator symbol;
+\item the path from the root to leaf $\StrieLeaf{i}$ spells the string $\AtCollection{\String}{i}\AtCollection{\$}{i}$.
 %Figure~\ref{fig:trie} illustrates.
+\end{enumerate}
 \end{definition}
 
-\subsubsection{Suffix trie}
+%\subsubsection{Suffix trie}
 
-\begin{definition}
+\begin{definition}[Suffix trie]
 Given a padded string $\String$ (definition~\ref{def:strd}) of length $\Slen$, the suffix trie $\StrieOf{\String}$ is the trie of all suffixes of $\String$.
-The \emph{suffix trie} $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\StrieLeaf{i}$ points to suffix $\Suffix{\String}{i}$.
+$\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\StrieLeaf{i}$ points to suffix $\Suffix{\String}{i}$.
 \end{definition}
 %The suffix trie generalizes to index string collections.
-\begin{definition}
-Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), any leaf of the \emph{generalized suffix trie} is labeled with a pair $(i,j)$ where $i$ points to the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to one of the $\AtCollection{\Slen}{i}$ suffixes of $\AtCollection{\String}{i}$.
-Thus any path from the root to a leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}$.
+
+\begin{definition}[Generalized suffix trie]
+Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), its generalized suffix tree is the suffix tree of all strings in $\Strings$.
+Each of the $||\Strings||$ leaves is labeled by a pair $\StrieLeaf{(i,j)}$ and points to suffix $\Suffix{\Strings}{(i,j)}$.
+
+% the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to suffix $\AtCollection{\Slen}{i}\AtCollection{\$}{i}$ of $\AtCollection{\String}{i}$.
+%The path from the root to leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}\AtCollection{\$}{i}$.
 \end{definition}
 %Figure~\ref{fig:stree} illustrates.
 
@@ -382,14 +389,15 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 
 I define a set of generic operations to traverse tries in a top-down fashion.
 Note that the following traversal operations do not walk over edges labeled terminator symbols, as these symbols are not necessary in string matching applications.
-Given a trie $\StrieOf{\Strings}$, I define the following operations inspecting any pointed node $\StrieNode$ of $\StrieOf{\Strings}$:
+I define the following operations on the node $\StrieNode$ pointed during the traversal of $\StrieOf{\Strings}$:
 \begin{itemize}
 \item \FunctionCall{isRoot}{\StrieNode} returns true iff the pointed node is the root;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff all outgoing edges are labeled by terminator symbols;
 \item \FunctionCall{label}{\StrieNode} returns the symbol labeling the edge entering $\StrieNode$;
 \item \FunctionCall{occurrences}{\StrieNode} returns the list of positions pointed by leaves below $\StrieNode$;
+\item \FunctionCall{concat}{\StrieNode} returns the concatenation of edge labels on the path from the root to $\StrieNode$.
 \end{itemize}
-Moreover, I define the following operations moving from pointed node $\StrieNode$, and returning true on success and false otherwise:
+Moreover, I define the following operations moving from pointed node $\StrieNode$, and returning \emph{true} on success and \emph{false} otherwise:
 \begin{itemize}
 \item \FunctionCall{goDown}{\StrieNode} moves to the lexicographically smallest child of $\StrieNode$;
 \item \FunctionCall{goDown}{\StrieNode, c} moves to the child of $\StrieNode$ whose entering edge is labeled by $c$;
