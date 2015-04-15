@@ -472,6 +472,11 @@ Manber, U. and Myers, G. (1990).
 \newblock Suffix arrays: a new method for on-line string searches.
 \newblock In {\em SODA\/}, pages 319--327.
 
+\bibitem[Mantaci \ea(2007)Mantaci, Restivo, Rosone, and Sciortino]{Mantaci2007}
+Mantaci, S., Restivo, A., Rosone, G., and Sciortino, M. (2007).
+\newblock An extension of the burrows--wheeler transform.
+\newblock {\em Theoretical Computer Science\/}, {\bf 387}(3), pages 298--312.
+
 \bibitem[Marco-Sola \ea(2012)Marco-Sola, Sammeth, Guig{\'o}, and
   Ribeca]{MarcoSola2012}
 Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
