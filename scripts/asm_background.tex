@@ -22,7 +22,7 @@ Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSe
 \begin{definition}[Occurrence]
 \label{def:occurrence}
 A string $\XSeq$ of length $\Xlen$ \emph{occurs} in a longer string $\YSeq$ iff $\XSeq$ is a substring of $\YSeq$.
-Given $\XSeq = \Substring{\YSeq}{i}{i+\Xlen}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $i+\Xlen$ in $\YSeq$.
+Given $\XSeq = \Substring{\YSeq}{i}{i+\Xlen}$, the occurrence of $\XSeq$ \emph{starts} at position $i$ and \emph{ends} at position $i+\AtEnd{\Xlen}$ in $\YSeq$.
 \end{definition}
 
 %Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
@@ -366,6 +366,7 @@ Each of the $||\Strings||$ leaves is labeled by a pair $\StrieLeaf{(i,j)}$ and p
 \begin{subfigure}[b]{.5\textwidth}
 \begin{center}
 \input{figures/stree_banana.tikz}
+\vspace{6mm}
 \end{center}
 \end{subfigure}
 \end{figure}
