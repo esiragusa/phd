@@ -691,7 +691,7 @@ As the array $R$ stores $\Oh(\xfloor{\Slen/\log{\Slen}})$ positions and each pos
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=010101100100$. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R}{\At{2}} + \popcount_1(\Suffix{\String}{5}, \At{2}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, \At{6}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{2}) = 3$.}
+\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=010101100100$. (\subref{fig:rd1}) One-level RD with $b=4$; in the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R}{\At{2}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$ (note that $R$ is now different from $b=4$); in the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$.}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -793,7 +793,7 @@ Thus, $R_{\sigma}$ adds $\Oh(\sigma \Slen \log{\sigma})$ bits to $\String$.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,4)= \SubscriptNM{R_{\sigma}}{2}{2} + \popcount_{\text{C}}(\Suffix{\String}{3}, 1)=2.$}
+\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,\At{5})= \SubscriptNM{R_{\sigma}}{\At{2}}{\At{2}} + \popcount_{\text{\ttfamily C}}(\Suffix{\String}{\At{3}}, \At{3})=2.$}
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcr}
@@ -1008,7 +1008,7 @@ In particular, the FM-indices, which are based on backward search, become more t
 \begin{algorithm}[H]
 \Algorithm{Dfs}{$\StrieNode,d$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\StrieNode$ : pointer to the root node of a suffix trie\\
+\textbf{Input}  & $\StrieNode$ : iterator of $\StrieOf{\String}$\\
  			    & $d$ : integer bounding the traversal depth\\
 \end{tabular}
 \begin{algorithmic}[1]
@@ -1058,9 +1058,9 @@ In particular, the SA shows a runtime peak for patterns of length 10, due to the
 \begin{algorithm}[H]
 \Algorithm{ExactSearch}{$t,p$}
 \begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
-				& $p$ : pointer to the pattern\\
-\textbf{Output} & list of all occurrences of the pattern in the text\\
+\textbf{Input}  & $t$ : iterator of $\StrieOf{\Text}$\\
+				& $p$ : iterator of $\Pattern$\\
+\textbf{Output} & list of all occurrences of $\Pattern$ in $\Text$\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{atEnd}{$p$}}
@@ -1123,10 +1123,10 @@ Conversely, if the pattern $\Pattern$ is completely spelled and the traversal en
 \begin{algorithm}[H]
 \Algorithm{KMismatches}{$t,p,k$}
 \begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the pattern\\
+\textbf{Input}  & $t$ : iterator of $\StrieOf{\Text}$\\
+ 			    & $p$ : iterator of $\Pattern$\\
  			    & $k$ : integer bounding the number of mismatches\\
-\textbf{Output} & list of all occurrences of the pattern in the text\\
+\textbf{Output} & list of all occurrences of $\Pattern$ in $\Text$\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {$k = 0$}
@@ -1277,9 +1277,9 @@ The traversal stops whenever it reaches a leaf node in $\RtrieOf{\Patterns}$ and
 \begin{algorithm}[H]
 \Algorithm{MultipleExactSearch}{$t,p$}
 \begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the root node of the trie of the patterns\\
-\textbf{Output} & list of all occurrences of any pattern in the text\\
+\textbf{Input}  & $t$ : iterator of $\StrieOf{\Text}$\\
+ 			    & $p$ : iterator of $\RtrieOf{\Patterns}$\\
+\textbf{Output} & list of all occurrences of $\Patterns$ in $\Text$\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$p$}}
@@ -1332,10 +1332,10 @@ The algorithm receives a collection of patterns $\Patterns$ and performs backtra
 \begin{algorithm}[H]
 \Algorithm{MultipleKMismatches}{$t,p,k$}
 \begin{tabular}{ll}
-\textbf{Input}  & $t$ : pointer to the root node of the suffix trie of the text\\
- 			    & $p$ : pointer to the root node of the trie of the patterns\\
+\textbf{Input}  & $t$ : iterator of $\StrieOf{\Text}$\\
+ 			    & $p$ : iterator of $\RtrieOf{\Patterns}$\\
  			    & $k$ : integer bounding the number of mismatches\\
-\textbf{Output} & list of all occurrences of any pattern in the text\\
+\textbf{Output} & list of all occurrences of $\Patterns$ in $\Text$\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {$k = 0$}
