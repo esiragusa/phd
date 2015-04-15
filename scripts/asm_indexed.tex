@@ -374,7 +374,7 @@ I define the basic node operations as follows:
 \begin{algorithm}[H]
 \Algorithm{L}{$\StrieNode,\StrieChar$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : $q$-gram index iterator\\
 				& $\StrieChar$ : character to query\\
 \textbf{Output} & integer denoting the left interval\\
 \end{tabular}
@@ -390,7 +390,7 @@ I define the basic node operations as follows:
 \begin{algorithm}[H]
 \Algorithm{R}{$\StrieNode,\StrieChar$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : $q$-gram index iterator\\
 				& $\StrieChar$ : character to query\\
 \textbf{Output} & integer denoting the right interval\\
 \end{tabular}
@@ -413,7 +413,7 @@ Conversely, \FunctionName{goDown} and \FunctionName{goRight} are implemented by 
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\StrieNode,\StrieChar$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\StrieNode$ : pointer to a $q$-gram node\\
+\textbf{Input}  & $\StrieNode$ : $q$-gram index iterator\\
 				& $\StrieChar$ : character to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
@@ -785,10 +785,10 @@ The rank query is rewritten accordingly:
 \rank_{\StrieChar}(\String,i) = \SubscriptNM{R_{\sigma}}{\xfloor{i/b}}{\lexrank{c}} + \popcount_{\StrieChar}(\Suffix{\String}{\xfloor{i/b} \cdot b}, \, i\imod{b}).
 \end{eqnarray}
 Figure \ref{fig:rd_dna} shows an example of one-level DNA RD.
-Answering this query requires counting the number of occurrences of the character $\StrieChar$ inside a block of $b$ bite.
+Answering this query requires counting the number of occurrences of the character $\StrieChar$ inside a block of $b$ bits.
 In order to answer this query in constant time, I consider blocks of $\xfloor{\xceil{\log{\Slen}}/\xceil{\log{\sigma}}}$ symbols, \ie 
 each block consumes not more than $\xceil{\log{\Slen}}$ bits as in the binary RD case.
-The matrix $R_{\sigma}$ has thus $\sigma$ rows and $\Oh(\xfloor{\Slen \log{\sigma}/\log{\Slen}})$ columns, each one consuming $\xceil{\log{\Slen}}$ bits.
+The matrix $R_{\sigma}$ has thus $\sigma$ rows and $\Oh(\Slen \log{\sigma}/\log{\Slen})$ columns, each one consuming $\xceil{\log{\Slen}}$ bits.
 Thus, $R_{\sigma}$ adds $\Oh(\sigma \Slen \log{\sigma})$ bits to $\String$.
 
 \begin{figure}[t]
@@ -864,40 +864,49 @@ Later, I focus on how to represent the leaves of the suffix trie, which are nece
 
 \subsubsection{Top-down traversal}
 
-Given a padded string collection $\Strings$, as shown in section \ref{sec:index:bwt}, its associated permutation $LF$ recovers substrings of $\bar{\Strings}$, \ie substrings of $\Strings$ in \emph{backward} direction.
-Nonetheless, the top-down traversal needs to recover the substrings of $\Strings$ in \emph{forward} direction, as the suffix trie $\StrieOf{\Strings}$ spells all forward substrings of $\Strings$.
-Therefore, I consider the BWT of $\bar{\Strings}$, such that $LF$ recovers any substring of $\Strings$.
-To encode $LF$, I supplement the BWT of $\bar{\Strings}$ with its rank dictionary, either multi-levels or wavelet tree.
-In this way, the top-down traversal is able to use the permutation $LF$ to decode $SA$ intervals.
+The top-down traversal of $\StrieOf{\Strings}$ spells all suffixes of $\Strings$.
+Therefore, to emulate the traversal, it is sufficient to enumerate all suffixes of $\Strings$ by inverting the BWT using the counting argument of permutation LF.
+This enumeration provides not only all suffixes of $\Strings$, but also their associated SA intervals, as permutation LF and the SA are closely related.
+However, we have seen that permutation LF enumerates suffixes of $\Rev{\Strings}$ in \emph{backward} direction, while we would rather need permutation $\Psi$ to enumerate suffixes of $\Strings$ in \emph{forward} direction.
+Since $LF = \Psi^{-1}$, we consider the BWT of $\Rev{\Strings}$, so that its permutation LF enumerates suffixes of $\Strings$.
+LF of $\Rev{\Strings}$ computes intervals on the backward SA $\Rev{\Sarray}$ of $\Rev{\Strings}$, so \FunctionName{occurrences} has to reverse the occurrences of $\Rev{\Sarray}$ back to those of $\Sarray$.
 
-I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where $\OInterval{l}{r}$ represents the current suffix array interval and $e$ is the label of the edge entering the current node.
+I represent the current node $\StrieNode$ by the elements $\{ l, r, e \}$, where $\OInterval{l}{r}$ represents the current SA interval and $e$ is the entering edge label.
 Therefore, I define the following node operations:
 \begin{itemize}
 \item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, \epsilon \}$;
-\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $\StrieNode.\Subscript{\Last}{r} = \$$;
-\item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$.
+\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $Occ(\$,\StrieNode.r) - Occ(\$,\StrieNode.l) = \StrieNode.r - \StrieNode.l$.;
+\item \FunctionCall{label}{\StrieNode} returns $\StrieNode.e$;
+\item \FunctionCall{occurrences}{\StrieNode} returns each value $(i,j)$ of $\Rev{\Sarray}\OInterval{l}{r}$ as $(i, \AtCollection{\Slen}{i} - j - \StrieNode.d)$.
 \end{itemize}
 
-The traversal easily goes from the root node to its child node labeled by $\StrieChar$: it suffices to derive the interval $\OInterval{C(c)}{C(c+1)}$.
-Suppose the traversal is on an arbitrary node $v$ of known interval $\OInterval{b_v}{e_v}$ \st the path from the root to $v$ spells the substring $s_v$.
-Now, the traversal goes down to a child node $w$ of unknown interval $\OInterval{b_w}{e_w}$ \st the path from the root to $w$ spells $\StrieChar \cdot s_v$ for some $\StrieChar \in \Sigma$.
-The known interval $\OInterval{b_v}{e_v}$ contains all prefixes of $\bar{\Strings}$ ending with $s_v$, \ie all suffixes of $\Strings$ starting with $s_v$, while the unknown interval $\OInterval{b_w}{e_w}$ contains all prefixes of $\bar{\Strings}$ ending with $\StrieChar \cdot s_v$, \ie all suffixes of $\Strings$ starting with $s_v \cdot c$.
-All these characters $\StrieChar$ are in $\Subscript{\Last}{b_v \dots e_v}$, since $\Subscript{\Last}{i}$ is the character $\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} - 1}$ preceding the suffix pointed by $\SubscriptNV{\Sarray}{i}$.
-Moreover, these characters $\StrieChar$ are \emph{contiguous} and \emph{in relative order} in $\First$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
-If $b$ and $e$ are the first and last position in $\Last$ within $\OInterval{b_v}{e_v}$ such that $\Subscript{\Last}{b} = c$ and $\Subscript{\Last}{e} = c$, then $b_w = LF(b)$ and $e_w = LF(e)$.
-Therefore $LF(b)$ becomes:
+The traversal easily goes from the root node to a child node following the edge labeled by character $c$, as it suffices to determine the interval $\OInterval{C(c)}{C(\lexnext{c})}$.
+Now, suppose the traversal is on an arbitrary suffix trie node $\StrieNode$ of known interval $\OInterval{\StrieNode.l}{\StrieNode.r}$ \st the path from the root to $\StrieNode$ spells the substring $\FunctionCall{concat}{\StrieNode}$.
+The traversal goes down to a child node $w$ of unknown interval $\OInterval{w.l}{w.r}$ \st the path from the root to $w$ spells $\FunctionCall{concat}{\StrieNode} \cdot c$ for some $c \in \Sigma$.
+Thus, the known interval $\OInterval{\StrieNode.l}{\StrieNode.r}$ contains all suffixes of $\Strings$ starting with $\FunctionCall{concat}{\StrieNode}$, \ie all prefixes of $\Rev{\Strings}$ ending with $\FunctionCall{concat}{\StrieNode}$, while the unknown interval $\OInterval{w.l}{w.r}$ contains all suffixes of $\Strings$ starting with $\FunctionCall{concat}{\StrieNode} \cdot c$, \ie all prefixes of $\Rev{\Strings}$ ending with $c \cdot \FunctionCall{concat}{\StrieNode}$.
+All these characters $c$ are in $\Substring{\Last}{w.l}{w.r}$, since $\Subscript{\Last}{i}$ is the character $\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} - 1}$ preceding the suffix pointed by $\SubscriptNV{\Sarray}{i}$.
+Moreover, these characters $c$ are contiguous and in relative order in $\First$ (see observations~\ref{obs:lf-a}--\ref{obs:lf-b}).
+If $i, \ldots , j$ are all positions in $\Last$ \st $\Subscript{\Last}{i} = c$ and $v.l \le i < \ldots < j \LeqThan{\StrieNode.r}$, then $w.l = LF(i)$ and $w.r = LF(j) + 1$.
+Therefore, $w.l$ becomes:
 \begin{eqnarray}
 \begin{array}{lcl}
-LF(b) &=& C(\Subscript{\Last}{b}) + Occ(\Subscript{\Last}{b}, b)\\
- 	  &=& C(c) + Occ(c, b)\\
-	  &=& C(c) + Occ(c, b_v - 1) + 1
+LF(i) &=& C(\Subscript{\Last}{i}) + Occ(\Subscript{\Last}{i}, i) \\
+ 	  &=& C(c) + Occ(c, i) \\
+	  &=& C(c) + Occ(c, \StrieNode.l)
 \end{array}
 \end{eqnarray}
-and analogously $LF(e)$ becomes $C(c) + Occ(c, e_v)$ \cite{Ferragina2000}.
+and analogously $w.r$ becomes:
+\begin{eqnarray}
+\begin{array}{lcl}
+LF(j)+1 &=& C(\Subscript{\Last}{j}) + Occ(\Subscript{\Last}{j}, j)+1\\
+ 	  &=& C(c) + Occ(c, j)+1\\
+	  &=& C(c) + Occ(c, \StrieNode.r)
+\end{array}
+\end{eqnarray}
 
-Algorithm \ref{alg:fm-godownc} implements the operation \FunctionName{goDown} a symbol.
-This algorithm computes two values of permutation $LF$ and thus runs in time $\Oh(1)$.
-Conversely, \FunctionName{goDown} and \FunctionName{goRight} are provided by the generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright} running in time $\Oh(\sigma)$.
+Algorithm \ref{alg:fm-godownc} uses the above equations for the operation \FunctionName{goDown} a symbol.
+Conversely, \FunctionName{goDown} and \FunctionName{goRight} are provided by the generic algorithms \ref{alg:st-godown} and \ref{alg:st-goright} which enumerate all symbols in $\Sigma$.
+Thus, \FunctionName{goDown} a symbol runs in time $\Oh(1)$, while \FunctionName{goDown} and \FunctionName{goRight} run in time $\Oh(\sigma)$.
 
 % This is backward search. The traversal computes the interval.
 
@@ -907,18 +916,18 @@ Conversely, \FunctionName{goDown} and \FunctionName{goRight} are provided by the
 \begin{algorithm}[H]
 \Algorithm{goDown}{$\StrieNode, \StrieChar$}
 \begin{tabular}{ll}
-\textbf{Input}  & $\StrieNode$ : pointer to an FM-index node\\
-				& $\StrieChar$ : char to query\\
+\textbf{Input}  & $\StrieNode$ : FM-index iterator\\
+				& $\StrieChar$ : character to query\\
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\Call{isLeaf}{$\StrieNode$}}
 	\State \Return \False
 \EndIf
-\State {$x.l \gets \Call{LF}{x.l,\StrieChar}$}
-\State {$x.r \gets \Call{LF}{x.r,\StrieChar}$}
-\State {$x.e \gets c$}
-\State \Return $x.l < x.r$
+\State {$\StrieNode.l \gets C(\StrieChar) + Occ(\StrieChar, \StrieNode.l)$}
+\State {$\StrieNode.r \gets C(\StrieChar) + Occ(\StrieChar, \StrieNode.r)$}
+\State {$\StrieNode.e \gets \StrieChar$}
+\State \Return $\StrieNode.l < \StrieNode.r$
 \end{algorithmic}
 \label{alg:fm-godownc}
 \end{algorithm}
@@ -926,14 +935,14 @@ Conversely, \FunctionName{goDown} and \FunctionName{goRight} are provided by the
 \end{center}
 \end{figure*}
 
-\subsubsection{Sampled suffix array}
+\subsubsection{Sparse suffix array}
 
-The suffix array $\Sarray$ is required to locate occurrences, yet it is not appealing to maintain the whole array.
-As proposed by \cite{Ferragina2000}, I maintain a \emph{sampled} suffix array $\Sarray^{\epsilon}$ containing positions sampled at regular intervals in the input string.
-In order to determine if and where I sampled any $\SubscriptNV{\Sarray}{i}$ in $\Sarray^{\epsilon}$, I maintain a binary rank dictionary $I$ of length $\Slen$: if $\SubscriptNV{I}{i}=1$, then I sampled $\SubscriptNV{\Sarray}{i}$ in $\SubscriptNV{\Sarray^{\epsilon}}{\rank_1(I,i)}$.
+The suffix array $\Sarray$ is required to implement function \FunctionName{occurrences}, however the whole SA would take $\Slen \log{\Slen}$ bits of space.
+As proposed by \cite{Ferragina2000}, I maintain a \emph{sparse} suffix array $\Sarray^{\epsilon}$ containing positions sampled at regular intervals from the input string.
+In order to determine if and where I sampled any $\SubscriptNV{\Sarray}{i}$ in $\Sarray^{\epsilon}$, I employ a binary rank dictionary $I$ of length $\Slen$ \st $\SubscriptNV{I}{i}=1$ iff $\SubscriptNV{\Sarray}{i}$ is in $\SubscriptNV{\Sarray^{\epsilon}}{\rank_1(I,i)}$.
 I obtain any $\SubscriptNV{\Sarray}{i}$ by finding the smallest $j \geq 0$ such that $LF^j(i)$ is in $\Sarray^{\epsilon}$, and then $\SubscriptNV{\Sarray}{i} = \SubscriptNV{\Sarray}{LF^j(i)} + j$.
 
-By sampling one text position out of $\log^{1+\epsilon}{\Slen}$, for some $\epsilon > 0$, then $\Sarray^{\epsilon}$ consumes $\Oh(\frac{n{\Slen}}{\log^{\epsilon}{\Slen}})$ space and \FunctionCall{occurrences}{\StrieNode} returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{\Slen})$ time \citep{Ferragina2000}.
+By sampling one text position out of $\log^{1+\epsilon}{\Slen}$, for some $\epsilon > 0$, then $\Sarray^{\epsilon}$ consumes $\Oh(\Slen / \log^{\epsilon}{\Slen})$ space and \FunctionCall{occurrences}{\StrieNode} returns all occurrences in $\Oh(o \cdot \log^{1+\epsilon}{\Slen})$ time \citep{Ferragina2000}.
 In practice, I sample text positions at rates between $2^{-3}$ and $2^{-5}$.
 The rank dictionary $I$ consumes $\Slen + o(\Slen)$ extra space, independently of the sampling rate.
 
@@ -943,7 +952,7 @@ The rank dictionary $I$ consumes $\Slen + o(\Slen)$ extra space, independently o
 In this section, I give string matching algorithms that use the generic suffix trie traversal operations defined in section \ref{sub:introindex}.
 Thus the following algorithms can be applied to all of the suffix trie implementations presented so far.
 I first consider a simple algorithm performing a top-down traversal bounded by depth.
-Then, I present algorithms for exact string matching and $k$-mismatches.% and $k$-differences.
+Then, I present algorithms for exact string matching and $k$-mismatches. % and $k$-differences.
 I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
 At the same time, I show the results of an experimental evaluation of all of these algorithms on various suffix trie implementations.
 
