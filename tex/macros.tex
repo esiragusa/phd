@@ -72,8 +72,8 @@
 %\newcommand\Subscript[2]{#1[#2]}					% string subscript S[i]
 \newcommand\Subscript[2]{\MakeLowercase{#1}_{#2}}	% string subscript s_i
 \newcommand\SubscriptM[3]{\MakeLowercase{#1}_{#2,#3}} % matrix subscript s_{i,j}
-\newcommand\SubscriptNV[2]{#1[#2]}					% numerical vector subscript V[i]
-\newcommand\SubscriptNM[3]{#1[#2,#3]}				% numerical matrix subscript M[i,j]
+\newcommand\SubscriptNV[2]{#1\left[#2\right]}		% numerical vector subscript V[i]
+\newcommand\SubscriptNM[3]{#1\left[#2,#3\right]}	% numerical matrix subscript M[i,j]
 
 %\newcommand\Substring[3]{#1\Interval{#2}{#3}}   	% substring S[i,j]
 %\newcommand\OSubstring[3]{#1\OInterval{#2}{#3}} 	% substring S[i,j)
@@ -82,8 +82,9 @@
 \newcommand\Substring[3]{{#1}_{{#2}\dots{#3}}}   	% substring S_{i..j}
 \newcommand\OSubstring[3]{{#1}_{{#2}\dots{#3-1}}} 	% substring S_{i..j-1}
 
-\newcommand\SubstringNV[3]{{#1}\Interval{#2}{#3}}  % numerical subvector V[i,j]
-\newcommand\OSubstringNV[3]{{#1}\OInterval{#2}{#3}} % numerical subvector V[i,j)
+%\newcommand\SubstringNV[3]{{#1}\Interval{#2}{#3}}   % numerical subvector V[i,j]
+%\newcommand\OSubstringNV[3]{{#1}\OInterval{#2}{#3}} % numerical subvector V[i,j)
+\newcommand\SubstringNV[3]{{#1}\left[{#2}\dots{#3}\right]} % numerical subvector V[i..j]
 
 \newcommand\Prefix[2]{\Substring{#1}{\Ibase}{#2}}	% prefix as substring
 \newcommand\Suffix[2]{{#1}_{#2}}					% suffix S_i
