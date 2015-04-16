@@ -654,7 +654,7 @@ The general problem on arbitrary strings has been tackled by several studies on 
 This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary} (RD).
 
 \begin{definition}[Rank query]
-Given a string $\String$ over an alphabet $\Sigma$ and a character $\StrieChar \in \Sigma$, $\rank_{\StrieChar}(\String, i)$ returns the number of occurrences of $\StrieChar$ in the prefix $\Prefix{\String}{i}$ (excluding $\Subscript{\String}{i}$).
+Given a string $\String$ over an alphabet $\Sigma$ and a character $\StrieChar \in \Sigma$, $\rank_{\StrieChar}(\String, i)$ returns the number of occurrences of $\StrieChar$ in the prefix $\Prefix{\String}{i}$\footnote{Note that symbol $\Subscript{\String}{i}$ is excluded from $\rank_{\StrieChar}(\String, i)$.}.
 \end{definition}
 
 The key idea of RDs is to maintain a succinct (or even compressed) representation of the input string and attach a dictionary to it.

@@ -8,7 +8,7 @@ Both classes include various combinatorial filtering methods of increasing speci
 
 I present two seed filtering methods:
 %\begin{inparaenum}[(i)]
-\emph{exact seeds} \citep{Baeza1992}, and
+\emph{exact seeds} \citep{Baeza1992} and
 \emph{approximate seeds} \citep{Myers1994,Navarro2000}.
 %\emph{suffix filters} \citep{Kaerkkaeinen2007}.
 %\end{inparaenum}
@@ -19,7 +19,7 @@ Approximate seeds increase filtration specificity by factorizing the pattern in 
 I present the following $q$-gram filtering methods:
 %\begin{inparaenum}[(i)]
 \emph{contiguous $q$-grams} \citep{Jokinen1991},
-\emph{gapped $q$-grams} \citep{Burkhardt2001}, and
+\emph{gapped $q$-grams} \citep{Burkhardt2001} and
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 %\end{inparaenum}
 Contiguous $q$-grams rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
@@ -58,33 +58,32 @@ I first explain the underlying combinatorial principle, then I discuss implement
 
 \subsection{Principle}
 
-I consider the case of two arbitrary strings $x,y$ within edit distance $k$.
+I consider the case of two arbitrary strings $\XSeq,\YSeq$ within edit distance $k$.
 The generalization to $k$-differences is straightforward.
 
-%If I partition \wlogs $y$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $x$.
-\begin{lemma}
+%If I partition \wlogs $\YSeq$ into $k+1$ non-overlapping seeds, then at least one seed will occur as a factor of $\XSeq$.
+\begin{lemma}[Exact seeds]
 \label{lemma:exact-seeds}
-\citep{Baeza1992}
-Let $x,y$ be two strings \st $d_E(x,y) = k$.
-%If $y=y^1 y^2 \dots y^{k+1}$ then $x=ay^ib$ for some $a, b$.
-If $y$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one seed occurs as a factor of $x$.
+Let $\XSeq,\YSeq$ be two strings \st $d_E(\XSeq,\YSeq) = k$.
+%If $\YSeq=y^1 y^2 \dots y^{k+1}$ then $\XSeq=ay^ib$ for some $a, b$.
+If $\YSeq$ is partitioned \wlogs into $k+1$ non-overlapping seeds, then at least one seed occurs as a factor of $\XSeq$ \citep{Baeza1992}.
 \end{lemma}
 %\begin{proof}
 %I proceed by induction on $k$.
-%For $k=0$, the string $y$ is partitioned into one factor, $y$ itself.
-%The condition $d_E(x,y) = 0$ implies $x=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
-%I suppose the case $k=j-1$ to be true, thus since $d_E(x,y) = j-1$ and $y=y^1 y^2 \dots y^{j}$ then $x=ay^ib$ for some $a, b$.
+%For $k=0$, the string $\YSeq$ is partitioned into one factor, $\YSeq$ itself.
+%The condition $d_E(\XSeq,\YSeq) = 0$ implies $\XSeq=y$, which is true for $a=\epsilon$ and $b=\epsilon$.
+%I suppose the case $k=j-1$ to be true, thus since $d_E(\XSeq,\YSeq) = j-1$ and $\YSeq=y^1 y^2 \dots y^{j}$ then $\XSeq=ay^ib$ for some $a, b$.
 %I consider the case $k=j$. The $j$-th error can be in
 %\begin{inparaenum}[(i)]
-%\item\label{lemma:exact-seeds:prefix} $y^1\dots y^{i-1}$,
-%\item\label{lemma:exact-seeds:infix} $y^i$, or
-%\item\label{lemma:exact-seeds:suffix} $y^{i+1}\dots y^{j}$.
+%\item\label{lemma:exact-seeds:prefix} $\YSeq^1\dots y^{i-1}$,
+%\item\label{lemma:exact-seeds:infix} $\YSeq^i$, or
+%\item\label{lemma:exact-seeds:suffix} $\YSeq^{i+1}\dots y^{j}$.
 %\end{inparaenum}
-%In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $x=ay^ib$ clearly holds.
-%In case~\ref{lemma:exact-seeds:infix}, if I partition $y^i$ in two factors $y^{i'}$ and $y^{i''}$, then either $x=ay^{i'}b'$ or $x={a'}y^{i''}b$.
+%In case~\ref{lemma:exact-seeds:prefix} or~\ref{lemma:exact-seeds:suffix}, $\XSeq=ay^ib$ clearly holds.
+%In case~\ref{lemma:exact-seeds:infix}, if I partition $\YSeq^i$ in two factors $\YSeq^{i'}$ and $\YSeq^{i''}$, then either $\XSeq=ay^{i'}b'$ or $\XSeq={a'}y^{i''}b$.
 %\end{proof}
 It is immediate to see that any edit distance error can cover at most one seed.
-Therefore, at least one seed of $y$ will not be covered by any seed and hence occur as a factor of $x$.
+Therefore, at least one seed of $\YSeq$ will not be covered by any seed and hence occur as a factor of $\XSeq$.
 Figure~\ref{fig:seeds-ext} shows an example.
 
 This filtering method reduces the approximate search into multiple smaller exact searches.
@@ -93,7 +92,7 @@ As lemma~\ref{lemma:exact-seeds} is valid for \emph{any substring} of the text w
 
 \begin{figure}[b]
 \begin{center}
-\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
+\caption[Filtration with exact seeds]{Filtration with 6 exact seeds solves $5$-differences. In the illustration, pattern $\Pattern$ occurs in text $\Text$ at edit distance 5. The seed in grey is not covered by any error and thus preserved.}
 \label{fig:seeds-ext}
 \input{figures/filtration_exact.tikz}
 \end{center}
@@ -136,13 +135,13 @@ The efficiency of this method strongly depends on the number of verifications.
 % filtration time is always $\Oh(m)$.
 It is straightforward to derive the expected number of verifications under the assumption of the text being generated according to the uniform Bernoulli model.
 I introduce the random variable $C$, counting the number of occurrences of a word in a text.
-The emission probability of any symbol in $\Sigma$ is $p = \frac{1}{\sigma}$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
+The emission probability of any symbol in $\Sigma$ is $p = 1/\sigma$ and under \iid assumptions the emission (and occurrence) probability of any word of length $q$ is simply
 \begin{eqnarray}
 \Pr[C > 0] = \frac{1}{\sigma^q}
 \end{eqnarray}
 thus the expected number of occurrences of a seed of length $q$ in a text of length $n$ is
 \begin{eqnarray}
-E[C] = \sum_{i=1}^{n-q+1}{\Pr[C > 0]} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
+E[C] = \sum_{i=0}^{n-q}{\Pr[C > 0]} = \frac{n - q + 1}{\sigma^q} \leq \frac{n}{\sigma^q}.
 \end{eqnarray}
 
 Lemma~\ref{lemma:exact-seeds} requires to partition the pattern into $k+1$ seeds but leaves the freedom to choose their length.
@@ -173,7 +172,7 @@ On those texts, uniform seed length often leads to suboptimal filtration.
 %\begin{eqnarray}
 %q > \log_{\sigma}{\frac{m^3}{c}}
 %\end{eqnarray}
-%and since $q$ in equation~\ref{eq:seed-len} is a function of $m$ and $k$, it follows that
+%and since $q$ in equation~\ref{eq:seed-len} is a function of $\Plen$ and $k$, it follows that
 %\begin{eqnarray}
 %\epsilon = \frac{k}{m} < \frac{m}{\log_{\sigma}{m}}
 %\end{eqnarray}
@@ -191,20 +190,19 @@ The key idea of filtration with approximate seeds is to reduce the approximate s
 
 \subsection{Principle}
 
-Again, I start by considering two arbitrary strings $x,y$ within edit distance $k$.
+Again, I start by considering two arbitrary strings $\XSeq,\YSeq$ within edit distance $k$.
 The result then holds for any substring of the text within distance $k$ from the pattern.
-\begin{lemma}
+\begin{lemma}[Approximate seeds]
 \label{lemma:apx-seeds}
-\citep{Myers1994,Navarro2000}
-Let $x,y$ be two strings \st $d_E(x,y) = k$.
-If $y$ is partitioned \wlogs into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed occurs as a factor of $x$ within distance $\lfloor k/s \rfloor$.
+Let $\XSeq,\YSeq$ be two strings \st $d_E(\XSeq,\YSeq) = k$.
+If $\YSeq$ is partitioned \wlogs into $s$ non-overlapping seeds \st $1 \leq s \leq k+1$, then at least one seed occurs as a factor of $\XSeq$ within distance $\lfloor k/s \rfloor$ \citep{Myers1994,Navarro2000}.
 \end{lemma}
 To prove full-sensitivity it suffices to see that, if none of the seeds occurs within its assigned distance, the total distance must be greater than $s \cdot \lfloor k/s \rfloor = k$.
 Figure~\ref{fig:seeds-apx} illustrates.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $p$ occurs in text $t$ at edit distance 5. The seed in grey is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $\Pattern$ occurs in text $\Text$ at edit distance 5. The seed in grey is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -212,13 +210,13 @@ Figure~\ref{fig:seeds-apx} illustrates.
 
 %\begin{lemma}
 %\label{lemma:apx-seeds-var}
-%Let $x,y$ be two strings \st $d_E(x,y) = k$.
-%Partition $y$ into $s$ non-overlapping seeds $y^1, y^2, \dots, y^s$.
-%Assign an arbitrary distance threshold $k_i$ to each seed $y^i$, satisfying the following constraint:
+%Let $\XSeq,\YSeq$ be two strings \st $d_E(\XSeq,\YSeq) = k$.
+%Partition $\YSeq$ into $s$ non-overlapping seeds $\YSeq^1, y^2, \dots, y^s$.
+%Assign an arbitrary distance threshold $k_i$ to each seed $\YSeq^i$, satisfying the following constraint:
 %\begin{equation}
 %s + \sum_{i=1}^{s}{k_i} > k.
 %\end{equation}
-%Then at least one seed occurs as a factor of $x$ within distance $k_i$.
+%Then at least one seed occurs as a factor of $\XSeq$ within distance $k_i$.
 %\end{lemma}
 
 \subsection{Filtration schemes}
@@ -231,15 +229,15 @@ Filtration specificity is expected to increase with seed length.
 
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
-\begin{definition}
-A seeds filtration scheme is an integer vector $\mathbf{t} = (t_1, \dots, t_s)$, where integer $t_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
+\begin{definition}[Filtration scheme]
+A seeds filtration scheme is an integer vector $\mathbf{t} = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$, where integer $\Threshold_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-Any filtration scheme $\mathbf{t} = (t_1, \dots, t_s)$ \st
+Any filtration scheme $\mathbf{t} = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$ \st
 \begin{eqnarray}
-s + \sum_{i=1}^s t_i > k
+s + \sum_{i=\At{1}}^{\AtEnd{s}} t_i > k
 \end{eqnarray}
 is full-sensitive for $k$-differences (and $k$-mismatches).
 \end{lemma}
@@ -249,11 +247,11 @@ is full-sensitive for $k$-differences (and $k$-mismatches).
 \label{ex:seeds-apx-scheme}
 The filtration schemes $(0,0,0,0,0)$, $(1,1,0)$, $(2,1)$, $(4)$ are full-sensitive for $4$-differences.
 %or any their permutation
-For instance, given a pattern of length $m=100$, according to equation~\ref{eq:seed-len}, $q$ is respectively $20, 33, 50, 100$.
+For instance, given a pattern of length $\Plen=100$, according to equation~\ref{eq:seed-len}, $q$ is respectively $20, 33, 50, 100$.
 \end{example}
 
 How to choose a \emph{good} filtration scheme in practice?
-Both \cite{Myers1994} and \cite{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds $s=\Theta(\frac{m}{\log_{\sigma}{n}})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - \frac{e}{\sqrt{\sigma}}$.
+Both \cite{Myers1994} and \cite{Navarro2000} carried out involved analysis to estimate the optimal parameterization. \citeauthor{Navarro2000} find out that a number of seeds $s=\Theta(m/\log_{\sigma}{n})$ yields an overall time complexity sublinear for an error rate $\epsilon < 1 - e/\sqrt{\sigma}$.
 \citeauthor{Myers1994} reports an analogous sublinear time when $q=\Theta(\log_{\sigma}{n})$ is the seed length.
 Yet, these results do not necessarily translate into optimal filtration schemes in practice.
 The parameterization depends on the full-text index, the verification algorithm, the statistical properties of the text.
@@ -281,26 +279,26 @@ The most strict threshold assignment is to give distance $\lfloor k/s \rfloor$ t
 
 $q$-Gram filters rely on counting arguments to filter out text regions containing less than a given threshold of $q$-gram occurrences.
 The first $q$-gram counting filter for approximate string matching has been proposed in \citep{Jokinen1991}.
-Filters for more general alignment problems have been proposed and implemented in \emph{QUASAR} \citep{Burkhardt1999}, \emph{SWIFT} \citep{Rasmussen2006}, and \emph{STELLAR} \citep{Kehr2011}.
+Filters for more general alignment problems have been proposed and implemented in \emph{QUASAR} \citep{Burkhardt1999}, \emph{SWIFT} \citep{Rasmussen2006} and \emph{STELLAR} \citep{Kehr2011}.
 
 \subsection{Principle}
 
 The counting argument of contiguous $q$-gram filters is based on \emph{$q$-gram similarity}: the number of substrings of length $q$ common to two given strings.
-The following lemma relates $q$-gram similarity to edit distance, by giving a \emph{lower bound} on the $q$-gram similarity of any two strings $x,y$ within edit distance $k$.
+The following lemma relates $q$-gram similarity to edit distance, by giving a \emph{lower bound} on the $q$-gram similarity of any two strings $\XSeq,\YSeq$ within edit distance $k$.
 As for seed filters, this result then easily translates to $k$-differences.
 
-\begin{lemma}[The $q$-gram lemma] \citep{Jokinen1991}
+\begin{lemma}[The $q$-gram lemma]
 \label{lemma:qgrams}
-Let $x,y$ be two strings \st $d_E(x,y) = k$, and assume \wlogs $|x| \leq |y|$ and $|x| = m$. Then $x$ and $y$ have $q$-gram similarity $\tau_q(m,k) \geq m - q + 1 - kq$.
+Let $\XSeq,\YSeq$ be two strings \st $d_E(\XSeq,\YSeq) = k$ and assume \wlogs $|\XSeq| \leq |\YSeq|$ and $|\XSeq| = \Plen$. Then $\XSeq$ and $\YSeq$ have $q$-gram similarity $\tau_q(\Plen,k) \geq \Plen - q + 1 - kq$ \citep{Jokinen1991}.
 \end{lemma}
-The first part of the threshold function $\tau_q$ counts the number of $q$-grams of $x$ (\ie $m - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
+The first part of the threshold function $\tau_q$ counts the number of $q$-grams of $\XSeq$ (\ie $\Plen - q + 1$), while the second part counts how many $q$-grams can be covered by $k$ errors (\ie at most $q$ per error, hence $kq$ in total).
 The position of errors in the transcript solely determines which $q$-gram occurrences are affected or preserved.
 The $q$-gram lemma considers one \emph{worst case} positioning of the errors that \emph{minimizes} the threshold.
 Figure~\ref{fig:qgrams-ext} exemplifies.
 
 \begin{figure}[h]
 \begin{center}
-\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,t) = (4,2)$ solves the instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. In this worst-case positioning of the errors, the two grey $q$-grams are preserved.}
+\caption[Filtration with contiguous $q$-grams]{Filtration with contiguous $q$-grams. A filtration scheme $(q,\Threshold) = (4,2)$ solves the instance $(25,5)$. In the illustration, pattern $\Pattern$ of length 25 occurs in text $\Text$ at edit distance 5. In this worst-case positioning of the errors, the two grey $q$-grams are preserved.}
 \label{fig:qgrams-ext}
 \input{figures/filtration_qgrams.tikz}
 \end{center}
@@ -309,22 +307,22 @@ Figure~\ref{fig:qgrams-ext} exemplifies.
 \subsection{Filtration schemes}
 \label{sec:filtering:qgrams-ext:schemes}
 
-I denote by a pair $(q,t)$ the filtration scheme counting $q$-grams with threshold $t$.
-According to lemma \ref{lemma:qgrams}, if $t = \tau_q(m,k) \geq 1$, then $(q,t)$ is full-sensitive for any $k$-differences instance where $|p|=m$.
-In this case, I say that $(q,t)$ \emph{solves} instance $(m,k)$.
+I denote by a pair $(q,\Threshold)$ the filtration scheme counting $q$-grams with threshold $\Threshold$.
+According to lemma \ref{lemma:qgrams}, if $\Threshold = \tau_q(\Plen,k) \geq 1$, then $(q,\Threshold)$ is full-sensitive for any $k$-differences instance where $|\Pattern|=\Plen$.
+In this case, I say that $(q,\Threshold)$ \emph{solves} instance $(\Plen,k)$.
 
-The following question arises: which is the longest $q$-gram solving instance $(m,k)$?
-In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(m,k) \geq 1$.
-Thus, by substituting $\tau_q(m,k)$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to seed filters (see equation~\ref{eq:seed-len}).
+The following question arises: which is the longest $q$-gram solving instance $(\Plen,k)$?
+In order to satisfy lemma~\ref{lemma:qgrams}, the $q$-gram threshold must be greater than zero, \ie it must hold $\tau_q(\Plen,k) \geq 1$.
+Thus, by substituting $\tau_q(\Plen,k)$, it follows that the $q$-gram length must be $q \leq \left \lfloor \frac{m}{k+1} \right \rfloor$, analogously to seed filters (see equation~\ref{eq:seed-len}).
 
 However, the longest $q$-gram does not yield always the most specific filtration scheme.
 For instance, a threshold of 1 completely discards the counting argument of lemma~\ref{lemma:qgrams} and makes filtration very unspecific in practice.
-Hence, on certain $(m,k)$ instances, filtration schemes with non-optimal $q$-gram length yield more specific filtration.
-Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes solving a given $(m,k)$ instance.
+Hence, on certain $(\Plen,k)$ instances, filtration schemes with non-optimal $q$-gram length yield more specific filtration.
+Example \ref{ex:qgrams-ext-scheme} shows alternative filtration schemes solving a given $(\Plen,k)$ instance.
 
 \begin{example}
 \label{ex:qgrams-ext-scheme}
-The following $(q,t)$ filtration schemes solve $(100,4)$-differences:
+The following $(q,\Threshold)$ filtration schemes solve $(100,4)$-differences:
 $(20,1)$, $(19,6)$, $(18,11)$.
 %or any their permutation
 \end{example}
@@ -335,7 +333,7 @@ $(20,1)$, $(19,6)$, $(18,11)$.
 Filtration with $q$-grams requires \emph{bucketing} the text in windows, in order to apply the counting argument of lemma \ref{lemma:qgrams}.
 Buckets are obtained by subdividing the implicit DP matrix in parallelograms and projecting them on the text.
 Figure \ref{fig:swift} illustrates this concept: any approximate occurrence of the pattern in the text spans at most $k$ diagonals and is thus enclosed inside a parallelogram of width $k+1$ \citep{Rasmussen2006}.
-Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $m - k$ and $m + k$.
+Hence the projection of any text bucket has length $2k + 1$ and any occurrence has length between $\Plen - k$ and $\Plen + k$.
 The implementations described in \citep{Rasmussen2006, Kehr2011, Weese2009} use more efficient bucketing strategies with larger, overlapping parallelograms.
 
 \begin{figure}[h]
@@ -349,7 +347,7 @@ The implementations described in \citep{Rasmussen2006, Kehr2011, Weese2009} use 
 This method lends itself to work in a multiple online fashion rather than offline.
 The filtration stage scans the text and counts how many $q$-grams of each pattern fall into each parallelogram bucket.
 As long as the filter scans the text, it remembers only the buckets that span the patterns' lengths.
-The verification stage then verifies only those parallelograms exceeding threshold $t$.
+The verification stage then verifies only those parallelograms exceeding threshold $\Threshold$.
 Conversely, the program QUASAR \citep{Burkhardt1999} uses a $q$-gram index of the text to speed up the filtration phase.
 Such implementation requires more memory, as it must bucket the whole text and keep the text index in memory.
 
@@ -379,22 +377,22 @@ Filtration with gapped $q$-grams indeed counts the number of subsequences of len
 An additional set $Q$ determines which symbols are taken in the subsequences.
 The formal definition of gapped $q$-gram follows.
 
-\begin{definition}
-A gapped $q$-gram (abbreviated as $Q$-gram) is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N$ and $1 \in Q$.
-The cardinality $|Q|$ is called the \emph{weight} of $Q$ and denoted as $w(Q)$.
-The maximum element of $Q$ is named \emph{span} and indicated by $s(Q)$.
+\begin{definition}[$Q$-gram]
+A gapped $q$-gram (abbreviated as $Q$-gram) is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N_0$ and $\Ibase \in Q$.
+The cardinality $|Q|$ is called the \emph{weight} of $Q$ and denoted as $\Weight{Q}$.
+The maximum element of $Q$ is named \emph{span} and indicated by $\Span{Q}$.
 \end{definition}
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
-%I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{s(Q)}$ such that $w_j=1$ iff $j \in Q$.
+%I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{\Span{Q}}$ such that $w_j=1$ iff $j \in Q$.
 
 Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
-As in lemma \ref{lemma:qgrams}, the threshold for $Q$-grams still depends on the worst-case positioning of the errors in the transcript, which in turn depends on parameters $(m,k)$.
-Thus, I still consider filtration schemes $(Q,t)$ solving a $(m,k)$ instance.
+As in lemma \ref{lemma:qgrams}, the threshold for $Q$-grams still depends on the worst-case positioning of the errors in the transcript, which in turn depends on parameters $(\Plen,k)$.
+Thus, I still consider filtration schemes $(Q,\Threshold)$ solving a $(\Plen,k)$ instance.
 However, contrary to contiguous $q$-grams, function $\tau_Q$ now gives only a lower bound to the full-sensitivity threshold.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,t) = (\{1, 3, 4, 5\},3)$ solves instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The three $q$-grams in grey are not covered by any mismatch.}
+\caption[Filtration with gapped $q$-grams]{Filtration with gapped $q$-grams. A filtration scheme $(Q,\Threshold) = (\{\At{1}, \At{3}, \At{4}, \At{5}\},3)$ solves instance $(25,5)$. In the illustration, pattern $\Pattern$ of length 25 occurs in text $\Text$ at edit distance 5. The three $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-gapped}
 \input{figures/filtration_qgrams_gapped.tikz}
 \end{center}
@@ -404,37 +402,37 @@ However, contrary to contiguous $q$-grams, function $\tau_Q$ now gives only a lo
 \subsection{Filtration schemes}
 \label{sub:qgram:design}
 
-Which is the most specific filtration scheme $(Q,t)$ solving a given instance $(m,k)$?
+Which is the most specific filtration scheme $(Q,\Threshold)$ solving a given instance $(\Plen,k)$?
 This question turns out to be surprisingly hard to answer.
 As discussed in section \ref{sec:filtering:qgrams-ext:schemes}, the most specific filtration schemes for contiguous $q$-grams are easily found.
 The choice falls on a few values of $q$ that are close to the maximum and do not yield a threshold too close to $1$.
-Conversely, such choice is non-trivial for $Q$-grams, as the search space of $Q$ is exponentially large in the span $s(Q)$ and a full-sensitivity threshold for arbitrary $Q$-grams is hard to compute.
+Conversely, such choice is non-trivial for $Q$-grams, as the search space of $Q$ is exponentially large in the span $\Span{Q}$ and a full-sensitivity threshold for arbitrary $Q$-grams is hard to compute.
 In addition, it is not easy to determine which filtration scheme is the most specific one in a set of full-sensitive candidates.
 
 %The design of $Q$-gram filtration schemes raises hard combinatorial problems.
 Given a $Q$-gram, I consider the following problems:
 \begin{table}[h]
 \begin{tabular}{rl}
-\textsc{Full Sensitivity} & Does filtration scheme $(Q,1)$ solve instance $(m,k)$?\\
-\textsc{Optimal Threshold} & Which is the optimal threshold $t^*$ \st $(Q,t^*)$ solves $(m,k)$?\\
-\textsc{Specificity} & Which is the expected specificity of scheme $(Q,t)$?\\
+\textsc{Full Sensitivity} & Does filtration scheme $(Q,1)$ solve instance $(\Plen,k)$?\\
+\textsc{Optimal Threshold} & Which is the optimal threshold $\Threshold^*$ \st $(Q,\Threshold^*)$ solves $(\Plen,k)$?\\
+\textsc{Specificity} & Which is the expected specificity of scheme $(Q,\Threshold)$?\\
 \end{tabular}
 \end{table}
-%\label{enum:qgram-distance} Which is the minimum distance $k^*$ for which $(m,k^*)$ is not solved by $(Q,t)$?
+%\label{enum:qgram-distance} Which is the minimum distance $k^*$ for which $(\Plen,k^*)$ is not solved by $(Q,\Threshold)$?
 
 \cite{Nicolas2005} considered the decision problem \textsc{Full Sensitivity} associated to \textsc{Optimal Threshold}.
-\textsc{Full Sensitivity} is easy for contiguous $q$-grams, \ie the answer is no iff $\tau_q(m,k) = 0$.
+\textsc{Full Sensitivity} is easy for contiguous $q$-grams, \ie the answer is no iff $\tau_q(\Plen,k) = 0$.
 \citeauthor{Nicolas2005} show, by performing an indirect reduction from \textsc{Exact Cover by 3-Sets}, that \textsc{Full Sensitivity} is \emph{strongly} NP-complete for arbitrary $Q$-grams.
 Strong NP-completeness implies that no \emph{fully polynomial-time approximation scheme} (FPTAS) nor any \emph{pseudo-polynomial} algorithm for \textsc{Full Sensitivity} exist, under the assumption that $P \neq NP$.
 
 \cite{Burkhardt2001} first considered the optimization problem \textsc{Optimal Threshold}.
-They give a DP algorithm solving \textsc{Optimal Threshold} in time $\Oh(m \cdot k \cdot 2^{s(Q)})$ for any $Q$-gram.
-Subsequently, they use their DP algorithm to explore the search space of full-sensitive $Q$-grams for some specific instances of $(m,k)$.
+They give a DP algorithm solving \textsc{Optimal Threshold} in time $\Oh(m \cdot k \cdot 2^{\Span{Q}})$ for any $Q$-gram.
+Subsequently, they use their DP algorithm to explore the search space of full-sensitive $Q$-grams for some specific instances of $(\Plen,k)$.
 They reduce the search space using a \emph{branch-and-bound} algorithm based on the observation that:
 \begin{eqnarray}
-Q_1 \subseteq Q_2 \iff \tau_{Q_1}(m,k) \geq \tau_{Q_2}(m,k).
+Q_1 \subseteq Q_2 \iff \tau_{Q_1}(\Plen,k) \geq \tau_{Q_2}(\Plen,k).
 \end{eqnarray}
-Finally, \citeauthor{Burkhardt2001} guess the most specific filtration scheme $(Q,t)$ by computing, again via branch-and-bound, the minimum number of characters covered by $t$ distinct $Q$-gram occurrences (\textsc{Minimum Coverage} criterion).
+Finally, \citeauthor{Burkhardt2001} guess the most specific filtration scheme $(Q,\Threshold)$ by computing, again via branch-and-bound, the minimum number of characters covered by $\Threshold$ distinct $Q$-gram occurrences (\textsc{Minimum Coverage} criterion).
 
 I propose alternative algorithms for the design of $Q$-gram filtration schemes.
 I give an \emph{integer linear program} (ILP) that solves exactly \textsc{Optimal Threshold} and is usually much quicker than the DP algorithm from \citep{Burkhardt2001}.
@@ -450,9 +448,9 @@ Therefore, I do not use these algorithms in practice.
 \label{sub:qgram-non-detection}
 
 I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
-I consider any Hamming distance transcript over $\{ R, M \}$ as an $m$-dimensional vector $\mathbf{x} = (x_1, x_2, \dots x_m)$ over $\Bo = \{ 0, 1 \}$.
-Accordingly, I denote by $|\mathbf{x}|_0=m - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^m_k \subset \Bo^m$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
-I now define the event of detection of a transcript by a filtration scheme $(Q,t)$.
+I consider any Hamming distance transcript over $\{ R, M \}$ as an $\Plen$-dimensional vector $\mathbf{x} = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
+Accordingly, I denote by $|\mathbf{x}|_0=\Plen - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
+I now define the event of detection of a transcript by a filtration scheme $(Q,\Threshold)$.
 
 \begin{definition}
 \label{def:qgram-occ}
@@ -461,18 +459,18 @@ A $Q$-gram \emph{occurs} at position $i$ in a transcript $\mathbf{x}$ iff $\fora
 
 \begin{definition}
 \label{def:qgram-detection}
-A filtration scheme $(Q,t)$ \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $t$ times in $\mathbf{x}$.
+A filtration scheme $(Q,\Threshold)$ \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $\Threshold$ times in $\mathbf{x}$.
 \end{definition}
 
 I introduce a \emph{boolean function} to characterize the set of transcripts detected by a filtration scheme of the form $(Q,1)$.
-Let $T_{Q}^{m}: \Bo^m \rightarrow \Bo$ denote the boolean function such that $T_{Q}^{m}(\mathbf{x})$ is true iff the $Q$-gram occurs in a transcript $\mathbf{x}$ of length $m$.
+Let $T_{Q}^{m}: \Bo^{\Plen} \rightarrow \Bo$ denote the boolean function such that $T_{Q}^{m}(\mathbf{x})$ is true iff the $Q$-gram occurs in a transcript $\mathbf{x}$ of length $\Plen$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
-T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=1}^{m-s(Q)+1} \bigwedge_{j \in Q} x_{i+j}
+T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=\At{1}}^{\Plen-\Span{Q}} \bigwedge_{j \in Q} x_{i+j}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
-According to definition \ref{def:qgram-detection}, filtration scheme $(Q,t)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $t$ clauses of $T_{Q}^{m}$.
+According to definition \ref{def:qgram-detection}, filtration scheme $(Q,\Threshold)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $\Threshold$ clauses of $T_{Q}^{m}$.
 The formal definition of \textsc{Full Sensitivity} follows.
 
 %The utility of these functions is manyfold.
@@ -481,8 +479,8 @@ The formal definition of \textsc{Full Sensitivity} follows.
 
 \begin{problem}[\textsc{Full Sensitivity}]
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance. \\
-{\bf Question}	&	$\exists \, \mathbf{x} \in \Bo^m_k$ \st $T_{Q}^{m}(\mathbf{x}) = 0$? \\
+{\bf Instance}	&	A $Q$-gram, an $(\Plen,k)$ instance. \\
+{\bf Question}	&	$\exists \, \mathbf{x} \in \Bo^{\Plen}_k$ \st $T_{Q}^{m}(\mathbf{x}) = 0$? \\
 \end{tabular}
 \end{problem}
 
@@ -491,19 +489,19 @@ The formal definition of \textsc{Full Sensitivity} follows.
 \label{sub:qgram-optimal-threshold}
 
 I now consider the \emph{pseudo-boolean function}, counterpart of function \ref{eq:qgram-bool}, that associates a filtration threshold to any transcript.
-Let the function $t_{Q}^{m}: \Bo^m \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
-Here, $t_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $m$.
+Let the function $\Threshold_{Q}^{m}: \Bo^{\Plen} \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
+Here, $\Threshold_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $\Plen$.
 I define such pseudo-boolean function as
 \begin{equation}
 \label{eq:qgram-pseudo}
-t_{Q}^{m}(\mathbf{x}) = \sum_{i=1}^{m-s(Q)+1} \prod_{j \in Q} x_{i+j}
+t_{Q}^{m}(\mathbf{x}) = \sum_{i=\At{1}}^{\Plen-\Span{Q}} \prod_{j \in Q} x_{i+j}
 \end{equation}
 The formal definition of \textsc{Optimal Threshold} follows.
 
 \begin{problem}[\textsc{Optimal Threshold}]
 \begin{tabular}{rl}
-{\bf Instance}	&	A $Q$-gram, an $(m,k)$ instance.\\
-{\bf Solution}	&	$\min \, t_{Q}^{m}(\mathbf{x})$ subject to $\mathbf{x} \in \Bo^m_k$
+{\bf Instance}	&	A $Q$-gram, an $(\Plen,k)$ instance.\\
+{\bf Solution}	&	$\min \, t_{Q}^{m}(\mathbf{x})$ subject to $\mathbf{x} \in \Bo^{\Plen}_k$
 \end{tabular}
 \end{problem}
 
@@ -514,79 +512,79 @@ The following ILP solves \textsc{Optimal Threshold}.
 
 \begin{equation}
 \begin{array}{lll}
-\min & \sum \mathbf{t}					\\
-\text{subject to}						\\
-& \mathbf{t} \in \Bo^{m - s(Q) + 1}		\\
-& \mathbf{x} \in \Bo^m_k				\\
-& t_i \geq x_{i+j} 						& \forall \, 1 \leq i \leq m-s(Q)+1 \quad \quad \forall \, j \in Q \\
+\min & \sum \mathbf{t}							\\
+\text{subject to}								\\
+& \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}		\\
+& \mathbf{x} \in \Bo^{\Plen}_k					\\
+& t_i \geq x_{i+j} 						& \forall \, \At{1} \leq i \leq \Plen-\Span{Q} \quad \quad \forall \, j \in Q \\
 \end{array}
 \end{equation}
 
-Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $t_{Q}^{m}$; each $t_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$.
+Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $\Threshold_{Q}^{m}$; each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$.
 Vector $\mathbf{x}$ represents any hamming transcript; each $x_j$ is subject to an integer linear constrain \st the hamming distance of $\mathbf{x}$ is within $k$.
-The set of inequalities of the form $t_i \geq x_{i+j}$ binds the satisfiability of each clause $t_i$ to its associated transcript values $x_j$.
-The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $t=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(m,k)$.
+The set of inequalities of the form $\Threshold_i \geq x_{i+j}$ binds the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
+The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $\Threshold=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(\Plen,k)$.
 
 \subsubsection{Approximate solution}
 
-Pseudo-boolean function $t_{Q}^{m}$ has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
+Pseudo-boolean function $\Threshold_{Q}^{m}$ has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
 In particular, supermodularity is the discrete analog of concavity.
 These properties allow to compute approximate solutions to constrained optimization problems in polynomial time.
-A pseudo-boolean function $f : \mathbb{B}^m \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
+A pseudo-boolean function $f : \mathbb{B}^{\Plen} \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
 \begin{equation}
 \label{eq:monotone-non-decreasing}
-f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m
+f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^{\Plen}
 \end{equation}
 and it is \emph{supermodular} iff 
 \begin{equation}
 \label{eq:supermodularity}
-f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \vee \mathbf{z}) + f(\mathbf{y} \wedge \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^m.
+f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \vee \mathbf{z}) + f(\mathbf{y} \wedge \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^{\Plen}.
 \end{equation}
 %or, equivalently, if all its second order derivatives are non-negative, \ie
 %\begin{equation}
 %\label{eq:supermodularity-partial}
-%\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^m \text{ and } \forall \, 1 \leq i \leq j \leq m
+%\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^{\Plen} \text{ and } \forall \, 1 \leq i \leq j \leq m
 %\end{equation}
-It is immediate to see that function $t_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
+It is immediate to see that function $\Threshold_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
 \textsc{Optimal Threshold} thus involves the minimization of a monotone supermodular function subject to linear constraints.
 
 Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} via \emph{gradient descent}.
 An analogous algorithm for the maximization of a monotone submodular function subject to linear constraints has an APX-ratio of $1 + 1/e$ \citep{Vazirani2001}.
 Algorithm \ref{alg:qgram-threshold-apx} achieves the same \emph{absolute error}, but this result does not translate into a relative error.
-Indeed, pseudo-boolean function $t_{Q}^{m}$ is monotone non-decreasing, thus its unconstrained minimum is $0$.
+Indeed, pseudo-boolean function $\Threshold_{Q}^{m}$ is monotone non-decreasing, thus its unconstrained minimum is $0$.
 Thus the result of algorithm \ref{alg:qgram-threshold-apx} is not guaranteed to be within a constant ratio from the optimum.
 %Thus \textsc{Optimal Threshold} cannot be said to be in APX.
 
 %I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
 %\begin{equation}
 %\label{eq:qgram-pseudoneg}
-%\bar{t}_{Q}^{m}(\mathbf{x}) = m - s(Q) + 1 - t_{Q}^{m}(\mathbf{x})
+%\bar{t}_{Q}^{m}(\mathbf{x}) = m - \Span{Q} + 1 - t_{Q}^{m}(\mathbf{x})
 %\end{equation}
 %Function $\bar{t}_{Q}^{m}$ is monotone non-increasing and submodular.
 %I consider the complementary problem, being the maximization of a submodular function subject to linear constraints:
-%{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^m_k$
+%{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^{\Plen}_k$
 
 \begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-\Algorithm{ApproximateThreshold}{$Q,m,k$}
+\Algorithm{ApproximateThreshold}{$Q,\Plen,k$}
 \begin{tabular}{ll}
-\textbf{Input}  & $Q$ : $Q$-gram sequence\\
-				& $m$ : integer denoting the pattern length\\
+\textbf{Input}  & $Q$ : $Q$-gram\\
+				& $\Plen$ : integer denoting the pattern length\\
 				& $k$ : integer bounding the number of mismatches\\
 \textbf{Output} & integer indicating the optimal threshold\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\mathbf{x} \gets \mathbf{1}^m$}
+\State {$\mathbf{x} \gets \mathbf{1}^{\Plen}$}
 \While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^m_Q(\mathbf{x})}{\partial x_j}$}
-%	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^m_Q(\mathbf{x})}{\partial x_j}$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^{\Plen}_Q(\mathbf{x})}{\partial x_j}$}
+%	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^{\Plen}_Q(\mathbf{x})}{\partial x_j}$}
 	\State {$x_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return $t^m_Q(\mathbf{x})$
-%\State \Return $m - s(Q) + 1 - \bar{t}^m_Q(\mathbf{x})$
+\State \Return $\Threshold^{\Plen}_Q(\mathbf{x})$
+%\State \Return $\Plen - \Span{Q} + 1 - \bar{t}^{\Plen}_Q(\mathbf{x})$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
@@ -603,7 +601,7 @@ Thus, among multiple full-sensitive filtration schemes, one clearly prefers the 
 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
-{\bf Instance}	&	A filtration scheme $(Q,t)$, an $(m,k)$ instance.\\
+{\bf Instance}	&	A filtration scheme $(Q,\Threshold)$, an $(\Plen,k)$ instance.\\
 {\bf Solution}	&	$| \{ \mathbf{x} \in \Bo^{m} : t_{Q}^{m}(\mathbf{x}) \geq t \} |$
 \end{tabular}
 \end{problem}
@@ -621,27 +619,27 @@ Algorithm~\ref{alg:qgram-specificity} follows the algorithm in \citep{Karp1989} 
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
-%\Algorithm{CountTranscripts}{$Q,t,m,\epsilon$}
-\Algorithm{CountTranscripts}{$Q,m,\epsilon$}
+%\Algorithm{CountTranscripts}{$Q,\Threshold,\Plen,\epsilon$}
+\Algorithm{CountTranscripts}{$Q,\Plen,\epsilon$}
 \begin{tabular}{ll}
-\textbf{Input}  & $Q$ : $Q$-gram sequence\\
-%				& $t$ : integer denoting the threshold\\
-				& $m$ : integer denoting the pattern length\\
+\textbf{Input}  & $Q$ : $Q$-gram\\
+%				& $\Threshold$ : integer denoting the threshold\\
+				& $\Plen$ : integer denoting the pattern length\\
 				& $\epsilon$ : real $\in [0,1]$ denoting the approximation factor\\
 \textbf{Output} & integer indicating the number of transcripts detected\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State $C \gets m+s(Q)+1$
-\State $M \gets C \cdot 2^{m-w(Q)}$
+\State $C \gets \Plen+\Span{Q}+1$
+\State $M \gets C \cdot 2^{\Plen-\Weight{Q}}$
 \State $N \gets 4 \cdot C^2 / \epsilon^2$
 \State $T \gets 0$
 \Repeat
-	\State {$i \gets$ \Call{random}{$\{ 1 \dots C \}$}}
-	\State {$\mathbf{x} \gets$ \Call{random}{$\{0,1\}^m$}}
+	\State {$i \gets$ \Call{random}{$\OInterval{\Ibase}{C}$}}
+	\State {$\mathbf{x} \gets$ \Call{random}{$\{0,1\}^{\Plen}$}}
 	\ForAll {$j \in Q$}
 		\State {$x_{i+j} \gets 1$}
 	\EndFor
-	\State $T \gets T + t_Q^m(\mathbf{x})$
+	\State $T \gets T + t_Q^{\Plen}(\mathbf{x})$
 \Until {$N$ times}
 \State \Return $N \cdot M / T$
 \end{algorithmic}
@@ -659,17 +657,17 @@ To obtain even more specific filtration, \cite{Kucherov2005} propose \emph{$q$-g
 Filtration with a $q$-gram family adopts disjunctively a set of multiple distinct gapped $q$-grams.
 The generalized counting argument now adds all occurrences of all gapped $q$-gram in the set.
 Figure~\ref{fig:qgrams-multiple} illustrates.
-\begin{definition}
-A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F} = \{ Q_1, \dots, Q_f \}$ of $Q$-grams.
+\begin{definition}[$\mathbb{F}$-gram]
+A $q$-gram family (abbreviated as $\mathbb{F}$-gram) is a finite set $\mathbb{F} = \{ Q_{\At{1}}, \dots, Q_{\AtEnd{f}} \}$ of $Q$-grams.
 Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \begin{eqnarray}
-\tau_{\mathbb{F}}(m,k) = \sum_{Q_i \in \mathbb{F}}{\tau_{Q_i}(m,k)}
+\tau_{\mathbb{F}}(\Plen,k) = \sum_{Q_i \in \mathbb{F}}{\tau_{Q_i}(\Plen,k)}
 \end{eqnarray}
 \end{definition}
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},t) = (\{ \{1, 3, 4, 5\}, \{1, 2, 3, 5\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $p$ of length 25 occurs in text $t$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
+\caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},\Threshold) = (\{ \{\At{1}, \At{3}, \At{4}, \At{5}\}, \{\At{1}, \At{2}, \At{3}, \At{5}\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $\Pattern$ of length 25 occurs in text $\Text$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
 \input{figures/filtration_qgrams_multiple.tikz}
 \end{center}
@@ -686,7 +684,7 @@ and a pseudo-boolean function as the sum
 \label{eq:family-pseudo}
 t_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}} t_{Q_i}^{m}(\mathbf{x}).
 \end{equation}
-Function $t_{\mathbb{F}}^{m}$ is still supermodular, because all supermodular functions are closed under non-negative linear combination.
+Function $\Threshold_{\mathbb{F}}^{m}$ is still supermodular, because all supermodular functions are closed under non-negative linear combination.
 
 
 % -----------------------------------------------------------------------------
@@ -703,7 +701,7 @@ Function $t_{\mathbb{F}}^{m}$ is still supermodular, because all supermodular fu
 \label{sec:filtering:evaluation}
 
 In this section, I show the results of an experimental evaluation of the filtration methods exposed so far.
-I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $t \geq 1$) and 4 ($q$-Grams, $t \geq 4$).
+I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $\Threshold \geq 1$) and 4 ($q$-Grams, $\Threshold \geq 4$).
 For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
 To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999} by \citep{Weese2012}.
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of 100~Mbp total length.
@@ -720,14 +718,14 @@ Figure \ref{fig:filter-runtime-hamming-celegans} shows the results for $k$-misma
 Exact seeds are the best filtration method for $k \leq 7$, mainly due to their superior filtration speed, while 1-approximate seeds are better for $k \geq 8$.
 2-Approximate seeds start to dominate exact seeds only for $k \geq 10$, \ie they provide too strong filtration on this text.
 Both $q$-gram filtration schemes are always slower than 1-approximate seeds;
-it can be seen that enforcing $t \geq 4$ improves the total runtime for those instances where $t \geq 1$ renders the filter too weak.
+it can be seen that enforcing $\Threshold \geq 4$ improves the total runtime for those instances where $\Threshold \geq 1$ renders the filter too weak.
 
 Figure \ref{fig:filter-runtime-edit-celegans} shows the results for $k$-differences.
 The more involved edit distance verification slightly fills the gap between exact seeds and contiguous $q$-grams, yet exact seeds continue to be always the fastest alternative.
 
 \begin{figure}[b]
 \begin{center}
-\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern length is fixed to 100. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
+\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
 \label{fig:filter-runtime-hamming-celegans}
 \includegraphics{filter_runtime.dna.celegans.hamming.100}
 \end{center}
@@ -735,7 +733,7 @@ The more involved edit distance verification slightly fills the gap between exac
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Dashed lines represent filtration time only.}
+\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
 \label{fig:filter-runtime-edit-celegans}
 \includegraphics{filter_runtime.dna.celegans.edit.100}
 \end{center}
@@ -748,7 +746,7 @@ For $k \leq 6$, all schemes spend more time on filtration rather than verificati
 The weakest scheme, filtration with exact seeds, shows the closest ratio to 1.
 As shown in the runtime plots (figures \ref{fig:filter-runtime-hamming-celegans}-\ref{fig:filter-runtime-edit-celegans}), quick filtration pays off for low error rates.
 Here, a quicker full-text index would be beneficial.
-For $k \geq 7$, contiguous $q$-grams with $t \geq 1$ show the closest ratio to 1, nonetheless the fastest alternative is provided by filtration with 1-approximate seeds, for which only 10\,\% of the runtime goes in verifications.
+For $k \geq 7$, contiguous $q$-grams with $\Threshold \geq 1$ show the closest ratio to 1, nonetheless the fastest alternative is provided by filtration with 1-approximate seeds, for which only 10\,\% of the runtime goes in verifications.
 Here, a judicious mix of exact and 1-approximate seeds could improve the total runtime.
 The ratios for $k$-difference show analogous patterns (data not shown).
 
@@ -771,21 +769,21 @@ The ratios for $k$-difference show analogous patterns (data not shown).
 \subsection{Positive predictive value}
 
 Instead of measuring filtration specificity, as introduced in section \ref{intro:filtering:spec-sens}, I measure the \emph{positive predictive value} (PPV).
-As shown in table \ref{tab:filter:ppv}, I define \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN) in terms of the number of verifications $V_f(t)$ produced in the filtration phase and the number of approximate occurrences $C(t)$ of the pattern in the text.
+As shown in table \ref{tab:filter:ppv}, I define \emph{true positives} (TP), \emph{false positives} (FP), \emph{true negatives} (TN), or \emph{false negatives} (FN) in terms of the number of verifications $V_f(\Text)$ produced in the filtration phase and the number of approximate occurrences $C(\Text)$ of the pattern in the text.
 Therefore, I define the PPV as:
 \begin{eqnarray}
-\frac{|TP_f(t)|}{|TP_f(t)| + |FP_f(t)|} = \frac{C(t)}{V_f(t)}
+\frac{|TP_f(\Text)|}{|TP_f(\Text)| + |FP_f(\Text)|} = \frac{C(\Text)}{V_f(\Text)}
 \end{eqnarray}
 
 \begin{table}[t]
 \begin{center}
-\caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(t)$ counts the number of verifications, $C(t)$ the number of approximate occurrences, and $|t|$ the text length. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
+\caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(\Text)$ counts the number of verifications, $C(\Text)$ the number of approximate occurrences, and $|\Text|$ the text length. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
 \begin{tabular}{rcc}
 \toprule
   & Positive & Negative\\
 \midrule
-True & $C(t)$ & $|t| - C(t)$ \\
-False & $V_f(t) - C(t)$ & 0		\\
+True & $C(\Text)$ & $|\Text| - C(\Text)$ \\
+False & $V_f(\Text) - C(\Text)$ & 0		\\
 \bottomrule
 \end{tabular}
 \label{tab:filter:ppv}
@@ -794,9 +792,9 @@ False & $V_f(t) - C(t)$ & 0		\\
 
 Figure \ref{fig:filter-ppv-hamming-celegans} shows the results for $k$-mismatches.
 As expected, 2-approximate seeds have always the highest PPV, followed by 1-approximate seeds.
-The PPV of contiguous $q$-grams with $t \geq 1$ oscillates around that one of exact seeds.
-In particular, when $t$ approaches $1$, \eg for $k = 9$, the PPV of contiguous $q$-grams stays below that one of exact seeds.
-Enforcing $t \geq 4$ boosts the PPV of contiguous $q$-grams to that one of 1-approximate seeds.
+The PPV of contiguous $q$-grams with $\Threshold \geq 1$ oscillates around that one of exact seeds.
+In particular, when $\Threshold$ approaches $1$, \eg for $k = 9$, the PPV of contiguous $q$-grams stays below that one of exact seeds.
+Enforcing $\Threshold \geq 4$ boosts the PPV of contiguous $q$-grams to that one of 1-approximate seeds.
 The PPVs for $k$-difference show analogous patterns (data not shown).
 
 \begin{figure}[b]

@@ -6,8 +6,8 @@
 %\band{25}
 \seed{1}{25}{1}
 
-\node[left=0.25cm of read_1] {$x$} ;
-\node[left=0.25cm of genome_1] {$y$} ;
-\node[left=0.25cm of transcript_1] {$transcript$} ;
+\node[left=0.25cm of read_1] {$\XSeq$} ;
+\node[left=0.25cm of genome_1] {$\YSeq$} ;
+%\node[left=0.25cm of transcript_1] {$transcript$} ;
 
 \end{tikzpicture}

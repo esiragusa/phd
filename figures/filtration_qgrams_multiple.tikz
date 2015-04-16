@@ -4,8 +4,8 @@
 \band{25}
 \seed{1}{25}{1}
 
-\node[left=0.25cm of read_1] {$p$} ;
-\node[left=0.25cm of genome_1] {$t$} ;
+\node[left=0.25cm of read_1] {$\Pattern$} ;
+\node[left=0.25cm of genome_1] {$\Text$} ;
 
 
 % Unaffected q-grams ###-#
