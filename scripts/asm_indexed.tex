@@ -37,7 +37,7 @@ The \emph{suffix array} of a padded string $\String$ of length $\Slen$ is an arr
 \end{definition}
 
 \begin{definition}[Generalized suffix array]
-The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of all pairs $(i,j)$ with $\At{1} \leq i \LeqThan{\Scard}$ and $\At{1} \leq j \LeqThan{|\AtCollection{\String}{i}|}$.
+The \emph{generalized suffix array} (GSA) of a padded string collection $\Strings$ (definition~\ref{def:coltd}), consisting of $\Scard$ strings of total length $\Slen$, is an array $\Sarray$ of length $\Slen$ containing a permutation of pairs $(i,j)$ for all $\At{1} \leq i \LeqThan{\Scard}$ and $\At{1} \leq j \LeqThan{|\AtCollection{\String}{i}|}$.
 Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ for all $\At{2} \leq i \LeqThan{\Slen}$.
 \end{definition}
 

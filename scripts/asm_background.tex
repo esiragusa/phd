@@ -10,7 +10,7 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 %I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_{\At{1}}, \dots, a_{\AtEnd{\sigma}} \}$ is a finite ordered set of characters (or symbols) $a_i$.
 A \emph{string} (or word) $\String = \Subscript{\String}{\At{1}} \dots \Subscript{\String}{\AtEnd{\Slen}}$ over $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
-I denote with $\Substring{\String}{i}{j}$ the sequence of symbols $\Subscript{\String}{i} \ldots \Subscript{\String}{\AtEnd{j}}$ (excluding $j$) for any $\At{1} \leq i \leq j \leq \Slen$, where $\Slen=|\String|$ is the length of $\String$.
+I denote with $\Substring{\String}{i}{j}$ the sequence of symbols $\Subscript{\String}{i} \ldots \Subscript{\String}{\AtEnd{j}}$ (excluding $j$) for any $\At{1} \leq i < j \leq \Slen$, where $\Slen=|\String|$ is the length of $\String$.
 The set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
 In this manuscript, I use numerical intervals, arrays and matrices.
@@ -35,8 +35,8 @@ The above definitions of prefix, suffix and substring generalize to multisets, \
 \end{definition}
 
 \begin{definition}[Substring]
-A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|$}, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|}$, 
-and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \leq i \leq j \LeqThan{|\YSeq|}$.
+A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, 
+and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \LeqThan{i} < j \leq |\YSeq|$.
 For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
 Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
 \end{definition}
@@ -96,8 +96,8 @@ Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is e
 However, if the two strings have different lengths, some symbols must be necessarily inserted or deleted from $\XSeq$ in order to obtain $\YSeq$.
 This fact motivates the following definition of \emph{edit transcript}.
 
-\begin{definition}
-\label{def:transcript}[Edit transcript]
+\begin{definition}[Edit transcript]
+\label{def:transcript}
 An edit transcript for any two given strings $\XSeq,\YSeq$ is a finite sequence of substitutions, insertions and deletions transforming $\XSeq$ into $\YSeq$ \citep{Gusfield1997}.
 \end{definition}
 
@@ -146,10 +146,10 @@ The edit distance $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$ between any their p
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d_E(\epsilon,\epsilon)&=&0\label{eq:dp-ee}\\
-d_E(\Prefix{\XSeq}{i},\epsilon)&=&i \; \text{ for all } \At{1} < i \LeqThan{\Xlen}\label{eq:dp-row}\\
-d_E(\epsilon, \Prefix{\YSeq}{j})&=&j \; \text{ for all } \At{1} < j \LeqThan{\Ylen}\label{eq:dp-col}
+d_E(\Prefix{\XSeq}{i},\epsilon)&=&i \; \text{ for all } \At{2} \LeqThan{i} \leq \Xlen\label{eq:dp-row}\\
+d_E(\epsilon, \Prefix{\YSeq}{j})&=&j \; \text{ for all } \At{2} \LeqThan{j} \leq \Ylen\label{eq:dp-col}
 \end{eqnarray}
-and the recursive case for all $\At{1} < i \LeqThan{\Xlen}$ and $\At{1} < j \LeqThan{\Ylen}$ is as follows:
+and the recursive case for all $\At{2} \LeqThan{i} \leq \Xlen$ and $\At{2} \LeqThan{j} \leq \Ylen$ is as follows:
 \begin{eqnarray}
 d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j}) = \min \left\{
 \begin{array}{lcl}
@@ -191,7 +191,7 @@ where the function $\delta$ indicates whether the characters $\Subscript{X}{i}$,
 \end{figure*}
 
 Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(\Xlen\Ylen)$ using a dynamic programming table $D$ of $(\Xlen+1) \times (\Ylen+1)$ cells, where cell $\SubscriptNM{D}{i}{j}$ stores the value of $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$.
-The sole edit distance without any alignment can be computed in space $\Oh(\Ylen)$; indeed, only column $j-1$ is required to compute column $j$.
+The sole edit distance without any alignment can be computed in space $\Oh(\Ylen)$; indeed, column $j-1$ alone is sufficient to compute column $j$.
 An optimal alignment can be computed in time $\Oh(\Xlen + \Ylen)$ via \emph{traceback} on the table $D$;
 the traceback starts in the cell $D[\Ylen,\Xlen]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[\Ylen,\Xlen]$.
 
@@ -309,7 +309,7 @@ Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the e
 Consider the recurrence relation described by equations~\ref{eq:dp-ee}--\ref{eq:dp-min} and pose $\XSeq=\Text$ and $\YSeq=\Pattern$.
 Because an occurrence of the pattern can start anywhere in the text, the base condition \ref{eq:dp-row} of the edit distance recurrence relation becomes:
 \begin{eqnarray}
-d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } \At{1} < i \LeqThan{\Xlen} \label{eq:dp-row-kdiff}
+d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } \At{2} \LeqThan{i} \leq \Xlen \label{eq:dp-row-kdiff}
 \end{eqnarray}
 and algorithm~\ref{alg:dp-kdiff} initializes the top row of the DP matrix $D$ accordingly.
 Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-kdiff} checks any cell in the bottom row for the condition $\SubscriptNM{D}{i}{\Plen} \leq k$.
@@ -409,7 +409,7 @@ Moreover, I define the following operations moving from pointed node $\StrieNode
 \end{itemize}
 
 Time complexities of the above operations depend on the data structure implementing the trie.
-Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} can be $\Oh(1)$ or logarithmic in $\Slen$, \textsc{occurrences} can be linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(\Slen)$ space complexity to stack all parent nodes.
+Usually \textsc{label} is $\Oh(1)$, both variants of \textsc{goDown} and \textsc{goRight} range from $\Oh(1)$ to $\Oh(\log{\Slen})$, \textsc{occurrences} is linear in the number of occurrences, \textsc{goUp} is $\Oh(1)$ but with an additional $\Oh(\Slen)$ space complexity to stack all parent nodes.
 Algorithms \ref{alg:st-godown} and \ref{alg:st-goright} show how to implement respectively \textsc{goDown} and \textsc{goRight} using \textsc{goDown} a symbol and \textsc{goUp}, although with a worst-case time complexity of $\Oh(\sigma)$.
 In chapter~\ref{chr:index}, I consider various data structures to implement suffix tries, I show how to implement these operations and give their complexities.
 
@@ -525,8 +525,9 @@ For $k$-differences, the occurrence probability is a function of the error rate 
 Under the uniform Bernoulli model, where each symbol of $\Sigma$ occurs with probability $1/\sigma$, \cite{Navarro2001a} experimentally finds that $\epsilon < 1 - 1 / \sqrt{\sigma}$ is a tight upper bound on the error rate which ensures few occurrences and for which filtering algorithms are effective.
 For higher error rates, non-filtering methods, either online or offline, work better.
 
-On the one hand, 50 \% error rate marks the filtration efficiency bound for the DNA alphabet, while on the other hand HTS read mapping applications require error rates in a range from 3 to 10 \%.
-According to the above considerations, filtering methods are expected to be very efficient in HTS applications.
+According to the above considerations, filtration efficiency is bound to 50 \% error rate on random DNA.
+However, practical HTS read mapping applications require much lower error rates, usually ranging from 3 to 10 \%.
+For this reason, filtering methods are expected to be very efficient in HTS applications.
 
 \subsubsection{Seeds versus $q$-grams}
 
