@@ -9,14 +9,37 @@ The reader familiar with basic stringology can skip this chapter and proceed to 
 
 %I start with fundamental objects of stringology: alphabets and strings.
 An \emph{alphabet} $\Sigma= \{ a_{\At{1}}, \dots, a_{\AtEnd{\sigma}} \}$ is a finite ordered set of characters (or symbols) $a_i$.
-A \emph{string} (or word) $\String$ over $\Sigma$ is a finite sequence of symbols from $\Sigma$.
-I denote with $\Subscript{\String}{i}$ the $i$-th symbol of $\String$ counting from $\Ibase$, with $\Substring{\String}{i}{j}$ the sequence of symbols $\Subscript{\String}{i} \ldots \Subscript{\String}{j}$ for any $\At{1} \leq i \leq j \LeqThan{\Slen}$, and with $|\String|=\Slen$ the length of $\String$.
+A \emph{string} (or word) $\String = \Subscript{\String}{\At{1}} \dots \Subscript{\String}{\AtEnd{\Slen}}$ over $\Sigma$ is a finite sequence of symbols $\Subscript{\String}{i} \in \Sigma$.
+I denote with $\Substring{\String}{i}{j}$ the sequence of symbols $\Subscript{\String}{i} \ldots \Subscript{\String}{\AtEnd{j}}$ (excluding $j$) for any $\At{1} \leq i \leq j \leq \Slen$, where $\Slen=|\String|$ is the length of $\String$.
 The set $\Sigma^0=\{ \epsilon \}$ contains only the \emph{empty string} \st $|\epsilon|=0$, $\Sigma^\Slen$ contains all strings of length $\Slen$ over $\Sigma$, and $\Sigma^* = \cup_{n=0}^{\infty}{\Sigma^n}$ all strings over $\Sigma$.
 
+In this manuscript, I use numerical intervals, arrays and matrices.
+Numerical intervals are sequences over $\N_{\Ibase}$, \ie $\Interval{i}{j} = \{i,i+1,\ldots,j\}$ and $\OInterval{i}{j} = \Interval{i}{j-1}$.
+An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$.
+I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
+A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ arranged \st
+$$X=
+\begin{pmatrix}
+  \SubscriptM{X}{\At{1}}{\At{1}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
+  \vdots & \ddots & \vdots  \\
+  \SubscriptM{X}{\AtEnd{m}}{\At{1}} & \cdots & \SubscriptM{X}{\AtEnd{m}}{\AtEnd{n}}
+\end{pmatrix}$$
+I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
+
+%\emph{Generalized} full-text indices work on string collections.
+\begin{definition}[String collection]
+\label{def:col}
+A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
+The above definitions of prefix, suffix and substring generalize to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
+\end{definition}
+
+\begin{definition}[Substring]
 A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|$}, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \leq i \LeqThan{|\YSeq|}$, 
 and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \leq i \leq j \LeqThan{|\YSeq|}$.
 For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
 Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
+\end{definition}
 
 %The definition of \emph{occurrence} is fundamental in string matching.
 \begin{definition}[Occurrence]
@@ -43,20 +66,12 @@ In addition, I denote by $\lexmin{\Sigma}$ the lexicographically smallest symbol
 The \emph{lexicographical order} $\lexlt$ between two non-empty strings $\XSeq,\YSeq$ is defined as $\XSeq \lexlt \YSeq \iff \Subscript{\XSeq}{\At{1}} < \Subscript{\YSeq}{\At{1}}, \text{ or } \Subscript{\XSeq}{\At{1}} = \Subscript{\YSeq}{\At{1}} \text{ and } \Suffix{\XSeq}{\At{2}} \lexlt \Suffix{\YSeq}{\At{2}}$.
 \end{definition}
 
-%\emph{Generalized} full-text indices work on string collections.
-\begin{definition}[String collection]
-\label{def:col}
-A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
-I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
-The above definitions of prefix, suffix and substring generalize to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
-\end{definition}
-
 To well-define full-text indices, I use the definitions of padded string (\ref{def:strd}) and padded string collection (\ref{def:coltd}).
-To this end, I introduce the special \emph{terminator} symbol $\$ \not \in \Sigma$, \st $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
+To this end, I introduce special \emph{terminator} symbols $\$ \not \in \Sigma$.
 
 \begin{definition}[Padded string]
 \label{def:strd}
-Given a string $\String$ over $\Sigma$, I call \emph{padded string} the string $\String\$$ over $\Sigma_{\$}$, where $\Sigma_{\$} =\Sigma \cup \{ \$ \}$.
+Given a string $\String$ over $\Sigma$, I call \emph{padded string} the string $\String\$$ over $\Sigma_{\$}$, where $\Sigma_{\$} =\Sigma \cup \{ \$ \}$ and $\lexrank{\$} < \lexrank{a}$ for any $a \in \Sigma$.
 \end{definition}
 
 \begin{definition}[Padded string collection]
@@ -66,26 +81,13 @@ Given a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots,
 
 \begin{definition}[Reverse string]
 \label{def:revstr}
-For a string $\String$, $\Rev{\String}$ denotes its reversal, \ie $\Subscript{\Rev{\String}}{i} = \Subscript{\String}{\AtEnd{\Slen} - i}$ for any $\At{1} \leq i \LeqThan{\Slen}$.
+Given a string $\String$, $\Rev{\String}$ denotes its reversal, \ie $\Subscript{\Rev{\String}}{i} = \Subscript{\String}{\AtEnd{\Slen} - i}$ for any $\At{1} \leq i \LeqThan{\Slen}$.
 \end{definition}
 
 \begin{definition}[Reverse string collection]
 \label{def:revcol}
-For a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}} \}$, $\Rev{\Strings}$ denotes the reversed collection $\{ \AtCollection{\Rev{\String}}{\At{1}}, \ldots, \AtCollection{\Rev{\String}}{\AtEnd{\Scard}} \}$.
+Given a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots, \AtCollection{\String}{\AtEnd{\Scard}} \}$, $\Rev{\Strings}$ denotes the reversed collection $\{ \AtCollection{\Rev{\String}}{\At{1}}, \ldots, \AtCollection{\Rev{\String}}{\AtEnd{\Scard}} \}$.
 \end{definition}
-
-In this manuscript, I use numerical intervals, arrays and matrices.
-Numerical intervals are sequences over $\N_{\Ibase}$, \ie $\Interval{i}{j} = \{i,i+1,\ldots,j\}$ and $\OInterval{i}{j} = \Interval{i}{j-1}$.
-An \emph{array} (or table, or vector) $V=\Subscript{V}{\At{1}} \dots \Subscript{V}{\AtEnd{\Slen}}$ is a finite sequence of numbers $\Subscript{V}{i} \in \N_0$.
-I denote by $\SubscriptNV{V}{i}$ the subscript element $\Subscript{V}{i}$.
-A \emph{matrix} $X$ is a rectangular array of numbers $\SubscriptM{X}{i}{j} \in \N_0$ arranged \st
-$$X=
-\begin{pmatrix}
-  \SubscriptM{X}{\At{1}}{\At{1}} & \cdots & \SubscriptM{X}{\At{1}}{\AtEnd{n}} \\
-  \vdots & \ddots & \vdots  \\
-  \SubscriptM{X}{\AtEnd{m}}{\At{1}} & \cdots & \SubscriptM{X}{\AtEnd{m}}{\AtEnd{n}}
-\end{pmatrix}$$
-I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
 \section{Transcripts, alignments and distances}
 
