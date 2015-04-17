@@ -92,12 +92,12 @@ $\At{13}$ & $(\At{1},\At{6})$ & S$\AtCollection{\$}{\At{1}}$\\
 \end{figure}
 
 The SA is constructed in $\Oh(\Slen)$ time, for instance using the \citep{Kaerkkaeinen2003} algorithm, or using non-optimal but practically faster algorithms, \eg \citep{Schuermann2007}.
-The space consumption of the SA is $\Slen \log{\Slen}$ bits.
+The space consumption of the SA is $\Theta(\Slen \log{\Slen})$ bits.
 When $\Slen < 4~GB$, a 32 bit integer is sufficient to encode any value in the range $\OInterval{\At{1}}{\Slen}$.
 Consequently, the space consumption of suffix arrays for strings shorter than 4~GB is $4 \Slen$ bytes.
 
 \cite{Weese2013} gives a generalization of \citeauthor{Kaerkkaeinen2003} algorithm to construct the GSA in $\Oh(\Slen)$ time.
-The space consumption of the GSA is $\Slen \log{\AtCollection{\Slen}{*}}$ bits, where $\AtCollection{\Slen}{*} = \max{\,|\AtCollection{\String}{i}|}$.
+The space consumption of the GSA is $\Theta(\Slen \log{\AtCollection{\Slen}{*}})$ bits, where $\AtCollection{\Slen}{*} = \max{\,|\AtCollection{\String}{i}|}$.
 For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a collection consisting of up to 256 strings, each one shorter than 4~GB.
 
 \begin{figure*}[t!]
@@ -258,7 +258,7 @@ In this way, the SA supports exact string matching in $\Oh(\Plen \log{\Tlen})$ t
 
 Note that the suffix array can be binary searched by spelling a full pattern within a single call of \FunctionName{L} and \FunctionName{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
 Nonetheless, the worst case runtime of algorithm~\ref{alg:st-exact} stays $\Oh(\Plen \log{\Tlen})$, as each step of the binary search requires a full lexicographical comparison between the pattern and any suffix of the text, which takes $\Oh(\Plen)$ time in the worst case.
-As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(\Plen + \log{\Tlen})$ at the expense of additional $\Tlen \log{\Tlen}$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$, $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(\Plen + \log{\Tlen})$ at the expense of additional $\Theta(\Tlen \log{\Tlen})$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$, $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 Alternatively, the \emph{average case} runtime is reduced to $\Oh(\Plen + \log{\Tlen})$, without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table \citep{Weese2013}.
 %Thus I replace algorithm~\ref{alg:st-exact} by algorithm~\ref{alg:sa-exact}.
@@ -288,7 +288,7 @@ The enhanced suffix array (ESA) \citep{Abouelhoda2004} supplements the SA and LC
 Each SA value represents one leaf of the suffix tree, while each LCP value represent the length of one edge of the suffix tree.
 What is still missing, in order to represent a full suffix tree, are the SA intervals of the children of each inner node.
 These intervals would have to be computed in logarithmic time by \FunctionName{goRight} during a top-down SA traversal.
-As proposed by \cite{Abouelhoda2004}, these intervals are computed in linear time, within one single bottom-up traversal, and stored in the child table, which consumes additional $\Slen \log \Slen$ bits, thus $4\Slen$ bytes for collections smaller than 4 GB.
+As proposed by \cite{Abouelhoda2004}, these intervals are computed in linear time, within one single bottom-up traversal, and stored in the child table, which consumes additional $\Theta(\Slen \log \Slen)$ bits, thus $4\Slen$ bytes for collections smaller than 4 GB.
 
 \subsubsection{Lazy suffix tree}
 \label{sec:index:lst}
@@ -539,7 +539,7 @@ Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\St
 
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT of $\String$.
 The BWT can be obtained in linear time by scanning the SA $\Sarray$ and assigning the symbol $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ to the $i$-th BWT symbol.
-However, constructing the BWT from the SA is not desirable in practice, especially for strings over small alphabets like DNA, as the SA consumes $\Slen \log{\Slen}$ bits in addition to the $\Slen \log{\sigma}$ bits of the BWT.
+However, constructing the BWT from the SA is not desirable in practice, especially for strings over small alphabets like DNA, as the SA consumes $\Theta(\Slen \log{\Slen})$ bits in addition to the $\Theta(\Slen \log{\sigma})$ bits of the BWT.
 Therefore, some direct BWT construction algorithms working within $o(\Slen \log{\sigma})$ bits plus constant space have been recently proposed in \citep{Bauer2013, Crochemore2013}.
 
 \begin{figure}[b]
@@ -643,7 +643,7 @@ Given the two above observations, \cite{Ferragina2000} define the permutation $L
 LF(i) = C(\Subscript{\Last}{i}) + Occ(\Subscript{\Last}{i}, i)
 \end{eqnarray}	
 where $C : \Sigma \rightarrow \OInterval{\At{1}}{\Slen}$ denotes the total number of occurrences in $\String$ of all characters alphabetically smaller than $\StrieChar$, and $Occ :  \Sigma \times \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$ the number of occurrences of character $\StrieChar$ in the prefix $\Prefix{\Last}{i}$.
-The key problem of encoding the permutation $LF$ lies in representing function $Occ$, as function $C$ is easily tabulated by a small array of size $\sigma \log{\Slen}$ bits.
+The key problem of encoding the permutation $LF$ lies in representing function $Occ$, as function $C$ is easily tabulated by a small array of size $\Theta(\sigma \log{\Slen})$ bits.
 In the next subsection, I address the problem of representing function $Occ$ efficiently. Subsequently, I explain how to implement generic full-text index traversal using the permutation $LF$.
 
 \subsection{Rank dictionaries}
@@ -776,7 +776,7 @@ However, the space consumption of such RD has a linear dependency in the alphabe
 This fact renders such extension appealing only for small alphabets like DNA.
 Here, I show how to extend the one-level RD.
 
-Consider an input string $\String$ of length $\Slen$ over $\Sigma$, thus consisting of $\Slen \log{\sigma}$ bits.
+Consider an input string $\String$ of length $\Slen$ over $\Sigma$, thus consisting of $\Theta(\Slen \log{\sigma})$ bits.
 As in the binary case, this one-level RD partitions $\String$ in blocks of $b$ bits.
 It complements the string $\String$ with a matrix $R_{\sigma}$ of size $\xfloor{\Slen/b+1} \times \sigma$, summarizing the number of occurrences for each symbol in $\Sigma$.
 The rank query is rewritten accordingly:
@@ -849,7 +849,7 @@ Figure \ref{fig:wt_dna} illustrates.
 The WT encodes any binary string $B^v$ associated to some non-leaf node $v$ using a separate binary RD.
 The WT contains $\lceil \log \sigma - 1 \rceil$ non-leaf levels and any such level encodes $\Slen$ bits overall.
 Using two-levels binary RDs (section~\ref{sec:index:rd:binary}), the WT consumes $(\Slen + o(\Slen)) \log \sigma$ bits, \ie $\Slen \log \sigma (1 + o(1))$ bits, and answers any rank query in time $\Oh(\log{\sigma})$.
-At the same time, the WT does not need to store the original input string $\String$ of $\Slen \log \sigma$ bits.
+At the same time, the WT does not need to store the original input string $\String$ of $\Theta(\Slen \log{\sigma})$ bits.
 %The more involved analysis by \citep{Grossi2003} shows that the WT is a \emph{compressed} RD, \ie its space consumption is proportional to that of the \emph{zero-order empirical entropy} \citep{Manzini2001} of the input string.
 
 \subsection{FM-index}

@@ -203,14 +203,14 @@ where the function $\delta$ indicates whether the characters $\Subscript{X}{i}$,
 Algorithm \ref{alg:dp-edit} computes the above recurrence relation in time $\Oh(\Xlen\Ylen)$ using a dynamic programming table $D$ of $(\Xlen+1) \times (\Ylen+1)$ cells, where cell $\SubscriptNM{D}{i}{j}$ stores the value of $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$.
 The sole edit distance without any alignment can be computed in space $\Oh(\Ylen)$; indeed, column $j-1$ alone is sufficient to compute column $j$.
 An optimal alignment can be computed in time $\Oh(\Xlen + \Ylen)$ via \emph{traceback} on the table $D$;
-the traceback starts in the cell $D[\Ylen,\Xlen]$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[\Ylen,\Xlen]$.
+the traceback starts in the cell $\SubscriptNM{D}{\Ylen}{\Xlen}$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[\Ylen,\Xlen]$.
 
 Further, if no alignment at all is needed, there is a more efficient solution to the edit distance problem.
 Myers' algorithm \citep{Myers1999}, instead of computing DP cells one after another, encodes one whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
 The time complexity of Myers' algorithm is $\Oh(\Xlen\Ylen/b)$, where $b$ is the processor's bit-width, \eg 64 on modern processors.
 
 Finally, if the edit distance problem is relaxed to simply checking if $d_E(\XSeq,\YSeq) \leq k$, with $k \in \N_0$, an answer is given in time $\Oh(\Xlen k)$.
-Indeed, the DP matrix $D$ needs not to be filled entirely, as the cells outside a \emph{band} of width $k+1$ around the $0$-diagonal are not \emph{co-accessible} from the \emph{sink} cell $D[\Ylen,\Xlen]$.
+Indeed, the DP matrix $D$ needs not to be filled entirely, as the cells outside a \emph{band} of width $k+1$ around the $0$-diagonal are not \emph{coaccessible} from the \emph{sink} cell $\SubscriptNM{D}{\Ylen}{\Xlen}$.
 The reader is referred to \citep{Siragusa2013b} for a formal proof and to \citep{Weese2012} for a banded version of Myers' algorithm running in time $\Oh(\Xlen k/b)$.
 
 % === Overview of existing methods ===
