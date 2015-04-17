@@ -97,7 +97,7 @@ Below, I give more
 \label{sec:background:pipeline:primary}
 
 Primary analysis consists of instrument specific steps to call base pairs and compute quality metrics.
-The base calling software converts raw sequencing signals into bases, \ie A, C, G, T, or N if the signal is unclear.
+The base calling software converts raw sequencing signals into bases, \ie \texttt{A}, \texttt{C}, \texttt{G}, \texttt{T}, or \texttt{N} if the signal is unclear.
 The software assigns a quality value to each called base, estimating the probability of a base calling error.
 On early generation instruments, users could provide their own base calling tool.
 Now this process happens automatically on special hardware (\eg FPGAs or GPUs) bundled within the instrument.
@@ -219,38 +219,38 @@ Mapping quality scores offer a way to prioritize the results produced in downstr
 For instance, the \emph{GATK HaplotypeCaller} \citep{DePristo2011} annotates its variant calls with qualities whose value depends on mapping qualities, rather than removing data by applying a hard mapping quality cutoff.
 Below, I define the mapping quality score as done in \citep{Li2008}.
 
-Fix the alphabet $\Sigma = \{$~A,~C,~G,~T~$\}$. Consider a known donor genome $g$ over $\Sigma$ and a read $r$ sequenced at location $l$ from the template $g_{l \dots l+|r|-1}$.
-The base calling error $\epsilon_i$ from equation \ref{eq:phred} represents the probability $\epsilon_i$ of miscalling a base $r_i$ instead of calling its corresponding base $g_{l+i-1}$ in the donor genome.
-The probability $\Pr[r_i | g_{l+i-1}]$ of observing the base $r_i$ given the donor genome base $g_{l+i-1}$, is:
+Fix the alphabet $\Sigma = \{$\texttt{A},\texttt{C},\texttt{G},\texttt{T}$\}$. Consider a known donor genome $\Genome$ over $\Sigma$ and a read $\Read$ sequenced at location $l$ from the template $\Substring{\Genome}{l}{l + |\Read|}$.
+The base calling error $\epsilon_i$ from equation \ref{eq:phred} represents the probability $\epsilon_i$ of miscalling a base $\Subscript{\Read}{i}$ instead of calling its corresponding base $\Subscript{\Genome}{l+i}$ in the donor genome.
+The probability $\Pr[\Subscript{\Read}{i} | \Subscript{\Genome}{l+i}]$ of observing the base $\Subscript{\Read}{i}$ given the donor genome base $\Subscript{\Genome}{l+i}$, is:
 \begin{eqnarray}
 \label{eq:baseprob}
-\Pr[r_i | g_{l+i-1}] = \left\{
+\Pr[\Subscript{\Read}{i} | \Subscript{\Genome}{l+i}] = \left\{
 \begin{array}{ll}
-1-\epsilon_i                  & \text{ if } g_{l+i-1} = r_i\\
-\frac{\epsilon_i}{|\Sigma|-1} & \text{ if } g_{l+i-1} \in \Sigma \setminus \{r_i\}\\
+1-\epsilon_i                  & \text{ if } \Subscript{\Genome}{l+i} = \Subscript{\Read}{i}\\
+\frac{\epsilon_i}{|\Sigma|-1} & \text{ if } \Subscript{\Genome}{l+i} \in \Sigma \setminus \{\Subscript{\Read}{i}\}\\
 \end{array}
 \right.
 \end{eqnarray}
-and assuming \iid base calling errors, it follows that the probability $\Pr[r | g, l]$ of observing the read $r$, given the donor genome template $g_{l \dots l+|r|-1}$, is:
+and assuming \iid base calling errors, it follows that the probability $\Pr[\Read | \Genome, l]$ of observing the read $\Read$, given the donor genome template $\Substring{\Genome}{l}{l + |\Read|}$, is:
 \begin{eqnarray}
 \label{eq:obsprob}
-\Pr[r | g, l] = \prod_{i=1}^{|r|}{\Pr[r_i | g_{l+i-1}]}.
+\Pr[\Read | \Genome, l] = \prod_{i=\At{1}}^{\AtEnd{|\Read|}}{\Pr[\Subscript{\Read}{i} | \Subscript{\Genome}{l+i}]}.
 \end{eqnarray}
 
-By applying Bayes' theorem, \cite{Li2008} derive the posterior probability $p(l|g,r)$, that location $l$ in the reference genome $g$ is the correct mapping location of read $r$.
-Assuming uniform coverage, each location $l \in [1, |g| - |r| + 1]$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $p(l)$ is simply:
+By applying Bayes' theorem, \cite{Li2008} derive the posterior probability $\Pr[l | \Genome, \Read]$, that location $l$ in the reference genome $\Genome$ is the correct mapping location of read $\Read$.
+Assuming uniform coverage, each location $l \in \Interval{\Ibase}{|\Genome| - |\Read|}$ has equal probability of being the origin of a read in the donor genome, thus the prior probability $\Pr[l]$ is simply:
 \begin{eqnarray}
-\Pr[l] = \frac{1}{|g| - |r| + 1}
+\Pr[l] = \frac{1}{|\Genome| - |\Read| + 1}
 \end{eqnarray}
-Therefore, recalling $\Pr[r | g, l]$ from equation~\ref{eq:obsprob}, the posterior probability $\Pr[l|g,r]$ equals the probability of the read $r$ originating at location $l$, normalized over all possible locations in the reference genome:
+Therefore, recalling $\Pr[\Read | \Genome, l]$ from equation~\ref{eq:obsprob}, the posterior probability $\Pr[l | \Genome, \Read]$ equals the probability of the read $\Read$ originating at location $l$, normalized over all possible locations in the reference genome:
 \begin{eqnarray}
 \label{eq:mapprob}
-\Pr[l|g,r] = \frac{\Pr[r|g,l]}{\sum_{i=1}^{|g| - |r| + 1}{\Pr[r|g,i]}}
+\Pr[l | \Genome, \Read] = \frac{\Pr[\Read | \Genome, l]}{\sum_{i=\At{1}}^{|\Genome| - |\Read|}{\Pr[\Read | \Genome, i]}}
 \end{eqnarray}
 which in Phred-scale becomes:
 \begin{eqnarray}
 \label{eq:mapqual}
-Q[l|g,r] = -10 \log_{10}(1 - \Pr[l|g,r]).
+Q[l | \Genome, \Read] = -10 \log_{10}(1 - \Pr[l | \Genome, \Read]).
 \end{eqnarray}
 
 Computing the exact mapping quality as in equation~\ref{eq:mapqual} requires aligning each read to all positions in the reference genome.
@@ -286,12 +286,12 @@ Below, I report their key ideas and most relevant findings.
 \subsection{Genome mappability}
 
 \cite{Derrien2012} define \emph{genome mappability} as a function of a genome for a fixed $q$-gram length, distance measure \ie the Hamming or edit distance, and distance threshold $k$.
-Given a genomic sequence $g$, they define the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $g_{l \dots l+q-1}$ at location $l$ in $g$ as the number of occurrences of the $q$-gram in $g$ and its reverse complement $\bar{g}$.
-The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(l) = {F^q_k(l)}^{-1}$ with $M^q_k : \N \rightarrow ]0,1]$.
+Given a genomic sequence $\Genome$, they define the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $\Substring{\Genome}{l}{l + q}$ at location $l$ in $\Genome$ as the number of occurrences of the $q$-gram in $\Genome$ and its reverse complement $\Rev{\Genome}$.
+The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(l) = 1/{F^q_k(l)}$ with $M^q_k : \N \rightarrow ]0,1]$.
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
 The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
-Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \citep{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:background:paradigms}).
+Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \cite{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:background:paradigms}).
 \citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole human, mouse, fly, and worm genomes.
 Mimicking typical Illumina read mapping setups, they consider $q$-grams of length 36, 50 and 75~bp, and Hamming distance 2.
 They find out that about 30~\% of the whole human genome is not unique \wrt $(36,2)$-mappability.
@@ -316,9 +316,9 @@ Table \ref{tab:mappability} shows some results obtained from \citep{Derrien2012}
 \end{table}
 
 To estimate single-base resequencing accuracy, \citeauthor{Derrien2012} consider the mappability of all possible $q$-grams spanning any single genomic location.
-They define \emph{pileup mappability} $P^q_k$ at position $i$ as the average mappability of all $q$-grams spanning position $i$:
+They define \emph{pileup mappability} $P^q_k$ at position $l$ as the average mappability of all $q$-grams spanning position $i$:
 \begin{eqnarray}
-P^q_k(i) = 1/q \sum_{j=i}^{i+1}{M^q_k(j)}.
+P^q_k(l) = 1/q \sum_{i=l-q}^{l+q}{M^q_k(i)}.
 \end{eqnarray}
 \cite{Derrien2012} find out in their own resequencing studies that \emph{``low pileup-mappability regions are more prone to show a high value of heterozygosity than those with high mappability''}.
 Ideally, variant calling tools call a locus as heterozygous whenever the consensus alignment column at that locus contains two distinct bases.
@@ -328,19 +328,19 @@ This situation tends to arise more frequently whenever the consensus alignment c
 
 Genome mappability score (GMS) \citep{Lee2012}, analogously to pileup mappability, estimates single-locus resequencing accuracy for a specific sequencing technology.
 Instead of considering the inverse $q$-gram frequency, \citeauthor{Lee2012} use mapping quality (see section~\ref{sec:background:paradigms:mapqual}) to estimate the probability that a read originating at a given position can be mapped correctly.
-Subsequently, they derive the average mapping probability of any read spanning a location $l$ of a reference genome $g$ as:
+Subsequently, they derive the average mapping probability of all reads (in $\mathbb{R}_l$) spanning a location $l$ of the reference genome $\Genome$ as:
 %\footnote{Equation~3 in \citep{Lee2012} is not precise, please consider equation~\ref{eq:gms} instead.}
 \begin{eqnarray}
 \label{eq:gms}
-\Pr[l|g] = \sum_{r \in \mathcal{R}(l)}{\frac{\Pr[l|g,r]}{|\mathcal{R}(l)|}}
+\Pr[l | \Genome] = \sum_{\Read \in \mathbb{R}_l}{\frac{\Pr[l | \Genome, \Read]}{|\mathbb{R}_l|}}
 \end{eqnarray}
 which in Phred-scale becomes:
 \begin{eqnarray}
-Q[l|g] = \sum_{r \in \mathcal{R}(l)}{\frac{1 - 10^{-Q[l|g,r]/10}}{|\mathcal{R}(l)|}}.
+Q[l | \Genome] = \sum_{\Read \in \mathbb{R}_l}{\frac{1 - 10^{-Q[ l |\Genome, \Read]/10}}{|\mathbb{R}_l|}}.
 \end{eqnarray}
-Thus, fixed a genomic sequence $g$, they define the genome mappability score $\text{GMS}(l)$ in percentual value:
+Thus, fixed a genomic sequence $\Genome$, they define the genome mappability score $\text{GMS}(l)$ in percentual value:
 \begin{eqnarray}
-\text{GMS}(l) = 100 \, Q[l|g]
+\text{GMS}(l) = 100 \cdot Q[l | \Genome]
 \end{eqnarray}
 
 \citeauthor{Lee2012} proceed as follow to compute GMS.

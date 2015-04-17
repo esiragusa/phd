@@ -379,7 +379,7 @@ The formal definition of gapped $q$-gram follows.
 
 \begin{definition}[$Q$-gram]
 A gapped $q$-gram (abbreviated as $Q$-gram) is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N_0$ and $\Ibase \in Q$.
-The cardinality $|Q|$ is called the \emph{weight} of $Q$ and denoted as $\Weight{Q}$.
+The length $|Q|$ is called the \emph{weight} of $Q$ and denoted as $\Weight{Q}$.
 The maximum element of $Q$ is named \emph{span} and indicated by $\Span{Q}$.
 \end{definition}
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
@@ -448,7 +448,7 @@ Therefore, I do not use these algorithms in practice.
 \label{sub:qgram-non-detection}
 
 I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
-I consider any Hamming distance transcript over $\{ R, M \}$ as an $\Plen$-dimensional vector $\mathbf{x} = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
+I consider any Hamming distance transcript over $\{ \text{\ttfamily R}, \text{\ttfamily M} \}$ as an $\Plen$-dimensional vector $\mathbf{x} = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
 Accordingly, I denote by $|\mathbf{x}|_0=\Plen - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,\Threshold)$.
 

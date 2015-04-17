@@ -66,7 +66,7 @@ In section \ref{masai:evaluation:filter}, I experimentally evaluate filtration s
 When mapping current Illumina reads on short to medium length genomes, exact seeds are still more efficient than approximate seeds.
 Conversely, on larger genomes (\eg mammalian genomes) 1-approximate seeds outperform exact seeds by an order of magnitude.
 
-Following \citep{Navarro2000}, I decided to find approximate seeds by backtracking the suffix trie of the reference genome.
+Following the work of \cite{Navarro2000}, I decided to find approximate seeds by backtracking the suffix trie of the reference genome.
 In section~\ref{masai:engineering:index}, I recall the engineering work I did to implement efficient backtracking of approximate seeds.
 In order to achieve faster filtration, I opted to find approximate seeds only under the Hamming distance.
 For this reason, when resorting to approximate seeds, Masai does not attain strict full-sensitivity under the edit distance.
