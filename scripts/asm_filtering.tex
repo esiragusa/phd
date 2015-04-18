@@ -512,6 +512,7 @@ I propose the following ILP to solve \textsc{Optimal Threshold}.
 
 \begin{equation}
 \begin{array}{lll}
+\label{eq:qgram-ilp}
 \min & \sum \mathbf{t}							\\
 \text{subject to}								\\
 & \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}		\\
@@ -524,6 +525,7 @@ Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $\Thres
 Vector $\mathbf{x}$ represents any Hamming transcript; each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\mathbf{x}$ is within $k$.
 The set of inequalities of the form $\Threshold_i \geq x_{i+j}$ binds the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
 The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $\Threshold=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(\Plen,k)$.
+Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp} on some problem instances.
 
 \subsubsection{Approximate solution}
 
@@ -594,6 +596,22 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 \end{center}
 \end{figure*}
 
+\begin{table}[h]
+\center
+\caption[Best $Q$-grams]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
+\sffamily
+\input{tables/shapes}
+\label{tab:shapes}
+\end{table}
+
+\begin{table}[h]
+\center
+\caption[Optimal threshold computation]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour.}
+\sffamily
+\renewcommand{\tabcolsep}{0.8ex}
+\input{tables/threshold}
+\label{tab:threshold}
+\end{table}
 
 \subsection{Specificity}
 \label{sub:qgram-specificity}
@@ -704,45 +722,17 @@ Said that, I do not use $\mathbb{F}$-grams in practice.
 \label{sec:filtering:evaluation}
 
 In this section, I show the results of an experimental evaluation of the filtration methods exposed so far.
-I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $\Threshold \geq 1$) and 4 ($q$-Grams, $\Threshold \geq 4$), gapped $q$-grams with the scheme $(Q,t)$ as indicated in table~\ref{tab:filter-shapes} ($Q$-Grams).
+I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $\Threshold \geq 1$) and 4 ($q$-Grams, $\Threshold \geq 4$), and the gapped $q$-gram (iii) from table~\ref{tab:shapes} with the optimal thresholds indicated in table~\ref{tab:threshold} ($Q$-Grams).
+
 For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
 To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999} by \citep{Weese2012}.
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of 100~Mbp total length.
 As patterns, I extrapolated $200k$ DNA sequences of length 100~bp from an Illumina sequencing run (Sequence Read Archive ID SRR065390).
 
 All experiments run on a desktop computer running Linux~3.10.11, equipped with one Intel\textsuperscript{\textregistered} Core i7-4770K CPU @ 3.50\,GHz, 32\,GB RAM and a 2\,TB HDD @ 7200\,RPM.
-I repeated the experiments for $k$-mismatches and $k$-differences, varying $k$ in the range $[1,10]$.
+I repeated the experiments for $k$-mismatches and $k$-differences, varying $k$ in the range $\Interval{1}{10}$.
 I measured the runtime of the filtration phase only, and then of the filtration plus verification phase.
 The plots show always \emph{average} runtimes (or values) per pattern.
-
-\subsection{Optimal threshold}
-
-\begin{table}[h]
-  \center
-  \caption[$Q$-grams filtration schemes]{$Q$-grams filtration schemes.}
-\label{tab:shapes}
-\end{table}
-
-\begin{table}[h]
-  \center
-  \caption[Optimal threshold computation]{Optimal threshold computation.}
-% $1010100010000010101000100000101010001$
-%  \sffamily
-%	\renewcommand{\tabcolsep}{0.8ex}
-%	\begin{subtable}
-%		\input{tables/threshold}
-%	\end{subtable}
-%	\begin{subtable}
-%		\input{tables/threshold}
-%	\end{subtable}
-%	\begin{subtable}
-%		\input{tables/threshold}
-%	\end{subtable}
-%	\begin{subtable}
-%		\input{tables/threshold}
-%	\end{subtable}
-\label{tab:threshold}
-\end{table}
 
 \subsection{Runtime}
 
