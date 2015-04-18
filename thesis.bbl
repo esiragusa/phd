@@ -546,6 +546,12 @@ Needleman, S.~B. and Wunsch, C.~D. (1970).
   amino acid sequence of two proteins.
 \newblock {\em J. Mol. Biol.}, {\bf 48}, pages 443--453.
 
+\bibitem[Nemhauser \ea(1978)Nemhauser, Wolsey, and Fisher]{Nemhauser1978}
+Nemhauser, G.~L., Wolsey, L.~A., and Fisher, M.~L. (1978).
+\newblock An analysis of approximations for maximizing submodular set
+  functions—i.
+\newblock {\em Mathematical Programming\/}, {\bf 14}(1), pages 265--294.
+
 \bibitem[Nicolas and Rivals(2005)Nicolas and Rivals]{Nicolas2005}
 Nicolas, F. and Rivals, E. (2005).
 \newblock Hardness of optimal spaced seed design.
