@@ -606,7 +606,7 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 
 \begin{table}[h]
 \center
-\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour.}
+\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour; algorithm APX always completed within 6 milliseconds (data not shown).}
 \sffamily
 \renewcommand{\tabcolsep}{0.8ex}
 \input{tables/threshold}
@@ -622,18 +622,62 @@ Thus, among multiple full-sensitive filtration schemes, one clearly prefers the 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A filtration scheme $(Q,\Threshold)$, an $(\Plen,k)$ instance.\\
-{\bf Solution}	&	$| \{ \mathbf{x} \in \Bo^{m} : t_{Q}^{m}(\mathbf{x}) \geq t \} |$
+{\bf Solution}	&	$| \{ \mathbf{x} \in \Bo^{\Plen} : t_{Q}^{\Plen}(\mathbf{x}) \geq t \} |$
 \end{tabular}
 \end{problem}
 
 \subsubsection{Approximate solution}
 
-I propose a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001} to estimate the number of transcripts detected by a filtration scheme of the type $(Q,1)$.
-This number coincides with the number of true assignments to the boolean function $T_{Q}^{m}$, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
-Boolean function $T_{Q}^{m}$, as defined in equation \ref{eq:qgram-bool}, is in \emph{disjunctive normal form} (\emph{DNF}).
-Counting the number of true assignments to an arbitrary boolean function in DNF is a classic \emph{\#P-complete} problem, that however allows approximability to any degree \citep{Vazirani2001}.
+I propose a randomized algorithm to estimate the number of transcripts detected by a filtration scheme of the type $(Q,1)$ and later discuss its generalization to $(Q,t)$.
+The number of transcripts detected by $(Q,1)$ coincides with the number of true assignments to the boolean function $T_{Q}^{m}$,
+%, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
+which is in \emph{disjunctive normal form} (\emph{DNF}) by definition (see equation~\ref{eq:qgram-bool}).
+Counting the number of true assignments to an arbitrary boolean function in DNF is a classic \emph{\#P-complete} counting problem that however allows approximability to any degree \citep{Karp1989}, \ie it allows a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001}.
+Algorithm~\ref{alg:qgram-specificity} shows the algorithm by \citeauthor{Karp1989} for boolean function $T_{Q}^{m}$.
 
-Algorithm~\ref{alg:qgram-specificity} follows the algorithm in \citep{Karp1989} to estimate the number of true assignments of an arbitrary boolean function in DNF.
+I denote with $\mathbb{D}_i$, for $\At{1} \leq i \leq \Plen-\Span{Q}$, the set of transcripts $\mathbf{x}$ detected by the $Q$-gram starting at position $i$
+\begin{eqnarray}
+\mathbb{D}_i = \left\{ \mathbf{x} \in \Bo^{\Plen} : \bigwedge_{j \in Q} x_{i+j} \right\} 
+\end{eqnarray}
+which has cardinality 
+\begin{eqnarray}
+\label{eq:card-di}
+\left| \mathbb{D}_i \right| = 2^{\Plen-\Weight{Q}}
+\end{eqnarray}
+as a $0$ at any $x_{i+j}$ would invalidate the $Q$-gram starting at position $i$.
+Problem \textsc{Specificity} for $(Q,1)$ involves computing
+\begin{eqnarray}
+\left| \left\{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \right\} \right| = \left| \bigcup_{i=\At{1}}^{\AtEnd{\Plen}}{\mathbb{D}_i} \right|
+\end{eqnarray}
+which is less than the sum of all $|\mathbb{D}_i|$ from equation~\ref{eq:card-di} and non-trivial to compute in general.
+
+Recall that $t_{Q}^{\Plen}(\mathbf{x})$ indicates the number of clauses of $T_{Q}^{m}$ which are satisfied by $\mathbf{x}$.
+I denote by $\mathbb{M}$ the multi-set
+\begin{eqnarray}
+\mathbb{M} = \left\{ \left( \mathbf{x}, t_{Q}^{m}(\mathbf{x}) \right) : \mathbf{x} \in \mathbb{D}_i \text{ for } \At{1} \leq i \leq \Plen-\Span{Q} \right\}
+\end{eqnarray}
+which has cardinality 
+\begin{eqnarray}
+\left| \mathbb{M} \right| = \sum_{i=\At{1}}^{\AtEnd{\Plen}}{\left| \mathbb{D}_i \right| } = \left( \Plen - \Span{Q} + 1 \right) \cdot 2^{\Plen-\Weight{Q}}.
+\end{eqnarray}
+
+Algorithm~\ref{alg:qgram-specificity} picks $\mathbf{x} \in \mathbb{M}$ with probability
+\begin{eqnarray}
+\frac{t_{Q}^{m}(\mathbf{x})}{\left| \mathbb{M} \right|}
+\end{eqnarray}
+by picking (line 6) $\mathbb{D}_i$ with probability
+\begin{eqnarray}
+\frac{\left| \mathbb{D}_i \right|}{\left| \mathbb{M} \right|} = \frac{1}{\Plen - \Span{Q} + 1}
+\end{eqnarray}
+and then (lines 7--9) picking $\mathbf{x} \in \mathbb{D}_i$ with probability
+\begin{eqnarray}
+\frac{1}{\left| \mathbb{D}_i \right|} = \frac{1}{2^{\Plen-\Weight{Q}}}.
+\end{eqnarray}
+It estimates the mean value of
+\begin{eqnarray}
+\frac{\left| \mathbb{M} \right|}{t_{Q}^{m}(\mathbf{x})}
+\end{eqnarray}
+by sampling $\mathbb{M}$ for $4 \cdot \left( \Plen - \Span{Q} + 1 \right) / \epsilon^2$ times (lines 3, 11).
 
 \begin{figure*}[b]
 \begin{center}
