@@ -1,7 +1,7 @@
 \chapter{Yara}
 \label{sec:yara}
 
-\emph{Yara} (\emph{y}et \emph{a}nother \emph{r}ead \emph{a}ligner) is a non-heuristic read mapper capable of quickly reporting all co-optimal or suboptimal mapping locations within a given error rate.
+\emph{Yara} is a non-heuristic read mapper capable of quickly reporting all co-optimal or suboptimal mapping locations within a given error rate.
 Yara works with Illumina or Ion Torrent reads, supports both paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
 
 % -----------------------------------------------------------------------------
@@ -123,7 +123,7 @@ Yara uses an efficient FM-index specialization for the DNA alphabet, based on in
 This FM-index exhibits a fourfold speedup over the first FM-index implementation bundled with Masai.
 Surprisingly, this FM-index is faster than any other index, both in exact and approximate search (see section~\ref{sec:index:algo}).
 Moreover, this index consumes only 1.23 bytes per base pair with a SA sampled at 10\,\%, thus its memory footprint for the human genome is 3.7~GB.
-Under these terms, there is no space-time indexing trade-off: the FM-index always provides the most convenient suffix trie implementation.
+Thus, the FM-index always provides the most convenient suffix trie implementation, both in terms of speed and memory footprint.
 
 Yara does not use the multiple search algorithms of section~\ref{sec:index:algo:multimismatch} to search seeds on the FM-index.
 As shown in section~\ref{sec:index:algo}, on the FM-index it is always faster to search exact queries in a na\"ive way and approximate queries after sorting them in lexicographical order.
@@ -449,8 +449,7 @@ Figure~\ref{fig:yara:calling-indels} shows the INDELs calling accuracy results.
 Again, the ROC curves show incorrect INDELs on a logarithmic scale.
 %Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
 Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it computes local alignments rather than semi-global alignments.
-Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
-Yara [s=0] and [s=1] produce exactly the same set of calls.
+Yara [s=0] and [s=1] produce exactly the same set of calls: they induce a lower rate of correct INDEL calls and at the same time a higher rate of incorrect calls than Bowtie~2 and BWA.
 Surprisingly, GEM induces almost only incorrect INDEL calls.
 
 \begin{figure}[t]
