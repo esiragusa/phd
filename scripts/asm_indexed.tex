@@ -43,11 +43,11 @@ Pairs are ordered \st $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i-1}} \lexlt \Suf
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of (generalized) suffix array]{(Generalized) suffix array. (\subref{fig:sa}) Suffix array of the string {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
+\caption[Suffix array and generalized suffix array]{Suffix array and generalized suffix array. (\subref{fig:sa}) Suffix array of the string $\String = $ {\ttfamily ANANAS\$}. (\subref{fig:gsa}) Generalized suffix array of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
 
 \begin{subfigure}[t]{0.45\textwidth}
 \begin{center}
-\caption[Example of suffix array]{Suffix array.}
+\caption[Suffix array]{Suffix array.}
 \label{fig:sa}
 \ttfamily
 \begin{tabular}{ccl}
@@ -65,7 +65,7 @@ $\At{7}$ & $\At{6}$ & S\$\\
 \end{subfigure}%
 \begin{subfigure}[t]{0.45\textwidth}
 \begin{center}
-\caption[Example of generalized suffix array]{Generalized suffix array.}
+\caption[Generalized suffix array]{Generalized suffix array.}
 \label{fig:gsa}
 \ttfamily
 \begin{tabular}{rcl}
@@ -306,7 +306,7 @@ The idea is to supplement the SA with a so-called $q$-gram \emph{directory}: an 
 
 \begin{figure}[b!]
 \begin{center}
-\caption[Example of $q$-gram index]{$2$-Gram index of the string $\String = $ {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ \text{ {\ttfamily A}, {\ttfamily N}, {\ttfamily S} }\}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=\At{4}$ addresses two lookups, respectively in $\SubscriptNV{D}{\At{4}}$ and $\SubscriptNV{D}{\At{5}}$, that in turn provide the range $\OInterval{\At{5}}{\At{7}}$ in $\Sarray$.} %Note that suffixes of $\String$ shorter than $q=2$ are disabled in $A$.}
+\caption[$q$-Gram index]{$2$-Gram index of the string $\String = $ {\ttfamily ANANAS\$} over the alphabet $\Sigma = \{ \text{ {\ttfamily A}, {\ttfamily N}, {\ttfamily S} }\}$. The example shows the lookup of the $2$-gram {\ttfamily NA}. The hash value $h(\text{\ttfamily NA})=\At{4}$ addresses two lookups, respectively in $\SubscriptNV{D}{\At{4}}$ and $\SubscriptNV{D}{\At{5}}$, that in turn provide the range $\OInterval{\At{5}}{\At{7}}$ in $\Sarray$.} %Note that suffixes of $\String$ shorter than $q=2$ are disabled in $A$.}
 \label{fig:qgram}
 \ttfamily
 \begin{tabular}{ccccccl}
@@ -509,7 +509,7 @@ Given a string $\String$ and its SA $\Sarray$, the BWT $\Last$ of $\String$ is a
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of Burrows-Wheeler transform]{Cyclic shifts matrix of the string $\String =$ {\ttfamily ANANAS\$}. Column $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ is the BWT of $\String$.}
+\caption[Burrows-Wheeler transform]{Cyclic shifts matrix of the string $\String =$ {\ttfamily ANANAS\$}. Column $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ is the BWT of $\String$.}
 \label{fig:bwt}
 \ttfamily
 \begin{tabular}{cccccc}
@@ -544,7 +544,7 @@ Therefore, some direct BWT construction algorithms working within $o(\Slen \log{
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of functions $LF$ and $\Psi$]{Functions $LF$ and $\Psi$ of the string $\String = $ {\ttfamily ANANAS\$}. The example shows that $LF = \Psi^{-1}$, \eg $LF(\Psi(5)) = 5$ and $\Psi(LF(3)) = 3$. Moreover, the example shows that the relative order of characters between $\Last$ and $\First$ is preserved, \eg the first occurrence of $N$ in $\Last$ corresponds to the first occurrence in $\First$.}
+\caption[Permutations $LF$ and $\Psi$]{Permutations $LF$ and $\Psi$ of the string $\String = $ {\ttfamily ANANAS\$}. The example shows that $LF = \Psi^{-1}$, \eg $LF(\Psi(5)) = 5$ and $\Psi(LF(3)) = 3$. Moreover, the example shows that the relative order of characters between $\Last$ and $\First$ is preserved, \eg the first occurrence of $N$ in $\Last$ corresponds to the first occurrence in $\First$.}
 \label{fig:lf_psi}
 \ttfamily
 \begin{tabular}{ccccccc}
@@ -594,7 +594,7 @@ Figure \ref{fig:psi} exemplifies.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of BWT inversion]{Recovering the string $\String = $ {\ttfamily ANANAS\$} from the permutation $\Psi$. The example shows only the first two steps of the inversion recovering {\ttfamily AN}.}
+\caption[Inversion of the Burrows-Wheeler transform]{Recovering the string $\String = $ {\ttfamily ANANAS\$} from permutation $\Psi$. The example shows only the first two steps of the inversion recovering {\ttfamily AN}.}
 \label{fig:psi}
 \ttfamily
 \begin{tabular}{ccc}
@@ -690,7 +690,7 @@ As the array $R$ stores $\Oh(\xfloor{\Slen/\log{\Slen}})$ positions and each pos
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=010101100100$. (\subref{fig:rd1}) One-level RD with $b=4$. In the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R}{\At{2}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$. In the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$. Note that $R$ in (\subref{fig:rd1}) is different from $R$ in (\subref{fig:rd2}).}
+\caption[Binary rank dictionaries]{Binary rank dictionaries (RDs) of the string $\String=010101100100$. (\subref{fig:rd1}) One-level RD with $b=4$. In the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R}{\At{2}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$. (\subref{fig:rd2}) Two-levels RD with $b=2$. In the example, $\rank_1(\String, \At{7}) = \SubscriptNV{R^2}{\At{2}} + \SubscriptNV{R}{\At{3}} + \popcount_1(\Suffix{\String}{\At{5}}, \At{3}) = 3$. Note that $R$ in (\subref{fig:rd1}) is different from $R$ in (\subref{fig:rd2}).}
 
 \begin{subfigure}[b]{0.45\textwidth}
 \begin{center}
@@ -792,7 +792,7 @@ Thus, $R_{\sigma}$ adds $\Oh(\sigma \Slen \log{\sigma})$ bits to $\String$.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of one-level DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,\At{5})= \SubscriptNM{R_{\sigma}}{\At{2}}{\At{2}} + \popcount_{\text{\ttfamily C}}(\Suffix{\String}{\At{3}}, \At{3})=2.$}
+\caption[DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,\At{5})= \SubscriptNM{R_{\sigma}}{\At{2}}{\At{2}} + \popcount_{\text{\ttfamily C}}(\Suffix{\String}{\At{3}}, \At{3})=2.$}
 \label{fig:rd_dna}
 \ttfamily
 \begin{tabular}{rcr}
@@ -828,7 +828,7 @@ Node $v$ implicitly represents the subsequence $\String^v$ of all symbols of $\S
 
 \begin{figure}[b]
 \begin{center}
-\caption[Example of wavelet tree]{Wavelet tree of the DNA string $\String=$ {\ttfamily CTCGCA}. The alphabet $\{\text{\ttfamily A},\text{\ttfamily C},\text{\ttfamily G},\text{\ttfamily T}\}$ is recursively partitioned as $\{\{\{\text{\ttfamily A}\},\{\text{\ttfamily C}\}\},\{\{\text{\ttfamily G}\},\{\text{\ttfamily T}\}\}\}$. In the example, $\rank_{\text{\ttfamily C}}(\String,4)=2$ is decomposed as $\rank_0(B,4) = 2$ on the root node and then $\rank_1(B^{\text{\ttfamily AC}}, 2) = 2$ on the left inner node.}
+\caption[Wavelet tree]{Wavelet tree of the DNA string $\String=$ {\ttfamily CTCGCA}. The alphabet $\{\text{\ttfamily A},\text{\ttfamily C},\text{\ttfamily G},\text{\ttfamily T}\}$ is recursively partitioned as $\{\{\{\text{\ttfamily A}\},\{\text{\ttfamily C}\}\},\{\{\text{\ttfamily G}\},\{\text{\ttfamily T}\}\}\}$. In the example, $\rank_{\text{\ttfamily C}}(\String,4)=2$ is decomposed as $\rank_0(B,4) = 2$ on the root node and then $\rank_1(B^{\text{\ttfamily AC}}, 2) = 2$ on the left inner node.}
 \label{fig:wt_dna}
 \ttfamily
 \input{figures/wavelet_tree.tikz}
@@ -983,7 +983,7 @@ As expected, the FM-TL and FM-WT are the most compact data structures, while the
 \end{center}
 \end{table}
 
-\subsection{Top-down traversal bounded by depth}
+\subsection{Depth-first traversal bounded by depth}
 \label{sec:index:algo:traversal}
 
 Before turning to proper string matching algorithms, I present a simple algorithm that helps to comprehend subsequent backtracking algorithms.
@@ -1026,7 +1026,7 @@ In particular, the FM-indices, which are based on backward search, become more t
 
 \begin{figure}[b]
 \begin{center}
-\caption[Top-down traversal runtime]{Runtime of the bounded top-down traversal of various suffix trie implementations.}
+\caption[Depth-first traversal runtime]{Runtime of the bounded depth-first traversal of various suffix trie implementations.}
 \label{fig:visit-dna}
 \includegraphics{visit.dna.celegans.pdf}
 \end{center}
@@ -1109,7 +1109,7 @@ Conversely, if the pattern $\Pattern$ is completely spelled and the traversal en
 
 \begin{figure}[b]
 \begin{center}
-\caption[$k$-mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
+\caption[$k$-Mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
 \label{fig:query-dna-apx}
 \includegraphics{query.dna.celegans.1.pdf}
 \end{center}

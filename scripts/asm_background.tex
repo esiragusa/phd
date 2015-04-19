@@ -125,7 +125,7 @@ An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of
 
 \begin{figure}[h]
 \begin{center}
-\caption[Example of edit transcript and alignment]{Example of edit transcript and alignment. The string $\XSeq$ is transformed into $\YSeq$. The transcript character \texttt{M} indicates a match, \texttt{R} a replacement, \texttt{I} an insertion, and \texttt{D} a deletion.
+\caption[Edit transcript and alignment]{Example of edit transcript and alignment. The string $\XSeq$ is transformed into $\YSeq$. The transcript character \texttt{M} indicates a match, \texttt{R} a replacement, \texttt{I} an insertion, and \texttt{D} a deletion.
 }
 \label{fig:edit-transcript}
 \input{figures/transcript.tikz}
@@ -239,7 +239,7 @@ Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilo
 
 \begin{figure}[t]
 \begin{center}
-\caption[Example of occurrence for $k$-differences]{Example of occurrence for $k$-differences. Pattern $\Pattern$ occurs in text $\Text$ at edit distance 3, \ie with a 19~\% error rate.
+\caption[$k$-Differences occurrence]{Example of occurrence for $k$-differences. Pattern $\Pattern$ occurs in text $\Text$ at edit distance 3, \ie with a 19~\% error rate.
 The alignment between $\Pattern$ and any substring of $\Text$ is called semi-global, as opposed to the global alignment of two complete strings.
 }
 \label{fig:edit-occurrence}
@@ -372,7 +372,7 @@ Each of the $||\Strings||$ leaves is labeled by a pair $\StrieLeaf{(i,j)}$ and p
 %Figure~\ref{fig:stree} illustrates.
 
 \begin{figure}[b]
-\caption[Example of suffix trie and suffix tree]{Suffix trie and suffix tree of the string {\ttfamily ANANAS\$} .}
+\caption[Suffix trie and suffix tree]{Suffix trie and suffix tree of the string $\String =$ {\ttfamily ANANAS\$} .}
 \label{fig:stree}
 \begin{subfigure}[b]{.5\textwidth}
 \begin{center}
@@ -395,7 +395,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 %I remark that all given algorithms can be generalized to work on trees.
 
 \begin{figure}[t]
-\caption[Example of generalized suffix trie]{Generalized suffix trie of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
+\caption[Generalized suffix trie]{Generalized suffix trie of the string collection $\Strings = \{$ {\ttfamily ANANAS$\AtCollection{\$}{\At{1}}$}, {\ttfamily CACAO$\AtCollection{\$}{\At{2}}$} $\}$.}
 \label{fig:gstrie}
 \begin{center}
 \input{figures/gstrie.tikz}

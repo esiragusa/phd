@@ -598,7 +598,7 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 
 \begin{table}[h]
 \center
-\caption[Best $Q$-grams]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
+\caption[Best $Q$-grams found by \citeauthor{Burkhardt2001}]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
 \sffamily
 \input{tables/shapes}
 \label{tab:shapes}
@@ -606,7 +606,7 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 
 \begin{table}[h]
 \center
-\caption[Optimal threshold computation]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour.}
+\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour.}
 \sffamily
 \renewcommand{\tabcolsep}{0.8ex}
 \input{tables/threshold}
