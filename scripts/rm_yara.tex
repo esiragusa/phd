@@ -496,8 +496,17 @@ Another similar application is the resolution of alternative loci in the new hum
 This task could be simply performed by inferring the most likely alternative locus, \eg from the density of mapped reads, and then re-assigning multi-reads to that locus.
 With de-facto standard mappers BWA and Bowtie~2, multi-reads would have to be re-mapped.
 
-Yara already provides a very efficient implementation of stratified all-mapping.
-Yet, the tool can be still sped up significantly.
+The weak spot of Yara is INDELs accuracy.
+Yara is unable to find medium to long INDELs (\ie > 5~bp) because the reads spanning those INDELs remain unmapped.
+The edit distance does not support long INDELs over random errors, thus increasing the error rate only increases the rate of incorrect INDELs.
+However, in the paired-end protocol, the other end of such unmapped reads is usually mapped.
+As the insert size is known and relatively narrow, it is possible to spot these unmapped reads by searching them \emph{online} within a neighborhood of their mapped end.
+This strategy is implemented by the tools BWA and Bowtie~2.
+
+Performance-wise, Yara can still be improved.
 The verification time can be drastically reduced: David Weese and me vectorized the banded Myers' algorithm such that it verifies multiple patterns simultaneously; a prototypical implementation on a modern processor (256~bit AVX instructions) shows a speed-up of 4--6 times over the conventional algorithm.
 The filtration time can be almost halved by indexing both the forward and reverse complemented strands of the reference genome; this would be paid with a total memory footprint of about 8GB, which is nonetheless acceptable.
+Finally, the estimation of mapping qualities in Yara [s=0] can use matches from sub-optimal strata, which are found but not reported; this could render Yara [s=0] almost as good as Yara [s=1].
 
+Yara is part of the SeqAn library \citep{Doering2008}, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/yara}.
+A manuscript for this work is in preparation and will be submitted to a peer-reviewed journal.
