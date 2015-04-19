@@ -621,12 +621,12 @@ Siragusa, E., Weese, D., and Reinert, K. (2013b).
 \newblock In {\em Proceedings of the Joint EDBT/ICDT 2013 Workshops\/}, pages
   370--374. ACM.
 
-\bibitem[Smedley \ea(pted)Smedley, Jacobson, J{\"a}ger, K{\"o}hler, Holtgrewe,
+\bibitem[Smedley \ea(2015)Smedley, Jacobson, J{\"a}ger, K{\"o}hler, Holtgrewe,
   Schubach, Siragusa, Zemojtel, Buske, Bone, Haendel, and
   Robinson]{Smedley2015}
 Smedley, D., Jacobson, J., J{\"a}ger, M., K{\"o}hler, S., Holtgrewe, M.,
   Schubach, M., Siragusa, E., Zemojtel, T., Buske, O., Bone, W., Haendel, M.,
-  and Robinson, P.~N. (accepted).
+  and Robinson, P.~N. (accepted, 2015).
 \newblock Next-generation diagnostics and disease gene discovery with the
   exomiser.
 \newblock {\em Nat. Protoc.}
@@ -760,8 +760,8 @@ Weese, D. (2013).
 \newblock {\em Indices and Applications in High-Throughput Sequencing\/}.
 \newblock Ph.D. thesis, Freie Universit{\"a}t Berlin.
 
-\bibitem[Weese and Siragusa(tted)Weese and Siragusa]{Weese2015}
-Weese, D. and Siragusa, E. (submitted).
+\bibitem[Weese and Siragusa(2015)Weese and Siragusa]{Weese2015}
+Weese, D. and Siragusa, E. (submitted, 2015).
 \newblock {\em Algorithms for next-generation sequencing data\/}, chapter
   Full-Text Indexes for High-Throughput Sequencing.
 \newblock John Wiley \& Sons.
