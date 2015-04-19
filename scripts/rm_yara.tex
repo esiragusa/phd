@@ -32,7 +32,7 @@ The $e$-stratum
 denotes the set of all mapping locations of a read $\Read$ at edit distance $e$ from the reference genome $\Genome$.
 According to the above definition, conventional all-mapping under the edit distance defines the set
 \begin{eqnarray}
-\Stratum = \Stratum_0 \cup \Stratum_1 \cup \dots \cup \Stratum_k
+\Stratum = \Stratum_0 \cup \Stratum_1 \cup \dots \cup \Stratum_k\label{eq:all-mapping}
 \end{eqnarray}
 as relevant mapping locations within an \emph{absolute} error threshold $k$.
 Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or suboptimal up to a certain degree $s$.
@@ -42,7 +42,7 @@ e^* = \min \,\{ e \in [0,k-s] : \Stratum_e \neq \emptyset \}
 \end{eqnarray}
 stratified all-mapping considers mapping locations
 \begin{eqnarray}
-\Stratum = \Stratum_{e^*} \cup \dots \cup \Stratum_{e^*+s}
+\Stratum = \Stratum_{e^*} \cup \dots \cup \Stratum_{e^*+s}\label{eq:strata-mapping}
 \end{eqnarray}
 within a \emph{relative} suboptimality error threshold $s$ to be relevant.
 %Note that $s \ll k$.
@@ -59,7 +59,7 @@ The following stratified all-mapping method, implemented in Yara, guarantees not
 Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $e^*+s$.
 Given a filtration scheme $\mathbf{t}=(t_{\At{1}},\dots,t_{\AtEnd{s}})$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbf{t^*}=(t^{*}_{\At{1}},\dots,t^{*}_{\AtEnd{s^*}})$ is full-sensitive within distance $e^*+s$ if it satisfies
 \begin{eqnarray}
-s^* + \sum_{i=\At{1}}^{\AtEnd{s^*}} t_i^* > e^*+s.
+s^* + \sum_{i=\At{1}}^{\AtEnd{s^*}} t_i^* > e^*+s.\label{eq:yara-filtration-scheme}
 \end{eqnarray}
 %The proof is analogous to that one given in section~\ref{sec:seeds-apx}.
 %Verification of all candidate locations produced by one seed or by one threshold accounts for one stratum $\Stratum_i$.
@@ -251,7 +251,7 @@ Under this measure the maximum throughput of the Illumina HiSeq\,2500 is $5.56$ 
 %Runtimes for each tool are measured on de-facto standard input and output formats, \ie they consider the time to produce a compressed BAM file from a gzipped FastQ file.
 
 In addition to Yara, I consider the following state-of-the-art tools: Bowtie\,2, BWA, GEM, RazerS\,3, and Hobbes\,2.
-Bowtie\,2 and BWA are suited for best-mapping, while RazerS\,3 and Hobbes\,2 for all-mapping.
+The tools Bowtie\,2 and BWA are suited for best-mapping, while RazerS\,3 and Hobbes\,2 for all-mapping.
 GEM, in addition to all-mapping, can be used for best-mapping only to some extent, as it does not compute mapping qualities.
 
 \subsection{Experimental setup}
@@ -259,6 +259,8 @@ GEM, in addition to all-mapping, can be used for best-mapping only to some exten
 \subsubsection{Read mappers parametrization}
 
 In appendix \ref{sup:yara:param}, I give the exact parametrization of each read mapper considered in the evaluation.
+I parameterized Yara in three different ways, denoted as [s=0], [s=1], and [all].
+Yara [s=0] thus reports only the co-optimal stratum as in equations~\ref{eq:strata-mapping}, Yara [s=1] up to the first sub-optimal stratum, and Yara [all] all sub-optimal strata as in equation~\ref{eq:all-mapping}.
 Whenever possible, I configured the tools with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
 When processing paired-end reads, I provided the tools with appropriate insert size information.
 
@@ -310,18 +312,18 @@ Subsequently, I provided the reads as unpaired to each tool, as the Rabema bench
 
 \subsubsection{Co-optimal mapping locations}
 Results are shown in table~\ref{tab:yara:rabema} (left panel).
-Yara is the most sensitive tool in finding all co-optimal locations; it is full-sensitive up to 3~\% error rate.
+Yara [s=0] is the most sensitive tool in finding all co-optimal locations; it is full-sensitive up to 3~\% error rate.
 GEM is not full-sensitive even though it claims to be so; it looses 5.6~\% of normalized locations at 5~\% error rate.
 Bowtie~2 and BWA are not designed for this task; indeed, they loose a significant number of co-optimal locations.
-In addition, Yara has the highest throughput, being 1.7 times faster than GEM, 2.3 times faster than Bowtie~2 and 3.2 times faster than BWA.
+In addition, Yara [s=0] has the highest throughput, being 1.7 times faster than GEM, 2.3 times faster than Bowtie~2 and 3.2 times faster than BWA.
 
 \subsubsection{Suboptimal mapping locations}
 Results are shown in table~\ref{tab:yara:rabema}  (right panel).
 RazerS~3 is the only full-sensitive tool in finding all suboptimal locations.
 Hobbes~2 looses only a few points at 4-5~\% error rate.
-Yara is full-sensitive up to 3~\% error rate, nonetheless it looses only 2.8~\% of normalized locations at 5~\% error rate.
-However, looking at throughputs, Yara is 3.6 times faster than Hobbes~2 and 21.9 times faster than RazerS~3.
-In addition, Yara has a significantly lower memory footprint than its two competitors.
+Yara [all] is full-sensitive up to 3~\% error rate, nonetheless it looses only 2.8~\% of normalized locations at 5~\% error rate.
+However, looking at throughputs, Yara [all] is 3.6 times faster than Hobbes~2 and 21.9 times faster than RazerS~3.
+In addition, Yara [all] has a significantly lower memory footprint than its two competitors.
 GEM is again not full-sensitive; it looses more than 50~\% of normalized locations at 5~\% error rate.
 This could be due to a misconfiguration of the tool; nonetheless, I took the same parameterization used in the supplemental material of \citep{MarcoSola2012}.
 
@@ -352,14 +354,16 @@ To assess the improvements due to the knowledge of the insert size, the experime
 
 Accuracy results are shown in figure~\ref{fig:yara:accuracy-se}.
 The ROC curves show incorrect locations on a logarithmic scale.
-Yara always dominates BWA, which in turn always dominates Bowtie~2.
+Yara [s=1] always dominates BWA, which in turn always dominates Bowtie~2.
+It is interesting to see that Yara [s=0] is not able to compute accurate mapping qualities without the knowledge of mapping locations from sub-optimal strata.
 %The ROC curves in the top panel show incorrect locations on a linear scale, in order to highlight unmappable reads.
 %Conversely, to focus on mappable reads, the ROC curves in the bottom panel show incorrect locations on a logarithmic scale.
 %From both plots, it is visible that Yara always dominates BWA, which in turn always dominates Bowtie~2.
 
 Performances are shown in table~\ref{tab:yara:throughput-se}.
-Yara is 3.6 times faster than BWA and 4.5 times faster than Bowtie~2.
-Bowtie~2 uses 1.5~GB less memory than Yara, probably thanks to a more compact FM-index implementation; however, memory footprint is not a limiting factor.
+Yara [s=0] is 3.6 times faster than BWA and 4.5 times faster than Bowtie~2.
+Bowtie~2 uses 1.5~GB less memory than Yara [s=0], probably thanks to a more compact FM-index implementation; however, memory footprint is not a limiting factor.
+Yara [s=1] is 3.0 times slower than Yara [s=0], but still faster than all other tools.
 
 \begin{table}[b]
 \begin{center}
@@ -384,13 +388,13 @@ Bowtie~2 uses 1.5~GB less memory than Yara, probably thanks to a more compact FM
 Accuracy results are shown in figure~\ref{fig:yara:accuracy-pe}.
 Again, the ROC curves show incorrect locations on a logarithmic scale.
 %Again, the ROC curves in the top panel show incorrect locations on a linear scale, while, those in the bottom panel are on a logarithmic scale.
-Yara still dominates BWA on the most mappable reads; however, compared to single-end reads, BWA on paired-end reads is closer to Yara.
+Yara [s=1] still dominates BWA on the most mappable reads; however, compared to single-end reads, BWA on paired-end reads is closer to Yara.
 Bowtie~2 shows the worst accuracy. 
 
 Performances are shown in table~\ref{tab:yara:throughput-pe}.
 Bowtie~2 on paired-end reads has a higher throughput than on single-end reads.
 Conversely, BWA on paired-end reads is considerably slower than on single-end reads.
-Yara is still XX times faster than Bowtie~2 and XX times faster than BWA.
+Yara [s=0] is still 3.4 times faster than Bowtie~2 and 4.0 times faster than BWA.
 
 \begin{table}[b]
 \begin{center}
@@ -433,6 +437,7 @@ The output of the evaluation is plotted as ROC curves.
 Figure~\ref{fig:yara:calling-snps} shows the SNVs calling accuracy results.
 The ROC curve show incorrect SNVs on a logarithmic scale, to highlight high-quality calls.
 The plot shows that Yara induces a significantly higher rate of high-quality calls and up to 3 times less incorrect SNVs than BWA.
+There is no appreciable difference between Yara [s=0] and [s=1].
 %The ROC curves in the top panel show incorrect SNVs on a linear scale, in order to highlight low-quality calls.
 %Conversely, to focus on high-quality calls, the ROC curves in the bottom panel show incorrect SNVs on a logarithmic scale.
 %From the top curves is evident that Yara induces up to 3 times fewer incorrect SNVs than BWA, while
@@ -445,6 +450,7 @@ Again, the ROC curves show incorrect INDELs on a logarithmic scale.
 %Again, the ROC curves in the top panel show incorrect INDELs on a linear scale, while, those in the bottom panel are on a logarithmic scale.
 Bowtie~2 dominates both BWA and Yara, possibly thanks to the fact that it computes local alignments rather than semi-global alignments.
 Yara induces the same number of correct INDEL calls as BWA, although with a higher rate of incorrect calls.
+Yara [s=0] and [s=1] produce exactly the same set of calls.
 Surprisingly, GEM induces almost only incorrect INDEL calls.
 
 \begin{figure}[t]
@@ -458,8 +464,10 @@ Surprisingly, GEM induces almost only incorrect INDEL calls.
 \subsubsection{Performance}
 
 Table~\ref{tab:yara:calling-throughput} shows tools performances.
-Yara is XX times faster than GEM, XX times faster than Bowtie~2, XX times faster than BWA.
-Compared to simulated WGS data (section~\ref{sec:yara:eval:accuracy}), all tools on real WES data exhibit a higher throughput. This is due to the fact that the mappability of the whole human exome is higher than the average mappability of the whole human genome.
+Yara [s=0] is 2.0 times faster than GEM, 3.2 times faster than Bowtie~2, and 4.7 times faster than BWA.
+Compared to simulated WGS data (section~\ref{sec:yara:eval:accuracy}), all tools exhibit a higher throughput on real WES data.
+This is due to the fact that the mappability of the whole human exome is higher than the average mappability of the whole human genome.
+This also explains why Yara [s=1] is now only 1.3 times slower than Yara [s=0].
 
 \begin{table}[b]
 \begin{center}

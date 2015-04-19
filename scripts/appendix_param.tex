@@ -51,8 +51,9 @@ In the following, I give the exact parameterization of each read mapper consider
 Below, \texttt{MIN} and \texttt{MAX} are placeholders for minimal and maximal insert size, while \texttt{INS} is the mean insert size and \texttt{ERR} its allowed deviation, \ie \texttt{INS = (MIN + MAX) / 2}, \texttt{ERR = (MAX - MIN) / 2}.
 
 \paragraph{Yara}
-Version 1.0 was used.
-To perform all-mapping, I passed the argument \texttt{--all}; by default, the tool runs as a best-mapper.
+Version 0.9.4 was used.
+By default, the tool runs as a best-mapper; I set the number of strata with the parameter \texttt{-s}.
+To perform all-mapping, I passed the argument \texttt{--all}.
 I set the error rate using the parameter \texttt{-e}.
 In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
 The number of threads was set with the parameter \texttt{-t}.
@@ -79,14 +80,14 @@ I used the parameter \texttt{-t} to select the number of threads in the \texttt{
 the \texttt{sampe} and \texttt{samse} steps were performed using one thread since BWA does not offer any parallelization here.
 
 \paragraph{Hobbes\,2}
-Version 2.1 was used.
+Version 2.0 was used.
 I built the index using the recommended $q$-gram length 11.
 I enabled edit distance with \texttt{--indels} and set the distance threshold using the parameter \texttt{-v}.
 In paired-end mode, I used the parameters \texttt{--pe --min MIN --max MAX}.
 Multi-threading was enabled using \texttt{-p}.
 
 \paragraph{RazerS\,3}
-Version 3.2 was used.
+Version 3.3 was used.
 I set the error rate through the parameter \texttt{-i}, \eg \texttt{-i 95} to map within an error rate of 5\,\%.
 I passed the option \texttt{-rr 100} to set the recognition rate to 100\,\% and \texttt{-m 1000000} to output all mapping locations per read.
 In paired-end mode, the parameters used were \texttt{--library-length INS --library-error ERR}.
