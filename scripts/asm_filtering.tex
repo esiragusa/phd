@@ -448,29 +448,29 @@ Therefore, I do not need these algorithms in the applications presented in chapt
 \label{sub:qgram-non-detection}
 
 I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
-I consider any Hamming distance transcript over $\{ \text{\ttfamily R}, \text{\ttfamily M} \}$ as an $\Plen$-dimensional vector $\mathbf{x} = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
-Accordingly, I denote by $|\mathbf{x}|_0=\Plen - \sum \mathbf{x}$ the Hamming distance of the transcript, and by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\mathbf{x}$ \st $|\mathbf{x}|_0 = k$.
+I consider any Hamming distance transcript over $\{ \text{\ttfamily R}, \text{\ttfamily M} \}$ as an $\Plen$-dimensional vector $\Transcript = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
+Accordingly, I denote by $|\Transcript|_0=\Plen - \sum \Transcript$ the Hamming distance of the transcript, and by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\Transcript$ \st $|\Transcript|_0 = k$.
 I now define the event of detection of a transcript by a filtration scheme $(Q,\Threshold)$.
 
 \begin{definition}
 \label{def:qgram-occ}
-A $Q$-gram \emph{occurs} at position $i$ in a transcript $\mathbf{x}$ iff $\forall j \in Q$ $x_{i+j}=1$.
+A $Q$-gram \emph{occurs} at position $i$ in a transcript $\Transcript$ iff $\forall j \in Q$ $x_{i+j}=1$.
 \end{definition}
 
 \begin{definition}
 \label{def:qgram-detection}
-A filtration scheme $(Q,\Threshold)$ \emph{detects} $\mathbf{x}$ iff the $Q$-gram occurs at least $\Threshold$ times in $\mathbf{x}$.
+A filtration scheme $(Q,\Threshold)$ \emph{detects} $\Transcript$ iff the $Q$-gram occurs at least $\Threshold$ times in $\Transcript$.
 \end{definition}
 
 I introduce a \emph{boolean function} to characterize the set of transcripts detected by a filtration scheme of the form $(Q,1)$.
-Let $T_{Q}^{m}: \Bo^{\Plen} \rightarrow \Bo$ denote the boolean function such that $T_{Q}^{m}(\mathbf{x})$ is true iff the $Q$-gram occurs in a transcript $\mathbf{x}$ of length $\Plen$.
+Let $T_{Q}^{m}: \Bo^{\Plen} \rightarrow \Bo$ denote the boolean function such that $T_{Q}^{m}(\Transcript)$ is true iff the $Q$-gram occurs in a transcript $\Transcript$ of length $\Plen$.
 I define such boolean function as the disjunction
 \begin{equation}
 \label{eq:qgram-bool}
-T_{Q}^{m}(\mathbf{x}) = \bigvee_{i=\At{1}}^{\Plen-\Span{Q}} \bigwedge_{j \in Q} x_{i+j}
+T_{Q}^{m}(\Transcript) = \bigvee_{i=\At{1}}^{\Plen-\Span{Q}} \bigwedge_{j \in Q} x_{i+j}
 \end{equation}
-where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\mathbf{x}$.
-According to definition \ref{def:qgram-detection}, filtration scheme $(Q,\Threshold)$ detects $\mathbf{x}$ iff $\mathbf{x}$ satisfies at least $\Threshold$ clauses of $T_{Q}^{m}$.
+where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\Transcript$.
+According to definition \ref{def:qgram-detection}, filtration scheme $(Q,\Threshold)$ detects $\Transcript$ iff $\Transcript$ satisfies at least $\Threshold$ clauses of $T_{Q}^{m}$.
 The formal definition of \textsc{Full Sensitivity} follows.
 
 %The utility of these functions is manyfold.
@@ -480,7 +480,7 @@ The formal definition of \textsc{Full Sensitivity} follows.
 \begin{problem}[\textsc{Full Sensitivity}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an $(\Plen,k)$ instance. \\
-{\bf Question}	&	$\exists \, \mathbf{x} \in \Bo^{\Plen}_k$ \st $T_{Q}^{m}(\mathbf{x}) = 0$? \\
+{\bf Question}	&	$\exists \, \Transcript \in \Bo^{\Plen}_k$ \st $T_{Q}^{m}(\Transcript) = 0$? \\
 \end{tabular}
 \end{problem}
 
@@ -490,18 +490,18 @@ The formal definition of \textsc{Full Sensitivity} follows.
 
 I now consider the \emph{pseudo-boolean function}, counterpart of function \ref{eq:qgram-bool}, that associates a filtration threshold to any transcript.
 Let the function $\Threshold_{Q}^{m}: \Bo^{\Plen} \rightarrow \N_0$ be the boolean function $T_{Q}^{m}$ acting on $\N_0$.
-Here, $\Threshold_{Q}^{m}(\mathbf{x})$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\mathbf{x}$ of length $\Plen$.
+Here, $\Threshold_{Q}^{m}(\Transcript)$ \emph{counts} how many times a $Q$-gram occurs in a transcript $\Transcript$ of length $\Plen$.
 I define such pseudo-boolean function as
 \begin{equation}
 \label{eq:qgram-pseudo}
-t_{Q}^{m}(\mathbf{x}) = \sum_{i=\At{1}}^{\Plen-\Span{Q}} \prod_{j \in Q} x_{i+j}
+t_{Q}^{m}(\Transcript) = \sum_{i=\At{1}}^{\Plen-\Span{Q}} \prod_{j \in Q} x_{i+j}
 \end{equation}
 The formal definition of \textsc{Optimal Threshold} follows.
 
 \begin{problem}[\textsc{Optimal Threshold}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an $(\Plen,k)$ instance.\\
-{\bf Solution}	&	$\min \, t_{Q}^{m}(\mathbf{x})$ subject to $\mathbf{x} \in \Bo^{\Plen}_k$
+{\bf Solution}	&	$\min \, t_{Q}^{m}(\Transcript)$ subject to $\Transcript \in \Bo^{\Plen}_k$
 \end{tabular}
 \end{problem}
 
@@ -516,13 +516,13 @@ I propose the following ILP to solve \textsc{Optimal Threshold}.
 \min & \sum \mathbf{t}							\\
 \text{subject to}								\\
 & \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}		\\
-& \mathbf{x} \in \Bo^{\Plen}_k					\\
+& \Transcript \in \Bo^{\Plen}_k					\\
 & t_i \geq x_{i+j} 						& \forall \, \At{1} \leq i \leq \Plen-\Span{Q} \quad \quad \forall \, j \in Q \\
 \end{array}
 \end{equation}
 
 Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $\Threshold_{Q}^{m}$; each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$.
-Vector $\mathbf{x}$ represents any Hamming transcript; each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\mathbf{x}$ is within $k$.
+Vector $\Transcript$ represents any Hamming transcript; each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\Transcript$ is within $k$.
 The set of inequalities of the form $\Threshold_i \geq x_{i+j}$ binds the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
 The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $\Threshold=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(\Plen,k)$.
 Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp} on some problem instances.
@@ -559,14 +559,14 @@ In practice, the threshold found by algorithm~\ref{alg:qgram-threshold-apx} turn
 Such threshold cannot be used in a filtration scheme guaranteed to be full-sensitive: if the threshold is non-optimal, the filtration scheme is lossy.
 Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the design of $Q$-grams, as a search space filter to quickly discard lossy $Q$-grams.
 
-%I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\mathbf{x}$, as
+%I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\Transcript$, as
 %\begin{equation}
 %\label{eq:qgram-pseudoneg}
-%\bar{t}_{Q}^{m}(\mathbf{x}) = m - \Span{Q} + 1 - t_{Q}^{m}(\mathbf{x})
+%\bar{t}_{Q}^{m}(\Transcript) = m - \Span{Q} + 1 - t_{Q}^{m}(\Transcript)
 %\end{equation}
 %Function $\bar{t}_{Q}^{m}$ is monotone non-increasing and submodular.
 %I consider the complementary problem, being the maximization of a submodular function subject to linear constraints:
-%{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\mathbf{x})$ \wrt $\mathbf{x} \in \bar{\Bo}^{\Plen}_k$
+%{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\Transcript)$ \wrt $\Transcript \in \bar{\Bo}^{\Plen}_k$
 
 \begin{figure*}[b]
 \begin{center}
@@ -580,15 +580,15 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 \textbf{Output} & integer indicating the optimal threshold\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State {$\mathbf{x} \gets \mathbf{1}^{\Plen}$}
+\State {$\Transcript \gets \mathbf{1}^{\Plen}$}
 \While {$k > 0$}
-	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^{\Plen}_Q(\mathbf{x})}{\partial x_j}$}
-%	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^{\Plen}_Q(\mathbf{x})}{\partial x_j}$}
+	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial t^{\Plen}_Q(\Transcript)}{\partial x_j}$}
+%	\State {i \gets $ \argmax_{j=1}^{m} \frac{\partial \bar{t}^{\Plen}_Q(\Transcript)}{\partial x_j}$}
 	\State {$x_i \gets 0$}
 	\State {$k \gets k - 1$}
 \EndWhile
-\State \Return $\Threshold^{\Plen}_Q(\mathbf{x})$
-%\State \Return $\Plen - \Span{Q} + 1 - \bar{t}^{\Plen}_Q(\mathbf{x})$
+\State \Return $\Threshold^{\Plen}_Q(\Transcript)$
+%\State \Return $\Plen - \Span{Q} + 1 - \bar{t}^{\Plen}_Q(\Transcript)$
 \end{algorithmic}
 \label{alg:qgram-threshold-apx}
 \end{algorithm}
@@ -622,62 +622,95 @@ Thus, among multiple full-sensitive filtration schemes, one clearly prefers the 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
 {\bf Instance}	&	A filtration scheme $(Q,\Threshold)$, an $(\Plen,k)$ instance.\\
-{\bf Solution}	&	$| \{ \mathbf{x} \in \Bo^{\Plen} : t_{Q}^{\Plen}(\mathbf{x}) \geq t \} |$
+{\bf Solution}	&	$| \{ \Transcript \in \Bo^{\Plen} : t_{Q}^{\Plen}(\Transcript) \geq t \} |$
 \end{tabular}
 \end{problem}
 
 \subsubsection{Approximate solution}
 
-I propose a randomized algorithm to estimate the number of transcripts detected by a filtration scheme of the type $(Q,1)$ and later discuss its generalization to $(Q,t)$.
-The number of transcripts detected by $(Q,1)$ coincides with the number of true assignments to the boolean function $T_{Q}^{m}$,
-%, \ie $| \{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \} |$.
-which is in \emph{disjunctive normal form} (\emph{DNF}) by definition (see equation~\ref{eq:qgram-bool}).
+I propose a randomized algorithm to estimate the number of transcripts detected by a filtration scheme of the type $(Q,1)$.
+%and later discuss its generalization to $(Q,t)$.
+Such number coincides with the number of true assignments to the boolean function $T_{Q}^{m}$, which is in \emph{disjunctive normal form} (\emph{DNF}) by definition (see equation~\ref{eq:qgram-bool}).
 Counting the number of true assignments to an arbitrary boolean function in DNF is a classic \emph{\#P-complete} counting problem that however allows approximability to any degree \citep{Karp1989}, \ie it allows a \emph{fully polynomial-time randomized approximation scheme} (FPRAS) \citep{Vazirani2001}.
 Algorithm~\ref{alg:qgram-specificity} shows the algorithm by \citeauthor{Karp1989} for boolean function $T_{Q}^{m}$.
+Here, I follow the proof given by \citep[chapter 28]{Vazirani2001}.
 
-I denote with $\mathbb{D}_i$, for $\At{1} \leq i \leq \Plen-\Span{Q}$, the set of transcripts $\mathbf{x}$ detected by the $Q$-gram starting at position $i$
+I denote with $\Detected$ the set of transcripts detected by $T_{Q}^{m}$
 \begin{eqnarray}
-\mathbb{D}_i = \left\{ \mathbf{x} \in \Bo^{\Plen} : \bigwedge_{j \in Q} x_{i+j} \right\} 
+\Detected = \left\{ \Transcript \in \Bo^{m} : T_{Q}^{m}(\Transcript) \right\}
 \end{eqnarray}
-which has cardinality 
+and with $\Detected_i$, for $\At{1} \leq i \leq \Plen-\Span{Q}$, the set of transcripts detected by the $i$-th clause of $T_{Q}^{m}$, \ie by the $Q$-gram starting at position $i$,
+\begin{eqnarray}
+\Detected_i = \left\{ \Transcript \in \Bo^{\Plen} : \bigwedge_{j \in Q} x_{i+j} \right\} 
+\end{eqnarray}
+whose cardinality is
 \begin{eqnarray}
 \label{eq:card-di}
-\left| \mathbb{D}_i \right| = 2^{\Plen-\Weight{Q}}
+\left| \Detected_i \right| = 2^{\Plen-\Weight{Q}}
 \end{eqnarray}
 as a $0$ at any $x_{i+j}$ would invalidate the $Q$-gram starting at position $i$.
 Problem \textsc{Specificity} for $(Q,1)$ involves computing
 \begin{eqnarray}
-\left| \left\{ \mathbf{x} \in \Bo^{m} : T_{Q}^{m}(\mathbf{x}) \right\} \right| = \left| \bigcup_{i=\At{1}}^{\AtEnd{\Plen}}{\mathbb{D}_i} \right|
+\left|\Detected\right| = \left| \bigcup_{i=\At{1}}^{\AtEnd{\Plen}}{\Detected_i} \right|
 \end{eqnarray}
-which is less than the sum of all $|\mathbb{D}_i|$ from equation~\ref{eq:card-di} and non-trivial to compute in general.
+which is less than the sum of all $|\Detected_i|$ and hard to compute in general.
 
-Recall that $t_{Q}^{\Plen}(\mathbf{x})$ indicates the number of clauses of $T_{Q}^{m}$ which are satisfied by $\mathbf{x}$.
+One might think of a randomized algorithm that estimates $\left| \Detected \right|$ by repeatedly sampling $\Transcript \in \Bo^{m}$ and counting whether $\Transcript \in \Detected$ too.
+However, it is immediate to see that such an algorithm cannot estimate $\left| \Detected \right|$ precisely and in polynomial time when $\Detected$ is very small.
+The idea of algorithm~\ref{alg:qgram-specificity} is thus to boost this estimate by sampling transcripts that are surely in $\Detected$ and subsequently adjusting the counts.
+Algorithm~\ref{alg:qgram-specificity} guarantees that
+\begin{eqnarray}
+\Pr \left[  \left| \text{\FunctionCall{CountTranscripts}{Q,\Plen,\epsilon}} - \left|\Detected\right| \right| \geq \epsilon \left|\Detected\right| \right] \leq \frac{1}{4} \; \; \forall \, \epsilon > 0.\label{eq:qgram-specificity-bound}
+\end{eqnarray}
+
+Recall that $t_{Q}^{\Plen}(\Transcript)$ indicates the number of clauses of $T_{Q}^{m}$ which are satisfied by $\Transcript$.
 I denote by $\mathbb{M}$ the multi-set
 \begin{eqnarray}
-\mathbb{M} = \left\{ \left( \mathbf{x}, t_{Q}^{m}(\mathbf{x}) \right) : \mathbf{x} \in \mathbb{D}_i \text{ for } \At{1} \leq i \leq \Plen-\Span{Q} \right\}
+\mathbb{M} = \left\{ \left( \Transcript, t_{Q}^{m}(\Transcript) \right) : \Transcript \in \Detected_i \text{ for } \At{1} \leq i \leq \Plen-\Span{Q} \right\}
 \end{eqnarray}
-which has cardinality 
+whose cardinality is easily computed (line 2) as
 \begin{eqnarray}
-\left| \mathbb{M} \right| = \sum_{i=\At{1}}^{\AtEnd{\Plen}}{\left| \mathbb{D}_i \right| } = \left( \Plen - \Span{Q} + 1 \right) \cdot 2^{\Plen-\Weight{Q}}.
+\left| \mathbb{M} \right| = \sum_{i=\At{1}}^{\Plen - \Span{Q}}{\left| \Detected_i \right| } = \left( \Plen - \Span{Q} + 1 \right) \cdot 2^{\Plen-\Weight{Q}}.
 \end{eqnarray}
 
-Algorithm~\ref{alg:qgram-specificity} picks $\mathbf{x} \in \mathbb{M}$ with probability
+Algorithm~\ref{alg:qgram-specificity} first (line 6) picks a $\Detected_i$ with probability
 \begin{eqnarray}
-\frac{t_{Q}^{m}(\mathbf{x})}{\left| \mathbb{M} \right|}
+\frac{\left| \Detected_i \right|}{\left| \mathbb{M} \right|} = \frac{1}{\Plen - \Span{Q} + 1}
 \end{eqnarray}
-by picking (line 6) $\mathbb{D}_i$ with probability
+and then (lines 7--9) picks an $\Transcript \in \Detected_i$ uniformly
 \begin{eqnarray}
-\frac{\left| \mathbb{D}_i \right|}{\left| \mathbb{M} \right|} = \frac{1}{\Plen - \Span{Q} + 1}
+\frac{1}{\left| \Detected_i \right|} = \frac{1}{2^{\Plen-\Weight{Q}}}
 \end{eqnarray}
-and then (lines 7--9) picking $\mathbf{x} \in \mathbb{D}_i$ with probability
+which results in picking an $\Transcript \in \mathbb{M}$ with probability
 \begin{eqnarray}
-\frac{1}{\left| \mathbb{D}_i \right|} = \frac{1}{2^{\Plen-\Weight{Q}}}.
+%\Pr \left[ \Transcript \leftarrow \mathbb{M} \right] = 
+\sum_{\Transcript \in \Bo^{m} : T_{Q}^{m}(\Transcript)}{\frac{\left| \Detected_i \right|}{\left| \mathbb{M} \right|} \cdot \frac{1}{\left| \Detected_i \right|}} = 
+\sum_{\Transcript \in \Bo^{m} : T_{Q}^{m}(\Transcript)}{\frac{1}{\left| \mathbb{M} \right|}} = 
+\frac{t_{Q}^{m}(\Transcript)}{\left| \mathbb{M} \right|}.
 \end{eqnarray}
-It estimates the mean value of
+
+Algorithm~\ref{alg:qgram-specificity} counts $\Transcript$ (line 10) with weight
 \begin{eqnarray}
-\frac{\left| \mathbb{M} \right|}{t_{Q}^{m}(\mathbf{x})}
+T = \frac{\left| \mathbb{M} \right|}{t_{Q}^{m}(\Transcript)}
 \end{eqnarray}
-by sampling $\mathbb{M}$ for $4 \cdot \left( \Plen - \Span{Q} + 1 \right) / \epsilon^2$ times (lines 3, 11).
+so that the expected value of $T$ is
+\begin{eqnarray}
+E[T] = \sum_{\Transcript \in \Bo^{m} : T_{Q}^{m}(\Transcript)}{\frac{t_{Q}^{m}(\Transcript)}{\left| \mathbb{M} \right|} \cdot \frac{\left| \mathbb{M} \right|}{t_{Q}^{m}(\Transcript)}} =
+\left| \left\{ \Transcript \in \Bo^{m} : T_{Q}^{m}(\Transcript) \right\} \right| = \left| \Detected \right|.
+\end{eqnarray}
+
+The standard deviation of $T$ is bound \wrt the expected value (see \citep[chapter 28]{Vazirani2001}) as
+\begin{eqnarray}
+\frac{\sigma(T)}{E[T]} \leq \Plen - \Span{Q},
+\end{eqnarray}
+hence the number of times $N$ (line 3) that algorithm~\ref{alg:qgram-specificity} has to sample $T$ (line 10) in order to guarantee the bound claimed in equation~\ref{eq:qgram-specificity-bound} is derived by applying Chebyshev's inequality
+\begin{eqnarray}
+\Pr \left[ \left| T - \epsilon E[T] \right| \geq \epsilon E[T] \right] \leq \left( \frac{1}{\epsilon \sqrt{N}} \cdot \frac{\sigma(T)}{E[T]} \right)^2 \leq \frac{1}{4}
+\end{eqnarray}
+and solving it for $N$, which gives
+\begin{eqnarray}
+N \geq 4 \cdot \frac{\Plen - \Span{Q}}{\epsilon^2}.
+\end{eqnarray}
 
 \begin{figure*}[b]
 \begin{center}
@@ -695,15 +728,15 @@ by sampling $\mathbb{M}$ for $4 \cdot \left( \Plen - \Span{Q} + 1 \right) / \eps
 \begin{algorithmic}[1]
 \State $C \gets \Plen+\Span{Q}+1$
 \State $M \gets C \cdot 2^{\Plen-\Weight{Q}}$
-\State $N \gets 4 \cdot C^2 / \epsilon^2$
+\State $N \gets 4 \cdot (C-1)^2 / \epsilon^2$
 \State $T \gets 0$
 \Repeat
 	\State {$i \gets$ \Call{random}{$\OInterval{\Ibase}{C}$}}
-	\State {$\mathbf{x} \gets$ \Call{random}{$\{0,1\}^{\Plen}$}}
+	\State {$\Transcript \gets$ \Call{random}{$\{0,1\}^{\Plen}$}}
 	\ForAll {$j \in Q$}
 		\State {$x_{i+j} \gets 1$}
 	\EndFor
-	\State $T \gets T + t_Q^{\Plen}(\mathbf{x})$
+	\State $T \gets T + t_Q^{\Plen}(\Transcript)$
 \Until {$N$ times}
 \State \Return $N \cdot M / T$
 \end{algorithmic}
@@ -742,12 +775,12 @@ The methods presented in section~\ref{sub:qgram-optimal-threshold} and \ref{sub:
 To this extent, it is sufficient to define the boolean function for an $\mathbb{F}$-gram as the disjunction
 \begin{equation}
 \label{eq:family-bool}
-T_{\mathbb{F}}^{m}(\mathbf{x}) = \bigvee_{Q_i \in \mathbb{F}} T_{Q_i}^{m}(\mathbf{x})
+T_{\mathbb{F}}^{m}(\Transcript) = \bigvee_{Q_i \in \mathbb{F}} T_{Q_i}^{m}(\Transcript)
 \end{equation}
 and its pseudo-boolean function as the sum
 \begin{equation}
 \label{eq:family-pseudo}
-t_{\mathbb{F}}^{m}(\mathbf{x}) = \sum_{Q_i \in \mathbb{F}} t_{Q_i}^{m}(\mathbf{x}).
+t_{\mathbb{F}}^{m}(\Transcript) = \sum_{Q_i \in \mathbb{F}} t_{Q_i}^{m}(\Transcript).
 \end{equation}
 Function $\Threshold_{\mathbb{F}}^{m}$ is still supermodular, because all supermodular functions are closed under non-negative linear combination.
 Said that, I do not use $\mathbb{F}$-grams in practice.

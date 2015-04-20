@@ -26,22 +26,22 @@ $$X=
 \end{pmatrix}$$
 I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
-\begin{definition}[String iterator]
-Given a string $\String$, I denote with $s$ its iterator, starting at $\Subscript{\String}{\Ibase}$ and providing the following operations
-\begin{itemize}
-\item \FunctionCall{goNext}{s} moves to $\Subscript{\String}{i+1}$;
-\item \FunctionCall{goPrevious}{s} moves to $\Subscript{\String}{i-1}$;
-\item \FunctionCall{atEnd}{s} returns $true$ iff $i=|\String|$;
-\item \FunctionCall{value}{s} returns $\Subscript{\String}{i}$.
-\end{itemize}
-\end{definition}
-
 %\emph{Generalized} full-text indices work on string collections.
 \begin{definition}[String collection]
 \label{def:col}
 A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
 The above definitions of prefix, suffix and substring generalize to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
+\end{definition}
+
+\begin{definition}[String iterator]
+Given a string $\String$, I denote with $s$ its iterator starting at position $i=0$ and providing the following operations
+\begin{itemize}
+\item \FunctionCall{goNext}{s} moves to position $i+1$;
+\item \FunctionCall{goPrevious}{s} moves to position $i-1$;
+\item \FunctionCall{atEnd}{s} returns $true$ iff $i=|\String|$;
+\item \FunctionCall{value}{s} returns $\Subscript{\String}{i}$.
+\end{itemize}
 \end{definition}
 
 \begin{definition}[Substring]
@@ -102,7 +102,7 @@ Given a string collection $\Strings = \{ \AtCollection{\String}{\At{1}}, \ldots,
 \section{Transcripts, alignments and distances}
 
 I now define the basic edit operations to transform one string into another.
-Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $\Subscript{X}{i}$ \st $\Subscript{X}{i} \neq \Subscript{Y}{i}$ into $\Subscript{Y}{i}$, for $\At{1} \leq i \LeqThan{\Xlen}$.
+Given two strings $\XSeq,\YSeq$ of equal length $\Xlen$, the string $\XSeq$ is easily transformed into the string $\YSeq$ by substituting (or replacing) all symbols $\Subscript{\XSeq}{i}$ \st $\Subscript{\XSeq}{i} \neq \Subscript{\YSeq}{i}$ into $\Subscript{\YSeq}{i}$, for $\At{1} \leq i \LeqThan{\Xlen}$.
 However, if the two strings have different lengths, some symbols must be necessarily inserted or deleted from $\XSeq$ in order to obtain $\YSeq$.
 This fact motivates the following definition of \emph{edit transcript}.
 
@@ -123,7 +123,7 @@ Figure~\ref{fig:edit-transcript} shows an example of edit transcript with its as
 An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of length between $\min\{\Ylen,\Xlen\}$ and $\Ylen+\Xlen$ over the pair alphabet $(\Sigma \cup \{ - \}) \times (\Sigma \cup \{ - \}) \setminus \{ (-,-) \} $.
 \end{definition}
 
-\begin{figure}[h]
+\begin{figure}[t]
 \begin{center}
 \caption[Edit transcript and alignment]{Example of edit transcript and alignment. The string $\XSeq$ is transformed into $\YSeq$. The transcript character \texttt{M} indicates a match, \texttt{R} a replacement, \texttt{I} an insertion, and \texttt{D} a deletion.
 }
@@ -132,13 +132,12 @@ An alignment of two strings of length $\Ylen,\Xlen$ over $\Sigma$ is a string of
 \end{center}
 \end{figure}
 
-At this point, I give the definition of two fundamental distance functions between strings.
+Hamming and edit distance are two fundamental distance functions on strings.
 
 \begin{definition}[Hamming distance]
 \label{def:hamming}
 The \emph{Hamming distance} $d_H : \Sigma^{\Xlen} \times \Sigma^{\Xlen} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{\Xlen}$ counts the number of substitutions necessary to transform $\XSeq$ into $\YSeq$ \citep{Hamming1950}.
 \end{definition}
-
 \begin{definition}[Edit distance]
 \label{def:edit}
 The \emph{Levenshtein} or \emph{edit distance} $d_E : \Sigma^{*} \times \Sigma^{*} \rightarrow \N_0$ between two strings $\XSeq,\YSeq \in \Sigma^{*}$ counts the \emph{minimum} number of edit operations necessary to transform $\XSeq$ into $\YSeq$ \citep{Levenshtein1966}.
@@ -165,13 +164,13 @@ d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j}) = \min \left\{
 \begin{array}{lcl}
 d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j})&+&1\\
 d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j-1})&+&1\\
-d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j-1})&+&\delta(\Subscript{X}{i}, \Subscript{Y}{j})
+d_E(\Prefix{\XSeq}{i-1},\Prefix{\YSeq}{j-1})&+&\delta(\Subscript{\XSeq}{i}, \Subscript{\YSeq}{j})
 \end{array}
 \right.\label{eq:dp-min}
 \end{eqnarray}
-where the function $\delta$ indicates whether the characters $\Subscript{X}{i}$, $\Subscript{Y}{j}$ match or mismatch (see definition \ref{def:delta}).
+where the function $\delta$ indicates whether the characters $\Subscript{\XSeq}{i}$, $\Subscript{\YSeq}{j}$ match or mismatch (see definition \ref{def:delta}).
 
-\begin{figure*}[t]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.9\textwidth}
 \begin{algorithm}[H]
@@ -189,7 +188,13 @@ where the function $\delta$ indicates whether the characters $\Subscript{X}{i}$,
 \For {$i \gets 1 \, \To \Xlen$}
 	\State {$\SubscriptNM{D}{0}{i} \gets \SubscriptNM{D}{0}{i-1} + 1$}
 	\For {$j \gets 1 \, \To \Ylen$}
-		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \{ \, \SubscriptNM{D}{i-1}{j} + 1, \SubscriptNM{D}{i}{j-1} + 1, \SubscriptNM{D}{i-1}{j-1} + \delta(\Subscript{X}{i}, \Subscript{Y}{j}) \, \}$}
+		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \left\{
+			\begin{array}{lcl}
+				\SubscriptNM{D}{i-1}{j}&+&1,\\
+				\SubscriptNM{D}{i}{j-1}&+&1,\\
+				\SubscriptNM{D}{i-1}{j-1}&+&\delta(\Subscript{\XSeq}{i}, \Subscript{\YSeq}{j})
+			\end{array}
+			\right.$}
 	\EndFor
 \EndFor
 \State \Return $\SubscriptNM{D}{\Ylen}{\Xlen}$
@@ -210,8 +215,8 @@ Myers' algorithm \citep{Myers1999}, instead of computing DP cells one after anot
 The time complexity of Myers' algorithm is $\Oh(\Xlen\Ylen/b)$, where $b$ is the processor's bit-width, \eg 64 on modern processors.
 
 Finally, if the edit distance problem is relaxed to simply checking if $d_E(\XSeq,\YSeq) \leq k$, with $k \in \N_0$, an answer is given in time $\Oh(\Xlen k)$.
-Indeed, the DP matrix $D$ needs not to be filled entirely, as the cells outside a \emph{band} of width $k+1$ around the $0$-diagonal are not \emph{coaccessible} from the \emph{sink} cell $\SubscriptNM{D}{\Ylen}{\Xlen}$.
-The reader is referred to \citep{Siragusa2013b} for a formal proof and to \citep{Weese2012} for a banded version of Myers' algorithm running in time $\Oh(\Xlen k/b)$.
+Indeed, the DP matrix $D$ needs not to be filled entirely, as the cells outside a \emph{band} of width $k+1$ around the $0$-th diagonal are not \emph{coaccessible} from the \emph{sink} cell $\SubscriptNM{D}{\Ylen}{\Xlen}$.
+The reader is referred to \citep{Siragusa2013b} for a proof and to \citep{Weese2012} for a banded version of Myers' algorithm running in time $\Oh(\Xlen k/b)$.
 
 % === Overview of existing methods ===
 
@@ -307,7 +312,13 @@ Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the e
 \For {$i \gets 1 \, \To \Tlen$}
 	\State {$\SubscriptNM{D}{0}{i} \gets 0$}
 	\For {$j \gets 1 \, \To \Plen$}
-		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \{ \, \SubscriptNM{D}{i-1}{j} + 1, \SubscriptNM{D}{i}{j-1} + 1, \SubscriptNM{D}{i-1}{j-1} + \delta(\Subscript{\Text}{i}, \Subscript{\Pattern}{j}) \, \}$}
+		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \left \{ 
+			\begin{array}{lcl}
+				\SubscriptNM{D}{i-1}{j}&+&1,\\
+				\SubscriptNM{D}{i}{j-1}&+&1,\\
+				\SubscriptNM{D}{i-1}{j-1}&+&\delta(\Subscript{\Text}{i}, \Subscript{\Pattern}{j})
+			\end{array}
+			\right.$}
 	\EndFor
 	\If {$\SubscriptNM{D}{i}{\Plen} \leq k$}
 		\State \Report $i$
