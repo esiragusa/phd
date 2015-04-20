@@ -3,27 +3,26 @@
 
 \selectlanguage{ngerman}
 
-In den letzten Jahren ist die Hochdurchsatz-Sequenzierung (HTS) zu einem unverzichtbaren Bestandteil von Molekulare Medizinische Forschung geworden. 
-HTS Technologien erm"oglichen DNA-Probe von Einzelpersonen in Form von Milliarden kurze DNA-Reads schnell und g"unstig zu Sequenzieren.
-Die F"ahigkeit, die Gehalt einer DNA-Probe mit Aufl"osung von einzige Basenpaare zu bewerten, er"offnet viele neue Anwendungsgebiete, wie die Genotypisierung, die Beurteilung von strukturelle Variationen, die Messung der Genexpressionsleveln und die Etablierung von Epigenetische Faktoren.
-Dennoch, die Menge und Qualit"at von HTS Daten ben"otigen effiziente und genaue Analyse durch komputationellen Methoden.
+In den letzten Jahren wurde die Hochdurchsatz-Sequenzierung (HTS) zu einem unverzichtbaren Bestandteil der molekularmedizinischen Forschung. 
+HTS Technologien erm"oglichen es DNS-Proben von Individuuen schnell und g"unstig in Form von Milliarden kurzer DNS-Reads zu sequenzieren.
+Die F"ahigkeit, die Basenpaarabfolge einer DNS-Probe zu bestimmen, er"offnet viele neue Anwendungsgebiete, wie zum Beispiel die Genotypisierung, die Beurteilung von strukturellen Variationen, die Messung der Genexpressionslevel oder die Etablierung von epigenetischen Faktoren.
+Jedoch setzen sowohl Quantit"at als auch die Qualit"at der von HTS-Technologien produzierten Daten recheneffiziente und akkurate Analysemethoden voraus um als Standardverfahren im biomedizinischen Bereich eingesetzt werden zu k"onnen.
 
-Diese Arbeit pr"asentiert neuartige Methoden f"ur die Mapping von HTS DNA-Reads, die auf den neuesten Stand der Datenstrukturen und Algorithmen f"ur approximative Stringsuche basierte sind.
-Reads Mapping ist ein entscheidender Schritt von jede Datenanalyse-Pipeline im Resequenzierungsprojekten, wo die DNA-reads durch Alignierung auf ein bekannten Referenzgenom z"uruck assembliert werden.
-Der Einfallsreichtum von approximative Stringsuche Methoden ist entscheidend f"ur die Entwicklung von genaue und effiziente Read Mapping Programmen.
+In dieser Arbeit stelle ich neue Methoden f"ur das sogenannte Read Mapping von HTS Daten vor.
+Read Mapping ist ein essentielles Verfahren, bei dem aus den Produkten einer HTS Applikation mit Hilfe eines bereits bekannten Referenzgenoms die urspr"ungliche DNS-Reads assembliert wird. 
+Die Entwicklung von speziellen und neuartigen Algorithmen f"ur die approximative Stringsuche spielt dabei eine entscheidende Rolle, um akkurate und effiziente Read Mapping Programme zu entwicklen.
 
-Die erster Teil dieser Arbeit geht um praktische Indizierung und Filterungsmethoden f"ur approximative Stringsuche.
-Der neuesten Stand der Datenstrukturen und Algorithmen f"ur approximative Stringsuche ist mit Pseudocode sowie mit eine Diskussion "uber die Details der Implementierung pr"asentiert.
-Die Implementierung ist Teil von \emph{SeqAn}, der generischen \CC Template-Bibliothek f"ur Sequenzanalyse, verf"ugbar unter \url{http://www.seqan.de/}.
-Im Anschluss, eine experimentelle Bewertung von alle Methoden wurde durchgef"uhrt, mit dem Ziel, die Entwicklung von neue Sequenzanalyse Programme zu f"uhren.
-Nach meinem bestem Wissen und Gewissen, das ist die erste Arbeit, dass umfassende Erkl"arung, Implementierung und Bewertung von solche Methoden bietet.
+Im ersten Teil dieser Arbeit beschreibe ich praktische Index-Datenstrukturen sowie Filtermethoden, die bei der approximativen Stringsuche angewendet werden. Ich stelle die Algorithmen im Pseudocode dar und bespreche deren Funktionsweise und Implementierung im Detail.
+S"amtliche Algorithmen und Datenstrukturen, die ich in dieser Arbeit vorstelle, wurden in \emph{SeqAn} - einer generischen \CC Template-Bibliothek f"ur Sequenzanalyse - implementiert und sind dar"uber verf"ugbar (siehe  \url{http://www.seqan.de/}).
+Anschlie{\ss}end analysiere und vergleiche ich die vorgestellten Methoden in verschiedenen Experimenten ausf"uhrlich miteinander, mit dem Ziel neue verbesserte Alignmentalgorithmen entwerfen zu k"onnen.
+Nach meinem besten Wissen und Gewissen, ist dies die erste Arbeit, die die genannten Methoden umfassend in ihrer Implementierung und Funktionsweise diskutiert und bewertet.
 
-Die zweiter Teil dieser Arbeit geht um die Entwicklung und Bewertung von Read Mapping Programme.
-Zuerst, pr"asentiert wird eine neuartige Methode dass, die DNA-Reads an alle ihren potentiellen genomischen Ursprung aligniert, bis einer spezifizierten Fehlerquote;
-diese Methode wird ins Open Source Programm \emph{Masai} implementiert und in der Zeitung \emph{Nucleic Acids Research} publiziert.
-Danach, wird die Methode generalisiert um alle Co-optimalen oder Suboptimalen Ursprung effizienter zu finden;
-diese zweite Methode, ins Open Source Programm \emph{Yara} implementiert, bietet eine Praktischere doch rechtliche fundierten L"osung der Read Mapping Problem.
-Eine eingehende Bewertung auf Simulierten und Realen Daten ergab, dass Yara schneller und genauer als De-facto-Standard Read Mapping Programme ist.
+Im zweiten Teil dieser Arbeit beschreibe und diskutiere ich zwei neue Read Mapping Programme und vergleiche diese mit bisherigen Anwendungen.
+Dabei stelle ich zuerst eine neue Methode vor, welche alle potentiellen genomischen Urpsprungspositionen f"ur jeden DNS-Read mit einer spezifizierten Fehleranzahl lokalisiert.
+Die beschriebene Methode wurde im Open Source Programm \emph{Masai} implementiert und wurde in der Zeitschrift \emph{Nucleic Acids Research} publiziert.
+Anschlie{\ss}end generalisiere ich die Methode und zeige wie alle co-optimalen oder suboptimalen Positionen, gegeben einer vom Nutzer definierten Fehlerrate, effizient gefunden werden k"onnen.
+Das Open Source Programm \emph{Yara} implementiert dieses Verfahren und bietet somit eine wesentlich praktischere und noch dazu solide L"osung f"ur das Read Mapping Problem.
+Eine umfassende Analyse auf simulierten und realen Daten ergab, dass Yara schneller und genauer als De-facto-Standard Read Mapping Programme ist.
 
 \selectlanguage{english}
 
