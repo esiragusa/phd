@@ -61,7 +61,7 @@ Given $\XSeq = \Substring{\YSeq}{i}{i+\Xlen}$, the occurrence of $\XSeq$ \emph{s
 %Furthermore, definition \ref{def:delta} is mandatory for approximate string matching problems. 
 \begin{definition}
 \label{def:delta}
-Given an alphabet $\Sigma$, I define the \emph{distance function} $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any distinct $a,b \in \Sigma$ and 0 otherwise.
+Given an alphabet $\Sigma$, I define the function $\delta : \Sigma \times \Sigma \rightarrow \{0, 1\}$ \st $\delta(a,b) = 1$ for any distinct $a,b \in \Sigma$ and 0 otherwise.
 \end{definition}
 
 %Lexicographical ordering is fundamental in respect to \emph{full-text indexing}.
@@ -289,55 +289,55 @@ For an extensive treatment of this subject, the reader is referred to complete s
 
 %\subsubsection{Dynamic programming}
 
-The DP algorithm~\ref{alg:dp-edit} to compute the edit distance between two strings is easily turned into an online $k$-differences algorithm.
-Since an approximate occurrence of the pattern can start (and end) anywhere in the text, the problem involves computing the edit distance between the pattern and \emph{any substring} of the text.
-Algorithm ~\ref{alg:dp-kdiff} efficiently solves this problem by computing the edit distance between the text and the pattern without penalizing leading and trailing deletions in the text.
+The DP algorithm~\ref{alg:dp-edit} to compute the edit distance between two strings is easily turned into an online algorithm for $k$-differences.
+Since an approximate occurrence of the pattern can start (and end) anywhere in the text, the problem essentially involves computing the edit distance between the pattern and \emph{any substring} of the text.
+The key idea is to compute the edit distance between the pattern and the text without penalizing leading and trailing deletions in the text.
 
-\begin{figure*}[b]
-\begin{center}
-\begin{minipage}[t]{.9\textwidth}
-\begin{algorithm}[H]
-\Algorithm{KDifferences}{$\Text,\Pattern,k$}
-\begin{tabular}{ll}
-\textbf{Input}  & $\Text$ : text string of length $\Tlen$\\
-				& $\Pattern$ : pattern string of length $\Plen$\\
-				& $k$ : integer bounding the number of errors\\
-\textbf{Output} & all end positions of $k$-differences occurrences of $\Pattern$ in $\Text$\\
-\end{tabular}
-\begin{algorithmic}[1]
-\State {$\SubscriptNM{D}{0}{0} \gets 0$}
-\For {$j \gets 1 \, \To \Plen$}
-	\State {$\SubscriptNM{D}{j}{0} \gets j$}
-\EndFor
-\For {$i \gets 1 \, \To \Tlen$}
-	\State {$\SubscriptNM{D}{0}{i} \gets 0$}
-	\For {$j \gets 1 \, \To \Plen$}
-		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \left \{ 
-			\begin{array}{lcl}
-				\SubscriptNM{D}{i-1}{j}&+&1,\\
-				\SubscriptNM{D}{i}{j-1}&+&1,\\
-				\SubscriptNM{D}{i-1}{j-1}&+&\delta(\Subscript{\Text}{i}, \Subscript{\Pattern}{j})
-			\end{array}
-			\right.$}
-	\EndFor
-	\If {$\SubscriptNM{D}{i}{\Plen} \leq k$}
-		\State \Report $i$
-	\EndIf
-\EndFor
-\end{algorithmic}
-\label{alg:dp-kdiff}
-\end{algorithm}
-\end{minipage}
-\end{center}
-\end{figure*}
+%\begin{figure*}[b]
+%\begin{center}
+%\begin{minipage}[t]{.9\textwidth}
+%\begin{algorithm}[H]
+%\Algorithm{KDifferences}{$\Text,\Pattern,k$}
+%\begin{tabular}{ll}
+%\textbf{Input}  & $\Text$ : text string of length $\Tlen$\\
+%				& $\Pattern$ : pattern string of length $\Plen$\\
+%				& $k$ : integer bounding the number of errors\\
+%\textbf{Output} & all end positions of $k$-differences occurrences of $\Pattern$ in $\Text$\\
+%\end{tabular}
+%\begin{algorithmic}[1]
+%\State {$\SubscriptNM{D}{0}{0} \gets 0$}
+%\For {$j \gets 1 \, \To \Plen$}
+%	\State {$\SubscriptNM{D}{j}{0} \gets j$}
+%\EndFor
+%\For {$i \gets 1 \, \To \Tlen$}
+%	\State {$\SubscriptNM{D}{0}{i} \gets 0$}
+%	\For {$j \gets 1 \, \To \Plen$}
+%		\State {$\SubscriptNM{D}{i}{j} \gets \min \, \left \{ 
+%			\begin{array}{lcl}
+%				\SubscriptNM{D}{i-1}{j}&+&1,\\
+%				\SubscriptNM{D}{i}{j-1}&+&1,\\
+%				\SubscriptNM{D}{i-1}{j-1}&+&\delta(\Subscript{\Text}{i}, \Subscript{\Pattern}{j})
+%			\end{array}
+%			\right.$}
+%	\EndFor
+%	\If {$\SubscriptNM{D}{i}{\Plen} \leq k$}
+%		\State \Report $i$
+%	\EndIf
+%\EndFor
+%\end{algorithmic}
+%\label{alg:dp-kdiff}
+%\end{algorithm}
+%\end{minipage}
+%\end{center}
+%\end{figure*}
 
 Consider the recurrence relation described by equations~\ref{eq:dp-ee}--\ref{eq:dp-min} and pose $\XSeq=\Text$ and $\YSeq=\Pattern$.
-Because an occurrence of the pattern can start anywhere in the text, the base condition \ref{eq:dp-row} of the edit distance recurrence relation becomes:
+Because an occurrence of the pattern can start anywhere in the text, the base condition \ref{eq:dp-row} of the edit distance recurrence relation becomes
 \begin{eqnarray}
-d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } \At{2} \LeqThan{i} \leq \Xlen \label{eq:dp-row-kdiff}
+d(\Prefix{\XSeq}{i}, \epsilon) = 0 \; \text{ for all } \At{2} \LeqThan{i} \leq \Xlen \label{eq:dp-row-kdiff},
 \end{eqnarray}
-and algorithm~\ref{alg:dp-kdiff} initializes the top row of the DP matrix $D$ accordingly.
-Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-kdiff} checks any cell in the bottom row for the condition $\SubscriptNM{D}{i}{\Plen} \leq k$.
+thus algorithm~\ref{alg:dp-edit} (line 5) must be adapted to initialize the top row of the DP matrix $D$ accordingly.
+Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-edit} (line 8) must be changed to check any cell in the bottom row for the condition $\SubscriptNM{D}{i}{\Plen} \leq k$.
 
 
 % --- Indexed methods ---
@@ -375,7 +375,7 @@ $\StrieOf{\String}$ has $\Slen$ leaves, where leaf $\StrieLeaf{i}$ points to suf
 
 \begin{definition}[Generalized suffix trie]
 Given a padded string collection $\Strings$ (definition~\ref{def:coltd}), its generalized suffix tree is the suffix tree of all strings in $\Strings$.
-Each of the $||\Strings||$ leaves is labeled by a pair $\StrieLeaf{(i,j)}$ and points to suffix $\Suffix{\Strings}{(i,j)}$.
+Each of the $|\Strings|$ leaves is labeled by a pair $\StrieLeaf{(i,j)}$ and points to suffix $\Suffix{\Strings}{(i,j)}$.
 
 % the string $\AtCollection{\String}{i} \in \Strings$ and $\At{1} \leq j \LeqThan{\AtCollection{\Slen}{i}}$ points to suffix $\AtCollection{\Slen}{i}\AtCollection{\$}{i}$ of $\AtCollection{\String}{i}$.
 %The path from the root to leaf $(i,j)$ spells the suffix $\Suffix{\Strings}{(i,j)}\AtCollection{\$}{i}$.
