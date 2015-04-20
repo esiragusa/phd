@@ -730,14 +730,15 @@ N \geq 4 \cdot \frac{\Plen - \Span{Q}}{\epsilon^2}.
 \State $M \gets C \cdot 2^{\Plen-\Weight{Q}}$
 \State $N \gets 4 \cdot (C-1)^2 / \epsilon^2$
 \State $T \gets 0$
-\Repeat
+\DoRepeat
 	\State {$i \gets$ \Call{random}{$\OInterval{\Ibase}{C}$}}
 	\State {$\Transcript \gets$ \Call{random}{$\{0,1\}^{\Plen}$}}
 	\ForAll {$j \in Q$}
 		\State {$x_{i+j} \gets 1$}
 	\EndFor
 	\State $T \gets T + t_Q^{\Plen}(\Transcript)$
-\Until {$N$ times}
+%\Until {$N$ times}
+\Times {$N$}
 \State \Return $N \cdot M / T$
 \end{algorithmic}
 \label{alg:qgram-specificity}
