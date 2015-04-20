@@ -359,7 +359,7 @@ Such implementation requires more memory, as it must bucket the whole text and k
 \cite{Califano1993} first introduced \emph{gapped $q$-grams} in sequence analysis.
 Since then, a surprisingly high number of research papers have been published on this topic (see \citep{Brown2008} for a survey).
 Almost all works focus on lossy filtration for homology search, rather than full-sensitive filtration for approximate string matching.
-Here, I consider gapped $q$-grams only in the context of full-sensitive filtration for $k$-mismatches.
+Here, I consider gapped $q$-grams only in the context of full-sensitive filtration for $k$-mis\-matches.
 This case has been first considered by \cite{Burkhardt2001}.
 
 \subsection{Principle}
@@ -384,6 +384,8 @@ The maximum element of $Q$ is named \emph{span} and indicated by $\Span{Q}$.
 \end{definition}
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
 %I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{\Span{Q}}$ such that $w_j=1$ iff $j \in Q$.
+
+\newpage
 
 Figure~\ref{fig:qgrams-gapped} shows an example of $Q$-gram.
 As in lemma \ref{lemma:qgrams}, the threshold for $Q$-grams still depends on the worst-case positioning of the errors in the transcript, which in turn depends on parameters $(\Plen,k)$.

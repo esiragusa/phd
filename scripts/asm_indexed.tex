@@ -100,7 +100,7 @@ Consequently, the space consumption of suffix arrays for strings shorter than 4~
 The space consumption of the GSA is $\Theta(\Slen \log{\AtCollection{\Slen}{*}})$ bits, where $\AtCollection{\Slen}{*} = \max{\,|\AtCollection{\String}{i}|}$.
 For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a collection consisting of up to 256 strings, each one shorter than 4~GB.
 
-\begin{figure*}[t!]
+\begin{figure*}[b!]
 \begin{minipage}[t]{.5\textwidth}
 \begin{algorithm}[H]
 \Algorithm{L}{$\StrieNode,\StrieChar$}
@@ -400,6 +400,7 @@ I define the basic node operations as follows:
 \label{alg:qgram-upper}
 \end{algorithm}
 \end{minipage}
+\vspace{10mm}
 \end{figure*}
 
 Algorithms \ref{alg:qgram-lower} and \ref{alg:qgram-upper} show respectively functions \FunctionName{L} and \FunctionName{R} using the directory $D$ instead of $\Sarray$.
@@ -470,6 +471,8 @@ This hybrid traversal cuts the most expensive binary searches and increases memo
 Furthermore, this traversal becomes useful whenever the SA is too big to fit in main memory and has to reside in external memory.
 In section \ref{sec:index:algo}, I show the experimental evaluation of this hybrid $q$-gram index.
 
+\newpage
+
 \subsection{Trie and radix tree realizations}
 \label{sec:index:trie}
 
@@ -507,7 +510,7 @@ In the following, consider the string $\String$ to be \emph{cyclic} and its subs
 Given a string $\String$ and its SA $\Sarray$, the BWT $\Last$ of $\String$ is a string over $\Sigma_{\$}$ with $\Subscript{\Last}{i}=\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$.
 \end{definition}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Burrows-Wheeler transform]{Cyclic shifts matrix of the string $\String =$ {\ttfamily ANANAS\$}. Column $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ is the BWT of $\String$.}
 \label{fig:bwt}
@@ -536,13 +539,12 @@ Figure~\ref{fig:bwt} shows an example.
 Note that the BWT easily generalizes to string collections.
 Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
 
-
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT of $\String$.
 The BWT can be obtained in linear time by scanning the SA $\Sarray$ and assigning the symbol $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ to the $i$-th BWT symbol.
 However, constructing the BWT from the SA is not desirable in practice, especially for strings over small alphabets like DNA, as the SA consumes $\Theta(\Slen \log{\Slen})$ bits in addition to the $\Theta(\Slen \log{\sigma})$ bits of the BWT.
 Therefore, some direct BWT construction algorithms working within $o(\Slen \log{\sigma})$ bits plus constant space have been recently proposed in \citep{Bauer2013, Crochemore2013}.
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Permutations $LF$ and $\Psi$]{Permutations $LF$ and $\Psi$ of the string $\String = $ {\ttfamily ANANAS\$}. The example shows that $LF = \Psi^{-1}$, \eg $LF(\Psi(5)) = 5$ and $\Psi(LF(3)) = 3$. Moreover, the example shows that the relative order of characters between $\Last$ and $\First$ is preserved, \eg the first occurrence of $N$ in $\Last$ corresponds to the first occurrence in $\First$.}
 \label{fig:lf_psi}
@@ -572,6 +574,7 @@ For convenience, I denote the first column $\Subscript{\String}{\SubscriptNV{\Sa
 Inverting the BWT means being able to know where any BWT character occurs in the original text.
 To this intent, I define two permutations $LF : \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$ and $\Psi : \OInterval{\At{1}}{\Slen} \rightarrow \OInterval{\At{1}}{\Slen}$, with $LF = \Psi^{-1}$, where the value of $LF(i)$ gives the position $j$ in $\First$ where character $\Subscript{\Last}{i}$ occurs and the value $\Psi(j)$ gives back the position $i$ in $\Last$ where $\Subscript{\First}{j}$ occurs.
 Figure~\ref{fig:lf_psi} illustrates.
+
 I define the iterated $\Psi$ as
 \begin{eqnarray}
 \begin{array}{lcl}
@@ -586,7 +589,6 @@ LF^0(j)     &=& j\\
 LF^{i+1}(j) &=& LF(LF^{i}(j)).
 \end{array}
 \end{eqnarray}
-
 The character $\Subscript{\String}{i}$ corresponds to $\Subscript{\First}{\Psi^{i+1}(j)}$, where $j$ is the position of $\$$ in $\First$; analogously, $\Subscript{\bar{\String}}{i}$ corresponds to $\Subscript{\Last}{LF^{i+1}(j)}$, where $j$ is the position of $\$$ in $\Last$.
 Therefore, the full string $\String$ is recovered by starting in $\First$ at the position of \$ and following the cycle of length $\Slen$ defined by the permutation $\Psi$;
 analogously, the reverse string $\bar{\String}$ is recovered by starting in $\Last$ at the position of \$ and following the cycle of length $\Slen$ defined by the permutation $LF$.
@@ -758,7 +760,7 @@ The rank query becomes:
 \rank_1(\String,i) = \SubscriptNV{R^2}{\xfloor{i/b^2}} + \SubscriptNV{R}{\xfloor{i/b}} + \popcount_1(\Suffix{\String}{\xfloor{i/b} \cdot b}, \, i \imod{b}).
 \end{eqnarray}
 
-Each entry of $R$ now represents only $b^2$ possible values and thus consumes only $\Oh(\log{b^2})=\Oh(\log{b})$ bits.
+Each entry of $R$ now represents only $b^2$ possible values and thus consumes only $\Oh(\log{b^2})$ $=\Oh(\log{b})$ bits.
 Summing up, $R^2$ adds $\Oh(\Slen \log{\Slen} / b^2)$ bits and $R$ adds $\Oh(\Slen \log{b} /b)$ bits.
 By posing $b=\log{\Slen}$ as above, it follows $\Oh(\Slen / \log{\Slen})$ bits for $R^2$ and $\Oh(\Slen \log{\log{\Slen}}/ \log{\Slen})$ bits for $R$.
 Hence, the two-levels binary RD consumes $o(\Slen)$ additional bits.
@@ -995,12 +997,7 @@ As expected, the WT FM-index is always slower than the TL FM-index.
 The $q$-gram index is never slower than the SA alone, however the contribution of the $q$-gram directory becomes insignificant for deep traversals.
 %The SA is significantly slower than all other indices as binary search converges slowly.
 
-Depth 12 marks the turning point, as the indices become sparse.
-The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index and the LST are the fastest at depths 10--12.
-Below depth 12, the tree indices (ESA and LST) become significantly faster than the trie indices (SA, $q$-gram and FM-indices).
-In particular, the FM-indices, which are based on backward search, become more than one order of magnitude slower than tree indices.
-
-\begin{figure*}[t]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.7\textwidth}
 \begin{algorithm}[H]
@@ -1024,13 +1021,20 @@ In particular, the FM-indices, which are based on backward search, become more t
 \end{center}
 \end{figure*}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Depth-first traversal runtime]{Runtime of the bounded depth-first traversal of various suffix trie implementations.}
 \label{fig:visit-dna}
 \includegraphics{visit.dna.celegans.pdf}
 \end{center}
 \end{figure}
+
+\newpage
+
+Depth 12 marks the turning point, as the indices become sparse.
+The TL FM-index is the fastest index up to depth $10$, while the $q$-gram index and the LST are the fastest at depths 10--12.
+Below depth 12, the tree indices (ESA and LST) become significantly faster than the trie indices (SA, $q$-gram and FM-indices).
+In particular, the FM-indices, which are based on backward search, become more than one order of magnitude slower than tree indices.
 
 \subsection{Exact string matching}
 \label{sec:index:algo:exact}
@@ -1107,14 +1111,6 @@ While traversing each branch of the trie, this algorithm incrementally computes 
 If the computed distance exceeds $k$, the traversal backtracks and proceeds on the next branch.
 Conversely, if the pattern $\Pattern$ is completely spelled and the traversal ends up in a node $\StrieNode$, each leaf $\StrieLeaf{i}$ below $\StrieNode$ points to a distinct suffix $\Suffix{\Text}{i}$ such that $d_H(\Substring{\Text}{i}{i+\Plen}, \Pattern) \leq k$.
 
-\begin{figure}[b]
-\begin{center}
-\caption[$k$-Mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
-\label{fig:query-dna-apx}
-\includegraphics{query.dna.celegans.1.pdf}
-\end{center}
-\end{figure}
-
 \begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -1147,6 +1143,14 @@ Conversely, if the pattern $\Pattern$ is completely spelled and the traversal en
 \end{minipage}
 \end{center}
 \end{figure*}
+
+\begin{figure}[hb]
+\begin{center}
+\caption[$k$-Mismatches runtime]{Runtime of $1$-mismatch search on various suffix trie implementations.}
+\label{fig:query-dna-apx}
+\includegraphics{query.dna.celegans.1.pdf}
+\end{center}
+\end{figure}
 
 %The \emph{worst case} runtime of algorithm \ref{alg:st-hamming} is clearly independent of the text length $\Tlen$.
 %According to \citep{Navarro2000}, this algorithm exhibits average time sublinear in $\Tlen$.
@@ -1269,7 +1273,7 @@ However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\StrieOf{\Text}$ 
 The traversal stops whenever it reaches a leaf node in $\RtrieOf{\Patterns}$ and reports the occurrences pointed by all the leaves beneath the current node in $\StrieOf{\Text}$.
 %If the collection $\Patterns$ contains two equal strings, some leaf of $\Patterns$ points to more than one pattern.
 
-\begin{figure*}[t]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1298,12 +1302,13 @@ The traversal stops whenever it reaches a leaf node in $\RtrieOf{\Patterns}$ and
 \end{center}
 \end{figure*}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. Pattern length is fixed to 15. Preprocessing times are shown in black.}
 \label{fig:query-dna-exact-multi}
 \includegraphics{multi.dna.celegans.0.15.pdf}
 \end{center}
+\vspace{-5mm}
 \end{figure}
 
 The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
@@ -1378,6 +1383,8 @@ Thus, the time to construct the trie of the patterns is easily justified.
 In practice, algorithm \ref{alg:st-exact-multi} fills the gap between the runtime of the SA and the $q$-gram index.
 Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-indices.
 
+\phantom{XXX}
+
 This algorithms works according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
 Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
 Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
@@ -1394,7 +1401,7 @@ Multiple methods exhibit again decreasing average runtimes by number of patterns
 However, here method Sorted is constantly faster than Multiple, but the runtime gap decreases with the number of patterns.
 Moreover, the speed-up of both multiple methods slowly increases with the number of patterns instead of decreasing.
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Multiple $k$-mismatches speed-up on SA]{Speed-up of multiple $1$-mismatch by number of patterns on the SA. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
 \label{fig:query-dna-apx-multi-sa}
@@ -1402,7 +1409,7 @@ Moreover, the speed-up of both multiple methods slowly increases with the number
 \end{center}
 \end{figure}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Multiple $k$-mismatches speed-up on FM-index]{Speed-up of multiple $1$-mismatch by number of patterns on the TL FM-Index. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
 \label{fig:query-dna-apx-multi-fmtl}

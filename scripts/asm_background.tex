@@ -242,16 +242,6 @@ Frequently, the problem's input respects the condition $k \ll \Plen \ll \Tlen$.
 Under the edit or Hamming distance, the \emph{error rate} is defined as $\epsilon = k/\Plen$, with $0 < \epsilon < 1$ given the above conditions.
 \end{definition}
 
-\begin{figure}[t]
-\begin{center}
-\caption[$k$-Differences occurrence]{Example of occurrence for $k$-differences. Pattern $\Pattern$ occurs in text $\Text$ at edit distance 3, \ie with a 19~\% error rate.
-The alignment between $\Pattern$ and any substring of $\Text$ is called semi-global, as opposed to the global alignment of two complete strings.
-}
-\label{fig:edit-occurrence}
-\input{figures/occurrence.tikz}
-\end{center}
-\end{figure}
-
 String matching problems are subdivided in two categories, \emph{online} and \emph{offline}, depending on which string, the pattern or the text, is given first.
 Algorithms for online string matching work by preprocessing the pattern and scanning the text from left to right (or right to left).
 Algorithms for offline string matching are instead allowed to preprocess the text,
@@ -271,6 +261,16 @@ Both classes of filtering methods then require a native online method to verify 
 
 Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \ie when the error rate is low, and are thus very appealing from a practical standpoint.
 Nonetheless, filtering methods are just opportunistic combinations of native online and indexed methods.
+
+\begin{figure}[t]
+\begin{center}
+\caption[$k$-Differences occurrence]{Example of occurrence for $k$-differences. Pattern $\Pattern$ occurs in text $\Text$ at edit distance 3, \ie with a 19~\% error rate.
+The alignment between $\Pattern$ and any substring of $\Text$ is called semi-global, as opposed to the global alignment of two complete strings.
+}
+\label{fig:edit-occurrence}
+\input{figures/occurrence.tikz}
+\end{center}
+\end{figure}
 
 In this manuscript, I often consider \emph{multiple} string matching problems, \ie variants in which many patterns are given at once, instead of \emph{single} problems where patterns are given one by one in an online fashion.
 Obviously, any method for the single case can solve the multiple case and vice versa.
