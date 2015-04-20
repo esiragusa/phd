@@ -200,7 +200,7 @@ As said, best-mapping methods rely on a single mapping location per read.
 In order to maximize recall, best-mappers often adopt complex scoring schemes taking into account gaps and base quality values, and at the same time implement sophisticated heuristics to speed up the search.
 Best-mappers annotate any mapping location with its mapping quality.
 Subsequently, in order to maximize precision, variant calling tools decide whether to consider or discard reads not mapping confidently to any location.
-The GATK~\citep{DePristo2011} and Samtools~\citep{Li2009a} are popular best-mapping tools to call small variants.
+The GATK \citep{DePristo2011} and Samtools~\citep{Li2009a} are popular best-mapping tools to call small variants.
 In section~\ref{sec:mappability}, I discuss how this paradigm systematically fails on reads belonging some critical genomic regions, thus is limited to the analysis of \emph{high mappability} regions.
 
 \subsubsection{Mapping quality score}
