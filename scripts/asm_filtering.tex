@@ -451,17 +451,16 @@ Therefore, I do not need these algorithms in the applications presented in chapt
 
 I start by modeling the decision problem \textsc{Full Sensitivity} before turning to the optimization problem \textsc{Optimal Threshold}.
 I consider any Hamming distance transcript over $\{ \text{\ttfamily R}, \text{\ttfamily M} \}$ as an $\Plen$-dimensional vector $\Transcript = (x_{\At{1}}, \dots x_{\AtEnd{\Plen}})$ over $\Bo = \{ 0, 1 \}$.
-Accordingly, I denote by $|\Transcript|_0=\Plen - \sum \Transcript$ the Hamming distance of the transcript, and by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\Transcript$ \st $|\Transcript|_0 = k$.
-I now define the event of detection of a transcript by a filtration scheme $(Q,\Threshold)$.
+I denote by $\Bo^{\Plen}_k \subset \Bo^{\Plen}$ the set containing all transcripts $\Transcript$ of length $\Plen$ whose Hamming distance is $k$.
 
 \begin{definition}
 \label{def:qgram-occ}
-A $Q$-gram \emph{occurs} at position $i$ in a transcript $\Transcript$ iff $\forall j \in Q$ $x_{i+j}=1$.
+A $Q$-gram \emph{occurs} at position $i$ in transcript $\Transcript$ iff $\forall j \in Q$ $x_{i+j}=1$.
 \end{definition}
 
 \begin{definition}
 \label{def:qgram-detection}
-A filtration scheme $(Q,\Threshold)$ \emph{detects} $\Transcript$ iff the $Q$-gram occurs at least $\Threshold$ times in $\Transcript$.
+A filtration scheme $(Q,\Threshold)$ \emph{detects} transcript $\Transcript$ iff the $Q$-gram occurs at least $\Threshold$ times in $\Transcript$.
 \end{definition}
 
 I introduce a \emph{boolean function} to characterize the set of transcripts detected by a filtration scheme of the form $(Q,1)$.
@@ -473,11 +472,7 @@ T_{Q}^{m}(\Transcript) = \bigvee_{i=\At{1}}^{\Plen-\Span{Q}} \bigwedge_{j \in Q}
 \end{equation}
 where each \emph{clause} of $T_{Q}^{m}$ represents a single possible occurrence of $Q$ in $\Transcript$.
 According to definition \ref{def:qgram-detection}, filtration scheme $(Q,\Threshold)$ detects $\Transcript$ iff $\Transcript$ satisfies at least $\Threshold$ clauses of $T_{Q}^{m}$.
-The formal definition of \textsc{Full Sensitivity} follows.
-
-%The utility of these functions is manyfold.
-%In section \ref{sub:qgram-optimal-threshold}, I use them within an ILP that computes an exact solution to \textsc{Optimal Threshold} and thus answers \textsc{Full Sensitivity}.
-%In section \ref{sub:qgram-specificity}, I reduce the estimation of filtration sensitivity to a counting problem on boolean functions.
+%The formal definition of \textsc{Full Sensitivity} follows.
 
 \begin{problem}[\textsc{Full Sensitivity}]
 \begin{tabular}{rl}
@@ -496,7 +491,7 @@ Here, $\Threshold_{Q}^{m}(\Transcript)$ \emph{counts} how many times a $Q$-gram 
 I define such pseudo-boolean function as
 \begin{equation}
 \label{eq:qgram-pseudo}
-t_{Q}^{m}(\Transcript) = \sum_{i=\At{1}}^{\Plen-\Span{Q}} \prod_{j \in Q} x_{i+j}
+\Threshold_{Q}^{m}(\Transcript) = \sum_{i=\At{1}}^{\Plen-\Span{Q}} \prod_{j \in Q} x_{i+j}
 \end{equation}
 The formal definition of \textsc{Optimal Threshold} follows.
 
@@ -512,22 +507,20 @@ The formal definition of \textsc{Optimal Threshold} follows.
 I propose the following ILP to solve \textsc{Optimal Threshold}.
 %The complementary \textsc{optimal threshold} is \textsc{maximum coverage} \citep{Vazirani2001}.
 
-\begin{equation}
-\begin{array}{lll}
-\label{eq:qgram-ilp}
-\min & \sum \mathbf{t}							\\
-\text{subject to}								\\
-& \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}		\\
-& \Transcript \in \Bo^{\Plen}_k					\\
-& t_i \geq x_{i+j} 						& \forall \, \At{1} \leq i \leq \Plen-\Span{Q} \quad \quad \forall \, j \in Q \\
-\end{array}
-\end{equation}
+\begin{align}
+%\label{eq:qgram-ilp}
+\min \sum \mathbf{t}\label{eq:qgram-ilp-sum}\\
+\text{subject to}\nonumber				\\
+& \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-ilp-t}\\
+&  \Transcript \in \Bo^{\Plen}_k\label{eq:qgram-ilp-transcript}\\
+&  t_i \geq x_{i+j} & \forall \, \At{1} \leq i \leq \Plen-\Span{Q}, \, j \in Q\label{eq:qgram-ilp-constr}
+\end{align}
 
-Vector $\mathbf{t}$ represents function $T_{Q}^{m}$ and its sum function $\Threshold_{Q}^{m}$; each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$.
-Vector $\Transcript$ represents any Hamming transcript; each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\Transcript$ is within $k$.
-The set of inequalities of the form $\Threshold_i \geq x_{i+j}$ binds the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
+Vector $\Transcript$ represents any Hamming transcript: each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\Transcript$ is within $k$ (constraint~\ref{eq:qgram-ilp-transcript}).
+Vector $\mathbf{t}$ represents function $\Threshold_{Q}^{m}$: each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$ (constraint~\ref{eq:qgram-ilp-t}) and its sum (objective function~\ref{eq:qgram-ilp-sum}) the value of $\Threshold_{Q}^{m}(\Transcript)$.
+The inequalities of the form $\Threshold_i \geq x_{i+j}$ (constraint~\ref{eq:qgram-ilp-constr}) bind the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
 The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $\Threshold=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(\Plen,k)$.
-Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp} on some problem instances.
+Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp-sum} on some problem instances.
 
 \subsubsection{Approximate solution}
 
@@ -552,25 +545,7 @@ f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \vee \mathbf{z}) + f(\mathbf{y} 
 It is immediate to see that function $\Threshold_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
 \textsc{Optimal Threshold} thus involves the minimization of a monotone supermodular function subject to linear constraints.
 
-There is a well-known \emph{gradient ascent} algorithm for the maximization of a monotone submodular function subject to linear constraints with an APX-ratio of $1 - 1/e$ \citep{Nemhauser1978}, \ie the ratio between the value of the greedy approximation and the value of the optimal solution is within $0.632$.
-Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} using the same principle.
-Nonetheless, its solution is not guaranteed to be within a constant ratio from the optimal one.
-Indeed, algorithm~\ref{alg:qgram-threshold-apx} minimizes function $\Threshold_{Q}^{m}$ which is monotone non-decreasing supermodular and has its unconstrained minimum at $0$.
-
-In practice, the threshold found by algorithm~\ref{alg:qgram-threshold-apx} turns out to be a tight upper bound for \textsc{Optimal Threshold} (see table~\ref{tab:threshold}).
-Such threshold cannot be used in a filtration scheme guaranteed to be full-sensitive: if the threshold is non-optimal, the filtration scheme is lossy.
-Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the design of $Q$-grams, as a search space filter to quickly discard lossy $Q$-grams.
-
-%I define the negated function $\bar{t}_{Q}^{m}$, counting how many times a $Q$-gram does not occur in a transcript $\Transcript$, as
-%\begin{equation}
-%\label{eq:qgram-pseudoneg}
-%\bar{t}_{Q}^{m}(\Transcript) = m - \Span{Q} + 1 - t_{Q}^{m}(\Transcript)
-%\end{equation}
-%Function $\bar{t}_{Q}^{m}$ is monotone non-increasing and submodular.
-%I consider the complementary problem, being the maximization of a submodular function subject to linear constraints:
-%{\bf Solution}	&	$\max \, \bar{t}_{Q}^{m}(\Transcript)$ \wrt $\Transcript \in \bar{\Bo}^{\Plen}_k$
-
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -598,6 +573,21 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 \end{center}
 \end{figure*}
 
+There is a well-known \emph{gradient ascent} algorithm for the maximization of a monotone submodular function subject to linear constraints with an APX-ratio of $1 - 1/e$ \citep{Nemhauser1978}, \ie the ratio between the value of the greedy approximation and the value of the optimal solution is within $0.632$.
+Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} using the same principle.
+Nonetheless, its solution is not guaranteed to be within a constant ratio from the optimal one.
+Indeed, algorithm~\ref{alg:qgram-threshold-apx} minimizes function $\Threshold_{Q}^{m}$ which is monotone non-decreasing supermodular and has its unconstrained minimum at $0$.
+
+In practice, the threshold found by algorithm~\ref{alg:qgram-threshold-apx} turns out to be a tight upper bound for \textsc{Optimal Threshold} (see table~\ref{tab:threshold}).
+Such threshold cannot be used in a filtration scheme guaranteed to be full-sensitive: if the threshold is non-optimal, the filtration scheme is lossy.
+Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the design of $Q$-grams, as a search space filter to quickly discard lossy $Q$-grams.
+
+\subsection{Specificity}
+\label{sub:qgram-specificity}
+
+Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of any filtration scheme is proportional to the number of transcripts detected.
+Thus, among multiple full-sensitive filtration schemes, one clearly prefers the one that minimizes the number of transcripts detected.
+
 \begin{table}[h]
 \center
 \caption[Best $Q$-grams found by \citeauthor{Burkhardt2001}]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
@@ -608,18 +598,12 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 
 \begin{table}[h]
 \center
-\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour; algorithm APX always completed within 6 milliseconds (data not shown).}
+\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp-sum} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour; algorithm APX always completed within 6 milliseconds (data not shown).}
 \sffamily
 \renewcommand{\tabcolsep}{0.8ex}
 \input{tables/threshold}
 \label{tab:threshold}
 \end{table}
-
-\subsection{Specificity}
-\label{sub:qgram-specificity}
-
-Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of any filtration scheme is proportional to the number of transcripts detected.
-Thus, among multiple full-sensitive filtration schemes, one clearly prefers the one that minimizes the number of transcripts detected.
 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
@@ -714,7 +698,7 @@ and solving it for $N$, which gives
 N \geq 4 \cdot \frac{\Plen - \Span{Q}}{\epsilon^2}.
 \end{eqnarray}
 
-\begin{figure*}[b]
+\begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -765,7 +749,7 @@ Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \end{eqnarray}
 \end{definition}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},\Threshold) = (\{ \{\At{1}, \At{3}, \At{4}, \At{5}\}, \{\At{1}, \At{2}, \At{3}, \At{5}\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $\Pattern$ of length 25 occurs in text $\Text$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
@@ -826,7 +810,7 @@ Gapped $q$-grams are on pair with 1-approximate seeds, slightly better only for 
 Figure \ref{fig:filter-runtime-edit-celegans} shows the results for $k$-differences.
 The more involved edit distance verification slightly fills the gap between exact seeds and contiguous $q$-grams, yet exact seeds continue to be always the fastest alternative.
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
 \label{fig:filter-runtime-hamming-celegans}
@@ -834,7 +818,7 @@ The more involved edit distance verification slightly fills the gap between exac
 \end{center}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[b]
 \begin{center}
 \caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
 \label{fig:filter-runtime-edit-celegans}
