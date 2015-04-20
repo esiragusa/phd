@@ -421,6 +421,7 @@ I define the following operations on the node $\StrieNode$ pointed during the tr
 \begin{itemize}
 \item \FunctionCall{isRoot}{\StrieNode} returns true iff the pointed node is the root;
 \item \FunctionCall{isLeaf}{\StrieNode} returns true iff all outgoing edges are labeled by terminator symbols;
+\item \FunctionCall{parent}{\StrieNode} returns the parent node of $\StrieNode$;
 \item \FunctionCall{label}{\StrieNode} returns the symbol labeling the edge entering $\StrieNode$;
 \item \FunctionCall{occurrences}{\StrieNode} returns the list of positions pointed by leaves below $\StrieNode$;
 \item \FunctionCall{concat}{\StrieNode} returns the concatenation of edge labels on the path from the root to $\StrieNode$.
@@ -447,14 +448,15 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \textbf{Output} & boolean indicating success\\
 \end{tabular}
 \begin{algorithmic}[1]
-\If {\Call{isLeaf}{$\StrieNode$}}
-	\State \Return \False
+\If {\NotB \Call{isLeaf}{$\StrieNode$}}
+	\State {$\StrieChar \gets \lexmin{\Sigma}$}
+	\Do
+		\If {\Call{goDown}{$\StrieNode, \StrieChar$}}
+			\State \Return \True
+		\EndIf
+	\DoWhile {$\StrieChar \gets \lexnext{\StrieChar}$}
 \EndIf
-\If {\Call{goDown}{$\StrieNode, \lexmin{\Sigma}$}}
-	\State \Return \True
-\Else
-	\State \Return $\Call{goRight}{\StrieNode}$		
-\EndIf
+\State \Return \False
 \end{algorithmic}
 \label{alg:st-godown}
 \end{algorithm}
@@ -469,9 +471,10 @@ In chapter~\ref{chr:index}, I consider various data structures to implement suff
 \end{tabular}
 \begin{algorithmic}[1]
 \If {\NotB \Call{isRoot}{$\StrieNode$}}
-	\While {$\StrieChar \gets \lexnext{\Call{label}{\StrieNode}}$}
-		\State {$\Call{goUp}{\StrieNode}$}
-		\If {$\Call{goDown}{\StrieNode, \StrieChar}$}
+	\State {$\StrieChar \gets \Call{label}{\StrieNode}$}
+	\State {$w \gets \Call{parent}{\StrieNode}$}
+	\While {$\StrieChar \gets \lexnext{\StrieChar}$}
+		\If {$\Call{goDown}{w, \StrieChar}$}
 			\State \Return \True
 		\EndIf
 	\EndWhile
