@@ -112,7 +112,7 @@ For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a 
 \begin{algorithmic}[1]
 \State {$(l_1,l_2) \gets (\StrieNode.l,\StrieNode.r)$}
 \While {$l_1 < l_2$}
-	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
+	\State {$i \gets \left\lfloor \frac{l_1+l_2}{2} \right\rfloor$}
 	\If {$\Subscript{\String}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexlt \StrieChar$}
 		\State {$l_1 \gets i+1$}
 	\Else
@@ -136,7 +136,7 @@ For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a 
 \begin{algorithmic}[1]
 \State {$(r_1,r_2) \gets (\StrieNode.l,\StrieNode.r)$}
 \While {$r_1 < r_2$}
-	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
+	\State {$i \gets \left\lfloor \frac{r_1+r_2}{2} \right\rfloor$}
 	\If {$\Subscript{\String}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexleq \StrieChar$}
 		\State {$r_1 \gets i+1$}
 	\Else
@@ -332,10 +332,8 @@ SS & $\At{9}$ & $\At{7}$ \\
 \edgedown{p}{h5}
 \edge{h4}{d5}
 \edge{h5}{d6}
-\linkcurved{d5}{i5}
-\linkcurved{d6}{i6}
-%\strike{i1}{s1}
-%\strike{i7}{s7}
+\linkleft{d5}{i5}{15}
+\linkleft{d6}{i6}{15}
 \end{center}
 \end{figure}
 
@@ -705,18 +703,24 @@ $\At{1}$ & $0$     & $0$\\
 $\At{2}$ & $1$\\
 $\At{3}$ & $0$\\
 $\At{4}$ & $1$\\
+\cline{2-3}
 $\At{5}$ & \cell{s5}{$0$} & \cell{R5}{$2$}\\
 \cell{i6}{$\At{6}$} & \cell{s6}{$1$}\\
 $\At{7}$ & $1$\\
 $\At{8}$ & $0$\\
+\cline{2-3}
 $\At{9}$ & $0$     & $4$\\
 $\At{10}$ & $1$\\
 $\At{11}$ & $0$\\
 $\At{12}$ & $0$\\
 \end{tabular}
-\around{i6}
-\eround{s5}{s6}
-\around{R5}
+%\around{i6}
+%\eround{s5}{s6}
+%\around{R5}
+\link{i6}{s6}
+\edgeup{s6}{s5}
+%\linkright{s6}{s5}{30}
+\linkleft{s5}{R5}{15}
 \label{fig:rd1}
 \end{center}
 \end{subfigure}%
@@ -729,21 +733,31 @@ $i$	& $\Subscript{\String}{i}$	& $\SubscriptNV{R}{\xfloor{i/2}}$ & $\SubscriptNV
 \midrule
 $\At{1}$ & $0$ & $0$ & $0$\\
 $\At{2}$ & $1$\\
+\cline{2-3}
 $\At{3}$ & $0$	& $1$\\
 $\At{4}$ & $1$\\
+\cline{2-4}
 $\At{5}$ & \cell{s5}{$0$} & \cell{Rb5}{$0$} & \cell{R5}{$2$}\\
 \cell{i6}{$\At{6}$} & \cell{s6}{$1$}\\
+\cline{2-3}
 $\At{7}$ & $1$ & $1$\\
 $\At{8}$ & $0$\\
+\cline{2-4}
 $\At{9}$ & $0$ & $0$ & $4$\\
 $\At{10}$ & $1$\\
+\cline{2-3}
 $\At{11}$ & $0$ & $1$\\
 $\At{12}$ & $0$\\
 \end{tabular}
-\around{i6}
-\eround{s5}{s6}
-\around{R5}
-\around{Rb5}
+%\around{i6}
+%\eround{s5}{s6}
+%\around{R5}
+%\around{Rb5}
+\link{i6}{s6}
+%\linkright{s6}{s5}{30}
+\edgeup{s6}{s5}
+\linkleft{s5}{Rb5}{15}
+\linkleft{Rb5}{R5}{15}
 \label{fig:rd2}
 \end{center}
 \end{subfigure}
@@ -797,20 +811,25 @@ Thus, $R_{\sigma}$ adds $\Oh(\sigma \Slen \log{\sigma})$ bits to $\String$.
 \caption[DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,\At{5})= \SubscriptNM{R_{\sigma}}{\At{2}}{\At{2}} + \popcount_{\text{\ttfamily C}}(\Suffix{\String}{\At{3}}, \At{3})=2.$}
 \label{fig:rd_dna}
 \ttfamily
-\begin{tabular}{rcc}
-    &                          & $R_{\sigma}[\xfloor{i/2}]$\\
-$i$	& $\Subscript{\String}{i}$ & $[\text{A}, \, \text{C}, \, \text{G}, \, \text{T}]$\\
+\begin{tabular}{rcr}
+%    &                          & \\
+$i$	& $\Subscript{\String}{i}$ & $R_{\sigma}\left[\xfloor{i/2}][\text{A}, \, \text{C}, \, \text{G}, \, \text{T}\right]$\\
 \midrule
-$\At{1}$ & C & $[0, \,0, \,0, \,0]$\\
+$\At{1}$ & C & $\left[0, \,0, \,0, \,0\right]$\\
 $\At{2}$ & T\\
-$\At{3}$ & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]$\\
+\cline{2-3}
+$\At{3}$ & \cell{s3}{C} & \cell{R3}{$\left[0, \, \cell{R3C}{1}, \, 0, \, 1\right]$}\\
 \cell{i4}{$\At{4}$}   & \cell{s4}{G}\\
-$\At{5}$ & C & $[0, \,2, \,1, \,1]$\\
+\cline{2-3}
+$\At{5}$ & C & $\left[0, \,2, \,1, \,1\right]$\\
 $\At{6}$ & A\\
 \end{tabular}
-\around{i4}
-\eround{s3}{s4}
+%\around{i4}
+%\eround{s3}{s4}
 \around{R3C}
+\link{i4}{s4}
+\edgeup{s4}{s3}
+\link{s3}{R3}
 \end{center}
 \end{figure}
 
