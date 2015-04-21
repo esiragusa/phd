@@ -698,6 +698,11 @@ and solving it for $N$, which gives
 N \geq 4 \cdot \frac{\Plen - \Span{Q}}{\epsilon^2}.
 \end{eqnarray}
 
+A straightforward generalization of algorithm~\ref{alg:qgram-specificity} for any filtration scheme $(Q,\Threshold)$ consists into expanding boolean function $T_{Q}^{m}$ to have $\binom{\Plen-\Span{Q}+1}{\Threshold}$ clauses, each one accounting for the joint occurrence of $\Threshold$ $Q$-grams.
+Whether the exponential dependency on $\Threshold$ can be removed is an open question.
+In practice, algorithm~\ref{alg:qgram-specificity} would be used in $Q$-grams design to choose the most specific $Q$-gram among a set of full-sensitive candidates.
+However, as my choice for the applications of chapters~\ref{sec:masai}-\ref{sec:yara} felt upon the more practical seeds filters, I did not have to perform $Q$-grams design.
+
 \begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -749,7 +754,7 @@ Its counting threshold $\tau_{\mathbb{F}}$ is defined as:
 \end{eqnarray}
 \end{definition}
 
-\begin{figure}[b]
+\begin{figure}[t]
 \begin{center}
 \caption[Filtration with multiple gapped $q$-grams]{Filtration with multiple gapped $q$-grams. A filtration scheme $(\mathbb{F},\Threshold) = (\{ \{\At{1}, \At{3}, \At{4}, \At{5}\}, \{\At{1}, \At{2}, \At{3}, \At{5}\} \},7)$ solves instance $(25,5)$. In the illustration, pattern $\Pattern$ of length 25 occurs in text $\Text$ at edit distance 5. The seven $q$-grams in grey are not covered by any mismatch.}
 \label{fig:qgrams-multiple}
