@@ -57,7 +57,7 @@ It is easy to see that also this method performs redundant computation: the tota
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
 Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $e^*+s$.
-Given a filtration scheme $\mathbf{t}=(t_{\At{1}},\dots,t_{\AtEnd{s}})$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbf{t^*}=(t^{*}_{\At{1}},\dots,t^{*}_{\AtEnd{s^*}})$ is full-sensitive within distance $e^*+s$ if it satisfies
+Given a filtration scheme $\Scheme=(t_{\At{1}},\dots,t_{\AtEnd{s}})$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbf{t^*}=(t^{*}_{\At{1}},\dots,t^{*}_{\AtEnd{s^*}})$ is full-sensitive within distance $e^*+s$ if it satisfies
 \begin{eqnarray}
 s^* + \sum_{i=\At{1}}^{\AtEnd{s^*}} t_i^* > e^*+s.\label{eq:yara-filtration-scheme}
 \end{eqnarray}
@@ -67,8 +67,8 @@ s^* + \sum_{i=\At{1}}^{\AtEnd{s^*}} t_i^* > e^*+s.\label{eq:yara-filtration-sche
 \begin{example}
 Let $k=5$ be the absolute threshold and $s=0$ the relative threshold, defining only co-optimal locations to be relevant.
 A read $\Read$ maps at distance 1, \ie $|\Stratum_0| = 0$ and $|\Stratum_1| > 0$, thus $e^* = 1$.
-Given the filtration scheme $\mathbf{t}=(1,1,1)$, any subset full-sensitive up to distance $e^*+s = 1$ finds all relevant mapping locations.
-All full-sensitive subsets of $\mathbf{t}$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
+Given the filtration scheme $\Scheme=(1,1,1)$, any subset full-sensitive up to distance $e^*+s = 1$ finds all relevant mapping locations.
+All full-sensitive subsets of $\Scheme$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
 Thus, the verification of all candidates, either produced by \emph{any} two exact seeds or by one 1-approximate seed, yields all mapping locations in the $1$-stratum of $\Read$.
 \end{example}
 

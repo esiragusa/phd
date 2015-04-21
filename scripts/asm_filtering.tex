@@ -202,7 +202,7 @@ Figure~\ref{fig:seeds-apx} illustrates.
 
 \begin{figure}[t]
 \begin{center}
-\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\mathbf{t} = (1,1,1)$ solves $5$-difference. In the illustration, pattern $\Pattern$ occurs in text $\Text$ at edit distance 5. The seed in grey is covered only by one error and thus preserved.}
+\caption[Filtration with approximate seeds]{Filtration with approximate seeds. A filtration scheme with thresholds $\Scheme = (1,1,1)$ solves $5$-difference. In the illustration, pattern $\Pattern$ occurs in text $\Text$ at edit distance 5. The seed in grey is covered only by one error and thus preserved.}
 \label{fig:seeds-apx}
 \input{figures/filtration_apx.tikz}
 \end{center}
@@ -230,12 +230,12 @@ Filtration specificity is expected to increase with seed length.
 Lemma \ref{lemma:apx-seeds} assigns the same distance threshold to all seeds, yet this is not obligatory.
 Hence, I give a more general definition of \emph{filtration scheme} for approximate seeds.
 \begin{definition}[Filtration scheme]
-A seeds filtration scheme is an integer vector $\mathbf{t} = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$, where integer $\Threshold_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
+A seeds filtration scheme is an integer vector $\Scheme = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$, where integer $\Threshold_i \in \N_0$ represents the threshold assigned to the $i$-th seed.
 \end{definition}
 
 \begin{lemma}
 \label{lemma:apx-scheme}
-Any filtration scheme $\mathbf{t} = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$ \st
+Any filtration scheme $\Scheme = (t_{\At{1}}, \dots, t_{\AtEnd{s}})$ \st
 \begin{eqnarray}
 s + \sum_{i=\At{1}}^{\AtEnd{s}} t_i > k
 \end{eqnarray}
@@ -509,17 +509,17 @@ I propose the following ILP to solve \textsc{Optimal Threshold}.
 
 \begin{align}
 %\label{eq:qgram-ilp}
-\min \sum \mathbf{t}\label{eq:qgram-ilp-sum}\\
+\min \sum T\label{eq:qgram-ilp-sum}\\
 \text{subject to}\nonumber				\\
-& \mathbf{t} \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-ilp-t}\\
+& T \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-ilp-t}\\
 &  \Transcript \in \Bo^{\Plen}_k\label{eq:qgram-ilp-transcript}\\
 &  t_i \geq x_{i+j} & \forall \, \At{1} \leq i \leq \Plen-\Span{Q}, \, j \in Q\label{eq:qgram-ilp-constr}
 \end{align}
 
 Vector $\Transcript$ represents any Hamming transcript: each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\Transcript$ is within $k$ (constraint~\ref{eq:qgram-ilp-transcript}).
-Vector $\mathbf{t}$ represents function $\Threshold_{Q}^{m}$: each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$ (constraint~\ref{eq:qgram-ilp-t}) and its sum (objective function~\ref{eq:qgram-ilp-sum}) the value of $\Threshold_{Q}^{m}(\Transcript)$.
+Vector $T$ represents function $\Threshold_{Q}^{m}$: each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$ (constraint~\ref{eq:qgram-ilp-t}) and its sum (objective function~\ref{eq:qgram-ilp-sum}) the value of $\Threshold_{Q}^{m}(\Transcript)$.
 The inequalities of the form $\Threshold_i \geq x_{i+j}$ (constraint~\ref{eq:qgram-ilp-constr}) bind the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
-The solution $\mathbf{t}^*$ to the above ILP provides the optimal threshold $\Threshold=\sum \mathbf{t}^*$ for a $Q$-gram on instance $(\Plen,k)$.
+The solution $T^*$ to the above ILP provides the optimal threshold $\Threshold=\sum T^*$ for a $Q$-gram on instance $(\Plen,k)$.
 Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp-sum} on some problem instances.
 
 \subsubsection{Approximate solution}
@@ -527,20 +527,20 @@ Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp-sum} on
 Pseudo-boolean function $\Threshold_{Q}^{m}$ has two important properties: it is \emph{monotone non-decreasing} and \emph{supermodular}.
 In particular, supermodularity is the discrete analog of concavity.
 These properties allow to compute approximate solutions to constrained optimization problems in polynomial time.
-A pseudo-boolean function $f : \mathbb{B}^{\Plen} \rightarrow \mathbb{Z}$ is monotone non-decreasing iff 
+A pseudo-boolean function $f : \Bo^{\Plen} \rightarrow \Z$ is monotone non-decreasing iff 
 \begin{equation}
 \label{eq:monotone-non-decreasing}
-f(\mathbf{y}) \leq f(\mathbf{y} \vee \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^{\Plen}
+f(Y) \leq f(Y \vee Z) \quad \forall \, Y, Z \in \Bo^{\Plen}
 \end{equation}
 and it is \emph{supermodular} iff 
 \begin{equation}
 \label{eq:supermodularity}
-f(\mathbf{y}) + f(\mathbf{z}) \leq f(\mathbf{y} \vee \mathbf{z}) + f(\mathbf{y} \wedge \mathbf{z}) \quad \forall \, \mathbf{y}, \mathbf{z} \in \mathbb{B}^{\Plen}.
+f(Y) + f(Z) \leq f(Y \vee Z) + f(Y \wedge Z) \quad \forall \, Y, Z \in \Bo^{\Plen}.
 \end{equation}
 %or, equivalently, if all its second order derivatives are non-negative, \ie
 %\begin{equation}
 %\label{eq:supermodularity-partial}
-%\frac{\partial^2 f}{\partial z_i \partial z_j}(\mathbf{z}) \geq 0 \quad \forall \, \mathbf{z} \in \mathbb{B}^{\Plen} \text{ and } \forall \, 1 \leq i \leq j \leq m
+%\frac{\partial^2 f}{\partial z_i \partial z_j}(Z) \geq 0 \quad \forall \, Z \in \Bo^{\Plen} \text{ and } \forall \, 1 \leq i \leq j \leq m
 %\end{equation}
 It is immediate to see that function $\Threshold_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
 \textsc{Optimal Threshold} thus involves the minimization of a monotone supermodular function subject to linear constraints.
