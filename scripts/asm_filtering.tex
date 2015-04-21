@@ -837,14 +837,6 @@ For $k \geq 7$, contiguous $q$-grams with $\Threshold \geq 1$ show the closest r
 Here, a judicious mix of exact and 1-approximate seeds could improve the total runtime.
 The ratios for $k$-difference show analogous patterns (data not shown).
 
-\begin{figure}[b]
-\begin{center}
-\caption[Filtration versus verification time on $k$-mismatches]{Filtration versus verification time on $k$-mismatches. Pattern lengths are fixed to 100~bp.}
-\label{fig:filter-ratio-hamming-celegans}
-\includegraphics{filter_ratio.dna.celegans.hamming.100}
-\end{center}
-\end{figure}
-
 %\begin{figure}[h]
 %\begin{center}
 %\caption[Ratio on $k$-differences]{Ratio on $k$-differences. Pattern length is fixed to 100.}
@@ -862,7 +854,7 @@ Therefore, I define the PPV as:
 \frac{|TP_f(\Text)|}{|TP_f(\Text)| + |FP_f(\Text)|} = \frac{C(\Text)}{V_f(\Text)}
 \end{eqnarray}
 
-\begin{table}[t]
+\begin{table}[b]
 \begin{center}
 \caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(\Text)$ counts the number of verifications, $C(\Text)$ the number of approximate occurrences, and $|\Text|$ the text length. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
 \begin{tabular}{rcc}
@@ -883,6 +875,14 @@ The PPV of gapped $q$-grams is comparable to that of 2-approximate seeds, while 
 In particular, when $\Threshold$ approaches $1$, \eg for $k = 9$, the PPV of contiguous $q$-grams stays below that one of exact seeds.
 Enforcing $\Threshold \geq 4$ boosts the PPV of contiguous $q$-grams to that one of 1-approximate seeds.
 The PPVs for $k$-difference show analogous patterns (data not shown).
+
+\begin{figure}[t]
+\begin{center}
+\caption[Filtration versus verification time on $k$-mismatches]{Filtration versus verification time on $k$-mismatches. Pattern lengths are fixed to 100~bp.}
+\label{fig:filter-ratio-hamming-celegans}
+\includegraphics{filter_ratio.dna.celegans.hamming.100}
+\end{center}
+\end{figure}
 
 \begin{figure}[b]
 \begin{center}
