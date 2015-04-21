@@ -1302,15 +1302,6 @@ The traversal stops whenever it reaches a leaf node in $\RtrieOf{\Patterns}$ and
 \end{center}
 \end{figure*}
 
-\begin{figure}[t]
-\begin{center}
-\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. Pattern length is fixed to 15. Preprocessing times are shown in black.}
-\label{fig:query-dna-exact-multi}
-\includegraphics{multi.dna.celegans.0.15.pdf}
-\end{center}
-\vspace{-5mm}
-\end{figure}
-
 The experimental evaluation compares algorithm~\ref{alg:st-exact-multi} (Multiple) with algorithm~\ref{alg:st-exact} processing patterns in random order (Single) and in lexicographic order (Sorted).
 Figure~\ref{fig:query-dna-exact-multi} shows the results.
 These three methods ran on 10~M patterns of length 30: runtimes shown in figure \ref{fig:query-dna-exact-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-exact} (plots at pattern length 15).
@@ -1329,7 +1320,7 @@ This algorithm becomes more useful as a primitive within the multiple $k$-mismat
 Algorithm \ref{alg:st-hamming-multi} is the straightforward generalization of algorithm \ref{alg:st-exact-multi} to $k$-mismatches.
 The algorithm receives a collection of patterns $\Patterns$ and performs backtracking on $\Texts$ as in algorithm  \ref{alg:st-hamming}, this time using the associated trie $\Patterns$.
 
-\begin{figure*}[t]
+\begin{figure*}[b]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -1368,6 +1359,15 @@ The experimental evaluation compares algorithm~\ref{alg:st-hamming-multi} (Multi
 All three methods ran on 10~M patterns of length 30, with $k$ fixed to 1.
 Thus, runtimes shown in figure \ref{fig:query-dna-apx-multi} (histogram Single) correspond to runtimes shown in figure \ref{fig:query-dna-apx} (plots at pattern length 30).
 
+\begin{figure}[t]
+\begin{center}
+\caption[Multiple exact string matching runtime]{Runtime of multiple exact string matching on various suffix trie implementations. Pattern length is fixed to 15. Preprocessing times are shown in black.}
+\label{fig:query-dna-exact-multi}
+\includegraphics{multi.dna.celegans.0.15.pdf}
+\end{center}
+\vspace{-5mm}
+\end{figure}
+
 \begin{figure}[b]
 \begin{center}
 \caption[Multiple $k$-mismatches runtime]{Runtime of multiple $1$-mismatch on various suffix trie implementations. Pattern length is fixed to 30. Preprocessing times are shown in black.}
@@ -1385,6 +1385,22 @@ Surprisingly, algorithm \ref{alg:st-exact-multi} increases traversal time on FM-
 
 \phantom{XXX}
 
+\begin{figure}[t]
+\begin{center}
+\caption[Multiple $k$-mismatches speed-up on SA]{Speed-up of multiple $1$-mismatch by number of patterns on the SA. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
+\label{fig:query-dna-apx-multi-sa}
+\includegraphics{multi.dna.celegans.1.sa.pdf}
+\end{center}
+\end{figure}
+
+\begin{figure}[b]
+\begin{center}
+\caption[Multiple $k$-mismatches speed-up on FM-index]{Speed-up of multiple $1$-mismatch by number of patterns on the TL FM-Index. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
+\label{fig:query-dna-apx-multi-fmtl}
+\includegraphics{multi.dna.celegans.1.fm-tl.pdf}
+\end{center}
+\end{figure}
+
 This algorithms works according to a \emph{cache-friendly} memory access pattern, which holds for forward search but not for backward search.
 Using forward search, the traversal of a suffix trie becomes less expensive as it proceeds towards bottom nodes.
 Indeed, traversal towards a child node involves the computation of a subinterval of the current suffix array interval; such computation accesses memory locations within the current interval, having good chances to be in the cache.
@@ -1401,18 +1417,3 @@ Multiple methods exhibit again decreasing average runtimes by number of patterns
 However, here method Sorted is constantly faster than Multiple, but the runtime gap decreases with the number of patterns.
 Moreover, the speed-up of both multiple methods slowly increases with the number of patterns instead of decreasing.
 
-\begin{figure}[b]
-\begin{center}
-\caption[Multiple $k$-mismatches speed-up on SA]{Speed-up of multiple $1$-mismatch by number of patterns on the SA. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
-\label{fig:query-dna-apx-multi-sa}
-\includegraphics{multi.dna.celegans.1.sa.pdf}
-\end{center}
-\end{figure}
-
-\begin{figure}[t]
-\begin{center}
-\caption[Multiple $k$-mismatches speed-up on FM-index]{Speed-up of multiple $1$-mismatch by number of patterns on the TL FM-Index. Pattern length is fixed to 30. Traversal times without preprocessing are shown by dashed lines.}
-\label{fig:query-dna-apx-multi-fmtl}
-\includegraphics{multi.dna.celegans.1.fm-tl.pdf}
-\end{center}
-\end{figure}
