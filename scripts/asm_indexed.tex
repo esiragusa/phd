@@ -113,7 +113,7 @@ For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a 
 \State {$(l_1,l_2) \gets (\StrieNode.l,\StrieNode.r)$}
 \While {$l_1 < l_2$}
 	\State {$i \gets \lfloor \frac{l_1+l_2}{2} \rfloor$}
-	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexlt \StrieChar$}
+	\If {$\Subscript{\String}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexlt \StrieChar$}
 		\State {$l_1 \gets i+1$}
 	\Else
 		\State {$l_2 \gets i$}
@@ -137,7 +137,7 @@ For instance, a pair of $1+4$~bytes suffices to encode any suffix position in a 
 \State {$(r_1,r_2) \gets (\StrieNode.l,\StrieNode.r)$}
 \While {$r_1 < r_2$}
 	\State {$i \gets \lfloor \frac{r_1+r_2}{2} \rfloor$}
-	\If {$\Subscript{\Strings}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexleq \StrieChar$}
+	\If {$\Subscript{\String}{\SubscriptNV{\Sarray}{i} + \StrieNode.d} \lexleq \StrieChar$}
 		\State {$r_1 \gets i+1$}
 	\Else
 		\State {$r_2 \gets i$}
@@ -157,15 +157,15 @@ Any suffix trie node is univocally identified by an interval of the suffix array
 For instance, the root node is represented by the interval $\OInterval{\At{1}}{\Slen}$ containing the whole SA.
 Thus, while traversing the trie, I remember the interval $\OInterval{l}{r}$ associated to the current node.
 In addition, I also remember the right interval $r_p$ of the parent node and the depth $d$ of the current node.
-The incoming edge label of an internal node at depth $d$ is identified by the $(\AtEnd{d})$-th symbol within the corresponding suffix $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$ with $i \in \OInterval{l}{r}$.
+The incoming edge label of an internal node at depth $d$ is identified by the $(\AtEnd{d})$-th symbol within the corresponding suffix $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$ with $i \in \OInterval{l}{r}$.
 Any leaf node is defined to have all outgoing edges labeled by terminator symbols (see section~\ref{sub:introindex}).
 The occurrences below any node correspond by definition to the interval $\OInterval{l}{r}$ of $\Sarray$.
 Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r, r_p, d \}$ and define the following operations on it:
 \begin{itemize}
 \item \FunctionCall{goRoot}{\StrieNode} initializes $\StrieNode$ to $\{ \At{1}, \Slen, \Slen, 0\}$;
 %\item \FunctionCall{isRoot}{\StrieNode} returns true iff $d = 0$;
-\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $|\Suffix{\Strings}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}}}|=\StrieNode.d+1$;
-\item \FunctionCall{label}{\StrieNode} returns $\Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
+\item \FunctionCall{isLeaf}{\StrieNode} returns true iff $|\Suffix{\String}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}}}|=\StrieNode.d+1$;
+\item \FunctionCall{label}{\StrieNode} returns $\Subscript{\String}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$;
 \item \FunctionCall{occurrences}{\StrieNode} returns $\SubstringNV{\Sarray}{\StrieNode.l}{\StrieNode.r}$.
 \end{itemize}
 
@@ -182,8 +182,8 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r, 
 	\State \Return \False
 \EndIf
 \State {$\StrieNode.l \gets$ \Call{R}{$\StrieNode,\$$}}
-\State {$\StrieChar_l \gets \Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$}
-\State {$\StrieChar_r \gets \Subscript{\Strings}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}} + \StrieNode.d}$}
+\State {$\StrieChar_l \gets \Subscript{\String}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$}
+\State {$\StrieChar_r \gets \Subscript{\String}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}} + \StrieNode.d}$}
 \State {$\StrieNode.r_p \gets \StrieNode.r$}
 \If {$\StrieChar_l \neq \StrieChar_r$}
 	\State {$\StrieNode.r \gets$ \Call{R}{$\StrieNode,\StrieChar_l$}}
@@ -207,8 +207,8 @@ Summing up, I represent the current node $\StrieNode$ by the integers $\{ l, r, 
 	\State \Return \False
 \EndIf
 \State {$\StrieNode.l \gets \StrieNode.r$}
-\State {$\StrieChar_l \gets \Subscript{\Strings}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$}
-\State {$\StrieChar_r \gets \Subscript{\Strings}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}} + \StrieNode.d}$}
+\State {$\StrieChar_l \gets \Subscript{\String}{\SubscriptNV{\Sarray}{\StrieNode.l} + \StrieNode.d}$}
+\State {$\StrieChar_r \gets \Subscript{\String}{\SubscriptNV{\Sarray}{\AtEnd{\StrieNode.r}} + \StrieNode.d}$}
 \State {$\StrieNode.r \gets \StrieNode.r_p$}
 \If {$\StrieChar_r \neq \StrieChar_p$}
 	\State {$\StrieNode.r \gets$ \Call{R}{$\StrieNode,\StrieChar_r$}}
@@ -258,7 +258,7 @@ In this way, the SA supports exact string matching in $\Oh(\Plen \log{\Tlen})$ t
 
 Note that the suffix array can be binary searched by spelling a full pattern within a single call of \FunctionName{L} and \FunctionName{R}: in line 6 of algorithms~\ref{alg:sa-lower}--\ref{alg:sa-upper}, instead of comparing a single character, it suffices to compare the full pattern to the current suffix.
 Nonetheless, the worst case runtime of algorithm~\ref{alg:st-exact} stays $\Oh(\Plen \log{\Tlen})$, as each step of the binary search requires a full lexicographical comparison between the pattern and any suffix of the text, which takes $\Oh(\Plen)$ time in the worst case.
-As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(\Plen + \log{\Tlen})$ at the expense of additional $\Theta(\Tlen \log{\Tlen})$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i}}$, $\Suffix{\Strings}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
+As shown in \citep{Manber1990}, the worst case runtime can be decreased to $\Oh(\Plen + \log{\Tlen})$ at the expense of additional $\Theta(\Tlen \log{\Tlen})$ bits, by storing the precomputed longest common prefixes (LCP) between any two consecutive suffixes $\Suffix{\String}{\SubscriptNV{\Sarray}{i}}$, $\Suffix{\String}{\SubscriptNV{\Sarray}{i+1}}$ for all $1 \leq i < \Slen$.
 Alternatively, the \emph{average case} runtime is reduced to $\Oh(\Plen + \log{\Tlen})$, without storing any additional information, by using the MLR heuristic \citep{Manber1990}.
 In practice, the MLR heuristic outperforms the SA + LCP algorithm, due to the higher cost of fetching additional data from the LCP table \citep{Weese2013}.
 %Thus I replace algorithm~\ref{alg:st-exact} by algorithm~\ref{alg:sa-exact}.
