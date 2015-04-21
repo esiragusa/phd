@@ -797,14 +797,15 @@ Thus, $R_{\sigma}$ adds $\Oh(\sigma \Slen \log{\sigma})$ bits to $\String$.
 \caption[DNA rank dictionary]{One-level DNA rank dictionary of the string $\String=$ {\ttfamily CTCGCA} with $b=2$. In the example, $\rank_{\text{C}}(\String,\At{5})= \SubscriptNM{R_{\sigma}}{\At{2}}{\At{2}} + \popcount_{\text{\ttfamily C}}(\Suffix{\String}{\At{3}}, \At{3})=2.$}
 \label{fig:rd_dna}
 \ttfamily
-\begin{tabular}{rcr}
-$i$	& $\Subscript{\String}{i}$ & $R_{\sigma}[\xfloor{i/2}, \{\text{A}, \, \text{C}, \, \text{G}, \, \text{T}\}]$\\
+\begin{tabular}{rcc}
+    &                          & $R_{\sigma}[\xfloor{i/2}]$\\
+$i$	& $\Subscript{\String}{i}$ & $[\text{A}, \, \text{C}, \, \text{G}, \, \text{T}]$\\
 \midrule
-$\At{1}$ & C & $[0, \,0, \,0, \,0]\phantom{]}$\\
+$\At{1}$ & C & $[0, \,0, \,0, \,0]$\\
 $\At{2}$ & T\\
-$\At{3}$ & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]\phantom{]}$\\
+$\At{3}$ & \cell{s3}{C} & $[0, \, \cell{R3C}{1}, \, 0, \, 1]$\\
 \cell{i4}{$\At{4}$}   & \cell{s4}{G}\\
-$\At{5}$ & C & $[0, \,2, \,1, \,1]\phantom{]}$\\
+$\At{5}$ & C & $[0, \,2, \,1, \,1]$\\
 $\At{6}$ & A\\
 \end{tabular}
 \around{i4}
