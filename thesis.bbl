@@ -251,8 +251,14 @@ Ferragina, P. and Manzini, G. (2000).
 
 \bibitem[Ferragina and Manzini(2001)Ferragina and Manzini]{Ferragina2001}
 Ferragina, P. and Manzini, G. (2001).
-\newblock An experimental study of an opportunistic index.
-\newblock In {\em SODA\/}, pages 269--278.
+\newblock An experimental study of a compressed index.
+\newblock {\em Information Sciences\/}, {\bf 135}(1), pages 13--28.
+
+\bibitem[Ferragina \ea(2005)Ferragina, Giancarlo, Manzini, and
+  Sciortino]{Ferragina2005}
+Ferragina, P., Giancarlo, R., Manzini, G., and Sciortino, M. (2005).
+\newblock Boosting textual compression in optimal linear time.
+\newblock {\em Journal of the ACM (JACM)\/}, {\bf 52}(4), pages 688--713.
 
 \bibitem[Fonseca \ea(2012)Fonseca, Rung, Brazma, and Marioni]{Fonseca2012}
 Fonseca, N.~A., Rung, J., Brazma, A., and Marioni, J.~C. (2012).
@@ -482,6 +488,16 @@ Mantaci, S., Restivo, A., Rosone, G., and Sciortino, M. (2007).
 Marco-Sola, S., Sammeth, M., Guig{\'o}, R., and Ribeca, P. (2012).
 \newblock The gem mapper: fast, accurate and versatile alignment by filtration.
 \newblock {\em Nature methods\/}, {\bf 9}(12), pages 1185--1188.
+
+\bibitem[Mardis(2011)Mardis]{Mardis2011}
+Mardis, E.~R. (2011).
+\newblock A decade's perspective on dna sequencing technology.
+\newblock {\em Nature\/}, {\bf 470}(7333), pages 198--203.
+
+\bibitem[McCreight(1976)McCreight]{McCreight1976}
+McCreight, E.~M. (1976).
+\newblock A space-economical suffix tree construction algorithm.
+\newblock {\em J. ACM\/}, {\bf 23}(2), pages 262--272.
 
 \bibitem[Meyne \ea(1990)Meyne, Baker, Hobart, Hsu, Ryder, Ward, Wiley,
   Wurster-Hill, Yates, and Moyzis]{Meyne1990}
@@ -742,6 +758,12 @@ Venter, J.~C., Adams, M.~D., Myers, E.~W., Li, P.~W., Mural, R.~J., Sutton,
   (2001).
 \newblock The sequence of the human genome.
 \newblock {\em Science\/}, {\bf 291}, pages 1304--1351.
+
+\bibitem[Vyverman \ea(2012)Vyverman, De~Baets, Fack, and Dawyndt]{Vyverman2012}
+Vyverman, M., De~Baets, B., Fack, V., and Dawyndt, P. (2012).
+\newblock Prospects and limitations of full-text index structures in genome
+  analysis.
+\newblock {\em Nucleic Acids Res.}, {\bf 40}(15), pages 6993--7015.
 
 \bibitem[Wandelt \ea(2014)Wandelt, Deng, Gerdjikov, Mishra, Mitankin, Patil,
   Siragusa, Tiskin, Wang, Wang, \ea]{Wandelt2014}

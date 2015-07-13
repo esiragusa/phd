@@ -222,7 +222,7 @@ Figure~\ref{fig:seeds-apx} illustrates.
 \subsection{Filtration schemes}
 
 Approximate seeds provide filtration schemes of variable specificity.
-The fastest but weakest filtration scheme is given by $s=k+1$, while the most specific filtration is obtained for $s=1$ \ie perfect filtration scheme without any verification step.
+The fastest but weakest filtration scheme is given by $s=k+1$, while the most specific filtration is obtained for $s=1$, \ie perfect filtration scheme without any verification step.
 Alternatively, filtration specificity is controlled by acting on the minimum seed length $q$.
 Fixing $q$ yields $s = \lfloor m/q \rfloor$, or vice versa, fixing the number of seeds $s$ gives $q =\lfloor m/s \rfloor$.
 Filtration specificity is expected to increase with seed length.
@@ -358,7 +358,7 @@ Such implementation requires more memory, as it must bucket the whole text and k
 
 \cite{Califano1993} first introduced \emph{gapped $q$-grams} in sequence analysis.
 Since then, a surprisingly high number of research papers have been published on this topic (see \citep{Brown2008} for a survey).
-Almost all works focus on lossy filtration for homology search, rather than full-sensitive filtration for approximate string matching.
+Almost all of them focus on lossy filtration for homology search, rather than full-sensitive filtration for approximate string matching.
 Here, I consider gapped $q$-grams only in the context of full-sensitive filtration for $k$-mis\-matches.
 This case has been first considered by \cite{Burkhardt2001}.
 
@@ -380,7 +380,7 @@ The formal definition of gapped $q$-gram follows.
 \begin{definition}[$Q$-gram]
 A gapped $q$-gram (abbreviated as $Q$-gram) is a finite sequence $Q$ of natural numbers starting with the unit element, \ie $Q \subset \N_0$ and $\Ibase \in Q$.
 The length $|Q|$ is called the \emph{weight} of $Q$ and denoted as $\Weight{Q}$.
-The maximum element of $Q$ is named \emph{span} and indicated by $\Span{Q}$.
+The value $1 + \max\,Q$ is named \emph{span} and it is indicated by $\Span{Q}$.
 \end{definition}
 %In literature, $Q$-grams are visualized as words over the alphabet $\{1,*\}$ or $\{\#,-\}$.
 %I adopt the former notation and represent the $Q$-gram by the word $w \in \{1,*\}^{\Span{Q}}$ such that $w_j=1$ iff $j \in Q$.
@@ -408,7 +408,7 @@ Which is the most specific filtration scheme $(Q,\Threshold)$ solving a given in
 This question turns out to be surprisingly hard to answer.
 As discussed in section \ref{sec:filtering:qgrams-ext:schemes}, the most specific filtration schemes for contiguous $q$-grams are easily found.
 The choice falls on a few values of $q$ that are close to the maximum and do not yield a threshold too close to $1$.
-Conversely, such choice is non-trivial for $Q$-grams, as the search space of $Q$ is exponentially large in the span $\Span{Q}$ and a full-sensitivity threshold for arbitrary $Q$-grams is hard to compute.
+Conversely, such a choice is non-trivial for $Q$-grams, as the search space of $Q$ is exponentially large in the span $\Span{Q}$ and a full-sensitivity threshold for arbitrary $Q$-grams is hard to compute.
 In addition, it is not easy to determine which filtration scheme is the most specific one in a set of full-sensitive candidates.
 
 %The design of $Q$-gram filtration schemes raises hard combinatorial problems.
@@ -437,7 +437,7 @@ Q_1 \subseteq Q_2 \iff \tau_{Q_1}(\Plen,k) \geq \tau_{Q_2}(\Plen,k).
 Finally, \citeauthor{Burkhardt2001} guess the most specific filtration scheme $(Q,\Threshold)$ by computing, again via branch-and-bound, the minimum number of characters covered by $\Threshold$ distinct $Q$-gram occurrences (\textsc{Minimum Coverage} criterion).
 
 I propose alternative algorithms for the design of $Q$-gram filtration schemes.
-I give an \emph{integer linear program} (ILP) that solves exactly \textsc{Optimal Threshold} and is orders of magnitude quicker than the DP algorithm from \citep{Burkhardt2001} (see table~\ref{tab:threshold}).
+I give an \emph{integer linear program} (ILP) that solves exactly \textsc{Optimal Threshold} and it is orders of magnitude quicker than the DP algorithm from \citep{Burkhardt2001} (see table~\ref{tab:threshold}).
 Afterwards, I give a simple polynomial time \emph{approximation algorithm} for \textsc{Optimal Threshold} usable as an additional search space filter to quickly discard lossy $Q$-grams and eventually providing good ILP starting points.
 Finally, I propose a randomized algorithm to estimate in polynomial time the specificity of a filtration scheme, instead of using the \textsc{Minimum Coverage} criterion.
 
@@ -717,7 +717,7 @@ However, as my choice for the applications of chapters~\ref{sec:masai}-\ref{sec:
 \textbf{Output} & integer indicating the number of transcripts detected\\
 \end{tabular}
 \begin{algorithmic}[1]
-\State $C \gets \Plen+\Span{Q}+1$
+\State $C \gets \Plen-\Span{Q}+1$
 \State $M \gets C \cdot 2^{\Plen-\Weight{Q}}$
 \State $N \gets 4 \cdot (C-1)^2 / \epsilon^2$
 \State $T \gets 0$
@@ -793,7 +793,7 @@ Said that, I do not use $\mathbb{F}$-grams in practice.
 In this section, I show the results of an experimental evaluation of the filtration methods exposed so far.
 I consider seed filtration schemes with exact, 1 and 2-approximate seeds (Exact, 1-Apx and 2-Apx seeds), contiguous $q$-grams filtration schemes using the maximum lossless value of $q$ for a threshold of 1 ($q$-Grams, $\Threshold \geq 1$) and 4 ($q$-Grams, $\Threshold \geq 4$), and the gapped $q$-gram (iii) from table~\ref{tab:shapes} with the optimal thresholds indicated in table~\ref{tab:threshold} ($Q$-Grams).
 
-For indexed filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
+For offline filters, I use the $q$-gram index with $q=10$ (see \ref{sec:index:qgram}).
 To perform edit distance verifications, I use a banded version of the Myers' algorithm \citep{Myers1999} by \citep{Weese2012}.
 As text, I take the \emph{C.~elegans} reference genome (WormBase WS195), \ie a collection of 6 DNA strings of 100~Mbp total length.
 As patterns, I extrapolated $200k$ DNA sequences of length 100~bp from an Illumina sequencing run (Sequence Read Archive ID SRR065390).

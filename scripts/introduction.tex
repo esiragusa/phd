@@ -3,13 +3,13 @@
 The sequencing of the whole human genome has been one of the major scientific achievements of the last decades.
 In February 2001, the three billion dollars publicly funded \emph{Human Genome Project} (HGP) published a first draft \emph{covering more than 96~\% of the euchromatic part of the human genome} \citep{Consortium2001}.
 Concurrently, the privately funded company \emph{Celera Genomics} published \emph{a 2.91 billion base pair consensus sequence of the euchromatic portion of the human genome} \citep{Venter2001}.
-The application of efficient computational methods has been crucial for the accomplishment of these projects.
+The application of efficient computational methods was crucial to the success of these projects.
 
 %Other international sequencing consortiums, analogous to the HGP, contributed to characterize the entire genomes of several other model organisms, including mouse \citep{Chinwalla2002}, nematode worms \citep{Sulston1992} and yeasts.
 %In addition, Celera Genomics carried on the sequencing of fruit fly \citep{Myers2000} and mouse \citep{Mural2002}.
 %The knowledge of the entire genomic sequence paved the way to a myriad of computational studies.
 
-These sequencing projects used the \emph{Sanger method} \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads long 700~bp in average, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
+These sequencing projects used the \emph{Sanger sequencing} method \citep{Sanger1977} with \emph{capillary electrophoresis}, a technology producing high fidelity DNA reads with an average length of 700~bp, at a throughput of about 150 \emph{kilo base pairs per hour} (Kbp/h).
 Because of such technological limitation, the sequencing of a whole genome had to be coupled with the \emph{shotgun} approach, 
 which consists of chopping long DNA fragments up into smaller segments and then generating \emph{reads} of these short nucleotide sequences.
 The whole human genome finally had to be reassembled from its sequencing reads using computational methods.
@@ -28,31 +28,32 @@ High-throughput sequencing was born.
 
 In 2006, Solexa released its \emph{1G Genetic Analyzer}, based on a massively parallel technique of \emph{reversible terminator-based sequencing}.
 The instrument produced reads as short as 30~bp with lower accuracy than Sanger sequencing but at very high-throughput: it allowed \emph{resequencing} a whole human genome in three months for about \$100,000.
-Following this success, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
+Successively, Solexa was acquired by \emph{Illumina}, which is nowadays the market leader.
 At the beginning of 2014, Illumina announced the \emph{HiSeq X Ten}, allowing in less than three days the sequencing of many whole human genomes at \$1,000 each.
 
-\subsection{Applications}
+%\subsection{Applications}
 %\label{sec:intro:hts:protocols}
 
-In the last few years, HTS has become an invaluable method of investigation for computational molecular biologists.
-Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at single-base resolution.
+Following these technological advancements, in the past few years HTS has become an invaluable method of investigation for computational molecular biologists \citep{Mardis2011}.
+\emph{Whole genome sequencing} (WGS) allows discovery of genetic variations across the whole genome;
+these variations may be in the form of single nucleotide variants (SNVs), small insertions or deletions (INDELs), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
+\emph{Whole exome sequencing} (WES) is a cost-effective, yet powerful alternative to WGS,
+consisting in the \emph{targeted sequencing} of the \emph{exome}, \ie the protein coding subset of a genome;
+WES has recently begun to be used for clinical diagnostics, \eg for the interpretation of tumor samples or for the characterization of mendelian disorders.
+In summary, abundant and cost-effective production of sequencing data, followed by its efficient and accurate computational analysis, permits viewing DNA at single-base resolution.
+
+%\emph{Chromatin immunoprecipitation} with next-generation sequencing (ChIP-seq) allows the selective sequencing of DNA bound by a specific protein;
+%with ChIP-seq it is possible to determine global methylation patterns, identify transcription factor binding sites, histone modifications, and chromatin remodeling proteins.
+
+%Abundant and cost-effective production of sequencing data permits viewing not only genomic DNA but also transcripts and epigenetic features at single-base resolution.
 %For instance, DNA resequencing applications include genotyping and discovery of structural variations, the sequencing of RNA transcripts allows to assess gene expression as well as to analyse non-coding RNAs, epigenetic applications predict gene regulation according to methylation patterns and transcription factor binding-sites activity.
 
-\emph{Whole genome sequencing} (WGS) allows discovery of genetic variations across the whole genome.
-These variations may be in the form of single nucleotide variants (SNVs), small insertions or deletions (INDELs), or large structural variants such as transversions, trans-locations, and copy number variants (CNVs).
+%The process isolates chromatin-protein complexes and sheares them by sonication;
+%all DNA fragments bound by the specific protein are subsequently pulled down using immunoprecipitation with a protein-specific antibody and finally sequenced using HTS.
 
-\emph{Whole exome sequencing} (WES) is a cost-effective, yet powerful alternative to WGS.
-This protocol consists in the \emph{targeted sequencing} of the \emph{exome}, \ie the protein coding subset of a genome.
-WES has recently begun to be used for clinical diagnostics, \eg for the interpretation of tumor samples or for the characterization of mendelian disorders.
-
-\emph{RNA sequencing} (RNA-seq) is a protocol to sequence the \emph{transcriptome}, \ie the set of RNA molecules of an organism, including mRNAs, rRNAs, tRNAs and other non-coding RNAs.
-Actual HTS technologies perform deep-sequencing of RNA molecules after they have been reverse-transcribed into cDNA.
-RNA-seq provides a myriad of information on gene expression, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and genetic variation with single-base accuracy.
-
-\emph{Chromatin immunoprecipitation} with next-generation sequencing (ChIP-seq) is a protocol that allows the selective sequencing of DNA bound by a specific protein.
-The process isolates chromatin-protein complexes and sheares them by sonication;
-all DNA fragments bound by the specific protein are subsequently pulled down using immunoprecipitation with a protein-specific antibody and finally sequenced using HTS.
-With ChIP-seq it is possible to determine global methylation patterns, identify transcription factor binding sites, histone modifications, and chromatin remodeling proteins.
+%\emph{RNA sequencing} (RNA-seq) is a protocol to sequence the \emph{transcriptome}, \ie the set of RNA molecules of an organism, including mRNAs, rRNAs, tRNAs and other non-coding RNAs.
+%Actual HTS technologies perform deep-sequencing of RNA molecules after they have been reverse-transcribed into cDNA.
+%RNA-seq provides a myriad of information on gene expression, alternative splicing, intron/exon boundaries, untranslated regions (UTRs), and genetic variation with single-base accuracy.
 
 % -----------------------------------------------------------------------------
 
@@ -60,13 +61,13 @@ With ChIP-seq it is possible to determine global methylation patterns, identify 
 \label{sec:intro:outline}
 
 This thesis presents novel methods for the \emph{efficient} and \emph{accurate} mapping of high-through\-put sequencing DNA reads, based on state of the art \emph{approximate string matching} algorithms and data structures.
-Read mapping is a non-trivial, ubiquitous task in all resequencing applications.
+Read mapping is a non-trivial, ubiquitous task in all resequencing applications, \eg WGS or WES.
 Efficiency is mandatory to keep the pace of sequencing technologies, exponentially increasing in throughput.
 Accuracy is required to enable downstream data analysis at single-base resolution.
 The ingenuity of state of the art approximate string matching methods is crucial for the design and implementation of efficient and accurate read mapping programs.
 
-The contributions of this work are of purely practical interest, nonetheless I follow a rigorous approach.
-I subdivide this work in two parts.
+This thesis contributes to two currently active areas of research: experimental algorithmics of string matching methods and algorithmic engineering of read mapping methods.
+Therefore, I subdivide this thesis in two parts.
 Part I covers practical approximate string matching methods, whose interest is beyond HTS applications.
 Part II describes the application of such methods to engineer two HTS read mapping programs developed by myself.
 In the two following sections, I describe the contents of part I and II.
@@ -79,7 +80,7 @@ In particular, in section \ref{sub:introindex}, I introduce the concept of full-
 
 In chapter 3, I cover \emph{indexed methods} for exact and approximate string matching.
 First, I describe some classic full-text indices (suffix arrays and $q$-gram indices) and succinct full-text indices (uncompressed variants of the FM-index).
-Afterwards, I introduce generic string matching algorithms, working on any of these data structures, and provide their experimental evaluation.
+Then, I introduce string matching algorithms generic to all these data structures and provide their experimental evaluation.
 My implementation of all these algorithms and data structures is publicly available in source form within the \CC library SeqAn \citep{Doering2008}.
 This work is being published as a book chapter \citep{Weese2015}.
 
@@ -94,16 +95,16 @@ From the latter one
 \emph{gapped $q$-grams} \citep{Burkhardt2001} and
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
 To the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
-In addition, I introduce a formal framework for (multiple) gapped $q$-grams, which leads to the formulation of efficient algorithms answering some combinatorially hard filter design questions.
+In addition, I introduce a formal framework for (multiple) gapped $q$-grams which leads to the formulation of novel methods addressing some combinatorially hard filter design questions.
 
 \subsection{Read mapping}
 
 In chapter 5, I give background information on HTS read mapping.
 I start by giving a quick overview of market-leading HTS technologies.
 Subsequently, I introduce two \emph{de facto} standard paradigms for HTS data analysis: \emph{best-mapping} and \emph{all-mapping}.
-By reviewing some recent works \citep{Derrien2012,Lee2012}, I try to delineate which are the limits of HTS.
+By reviewing some recent works \citep{Derrien2012,Lee2012}, I try to delineate the limits of HTS.
 Finally, I give an overview of the most popular read mappers.
-In the last two chapters, I consider these popular programs in the evaluation of my own tools, Masai \citep{Siragusa2013} and Yara.
+In the last two chapters, I evaluate such popular programs against my own tools: Masai \citep{Siragusa2013} and Yara.
 
 In chapter 6, I present the engineering and evaluation of a read mapping tool for the all-mapping paradigm.
 My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.

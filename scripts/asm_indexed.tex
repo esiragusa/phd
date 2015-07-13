@@ -1,12 +1,12 @@
-\chapter{Indexed methods}
+\chapter{Indexing methods}
 \label{chr:index}
 
 Suffix trees are elegant data structures but they are rarely used in practice.
-Although suffix trees provides theoretically optimal construction and query time, their high space consumption prohibits practical indexing of large string collections.
+Although suffix trees provide theoretically optimal construction and query time, their high space consumption prohibits practical indexing of large string collections.
 A practical study on suffix trees by \cite{Kurtz1999} reports that efficient implementations achieve sizes between $12\Slen$ and $20\Slen$ bytes per character.
 For instance, two years before completing the sequencing of the human genome, \citeauthor{Kurtz1999} conjectured the resources required for computing the suffix tree for the complete human genome (consisting of about $3 \cdot 10^9$~bp) in 45.31~GB of memory and nine hours of CPU time, and concluded that \emph{``it seems feasible to compute the suffix tree for the entire human genome on some computers''}.
 
-One might be tempted to think that such memory requirements are not anymore a limiting factor as, at the time of writing, even standard workstations come with 32~GB of main memory.
+One might be tempted to think that such memory requirements are not anymore a limiting factor as, at the time of this writing, even standard workstations come with 32~GB of main memory.
 Indeed, over the last decades, the semiconductors industry followed the exponential trends dictated by Moores' law and yielded not only exponentially faster microprocessors but also larger memories.
 Unfortunately, memory latency improvements have been more modest, leading to the so called memory wall effect \citep{Wilkes1995}: data access times are taking an increasingly fraction of total computation times.
 Thus, if \cite{Knuth1973} wrote that \emph{``space optimization is closely related to time optimization in a disk memory''}, forty years later one can simply say that space optimization is always related to time optimization.
@@ -461,7 +461,7 @@ This gives a twofold advantage, as one can
 \item construct the SA more efficiently using bucket sorting and
 \item maintain leaves in each bucket sorted by their relative text positions.
 \end{inparaenum}
-The latter property allows to compress the SA bucket-wise \eg using Elias $\delta$ encoding \citep{Elias1975} or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
+The latter property allows to compress the SA bucket-wise, \eg using Elias $\delta$ encoding \citep{Elias1975}, or to devise cache-oblivious strategies to process the occurrences \citep{Hach2010}.
 
 The directory $D$ is still usable, even if the traversal needs to go below depth $q$.
 An hybrid traversal can use the directory $D$ up to depth $q$ and later continue with binary searches on the suffix array $\Sarray$.
@@ -487,13 +487,13 @@ I fill the LST's partial SA as described above and subsequently apply the \emph{
 
 The \emph{Burrows-Wheeler transform} (BWT) \citep{Burrows1994} is a transformation defining a permutation of an input string.
 Such transformation exposes two important properties: it is \emph{reversible} and it tends to produce \emph{runs of equal characters}.
-The former property allows to recover the original string from its BWT alone, while the latter property makes the transformed string more amenable to compression.
+The former property is immediate and allows to recover the original string from its BWT alone, while the latter property makes the transformed string more amenable to compression \citep{Ferragina2005}.
 Because of these two properties, the BWT is a fundamental method for text compression.
 %and is practically used in the bzip2 tool \citep{Seward1996}.
 
 Some years after its introduction, \citeauthor{Ferragina2000} proposed the BWT for full-text indexing.
 They show in \citep{Ferragina2000} that the BWT allows to perform exact string matching and engineer in \citep{Ferragina2001} a compressed full-text index called FM-index.
-Over the last years, the FM-index has been widely employed under different re-implementations by many popular bioinformatics tools \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences.
+Over the last years, the FM-index has been widely employed under different re-implementations by many popular bioinformatics tools, \eg Bowtie \citep{Langmead2009} and BWA \citep{Li2009}, and is now considered a fundamental method for the indexing of genomic sequences \citep{Vyverman2012}.
 
 In the following, I give the fundamental ideas behind the BWT.
 Subsequently, I discuss my generalized FM-index implementation covering strings and string collections.
@@ -534,7 +534,8 @@ Note how the cyclic shifts matrix is related to the suffix array $\Sarray$ of $\
 The BWT is the string obtained by concatenating the symbols in the last column of the sorted cyclic shifts matrix of $\String$.
 Figure~\ref{fig:bwt} shows an example.
 
-Note that the BWT easily generalizes to string collections.
+The BWT generalizes to string collections.
+There are different ways to treating this problem \citep{Mantaci2007}.
 Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
 
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT of $\String$.
@@ -649,7 +650,7 @@ In the next subsection, I address the problem of representing function $Occ$ eff
 \subsection{Rank dictionaries}
 \label{sec:index:succinct:rd}
 
-Function $Occ$, answering the question \emph{``how many times a given character $\StrieChar$ occurs in the prefix $\Prefix{\Last}{i}$?''}, has to be answered efficiently, ideally in constant time and succinct space.
+Function $Occ$, answering the question \emph{``how many times a given character $\StrieChar$ occurs in the prefix $\Prefix{\Last}{i}$?''}, has to be computed efficiently, ideally in constant time and succinct space.
 The general problem on arbitrary strings has been tackled by several studies on the succinct representation of data structures \citep{Jacobson1989}.
 This specific question takes the name of \emph{rank query} and a data structure answering rank queries is called \emph{rank dictionary} (RD).
 
@@ -766,7 +767,7 @@ $\At{12}$ & $0$\\
 \end{figure}
 
 A binary \emph{two-levels} RD squeezes additional space consumption down to $o(\Slen)$ bits.
-The idea is to divide $\String$ in \emph{superblocks} of length $b^2$ and add another array $R^2$ to store the number of occurrences of the bit $1$ in $\String$ before each superblock.
+The idea is to divide $\String$ into \emph{superblocks} of length $b^2$ and add another array $R^2$ to store the number of occurrences of the bit $1$ in $\String$ before each superblock.
 The initial array $R$ now counts bit $1$ only within the overlapping superblock defined by $R^2$.
 Figure \ref{fig:rd2} exemplifies.
 The rank query becomes:
@@ -844,7 +845,7 @@ I first give the formal definition of WT and then discuss how to answer rank que
 
 \begin{definition}[Wavelet tree]
 The wavelet tree of a string $\String \in \Sigma^*$ is a balanced binary tree of height $\lceil \log \sigma \rceil$. The root represents all symbols in $\Sigma$ and each leaf exactly one symbol $\StrieChar \in \Sigma$.
-Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval{i}{j}$ \ie $\Sigma_v = \{ c \in \Sigma : \lexrank{c} \in \OInterval{i}{j} \}$, its left child $l$ represents the subset $\Sigma_l$ of symbols in range $\OInterval{i}{\frac{i+j}{2}}$ while its right child $r$ represents in $\Sigma_r$ those in range $\OInterval{\frac{i+j}{2}}{j}$.
+Any non-leaf node $v$ represents some subset of symbols $\Sigma_v$ whose lexicographic rank is in range $\Interval{i}{j}$, \ie $\Sigma_v = \{ c \in \Sigma : \lexrank{c} \in \OInterval{i}{j} \}$, its left child $l$ represents the subset $\Sigma_l$ of symbols in range $\OInterval{i}{\frac{i+j}{2}}$ while its right child $r$ represents in $\Sigma_r$ those in range $\OInterval{\frac{i+j}{2}}{j}$.
 Node $v$ implicitly represents the subsequence $\String^v$ of all symbols of $\String$ in $\Sigma_v$ and explicitly encodes its decomposition as a binary string $B^v$ \st $\Subscript{B}{i}^v = 0$ if $\Subscript{\String}{i}^v \in \Sigma_l$ and 1 otherwise \citep{Grossi2003, Navarro2007}.
 \end{definition}
 
@@ -973,7 +974,7 @@ In this section, I give string matching algorithms that use the generic suffix t
 Thus the following algorithms can be applied to all of the suffix trie implementations presented so far.
 I first consider a simple algorithm performing a top-down traversal bounded by depth.
 Then, I present algorithms for exact string matching and $k$-mismatches. % and $k$-differences.
-I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexed exact string matching and $k$-mismatches.
+I finally give, for the first time to the best of my knowledge, algorithms solving multiple variants of indexing exact string matching and $k$-mismatches.
 At the same time, I show the results of an experimental evaluation of all of these algorithms on various suffix trie implementations.
 
 As data structures, I consider the fully-constructed lazy suffix tree (LST), the enhanced suffix array (ESA), the suffix array (SA), the $q$-gram index for $q=12$ (q-Gram), the FM-index with a two-levels DNA rank dictionary (FM-TL), the FM-index with a wavelet tree composed of two-levels binary rank dictionaries (FM-WT).
@@ -1060,7 +1061,7 @@ In particular, the FM-indices, which are based on backward search, become more t
 \label{sec:index:algo:exact}
 
 I now give a simple algorithm performing exact string matching on a generic suffix trie.
-In the following, I assume the text $\Text$ to be indexed by its suffix trie $\StrieOf{\Text}$.
+In the following, I assume the text $\Text$ to be indexing by its suffix trie $\StrieOf{\Text}$.
 Algorithm~\ref{alg:st-exact} searches the pattern $\Pattern$ by starting on the root node of $\StrieOf{\Text}$ and following the path spelling the pattern.
 If the search ends up in a node $\StrieNode$, then each leaf $\StrieLeaf{i}$ below $\StrieNode$ points to a distinct suffix $\Suffix{\Text}{i}$ such that $\Substring{\Text}{i}{i+\Plen}$ equals $\Pattern$.
 %Algorithm~\ref{alg:st-exact} is correct since each path from the root to any internal node of the suffix trie $\StrieOf{\Text}$ spells a different unique substring of $\Text$; consequently all equal substrings of $\Text$ are represented by a single common path.
@@ -1286,7 +1287,7 @@ On the ESA, $1$-approximate matching shows a slow-down of 24 times: $1$-approxim
 Before turning to multiple $k$-mismatches, I describe a simpler algorithm for multiple exact string matching.
 In addition to the text $\Text$, multiple exact string matching provides a collection of patterns $\Patterns$.
 Hence, in addition to the suffix trie $\StrieOf{\Text}$, algorithm \ref{alg:st-exact-multi} considers the trie $\RtrieOf{\Patterns}$.
-Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\StrieOf{\Text}$ all patterns indexed in $\RtrieOf{\Patterns}$.
+Algorithm \ref{alg:st-exact-multi} matches simultaneously in $\StrieOf{\Text}$ all patterns indexing in $\RtrieOf{\Patterns}$.
 The traversal performed by algorithm \ref{alg:st-exact-multi} visits pairs of nodes in $\StrieOf{\Text} \times \RtrieOf{\Patterns}$ whose entering edges have the same label.
 Such traversal implicitly \emph{intersects} the two tries.
 However, algorithm \ref{alg:st-exact-multi} is not symmetric: $\StrieOf{\Text}$ and $\RtrieOf{\Patterns}$ cannot be interchanged.

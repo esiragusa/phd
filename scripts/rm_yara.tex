@@ -53,7 +53,7 @@ Yara significantly improves the runtime of stratified all-mapping over conventio
 Obviously, the most straightforward way to achieve stratified all-mapping consists of performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
 For instance, RazerS\,3 implements this method and gets no speedup.
 Another na\"ive method consists of performing up to $k$ rounds of conventional all-mapping, using filtration schemes with thresholds incrementing from $0$ to $e^*+s$.
-It is easy to see that also this method performs redundant computation: the total work for any read that maps at distance greater or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
+It is easy to see that also this method performs redundant computation: the total work for any read that maps at distance greater than or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
 Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $e^*+s$.
@@ -487,8 +487,8 @@ The knowledge of mapping strata allows to accurately compute mapping qualities a
 To show the advantages of this method in real applications, I considered the genotyping of a human individual.
 Nonetheless, other HTS applications would equally benefit from this method.
 
-One such application is metagenomics classification:
-HTS reads coming from DNA samples recovered from \eg soil or water are screened against a database consisting of bacterial reference genomes.
+Such an application is metagenomics classification:
+HTS reads coming from DNA samples recovered from, \eg soil or water are screened against a database consisting of bacterial reference genomes.
 The presence of several homologous genomes lowers the mappability of the database and requires the knowledge of multiple mapping locations per read.
 Actual read mappers are much slower or not sensitive enough for this task.
 

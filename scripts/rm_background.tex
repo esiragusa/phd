@@ -5,9 +5,9 @@
 
 In this chapter, I provide the reader with background knowledge in the fast-moving field of high-throughput sequencing (HTS).
 It goes without saying that the reader familiar with HTS can skip this chapter.
-In section suboptimal\ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
-Afterwards, in section \ref{sec:background:analisys}, I explain how standard HTS data \emph{analysis pipelines} are structured;
-in particular, in section \ref{sec:background:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
+In section~\ref{sec:background:sequencing}, I briefly introduce the two most prominent HTS technologies and the kind of sequencing data they produce.
+Afterwards, in section~\ref{sec:background:analisys}, I explain how standard HTS data \emph{analysis pipelines} are structured;
+in particular, in section~\ref{sec:background:paradigms}, I present two popular paradigms for reference-guided assembly: best-mapping and all-mapping.
 In section \ref{sec:mappability}, I review two studies on the limits of HTS data analysis.
 Finally, in section \ref{sec:background:mappers}, I give an overview of the most popular read mapping tools.
 
@@ -15,7 +15,7 @@ Finally, in section \ref{sec:background:mappers}, I give an overview of the most
 \label{sec:background:sequencing}
 
 As anticipated in section \ref{sec:intro:hts}, actual HTS technologies produce DNA reads which are shorter than Sanger sequencing and more likely to contain systematic sequencing artefacts.
-HTS data does not consist of read sequences only, but includes also base quality scores annotating the quality of the sequencing process.
+HTS data do not consist of read sequences only, but include also base quality scores annotating the quality of the sequencing process.
 
 \subsection{Read sequences}
 
@@ -87,11 +87,11 @@ All sequencing technologies complement DNA reads with base quality scores, encod
 \label{sec:background:pipeline}
 
 The analysis of HTS data consists of numerous steps, ranging from the initial instrument-specific data processing to the final application-specific interpretation of the results.
-It is conventional wisdom to subdivide such data analysis pipelines in three stages of analysis.
+It is conventional wisdom to subdivide such data analysis pipelines in three stages.
 The \emph{primary stage} of analysis consists of instrument specific steps for the generation, collection, and processing of raw sequencing signals.
 The \emph{secondary stage} applies sequence analysis methods to the raw sequencing data in order to reconstruct the original sequence of the donor genome.
 The \emph{tertiary stage} characterizes application-specific features of the donor genome and then provides interpretations, \eg in whole exome sequencing (WES) it consists of calling genetic variations and predicting their phatogenicity.
-Below, I give more 
+Below, I describe these three stages of analysis.
 
 \subsubsection{Primary analysis}
 \label{sec:background:pipeline:primary}
@@ -160,7 +160,7 @@ The scoring scheme accounts for eventual genomic variation, as well as for any s
 Under these assumptions, an alignment of optimal score for a read implies its \emph{original location} on the reference genome.
 Conversely, no alignment within the score threshold implies too many sequencing errors, too much genetic variation, or sample contamination.
 %A pile-up of the reads aligned at their mapping locations thus provides a consensus alignment of the donor genome.
-A problem arises in presence of co-optimal or close suboptimal alignments: the read cannot be mapped confidently to one single location.
+A problem arises in presence of co-optimal to close suboptimal alignments: the read cannot be mapped confidently to one single location.
 
 The problem of confidently mapping high-throughput sequencing reads comes from the non-random nature of genomic sequences.
 Genomes evolved through multiple types of duplication events, including whole-genome duplications \citep{Wolfe1997,Dehal2005} or large-scale segmental duplications in chromosomes \citep{Bailey2001,Samonte2002}, transposition of repetitive elements as short tandem repeats (microsatellites) \citep{Wang1994a,Wooster1994} and interspersed nuclear elements (LINE, SINE) \citep{Smit1996}, proliferation of repetitive structural elements such as telomeres and centromeres \citep{Meyne1990}.
@@ -285,11 +285,11 @@ Below, I report their key ideas and most relevant findings.
 
 \subsection{Genome mappability}
 
-\cite{Derrien2012} define \emph{genome mappability} as a function of a genome for a fixed $q$-gram length, distance measure \ie the Hamming or edit distance, and distance threshold $k$.
+\cite{Derrien2012} define \emph{genome mappability} as a function of a genome for a fixed $q$-gram length, distance measure, \ie the Hamming or edit distance, and distance threshold $k$.
 Given a genomic sequence $\Genome$, they define the $(q,k)$-frequency $F^q_k(l)$ of the $q$-gram $\Substring{\Genome}{l}{l + q}$ at location $l$ in $\Genome$ as the number of occurrences of the $q$-gram in $\Genome$ and its reverse complement $\Rev{\Genome}$.
 The $(q,k)$-mappability $M^q_k(l)$ is the inverse $(q,k)$-frequency, \ie $M^q_k(l) = 1/{F^q_k(l)}$ with $M^q_k : \N \rightarrow ]0,1]$.
 Note that $M^q_k(l)$ can be seen as the prior probability that any read of length $q$ originating at location $l$ will be mapped correctly.
-The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it hold that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
+The values of $(q,k)$-frequency and mappability obviously vary with the distance threshold $k$. Nonetheless, under any distance measure, it holds that the $q$-gram at location $l$ is unique up to distance $k$ iff $M^q_k(l) = 1$ and repeated otherwise.
 
 Unique mappability determines which fraction of a genome can be analyzed according to strategy (i) of \cite{Treangen2011} (\ie discarding non-unique reads, see section \ref{sec:background:paradigms}).
 \citeauthor{Derrien2012} quantify the \emph{unique mappability} of whole human, mouse, fly, and worm genomes.
@@ -344,7 +344,7 @@ Thus, fixed a genomic sequence $\Genome$, they define the genome mappability sco
 \end{eqnarray}
 
 \citeauthor{Lee2012} proceed as follow to compute GMS.
-They first simulate reads from all genomic locations, having length and error profiles similar to those issue by actual sequencing technologies.
+They first simulate reads from all genomic locations, having length and error profiles similar to those issued by actual sequencing technologies.
 Subsequently, they compute mapping quality scores by mapping all simulated reads with the best-mapper BWA \citep{Li2009}.
 Then, as just explained, they compute GMS at any location by averaging the quality scores.
 Finally, they define \emph{low GMS} regions as those locations for which $\text{GMS}(l) \leq 10$ and \emph{high GMS} otherwise.
@@ -372,7 +372,7 @@ These are the limits of the analysis of high-throughput sequencing data.
 \label{sec:background:mappers}
 
 Following the boom of NGS technologies, recent bioinformatics research has produced dozens of tools to perform read mapping.
-Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians to find their way in the jungle of of read mapping tools.
+Two surveys \citep{Li2010, Fonseca2012} try to help bioinformaticians finding the way.
 The survey by \citeauthor{Li2010} first classifies read mapping algorithms by data structure: those based on hash tables and those based on suffix/prefix trees.
 However, the adopted data structure is often an implementation detail, indeed most algorithms covered in their survey could fit into both classes.
 The survey primarily considers the application of SNP calling; in the considered setup, tools enumerating a comprehensive set of locations always lag behind those designed to report only one location per read.
@@ -389,7 +389,7 @@ Most read mappers are specifically designed to fit one paradigm, while others ar
 The rest of this section presents most popular read mapping tools.
 Table~\ref{tab:mappers} gives an overview of all these tools.
 Among them, BWA \citep{Li2009}, Bowtie \citep{Langmead2009} and Bowtie~2\citep{Langmead2012}, and Soap \citep{Li2009b} are prominent tools designed for best-mapping, while SHRiMP~2 \citep{David2011}, mr(s)Fast \citep{Alkan2009,Hach2010}, RazerS \citep{Weese2009} and RazerS~3 \citep{Weese2012}, and Hobbes~2 \citep{Kim2014} are designed for all-mapping.
-Grosso modo, most prominent best-mappers recursively enumerate substrings on a suffix/prefix tree of the reference genome via backtracking algorithms.
+Usually, most prominent best-mappers recursively enumerate substrings on a suffix/prefix tree of the reference genome via backtracking algorithms.
 Backtracking alone is impractical as its time complexity grows exponentially with the number of errors considered, hence best-mappers apply heuristics to reduce and prioritize the enumeration.
 Conversely, all-mappers are based on filtering algorithms for approximate string matching.
 They quickly determine, often with the help of an index, locations of the reference genome candidate to contain approximate occurrences, then verify them with conventional methods.

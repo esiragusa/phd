@@ -26,10 +26,17 @@ $$X=
 \end{pmatrix}$$
 I denote by $\SubscriptNM{X}{i}{j}$ the subscript element $\SubscriptM{X}{i}{j}$.
 
+\begin{definition}[Substring]
+A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{i}{\Xlen}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, 
+and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \LeqThan{i} < j \leq |\YSeq|$.
+For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
+Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
+\end{definition}
+
 %\emph{Generalized} full-text indices work on string collections.
 \begin{definition}[String collection]
 \label{def:col}
-A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of non necessarily distinct strings over a common alphabet $\Sigma$.
+A \emph{string collection} is an ordered multiset $\Strings = \{ \AtCollection{\String}{\At{1}}, \dots, \AtCollection{\String}{\AtEnd{\Scard}} \}$ of strings over a common alphabet $\Sigma$.
 I denote by $\norm{\Strings}=\sum_{i=\At{1}}^{\AtEnd{c}}{|\AtCollection{\String}{i}|}$ the total length of the string collection.
 The above definitions of prefix, suffix and substring generalize to multisets, \eg $\Substring{\Strings}{(d,i)}{(d,j)}$ denotes the substring $\Substring{\String^d}{i}{j}$.
 \end{definition}
@@ -42,13 +49,6 @@ Given a string $\String$, I denote with $s$ its iterator starting at position $i
 \item \FunctionCall{atEnd}{s} returns $true$ iff $i=|\String|$;
 \item \FunctionCall{value}{s} returns $\Subscript{\String}{i}$.
 \end{itemize}
-\end{definition}
-
-\begin{definition}[Substring]
-A string $\XSeq$ is a \emph{prefix} of another string $\YSeq$ iff $\XSeq = \Prefix{\YSeq}{i}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, a \emph{suffix} iff $\XSeq = \Substring{\YSeq}{\At{1}}{i}$ for some $\At{1} \LeqThan{i} \leq |\YSeq|$, 
-and a \emph{substring} iff $\XSeq = \Substring{\YSeq}{i}{j}$ for some $\At{1} \LeqThan{i} < j \leq |\YSeq|$.
-For convenience, I denote the suffix of $\YSeq$ beginning at position $i$ simply by $\Suffix{\YSeq}{i}$.
-Moreover, I denote the concatenation of two strings $\XSeq$ and $\YSeq$ by $\XSeq \cdot \YSeq$ or simply $\XSeq \YSeq$.
 \end{definition}
 
 %The definition of \emph{occurrence} is fundamental in string matching.
@@ -151,7 +151,7 @@ While the Hamming distance between any two strings of length $\Xlen$ is easily c
 The edit distance between two strings is efficiently computed via \emph{dynamic programming} (DP) \citep{Needleman1970}.
 %Below, I describe the three essential components of the DP approach: the recurrence relation, the DP table, and the traceback.
 Let $\XSeq,\YSeq$ be two strings of length $\Xlen \geq \Ylen$.
-The edit distance $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$ between any their prefixes $\Prefix{\XSeq}{i}$ and $\Prefix{\YSeq}{j}$ is defined recursively.
+The edit distance $d_E(\Prefix{\XSeq}{i},\Prefix{\YSeq}{j})$ between any of their prefixes $\Prefix{\XSeq}{i}$ and $\Prefix{\YSeq}{j}$ is defined recursively.
 The base conditions of the recurrence relation are:
 \begin{eqnarray}
 d_E(\epsilon,\epsilon)&=&0\label{eq:dp-ee}\\
@@ -211,7 +211,7 @@ An optimal alignment can be computed in time $\Oh(\Xlen + \Ylen)$ via \emph{trac
 the traceback starts in the cell $\SubscriptNM{D}{\Ylen}{\Xlen}$ and goes backwards (either left, up-left, or up) to the previous cell by deciding which condition of equation~\ref{eq:dp-min} yielded the value of $D[\Ylen,\Xlen]$.
 
 Further, if no alignment at all is needed, there is a more efficient solution to the edit distance problem.
-Myers' algorithm \citep{Myers1999}, instead of computing DP cells one after another, encodes one whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
+Myers' algorithm \citep{Myers1999}, instead of computing the DP cells one after another, encodes one whole DP column in two bit-vectors and computes the adjacent column in a constant number of 12 logical and 3 arithmetical operations.
 The time complexity of Myers' algorithm is $\Oh(\Xlen\Ylen/b)$, where $b$ is the processor's bit-width, \eg 64 on modern processors.
 
 Finally, if the edit distance problem is relaxed to simply checking if $d_E(\XSeq,\YSeq) \leq k$, with $k \in \N_0$, an answer is given in time $\Oh(\Xlen k)$.
@@ -250,7 +250,7 @@ In practice, if the text is long, static and searched frequently, offline method
 
 It goes without saying that offline string matching algorithms are tightly bound to text indexing data structures.
 Almost all of these algorithms require a \emph{full-text index}, \ie a data structure representing all substrings of the text.
-Very often, such full-text index is realized as the \emph{suffix tree} \citep{Weiner1973}, a fundamental data structure in stringology.
+Very often, such full-text index is realized as the \emph{suffix tree} \citep{Weiner1973, McCreight1976, Gusfield1997}, a fundamental data structure in stringology.
 Among its virtues \citep{Apostolico1985}, the suffix tree natively provides exact string matching in optimal time and approximate string matching via backtracking \citep{Ukkonen1993}.
 Often, the suffix tree finds its use within hybrid \emph{filtering methods} rather than on its own.
 
@@ -259,8 +259,8 @@ These methods work either online or offline.
 Online filtering methods try to jump over the text while scanning it; instead, offline filtering methods use an index to place anchors in the text.
 Both classes of filtering methods then require a native online method to verify the anchors.
 
-Filtering methods outperform \emph{native} online and indexed methods for a vast range of inputs, \ie when the error rate is low, and are thus very appealing from a practical standpoint.
-Nonetheless, filtering methods are just opportunistic combinations of native online and indexed methods.
+%Filtering methods outperform \emph{native} online and indexing methods for a vast range of inputs, \ie when the error rate is low, and are thus very appealing from a practical standpoint.
+%Nonetheless, filtering methods are just opportunistic combinations of native online and indexing methods.
 
 \begin{figure}[t]
 \begin{center}
@@ -279,8 +279,8 @@ For instance, online methods for multiple string matching are allowed to preproc
 Thus, in general, methods for multiple string matching are more appealing than methods for single string matching.
 
 In the remainder of this section, I give a quick overview of the fundamental algorithms and data structures adopted by classic string matching methods.
-This overview serves as an introduction to the indexed and filtering methods presented in the next two chapters.
-For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001a} and indexed \citep{Navarro2001} approximate string matching methods.
+This overview serves as an introduction to the indexing and filtering methods presented in the next two chapters.
+For an extensive treatment of this subject, the reader is referred to complete surveys on online \citep{Navarro2001a} and indexing \citep{Navarro2001} approximate string matching methods.
 
 % --- Online methods ---
 
@@ -340,9 +340,9 @@ thus algorithm~\ref{alg:dp-edit} (line 5) must be adapted to initialize the top 
 Then, as an occurrence of the pattern can end anywhere in the text, algorithm~\ref{alg:dp-edit} (line 8) must be changed to check any cell in the bottom row for the condition $\SubscriptNM{D}{i}{\Plen} \leq k$.
 
 
-% --- Indexed methods ---
+% --- Indexing methods ---
 
-\subsection{Indexed methods}
+\subsection{Indexing methods}
 \label{sub:introindex}
 
 I now introduce \emph{suffix tries}, idealized data structures to index full texts.
@@ -416,7 +416,7 @@ For this reason, in the remainder of this manuscript, I consider \wlogs always s
 \subsubsection{Top-down traversal}
 
 I define a set of generic operations to traverse tries in a top-down fashion.
-Note that the following traversal operations do not walk over edges labeled terminator symbols, as these symbols are not necessary in string matching applications.
+Note that the following traversal operations do not walk over edges labeled by terminator symbols, as these symbols are not necessary in string matching applications.
 I define the following operations on the node $\StrieNode$ pointed during the traversal of $\StrieOf{\Strings}$:
 \begin{itemize}
 \item \FunctionCall{isRoot}{\StrieNode} returns true iff the pointed node is the root;
@@ -520,7 +520,7 @@ A filter is \emph{lossless} or \emph{full-sensitive} if its sensitivity is 1, \i
 \end{definition}
 %A full-sensitive filter for approximate string matching solves the problem exactly.
 Many practical applications, \eg read mapping, do not require strictly lossless filtration.
-Nonetheless, a predictable or controlled lossy filter helps to interpret the results and insure their quality.
+Nonetheless, a predictable or controlled lossy filter helps to interpret the results and ensure their quality.
 For this reason, I focus on criteria yielding filters which are lossless or lossy in a predictable fashion.
 
 \begin{table}[b]
