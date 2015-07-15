@@ -34,7 +34,7 @@ In summary, Yara is currently the fastest and the most accurate read mapping too
 
 Future efforts on best-mapping must be spent on improving INDELs accuracy.
 Unmapped reads should be re-mapped considering semi-global alignments with gaps, rather than local alignments which do not account for leading and trailing errors (\eg as done by Bowtie~2).
-Furthermore, variant quality for INDELs could be improved by considering the number of co-optimal or suboptimal traces of an alignment, \ie the cardinality of the equivalency classes defined through Rabema intervals \citep{Holtgrewe2011}.
+Furthermore, variant quality for INDELs could be improved by considering the number of co-optimal or suboptimal alignment traces within a mapping location, \ie the cardinality of the equivalency classes defined through Rabema intervals \citep{Holtgrewe2011}.
 Finally, Yara's best-mapping accuracy could be further improved by the precious feedback of the evaluation on real data (section~\ref{sec:yara:eval:calling}).
 
 At this point, a consideration on all-mapping tools arises: are they useful at all?
