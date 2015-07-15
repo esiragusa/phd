@@ -254,6 +254,10 @@ Ferragina, P. and Manzini, G. (2001).
 \newblock An experimental study of a compressed index.
 \newblock {\em Information Sciences\/}, {\bf 135}(1), pages 13--28.
 
+\bibitem[Ferragina and Navarro(2007)Ferragina and Navarro]{Ferragina2007a}
+Ferragina, P. and Navarro, G. (2007).
+\newblock The pizza \& chili corpus.
+
 \bibitem[Ferragina \ea(2005)Ferragina, Giancarlo, Manzini, and
   Sciortino]{Ferragina2005}
 Ferragina, P., Giancarlo, R., Manzini, G., and Sciortino, M. (2005).
@@ -291,6 +295,11 @@ Giegerich, R., Kurtz, S., and Stoye, J. (1999).
 Giegerich, R., Kurtz, S., and Stoye, J. (2003).
 \newblock Efficient implementation of lazy suffix trees.
 \newblock {\em Softw., Pract. Exper.}, pages 1035--1049.
+
+\bibitem[Gog \ea(2014)Gog, Beller, Moffat, and Petri]{Gog2014}
+Gog, S., Beller, T., Moffat, A., and Petri, M. (2014).
+\newblock From theory to practice: Plug and play with succinct data structures.
+\newblock In {\em Experimental Algorithms\/}, pages 326--337. Springer.
 
 \bibitem[Grossi \ea(2003)Grossi, Gupta, and Vitter]{Grossi2003}
 Grossi, R., Gupta, A., and Vitter, J.~S. (2003).
@@ -389,6 +398,17 @@ Kurtz, S. (1999).
 \newblock Reducing the space requirement of suffix trees.
 \newblock {\em Software-Practice and Experience\/}, {\bf 29}(13), pages
   1149--71.
+
+\bibitem[Lam \ea(2008)Lam, Sung, Tam, Wong, and Yiu]{Lam2008}
+Lam, T.~W., Sung, W.~K., Tam, S.~L., Wong, C.~K., and Yiu, S.~M. (2008).
+\newblock Compressed indexing and local alignment of {DNA}.
+\newblock {\em Bioinformatics\/}, {\bf 24}(6), pages 791--797.
+
+\bibitem[Lam \ea(2009)Lam, Li, Tam, Wong, Wu, and Yiu]{Lam2009}
+Lam, T.~W., Li, R., Tam, A., Wong, S., Wu, E., and Yiu, S.-M. (2009).
+\newblock High throughput short read alignment via bi-directional bwt.
+\newblock In {\em Bioinformatics and Biomedicine, 2009. BIBM'09. IEEE
+  International Conference on\/}, pages 31--36. IEEE.
 
 \bibitem[Langmead and Salzberg(2012)Langmead and Salzberg]{Langmead2012}
 Langmead, B. and Salzberg, S.~L. (2012).
@@ -540,6 +560,11 @@ Navarro, G. (2001).
 \newblock A guided tour to approximate string matching.
 \newblock {\em ACM Comput. Surv.}, {\bf 33}(1), pages 31--88.
 
+\bibitem[Navarro and Baeza-Yates(2001)Navarro and Baeza-Yates]{Navarro2001b}
+Navarro, G. and Baeza-Yates, R. (2001).
+\newblock Improving an algorithm for approximate pattern matching.
+\newblock {\em Algorithmica\/}, {\bf 30}(4), pages 473--502.
+
 \bibitem[Navarro and Baeza-Yates(2000)Navarro and Baeza-Yates]{Navarro2000}
 Navarro, G. and Baeza-Yates, R.~A. (2000).
 \newblock A hybrid indexing method for approximate string matching.
@@ -596,6 +621,12 @@ Rusk, N. (2010).
 \newblock Torrents of sequence.
 \newblock {\em Nature Methods\/}, {\bf 8}(1), pages 44--44.
 
+\bibitem[Russo \ea(2009)Russo, Navarro, and Oliveira]{Russo2009}
+Russo, L.~M., Navarro, G., and Oliveira, A.~L. (2009).
+\newblock Indexed hierarchical approximate string matching.
+\newblock In {\em String Processing and Information Retrieval\/}, pages
+  144--154. Springer.
+
 \bibitem[Samonte and Eichler(2002)Samonte and Eichler]{Samonte2002}
 Samonte, R.~V. and Eichler, E.~E. (2002).
 \newblock Segmental duplications and the evolution of the primate genome.
@@ -605,6 +636,12 @@ Samonte, R.~V. and Eichler, E.~E. (2002).
 Sanger, F., Nicklen, S., and Coulson, A.~R. (1977).
 \newblock {DNA} sequencing with chain-terminating inhibitors.
 \newblock {\em PNAS\/}, {\bf 74}(12), pages 5463--5467.
+
+\bibitem[Schnattinger \ea(2010)Schnattinger, Ohlebusch, and
+  Gog]{Schnattinger2010}
+Schnattinger, T., Ohlebusch, E., and Gog, S. (2010).
+\newblock Bidirectional search in a string with wavelet trees.
+\newblock In {\em Combinatorial Pattern Matching\/}, pages 40--50. Springer.
 
 \bibitem[Sch{\"u}rmann and Stoye(2007)Sch{\"u}rmann and Stoye]{Schuermann2007}
 Sch{\"u}rmann, K.-B. and Stoye, J. (2007).
