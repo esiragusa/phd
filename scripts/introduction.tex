@@ -82,7 +82,7 @@ In chapter 3, I cover \emph{indexing methods} for exact and approximate string m
 First, I describe some classic full-text indices (suffix arrays and $q$-gram indices) and succinct full-text indices (uncompressed variants of the FM-index).
 Then, I introduce string matching algorithms generic to all these data structures and provide their experimental evaluation.
 My implementation of all these algorithms and data structures is publicly available in source form within the \CC library SeqAn \citep{Doering2008}.
-This work is being published as a book chapter \citep{Weese2015}.
+This survey is being published as a book chapter \citep{Weese2015}.
 
 In chapter 4, I cover \emph{filtering methods} for approximate string matching.
 I consider two classes of full-sensitive filtering methods: those based on \emph{seeds} and those based on \emph{$q$-grams}.
@@ -94,7 +94,7 @@ From the latter one
 \emph{contiguous $q$-grams} \citep{Jokinen1991},
 \emph{gapped $q$-grams} \citep{Burkhardt2001} and
 \emph{multiple gapped $q$-grams} (also called \emph{$q$-gram families}) \citep{Kucherov2005}.
-To the best of my knowledge, this is the first work providing a comprehensive exposition of these methods together with their experimental evaluation.
+To the best of my knowledge, this is the first study providing a comprehensive exposition of these methods together with their experimental evaluation.
 In addition, I introduce a formal framework for (multiple) gapped $q$-grams which leads to the formulation of novel methods addressing some combinatorially hard filter design questions.
 
 \subsection{Read mapping}
@@ -102,17 +102,17 @@ In addition, I introduce a formal framework for (multiple) gapped $q$-grams whic
 In chapter 5, I give background information on HTS read mapping.
 I start by giving a quick overview of market-leading HTS technologies.
 Subsequently, I introduce two \emph{de facto} standard paradigms for HTS data analysis: \emph{best-mapping} and \emph{all-mapping}.
-By reviewing some recent works \citep{Derrien2012,Lee2012}, I try to delineate the limits of HTS.
+By reviewing some recent studies \citep{Derrien2012,Lee2012}, I try to delineate the limits of HTS.
 Finally, I give an overview of the most popular read mappers.
 In the last two chapters, I evaluate such popular programs against my own tools: Masai \citep{Siragusa2013} and Yara.
 
 In chapter 6, I present the engineering and evaluation of a read mapping tool for the all-mapping paradigm.
 My method is packaged in a \CC tool nicknamed \emph{Masai}, which stands for \emph{m}ultiple backtracking of \emph{a}pproximate seeds on a \emph{s}uffix \emph{a}rray \emph{i}ndex.
 Masai is part of the SeqAn library \citep{Doering2008}, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/masai}.
-The result of this work has been published in the peer-reviewed journal \emph{Nucleic Acids Research} \citep{Siragusa2013}.
+The result of this study has been published in the peer-reviewed journal \emph{Nucleic Acids Research} \citep{Siragusa2013}.
 
 In chapter 7, I present \emph{Yara}, a non-heuristic best-mapper capable of quickly reporting all co-optimal or suboptimal mapping locations within a given error rate.
 The tool works with Illumina or Ion Torrent reads, supports paired-end and mate-pair protocols, computes accurate mapping qualities, offers parallelization via multi-threading, has a low memory footprint thanks to the FM-index, and does not require ad-hoc parameterization.
 Yara is part of the SeqAn library \citep{Doering2008}, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/yara}.
-A manuscript for this work is in preparation and will be submitted to a peer-reviewed journal.
+A manuscript is in preparation and will be submitted to a peer-reviewed journal.
 

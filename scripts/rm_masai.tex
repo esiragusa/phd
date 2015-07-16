@@ -57,9 +57,9 @@ For instance, RazerS~3 \citep{Weese2012} went back to filtration with exact seed
 Nonetheless, I wanted to improve filtration specificity of exact seeds, as the runtime of RazerS~3 on mammal genomes became dominated by verifications.
 I knew that to improve filtration specificity I had to increase the seed length.
 
-While reviewing past literature in the field of approximate string matching, I rediscovered the works of \cite{Myers1994} and \cite{Navarro2000} on approximate seeds, providing stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
+While reviewing past literature in the field of approximate string matching, I rediscovered approximate seeds \citep{Myers1994,Navarro2000}, providing stronger filtration than exact seeds while preserving full-sensitivity under the edit distance.
 Their idea is to partition the pattern into fewer non-overlapping seeds, which obviously can be longer than exact seeds but have to be searched approximately.
-First, I slightly improved the filtration lemma of \citep{Navarro2000} to use approximate seeds with variable thresholds (see section~\ref{sec:seeds-apx}).
+First, I slightly improved the filtration lemma of \cite{Navarro2000} to use approximate seeds with variable thresholds (see section~\ref{sec:seeds-apx}).
 Then, as discussed in section~\ref{sec:seeds-apx}, I chose to parameterize Masai's filter by the seed length rather than by the number of seeds.
 Indeed, the minimum seed length provides a direct estimate of the expected number of candidate locations to verify and thus of filtration specificity.
 The resulting filter is thus flexible: by increasing the seed length, filtration becomes more specific at the expense of a higher filtration time.
@@ -68,7 +68,7 @@ In section \ref{masai:evaluation:filter}, I experimentally evaluate filtration s
 When mapping current Illumina reads on short to medium length genomes, exact seeds are still more efficient than approximate seeds.
 Conversely, on larger genomes (\eg mammalian genomes) 1-approximate seeds outperform exact seeds by an order of magnitude.
 
-Following the work of \cite{Navarro2000}, I decided to find approximate seeds by backtracking the suffix trie of the reference genome.
+Following \cite{Navarro2000}, I decided to find approximate seeds by backtracking the suffix trie of the reference genome.
 In section~\ref{masai:engineering:index}, I recall the engineering work I did to implement efficient backtracking of approximate seeds.
 In order to achieve faster filtration, I opted to find approximate seeds only under the Hamming distance.
 For this reason, when resorting to approximate seeds, Masai does not attain strict full-sensitivity under the edit distance.
