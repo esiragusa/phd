@@ -535,8 +535,8 @@ The BWT is the string obtained by concatenating the symbols in the last column o
 Figure~\ref{fig:bwt} shows an example.
 
 The BWT generalizes to string collections.
-There are different ways to treating this problem \citep{Mantaci2007}.
-Indeed, definition~\ref{def:bwt} still holds for a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order.
+For a padded string collection $\Strings$ (definition~\ref{def:coltd}) and its cyclic shifts matrix sorted in lexicographical order, definition~\ref{def:bwt} still holds.
+Note that there are different ways of treating this problem (see \citep{Mantaci2007}).
 
 The cyclic shifts matrix is conceptual and does not have to be constructed explicitly to derive the BWT of $\String$.
 The BWT can be obtained in linear time by scanning the SA $\Sarray$ and assigning the symbol $\Subscript{\String}{\SubscriptNV{\Sarray}{i}-1}$ to the $i$-th BWT symbol.

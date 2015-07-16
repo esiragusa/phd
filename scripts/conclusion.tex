@@ -1,6 +1,6 @@
 \chapter{Outlook}
 
-In part I, I gave an overview of practical indexing and filtering methods for approximate string matching.
+In the first part of this manuscript, I gave an overview of practical indexing and filtering methods for approximate string matching.
 Among indexing methods, I considered classic and succinct full-text indices.
 Among filtering methods, I considered filters based on seeds and on $q$-grams.
 I implemented these methods in the generic \CC library SeqAn \citep{Doering2008}, which is publicly available in source form under the BSD license.
@@ -9,17 +9,17 @@ To close the algorithmic engineering cycle, I performed an experimental evaluati
 Concerning indexing methods, the experimental evaluation on DNA data (section~\ref{sec:index:algo}) showed that the FM-index is several times faster than classic full-text indices, despite being up to an order of magnitude smaller.
 Moreover, an FM-index using a two-levels DNA rank dictionary is twice as fast but has the same memory footprint of an FM-index using a wavelet tree, which is usually regarded as the best FM-index realization \citep{Navarro2007}.
 In the spirit of the \emph{Pizza \& Chili} corpus \citep{Ferragina2007a}, it would be interesting to extend such experimental evaluation to compressed full-text indices from other software libraries, as \emph{sdsl} \citep{Gog2014} or \emph{libcds2}.
-Future algorithmic engineering will go into the realization of an efficient bidirectional FM-index~\citep{Lam2009, Schnattinger2010}.
+Future engineering work will go into the realization of an efficient bidirectional FM-index~\citep{Lam2009, Schnattinger2010}.
 
 Concerning filtering methods for approximate string matching, the experimental evaluation of section~\ref{sec:filtering:evaluation} showed that seed filters are more practical than $q$-gram filters; $q$-gram filters are harder to design and implement but they do not pay off in practice.
 Future directions include experimenting with \emph{hierarchical seeds} (PEX) \citep{Navarro2001b} on a bidirectional FM-index \citep{Russo2009}, and generalizing seeds filters to consider semi-global alignments with gaps or local alignments; for the former case no practical method is known, while for the latter case proposed methods are based either on pure backtracking (BWT-SW \citep{Lam2008}) or on $q$-grams (SWIFT \citep{Rasmussen2006}).
 
-In part II, I presented methods for mapping high-throughput sequencing reads.
-I observed two \emph{de facto} standard paradigms for HTS data analysis, \emph{best-mapping} and \emph{all-mapping}, which implied a straightforward classification of existing read mapping programs.
+In the second part, I presented methods for mapping high-throughput sequencing reads.
+I observed two \emph{de facto} standard paradigms for HTS data analysis, \emph{best-mapping} and \emph{all-mapping}, which implies a straightforward classification of existing read mapping programs.
 I first engineered Masai, an all-mapper being $12$ to $15$ times faster than all previous tools in its class.
 Its speedup comes mainly from approximate seeds, a filtering method which had been overlooked by precedent read mapping methods.
 Afterwards, I turned Masai into a best-mapper nicknamed Yara.
-Turning an all-mapper into a best-mapper meant:
+Turning an all-mapper into a best-mapper means:
 \begin{inparaenum}[(i)]
 \item restricting all mapping locations to the relevant ones by means of mapping strata,
 \item estimating the probability of stratified mapping locations, and therefore 
@@ -32,13 +32,13 @@ Yara's read mapping model is exact, simple and clear, thus fully reproducible an
 These two properties are of paramount importance, especially in the context of clinical diagnostics.
 In summary, Yara is currently the fastest and the most accurate read mapping tool, both on simulated and real data.
 
-Future efforts on best-mapping must be spent on improving INDELs accuracy.
-Unmapped reads should be re-mapped considering semi-global alignments with gaps, rather than local alignments which do not account for leading and trailing errors (\eg as done by Bowtie~2).
-Furthermore, variant quality for INDELs could be improved by considering the number of co-optimal or suboptimal alignment traces within a mapping location, \ie the cardinality of the equivalency classes defined through Rabema intervals \citep{Holtgrewe2011}.
+Future efforts on best-mapping will be spent on improving INDELs accuracy.
+Unmapped reads would have to be re-mapped considering semi-global alignments with gaps, rather than local alignments (\eg as Bowtie~2) which do not account for leading and trailing errors.
+Furthermore, calling accuracy for INDELs could be improved by considering the number of co-optimal or suboptimal alignment traces within a mapping location, \ie the cardinality of the equivalency classes defined through Rabema intervals \citep{Holtgrewe2011}.
 Finally, Yara's best-mapping accuracy could be further improved by the precious feedback of the evaluation on real data (section~\ref{sec:yara:eval:calling}).
 
 At this point, a consideration on all-mapping tools arises: are they useful at all?
 Yara reports only relevant mapping locations annotated by their quality \ie weighted.
 Conversely, conventional all-mapping methods report several suboptimal mapping locations which are all considered to be equally relevant.
-Thus, conventional all-mapping methods are likely to add only noise to downstream analysis.
+Thus, conventional all-mapping methods are likely to add only noise to downstream analyses.
 Much research is still going into improving the speed of such all-mapping tools, while an experimental study assessing their accuracy would be more interesting.
