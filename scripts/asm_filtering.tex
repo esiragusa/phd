@@ -496,31 +496,57 @@ I define such pseudo-boolean function as
 The formal definition of \textsc{Optimal Threshold} follows.
 
 \begin{problem}[\textsc{Optimal Threshold}]
+\label{problem:opt-threshold}
 \begin{tabular}{rl}
 {\bf Instance}	&	A $Q$-gram, an $(\Plen,k)$ instance.\\
-{\bf Solution}	&	$\min \, t_{Q}^{m}(\Transcript)$ subject to $\Transcript \in \Bo^{\Plen}_k$
+{\bf Solution}	&	$\min \, \Threshold_{Q}^{\Plen}(\Transcript)$ subject to $\Transcript \in \Bo^{\Plen}_k$
 \end{tabular}
 \end{problem}
 
 \subsubsection{Exact solution}
 
-I propose the following ILP to solve \textsc{Optimal Threshold}.
-%The complementary \textsc{optimal threshold} is \textsc{maximum coverage} \citep{Vazirani2001}.
-
+The key to formulate problem~\ref{problem:opt-threshold} as an ILP is to rewrite function $t_{Q}^{m}$ as a linear combination of boolean variables.
+I start by representing function $\Threshold_{Q}^{\Plen}$ using a boolean vector $T$ of size $\Plen - \Span{Q} + 1$, where each $\Threshold_i$ indicates the truthfulness of the $i$-th clause (constraint~\ref{eq:qgram-inlp-t}).
+In addition, I represent any Hamming transcript by a boolean vector $\Transcript$: each $x_j$ is subject to an integer linear constraint \st the Hamming distance of $\Transcript$ is within $k$ (constraint~\ref{eq:qgram-inlp-transcript}).
+This leads to the following non-linear formulation
 \begin{align}
-%\label{eq:qgram-ilp}
-\min \sum T\label{eq:qgram-ilp-sum}\\
-\text{subject to}\nonumber				\\
-& T \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-ilp-t}\\
-&  \Transcript \in \Bo^{\Plen}_k\label{eq:qgram-ilp-transcript}\\
-&  t_i \geq x_{i+j} & \forall \, \At{1} \leq i \leq \Plen-\Span{Q}, \, j \in Q\label{eq:qgram-ilp-constr}
+\hspace{1cm}\min \sum t_i\label{eq:qgram-inlp-sum}\\
+\hspace{1cm}\text{subject to }&T \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-inlp-t}\\
+&\Transcript \in \Bo^{\Plen}_k\label{eq:qgram-inlp-transcript}\\
+&t_i \geq \prod_{j \in Q} x_{i+j} &\hspace{-8cm}\forall \, \At{1} \leq i \leq \Plen-\Span{Q}\label{eq:qgram-inlp-constr}
 \end{align}
+Using de Morgan's law, I rewrite inequality~\ref{eq:qgram-inlp-constr} as
+\begin{eqnarray}
+\overline{t_i} \leq \sum_{j \in Q}{\overline{x_{i+j}}}.
+\end{eqnarray}
+Thus, for convenience, I consider vectors $T$ and $X$ in negated form; this involves negating boolean constraints \ref{eq:qgram-inlp-transcript}--\ref{eq:qgram-inlp-t} and maximizing objective function \ref{eq:qgram-inlp-sum}.
 
-Vector $\Transcript$ represents any Hamming transcript: each $x_j$ is subject to an integer linear constrain \st the Hamming distance of $\Transcript$ is within $k$ (constraint~\ref{eq:qgram-ilp-transcript}).
-Vector $T$ represents function $\Threshold_{Q}^{m}$: each $\Threshold_i$ indicates the truthfulness of the $i$-th clause of $T_{Q}^{m}$ (constraint~\ref{eq:qgram-ilp-t}) and its sum (objective function~\ref{eq:qgram-ilp-sum}) the value of $\Threshold_{Q}^{m}(\Transcript)$.
-The inequalities of the form $\Threshold_i \geq x_{i+j}$ (constraint~\ref{eq:qgram-ilp-constr}) bind the satisfiability of each clause $\Threshold_i$ to its associated transcript values $x_j$.
-The solution $T^*$ to the above ILP provides the optimal threshold $\Threshold=\sum T^*$ for a $Q$-gram on instance $(\Plen,k)$.
-Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp-sum} on some problem instances.
+The following ILP solves \textsc{Optimal Threshold}:
+\begin{align}
+\hspace{1cm}\max \sum \overline{t_i}\label{eq:qgram-ilp-sum}\\
+\hspace{1cm}\text{subject to }& \overline{T} \in \Bo^{\Plen - \Span{Q} + 1}\label{eq:qgram-ilp-t}\\
+& \overline{\Transcript} \in \Bo^{\Plen}_{\Plen-k}\label{eq:qgram-ilp-transcript}\\
+&  \overline{t_i} \leq \sum_{j \in Q}{\overline{x_{i+j}}} & \hspace{-8cm} \forall \, \At{1} \leq i \leq \Plen-\Span{Q}\label{eq:qgram-ilp-constr}
+\end{align}
+The solution $T^*$ to the above ILP provides the optimal threshold $\sum t_i^*$ for a $Q$-gram on instance $(\Plen,k)$.
+Table~\ref{tab:threshold} shows the performance of ILP~\ref{eq:qgram-ilp-sum} on selected problem instances.
+
+\begin{table}[h]
+\center
+\caption[Best $Q$-grams found by \citeauthor{Burkhardt2001}]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
+\sffamily
+\input{tables/shapes}
+\label{tab:shapes}
+\end{table}
+
+\begin{table}[h]
+\center
+\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp-sum} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour; algorithm APX always completed within 6 milliseconds (data not shown).}
+\sffamily
+\renewcommand{\tabcolsep}{0.8ex}
+\input{tables/threshold}
+\label{tab:threshold}
+\end{table}
 
 \subsubsection{Approximate solution}
 
@@ -545,7 +571,12 @@ f(Y) + f(Z) \leq f(Y \vee Z) + f(Y \wedge Z) \quad \forall \, Y, Z \in \Bo^{\Ple
 It is immediate to see that function $\Threshold_{Q}^{m}$ satisfies all the above inequalities, as it does not contain any term in negative form by definition (see equation \ref{eq:qgram-pseudo}).
 \textsc{Optimal Threshold} thus involves the minimization of a monotone supermodular function subject to linear constraints.
 
-\begin{figure*}[t]
+There is a well-known \emph{gradient ascent} algorithm for the maximization of a monotone submodular function subject to linear constraints with an APX-ratio of $1 - 1/e$ \citep{Nemhauser1978}, \ie the ratio between the value of the greedy approximation and the value of the optimal solution is within $0.632$.
+Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} using the same principle.
+Nonetheless, its solution is not guaranteed to be within a constant ratio from the optimal one.
+Indeed, algorithm~\ref{alg:qgram-threshold-apx} minimizes function $\Threshold_{Q}^{m}$ which is monotone non-decreasing supermodular and has its unconstrained minimum at $0$.
+
+\begin{figure*}[h]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
 \begin{algorithm}[H]
@@ -573,11 +604,6 @@ It is immediate to see that function $\Threshold_{Q}^{m}$ satisfies all the abov
 \end{center}
 \end{figure*}
 
-There is a well-known \emph{gradient ascent} algorithm for the maximization of a monotone submodular function subject to linear constraints with an APX-ratio of $1 - 1/e$ \citep{Nemhauser1978}, \ie the ratio between the value of the greedy approximation and the value of the optimal solution is within $0.632$.
-Algorithm~\ref{alg:qgram-threshold-apx} computes an approximate solution to \textsc{Optimal Threshold} using the same principle.
-Nonetheless, its solution is not guaranteed to be within a constant ratio from the optimal one.
-Indeed, algorithm~\ref{alg:qgram-threshold-apx} minimizes function $\Threshold_{Q}^{m}$ which is monotone non-decreasing supermodular and has its unconstrained minimum at $0$.
-
 In practice, the threshold found by algorithm~\ref{alg:qgram-threshold-apx} turns out to be a tight upper bound for \textsc{Optimal Threshold} (see table~\ref{tab:threshold}).
 Such threshold cannot be used in a filtration scheme guaranteed to be full-sensitive: if the threshold is non-optimal, the filtration scheme is lossy.
 Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the design of $Q$-grams, as a search space filter to quickly discard lossy $Q$-grams.
@@ -587,23 +613,6 @@ Instead, algorithm~\ref{alg:qgram-threshold-apx} might find its use in the desig
 
 Assuming the text to be generated according to the uniform Bernoulli model, the expected specificity of any filtration scheme is proportional to the number of transcripts detected.
 Thus, among multiple full-sensitive filtration schemes, one clearly prefers the one that minimizes the number of transcripts detected.
-
-\begin{table}[h]
-\center
-\caption[Best $Q$-grams found by \citeauthor{Burkhardt2001}]{Best $Q$-grams found by \cite{Burkhardt2001} to solve instances with $m=50$ and $k \in \Interval{4}{5}$. $Q$-grams are visualized as strings over $\{$ \texttt{\#,{-}} $\}$, \eg $Q = \{ \At{1}, \At{3}, \At{4}, \At{5} \} = $ \texttt{\#{-}\#\#\#}. In the experimental evaluation of section~\ref{sec:filtering:evaluation}, $Q$-gram (iii) is the best one for $m=100$ and $k \in\Interval{8}{10}$.}
-\sffamily
-\input{tables/shapes}
-\label{tab:shapes}
-\end{table}
-
-\begin{table}[h]
-\center
-\caption[Optimal threshold computation results]{Optimal threshold computation for the $Q$-grams in table~\ref{tab:shapes} with $m=100$ and $k \in \Interval{8}{10}$. Threshold column shows the lower bound given the $q$-gram lemma (LEMMA), the optimal threshold (EXACT) and the upper bound given by algorithm~\ref{alg:qgram-threshold-apx} (APX). Runtime column shows the runtime in seconds of the DP algorithm by \cite{Burkhardt2001} and the ILP program \ref{eq:qgram-ilp-sum} solved with IBM CPLEX 12.2; algorithm DP on $Q$-gram (iii) required 44\,GB of RAM and could not complete within one hour; algorithm APX always completed within 6 milliseconds (data not shown).}
-\sffamily
-\renewcommand{\tabcolsep}{0.8ex}
-\input{tables/threshold}
-\label{tab:threshold}
-\end{table}
 
 \begin{problem}[\textsc{Specificity}]
 \begin{tabular}{rl}
@@ -698,11 +707,6 @@ and solving it for $N$, which gives
 N \geq 4 \cdot \frac{\Plen - \Span{Q}}{\epsilon^2}.
 \end{eqnarray}
 
-A straightforward generalization of algorithm~\ref{alg:qgram-specificity} for any filtration scheme $(Q,\Threshold)$ consists into expanding boolean function $T_{Q}^{m}$ to have $\binom{\Plen-\Span{Q}+1}{\Threshold}$ clauses, each one accounting for the joint occurrence of $\Threshold$ $Q$-grams.
-Whether the exponential dependency on $\Threshold$ can be removed is an open question.
-In practice, algorithm~\ref{alg:qgram-specificity} would be used in $Q$-grams design to choose the most specific $Q$-gram among a set of full-sensitive candidates.
-However, as my choice for the applications of chapters~\ref{sec:masai}-\ref{sec:yara} felt upon the more practical seeds filters, I did not have to perform $Q$-grams design.
-
 \begin{figure*}[t]
 \begin{center}
 \begin{minipage}[t]{.8\textwidth}
@@ -737,6 +741,11 @@ However, as my choice for the applications of chapters~\ref{sec:masai}-\ref{sec:
 \end{minipage}
 \end{center}
 \end{figure*}
+
+A straightforward generalization of algorithm~\ref{alg:qgram-specificity} for any filtration scheme $(Q,\Threshold)$ consists into expanding boolean function $T_{Q}^{m}$ to have $\binom{\Plen-\Span{Q}+1}{\Threshold}$ clauses, each one accounting for the joint occurrence of $\Threshold$ $Q$-grams.
+Whether the exponential dependency on $\Threshold$ can be removed is an open question.
+In practice, algorithm~\ref{alg:qgram-specificity} would be used in $Q$-grams design to choose the most specific $Q$-gram among a set of full-sensitive candidates.
+However, as my choice for the applications of chapters~\ref{sec:masai}-\ref{sec:yara} felt upon the more practical seeds filters, I did not have to perform $Q$-grams design.
 
 %Finally, $T_{Q}^{m}$ is \emph{minimal} (definition \ref{}) as all monotone boolean functions in DNF are minimal.
 
@@ -815,22 +824,6 @@ Gapped $q$-grams are on pair with 1-approximate seeds, slightly better only for 
 Figure \ref{fig:filter-runtime-edit-celegans} shows the results for $k$-differences.
 The more involved edit distance verification slightly fills the gap between exact seeds and contiguous $q$-grams, yet exact seeds continue to be always the fastest alternative.
 
-\begin{figure}[t]
-\begin{center}
-\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
-\label{fig:filter-runtime-hamming-celegans}
-\includegraphics{filter_runtime.dna.celegans.hamming.100}
-\end{center}
-\end{figure}
-
-\begin{figure}[b]
-\begin{center}
-\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
-\label{fig:filter-runtime-edit-celegans}
-\includegraphics{filter_runtime.dna.celegans.edit.100}
-\end{center}
-\end{figure}
-
 \subsection{Verification versus filtration time}
 
 Figure \ref{fig:filter-ratio-hamming-celegans} shows the ratios between the runtimes of the verification and filtration phases of each filtration scheme.
@@ -859,7 +852,7 @@ Therefore, I define the PPV as:
 \frac{|TP_f(\Text)|}{|TP_f(\Text)| + |FP_f(\Text)|} = \frac{C(\Text)}{V_f(\Text)}
 \end{eqnarray}
 
-\begin{table}[b]
+\begin{table}[t]
 \begin{center}
 \caption[Measurement of filtering methods efficiency]{Measurement of filtering methods efficiency. $V_f(\Text)$ counts the number of verifications, $C(\Text)$ the number of approximate occurrences, and $|\Text|$ the text length. Since all considered filtering methods are full-sensitive, the number of false negatives is always 0.}
 \begin{tabular}{rcc}
@@ -880,6 +873,24 @@ The PPV of gapped $q$-grams is comparable to that of 2-approximate seeds, while 
 In particular, when $\Threshold$ approaches $1$, \eg for $k = 9$, the PPV of contiguous $q$-grams stays below that one of exact seeds.
 Enforcing $\Threshold \geq 4$ boosts the PPV of contiguous $q$-grams to that one of 1-approximate seeds.
 The PPVs for $k$-difference show analogous patterns (data not shown).
+
+\newpage
+
+\begin{figure}[t]
+\begin{center}
+\caption[Filters runtime on $k$-mismatches]{Filters runtime on $k$-mismatches. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
+\label{fig:filter-runtime-hamming-celegans}
+\includegraphics{filter_runtime.dna.celegans.hamming.100}
+\end{center}
+\end{figure}
+
+\begin{figure}[b]
+\begin{center}
+\caption[Filters runtime on $k$-differences]{Filters runtime on $k$-differences. Pattern lengths are fixed to 100~bp. Solid lines represent total runtimes, while dashed lines represent filtration times only.}
+\label{fig:filter-runtime-edit-celegans}
+\includegraphics{filter_runtime.dna.celegans.edit.100}
+\end{center}
+\end{figure}
 
 \begin{figure}[t]
 \begin{center}
