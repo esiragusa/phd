@@ -38,11 +38,11 @@ as relevant mapping locations within an \emph{absolute} error threshold $k$.
 Stratified all-mapping refines this definition by considering only mapping locations being co-optimal, or suboptimal up to a certain degree $s$.
 Formally, if the distance of any optimal mapping location for read $\Read$ is
 \begin{eqnarray}
-e^* = \min \,\{ e \in [0,k-s] : \Stratum_e \neq \emptyset \}
+o = \min \,\{ e \in [0,k-s] : \Stratum_e \neq \emptyset \}
 \end{eqnarray}
 stratified all-mapping considers mapping locations
 \begin{eqnarray}
-\Stratum = \Stratum_{e^*} \cup \dots \cup \Stratum_{e^*+s}\label{eq:strata-mapping}
+\Stratum = \Stratum_{o} \cup \dots \cup \Stratum_{o+s}\label{eq:strata-mapping}
 \end{eqnarray}
 within a \emph{relative} suboptimality error threshold $s$ to be relevant.
 %Note that $s \ll k$.
@@ -52,22 +52,22 @@ within a \emph{relative} suboptimality error threshold $s$ to be relevant.
 Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping.
 Obviously, the most straightforward way to achieve stratified all-mapping consists of performing conventional all-mapping and subsequently filtering out any irrelevant mapping location.
 For instance, RazerS\,3 implements this method and gets no speedup.
-Another na\"ive method consists of performing up to $k$ rounds of conventional all-mapping, using filtration schemes with thresholds incrementing from $0$ to $e^*+s$.
+Another na\"ive method consists of performing up to $k$ rounds of conventional all-mapping, using filtration schemes with thresholds incrementing from $0$ to $o+s$.
 It is easy to see that also this method performs redundant computation: the total work for any read that maps at distance greater than or equal to $k$ corresponds to the sum of all $k$ filtration schemes.
 
 The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping.
-Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $e^*+s$.
-Given a filtration scheme $\Scheme=(t_{\At{1}},\dots,t_{\AtEnd{s}})$ full-sensitive within distance $k$, any subset consisting of $s^* \leq s$ seeds with thresholds $\mathbf{t^*}=(t^{*}_{\At{1}},\dots,t^{*}_{\AtEnd{s^*}})$ is full-sensitive within distance $e^*+s$ if it satisfies
+Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance $k$ to be full-sensitive within distance $o+s$.
+Given a filtration scheme $\Scheme=(t_{\At{1}},\dots,t_{\AtEnd{s}})$ full-sensitive within distance $k$, any subset consisting of $s' \leq s$ seeds with thresholds $\mathbf{t'}=(t'_{\At{1}},\dots,t'_{\AtEnd{s'}})$ is full-sensitive within distance $o+s$ if it satisfies
 \begin{eqnarray}
-s^* + \sum_{i=\At{1}}^{\AtEnd{s^*}} t_i^* > e^*+s.\label{eq:yara-filtration-scheme}
+s' + \sum_{i=\At{1}}^{\AtEnd{s'}} t'_i > o+s.\label{eq:yara-filtration-scheme}
 \end{eqnarray}
 %The proof is analogous to that one given in section~\ref{sec:seeds-apx}.
 %Verification of all candidate locations produced by one seed or by one threshold accounts for one stratum $\Stratum_i$.
 
 \begin{example}
 Let $k=5$ be the absolute threshold and $s=0$ the relative threshold, defining only co-optimal locations to be relevant.
-A read $\Read$ maps at distance 1, \ie $|\Stratum_0| = 0$ and $|\Stratum_1| > 0$, thus $e^* = 1$.
-Given the filtration scheme $\Scheme=(1,1,1)$, any subset full-sensitive up to distance $e^*+s = 1$ finds all relevant mapping locations.
+A read $\Read$ maps at distance 1, \ie $|\Stratum_0| = 0$ and $|\Stratum_1| > 0$, thus $o = 1$.
+Given the filtration scheme $\Scheme=(1,1,1)$, any subset full-sensitive up to distance $o+s = 1$ finds all relevant mapping locations.
 All full-sensitive subsets of $\Scheme$ are $(0,0,-)$, $(0,-,0)$, $(-,0,0)$, $(1,-,-)$, $(-,1,-)$, $(-,-,1)$, where a $-$ at position $i$ indicates that the $i$-th seed is unnecessary.
 Thus, the verification of all candidates, either produced by \emph{any} two exact seeds or by one 1-approximate seed, yields all mapping locations in the $1$-stratum of $\Read$.
 \end{example}
@@ -150,40 +150,40 @@ Since Yara outputs all relevant mapping locations, the choice of primary locatio
 \subsection{Mapping qualities}
 \label{sec:yara:eng:qualities}
 Yara computes accurate mapping qualities using the number of found mapping locations stratified by error rate.
-In section~\ref{sec:yara:eng:strata} I defined the set $\Stratum$ of all relevant mapping locations as
+In equation~\ref{eq:strata-mapping}, I defined the set $\Stratum$ of all relevant mapping locations as
 \begin{eqnarray}
-\Stratum = \bigcup_{e=0}^{k} \Stratum_e.
+\Stratum = \bigcup_{e=o}^{o+s} \Stratum_e.
 \end{eqnarray}
 I now denote by $z_e$ the number of mapping locations in the stratum $\Stratum_e$, \ie $z_e=|\Stratum_e|$;
 I associate to $\Stratum$ a canonical partition function $Z$
 \begin{eqnarray}
 \label{eq:yara:mqual:partition}
-Z = \sum_{e=0}^{k} z_e w(e),
+Z = \sum_{e=o}^{o+s} z_e \theta_{e-o},
 \end{eqnarray}
-where the function $w : \N \rightarrow \R$ assigns a weight to each (sub)optimal stratum.
-The function $w$ expresses how well edit distance correlates to the distance of correct mapping locations.
-If all correct mapping locations occur at minimum edit distance $e^*$, then $w(e^*) = 1$ and $w(e) = 0$ for all $e > e^*$.
+where the parameter $\theta_{e-o}$ assigns a weight to the $(e-o)$-th suboptimal stratum $\Stratum_e$.
+Parameters $\theta$ express how well the edit distance correlates to the distance of correct mapping locations.
+If all correct mapping locations occur at optimal edit distance $o$, then $\theta_{0} = 1$ and $\theta_{e-o} = 0$ for all $e > o$.
 
 \subsubsection{Single-end reads}
 
-For a fixed single-end read, I denote with $C$ a random variable assuming the value of its correct mapping location and I assume that
+For a fixed single-end read, occurring at optimal edit distance $o$, I denote with $C$ a random variable assuming the value of its correct mapping location; I assume that
 \begin{eqnarray}
 \Pr[C \in \Stratum] = 1.
 \end{eqnarray}
 I estimate the probability of $C$ being part of the stratum $\Stratum_e$ as
 \begin{eqnarray}
 \label{eq:yara:mqual:se:stratum}
-\Pr[C \in \Stratum_e] = \frac{1}{Z} \cdot z_e w(e)
+\Pr[C \in \Stratum_e] = \frac{z_e \theta_{e-o}}{Z}
 \end{eqnarray}
 and the probability of $C$ being equal to any found mapping location $(i,j,e)$ as
 \begin{eqnarray}
 \label{eq:yara:mqual:se:location}
-\Pr[C = (i,j,e)] = \frac{1}{Z} \cdot w(e).
+\Pr[C = (i,j,e)] = \frac{\theta_{e-o}}{Z}.
 \end{eqnarray}
 
 %In practice, I define $w$ as:
 %\begin{eqnarray}
-%w(e) = ...
+%\theta_e = ...
 %\end{eqnarray}
 
 Hence, equation~\ref{eq:yara:mqual:se:location} gives the probability $p$ that a random mapping location drawn from any stratum is correct.
@@ -191,7 +191,7 @@ Such probability $p$ is further encoded as the mapping quality $Q=-10 \log_{10}(
 
 \subsubsection{Paired-end reads}
 
-A paired-end read whose mate is unmapped is treated as a single-end read, thus the above probabilities still hold.
+A paired-end read whose mate is unmapped is equivalent to a single-end read, thus the above probabilities still hold.
 Given a read end, I denote by $\Stratum'_e$ the $e$-stratum of its mate, by $Z'$ the canonical partition function of its mate as in equation~\ref{eq:yara:mqual:partition}, and by $C'$ its correct mapping location.
 I partition each stratum $\Stratum_e$ in two subsets $\Stratum^P_e$ and $\Stratum^I_e$, where $\Stratum^P_e$ contains all mapping locations in $\Stratum_e$ being properly paired to some mapping location in $\Stratum'$, and $\Stratum^I_e = \Stratum^P_e \setminus \Stratum_e$.
 I distinguish the cases of a read end having some properly paired mapping location or not.
@@ -203,12 +203,12 @@ I estimate the probability of $C$ being equal to any found mapping location $(i,
 \end{eqnarray}
 and since
 \begin{eqnarray}
-\Pr[C' \not{\in} \Stratum'_{e'}] = 1 - \frac{1}{Z'} \cdot z_{e'} w(e'),
+\Pr[C' \not{\in} \Stratum'_{e'}] = 1 - \frac{1}{Z'} \cdot z_{e'} \theta_{e'},
 \end{eqnarray}
 it follows that
 \begin{eqnarray}
 \label{eq:yara:mqual:pe:unpaired}
-\Pr[C = (i,j,e) | \Stratum^P_e = \emptyset] = \frac{1}{Z} \cdot w(e) - \frac{1}{ZZ'} \cdot z_{e'} w(e) w(e').
+\Pr[C = (i,j,e) | \Stratum^P_e = \emptyset] = \frac{1}{Z} \cdot \theta_e - \frac{1}{ZZ'} \cdot z_{e'} \theta_e \theta_{e'}.
 \end{eqnarray}
 
 Now I consider the case of a read end having some properly paired mapping location.
@@ -225,12 +225,12 @@ and
 Hence the probability of $C$ being part of the properly paired locations in stratum $\Stratum_e$ is
 \begin{eqnarray}
 \label{eq:yara:mqual:pe:stratum}
-\Pr[C \in \Stratum^P_e] = \frac{p' z^p_e w(e)}{p' \cdot Z^P + (1-p') \cdot Z^I}
+\Pr[C \in \Stratum^P_e] = \frac{p' z^p_e \theta_e}{p' \cdot Z^P + (1-p') \cdot Z^I}
 \end{eqnarray}
 and the probability that any of these locations is correct as
 \begin{eqnarray}
 \label{eq:yara:mqual:pe:paired}
-\Pr[C = (i,j,e) \in \Stratum^P_e] = \frac{p' w(e)}{p' \cdot Z^P + (1-p') \cdot Z^I}.
+\Pr[C = (i,j,e) \in \Stratum^P_e] = \frac{p' \theta_e}{p' \cdot Z^P + (1-p') \cdot Z^I}.
 \end{eqnarray}
 
 
@@ -260,7 +260,7 @@ GEM, in addition to all-mapping, can be used for best-mapping only to some exten
 
 In appendix \ref{sup:yara:param}, I give the exact parametrization of each read mapper considered in the evaluation.
 I parameterized Yara in three different ways, denoted as [s=0], [s=1], and [all].
-Yara [s=0] thus reports only the co-optimal stratum as in equations~\ref{eq:strata-mapping}, Yara [s=1] up to the first sub-optimal stratum, and Yara [all] all sub-optimal strata as in equation~\ref{eq:all-mapping}.
+Yara [s=0] thus reports only the co-optimal stratum as in equations~\ref{eq:strata-mapping}, Yara [s=1] up to the first suboptimal stratum, and Yara [all] all suboptimal strata as in equation~\ref{eq:all-mapping}.
 Whenever possible, I configured the tools with the appropriate error rate (Yara, GEM, RazerS\,3) or absolute number of errors (Hobbes\,2).
 When processing paired-end reads, I provided the tools with appropriate insert size information.
 
@@ -355,7 +355,7 @@ To assess the improvements due to the knowledge of the insert size, the experime
 Accuracy results are shown in figure~\ref{fig:yara:accuracy-se}.
 The ROC curves show incorrect locations on a logarithmic scale.
 Yara [s=1] always dominates BWA, which in turn always dominates Bowtie~2.
-It is interesting to see that Yara [s=0] is not able to compute accurate mapping qualities without the knowledge of mapping locations from sub-optimal strata.
+It is interesting to see that Yara [s=0] is not able to compute accurate mapping qualities without the knowledge of mapping locations from suboptimal strata.
 %The ROC curves in the top panel show incorrect locations on a linear scale, in order to highlight unmappable reads.
 %Conversely, to focus on mappable reads, the ROC curves in the bottom panel show incorrect locations on a logarithmic scale.
 %From both plots, it is visible that Yara always dominates BWA, which in turn always dominates Bowtie~2.
@@ -506,7 +506,7 @@ This strategy is implemented by the tools BWA and Bowtie~2.
 Performance-wise, Yara can still be improved.
 The verification time can be drastically reduced: David Weese and me vectorized the banded Myers' algorithm such that it verifies multiple patterns simultaneously; a prototypical implementation on a modern processor (256~bit AVX instructions) shows a speed-up of 4--6 times over the conventional algorithm.
 The filtration time can be almost halved by indexing both the forward and reverse complemented strands of the reference genome; this would be paid with a total memory footprint of about 8GB, which is nonetheless acceptable.
-Finally, the estimation of mapping qualities in Yara [s=0] can use matches from sub-optimal strata, which are found but not reported; this could render Yara [s=0] almost as good as Yara [s=1].
+Finally, the estimation of mapping qualities in Yara [s=0] can use matches from suboptimal strata, which are found but not reported; this could render Yara [s=0] almost as good as Yara [s=1].
 
 Yara is part of the SeqAn library \citep{Doering2008}, it is distributed under the BSD license and can be downloaded from \url{http://www.seqan.de/projects/yara}.
 A manuscript for this work is in preparation and will be submitted to a peer-reviewed journal.
